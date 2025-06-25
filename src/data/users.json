@@ -1,0 +1,12 @@
+[
+  {
+    "id": "6",
+    "name": "Mücahit Ali",
+    "username": "mucahitali",
+    "email": "mucahit.ali@example.com",
+    "role": "Developer",
+    "avatar": "/avatars/06.png",
+    "status": "active",
+    "permissions":  ["Create", "Read", "Update", "Delete"]
+  }
+] 

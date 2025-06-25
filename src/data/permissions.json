@@ -1,0 +1,27 @@
+[
+  {
+    "id": "1",
+    "name": "User Management",
+    "description": "Full access to user management operations"
+  },
+  {
+    "id": "2",
+    "name": "Resource Read",
+    "description": "Read-only access to resources"
+  },
+  {
+    "id": "3",
+    "name": "Data Write",
+    "description": "Write access to data operations"
+  },
+  {
+    "id": "4",
+    "name": "System Configuration",
+    "description": "System configuration management"
+  },
+  {
+    "id": "5",
+    "name": "Report Generation",
+    "description": "Generate and export reports"
+  }
+] 

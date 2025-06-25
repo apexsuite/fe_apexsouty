@@ -1,0 +1,9 @@
+[
+  { "id": 1, "label": "Kubernetes services" },
+  { "id": 2, "label": "SQL databases" },
+  { "id": 3, "label": "Virtual machines" },
+  { "id": 4, "label": "App Services" },
+  { "id": 5, "label": "Storage accounts" },
+  { "id": 6, "label": "Monitor" },
+  { "id": 7, "label": "Resource groups" }
+] 
