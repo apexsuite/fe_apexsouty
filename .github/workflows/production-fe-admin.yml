@@ -1,0 +1,169 @@
+name: Frontend Admin Production
+on:
+  workflow_dispatch:
+
+env:
+  CLUSTER_NAME: e12-prod
+  RESOURCE_GROUP: rg-e12prod
+  NAMESPACE: production
+  PORTAL_FRONTEND_IMAGE: ghcr.io/loop-soft/e12-admin-portal-fe/frontend-admin-prod
+  DEPLOYMENT_MANIFEST_PATH: "${{ github.workspace }}/deploy/admin-fe/prod"
+  CONTAINER_REGISTRY: ghcr.io
+  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
+  CLUSTER_NAME_AZ: e12-prod
+  RESOURCE_GROUP_AZ: rg-e12prod
+  NAMESPACE_AZ: production-az
+  PORTAL_FRONTEND_IMAGE_AZ: ghcr.io/loop-soft/e12-admin-portal-fe/frontend-admin-prod-az
+  DEPLOYMENT_MANIFEST_PATH_AZ: "${{ github.workspace }}/deploy/admin-fe/prod-az"
+  CONTAINER_REGISTRY_AZ: ghcr.io
+  SENTRY_AUTH_TOKEN_AZ: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
+jobs:
+  build-portal-frontend:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Tagging Image and Metadata
+        uses: docker/metadata-action@v5
+        id: metadata
+        with:
+          images: ${{ env.PORTAL_FRONTEND_IMAGE }}
+          tags: |
+            ${{github.run_number}}
+            latest
+
+      - name: Login GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.CONTAINER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.API_TOKEN_GITHUB }}
+
+      - name: Build and Push Image to Repository
+        uses: int128/kaniko-action@v1
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          build-args: |
+            MODE=prod
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+            GITHUB_SHA=${{ github.sha }}
+
+  deploy-portal-frontend:
+    needs: build-portal-frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          repository: loop-soft/e12-deployment
+          token: ${{ secrets.GH_PAT }}
+          path: deploy
+          ref: main
+
+      - name: Login with Azure
+        uses: azure/login@v2
+        with:
+          creds: "${{ secrets.AZURE_CREDENTIALS }}"
+
+      - name: Connect to AKS Cluster
+        run: |
+          az aks get-credentials --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }}
+
+      - name: Deploy frontend-admin Manifest YAML Files
+        run: |
+          cd ${{ env.DEPLOYMENT_MANIFEST_PATH }}
+          kubectl apply -f namespace.yaml
+          # kubectl create secret docker-registry ghcr -n ${{ env.NAMESPACE }} --docker-server=https://ghcr.io --docker-username=loop-soft --docker-password=${{ secrets.API_TOKEN_GITHUB }} --docker-email=info@e12test.com
+          # kubectl create cm config-fe-admin -n ${{ env.NAMESPACE }} --from-env-file=../../../.env.prod --dry-run=client -o yaml>frontend-cm.yaml
+
+          kubectl config set-context --current --namespace ${{ env.NAMESPACE }}
+          kustomize edit set image ${{ env.PORTAL_FRONTEND_IMAGE }}=:${{github.run_number}}
+          kubectl apply -k . --namespace ${{ env.NAMESPACE }}
+
+  build-portal-frontend-az:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Tagging Image and Metadata
+        uses: docker/metadata-action@v5
+        id: metadata
+        with:
+          images: ${{ env.PORTAL_FRONTEND_IMAGE_AZ }}
+          tags: |
+            ${{github.run_number}}
+            latest
+
+      - name: Login GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.CONTAINER_REGISTRY_AZ }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.API_TOKEN_GITHUB }}
+
+      - name: Build and Push Image to Repository
+        uses: int128/kaniko-action@v1
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          build-args: |
+            MODE=prod-az
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+            GITHUB_SHA=${{ github.sha }}
+
+  deploy-portal-frontend-az:
+    needs: build-portal-frontend-az
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          repository: loop-soft/e12-deployment
+          token: ${{ secrets.GH_PAT }}
+          path: deploy
+          ref: main
+
+      - name: Login with Azure
+        uses: azure/login@v2
+        with:
+          creds: "${{ secrets.AZURE_CREDENTIALS }}"
+
+      - name: Connect to AKS Cluster
+        run: |
+          az aks get-credentials --resource-group ${{ env.RESOURCE_GROUP_AZ }} --name ${{ env.CLUSTER_NAME_AZ }}
+
+      - name: Deploy frontend-admin Manifest YAML Files
+        run: |
+          cd ${{ env.DEPLOYMENT_MANIFEST_PATH_AZ }}
+          kubectl apply -f namespace.yaml
+          # kubectl create secret docker-registry ghcr -n ${{ env.NAMESPACE_AZ }} --docker-server=https://ghcr.io --docker-username=loop-soft --docker-password=${{ secrets.API_TOKEN_GITHUB }} --docker-email=info@e12test.com
+          # kubectl create cm config-fe-admin -n ${{ env.NAMESPACE }} --from-env-file=../../../.env.prod-az --dry-run=client -o yaml>frontend-cm.yaml
+
+          kubectl config set-context --current --namespace ${{ env.NAMESPACE_AZ }}
+          kustomize edit set image ${{ env.PORTAL_FRONTEND_IMAGE_AZ }}=:${{github.run_number}}
+          kubectl apply -k . --namespace ${{ env.NAMESPACE_AZ }}

@@ -1,0 +1,85 @@
+name: FE Scouty Stage
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  CLUSTER_NAME: apexcrawl
+  RESOURCE_GROUP: rg-apexcrawl
+  FRONTEND_IMAGE: ghcr.io/apexsuite/fe-apexscouty/fe-scouty-stage
+  DEPLOYMENT_PATH: "${{ github.workspace }}/deploy/apexscouty/fe-scouty/stage"
+  NAMESPACE: scouty-stage
+  REGISTRY: ghcr.io
+  VERSION: v0.0.1.
+
+jobs:
+  fe-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: tagging image and metadata
+        uses: docker/metadata-action@v5
+        id: metadata
+        with:
+          images: ${{ env.FRONTEND_IMAGE }}
+          tags: |
+            ${{ github.run_number }}
+            latest
+
+      - name: login GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: build and push image to repository
+        uses: int128/kaniko-action@v1
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          build-args: |
+            MODE=stage
+
+  fe-deploy:
+    needs: fe-build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          repository: apexsuite/deployment
+          token: ${{ secrets.GH_PAT }}
+          path: deploy
+          ref: main
+
+      - name: Log in with Azure
+        uses: azure/login@v2
+        with:
+          creds: "${{ secrets.AZURE_CREDENTIALS }}"
+
+      - name: connect to AKS cluster
+        run: |
+          az aks get-credentials --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }}
+
+      - name: Deploy portal-backend manifest yaml files
+        run: |
+          cd ${{ env.DEPLOYMENT_PATH }}
+
+          kubectl config set-context --current --namespace ${{ env.NAMESPACE }}
+          kustomize edit set image ${{ env.FRONTEND_IMAGE }}=:${{ github.run_number }}
+          kubectl apply -k . --namespace ${{ env.NAMESPACE }}
