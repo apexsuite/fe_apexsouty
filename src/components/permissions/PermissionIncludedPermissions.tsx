@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, Button, Typography, Space } from 'antd';
 import { Copy } from 'lucide-react';
+
+const { Title } = Typography;
 
 interface Permission {
   id: string;
@@ -30,24 +31,29 @@ export default function PermissionIncludedPermissions({ permission }: Permission
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>{t('permissions.includedPermissions')}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-          {permission.permissions.map((perm, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between p-2 bg-background rounded"
-            >
-              <span className="text-sm">{perm}</span>
-              <Button variant="ghost" size="sm">
-                <Copy className="w-3 h-3" />
-              </Button>
-            </div>
-          ))}
-        </div>
-      </CardContent>
+      <div style={{ marginBottom: 16 }}>
+        <Title level={4} style={{ margin: 0 }}>{t('permissions.includedPermissions')}</Title>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 8 }}>
+        {permission.permissions.map((perm, index) => (
+          <div
+            key={index}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: 8,
+              backgroundColor: '#fafafa',
+              borderRadius: 6,
+            }}
+          >
+            <span style={{ fontSize: 14 }}>{perm}</span>
+            <Button type="text" size="small">
+              <Copy style={{ width: 12, height: 12 }} />
+            </Button>
+          </div>
+        ))}
+      </div>
     </Card>
   );
 } 

@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/lib/store';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Button } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import PermissionStats from '@/components/permissions/PermissionStats';
 import PermissionFilters from '@/components/permissions/PermissionFilters';
 import PermissionList from '@/components/permissions/PermissionList';
@@ -178,16 +178,15 @@ export default function PermissionsPage() {
   };
 
   return (
-    <div className="p-6 space-y-6 bg-background min-h-full">
+    <div style={{ padding: 24, minHeight: '100vh', background: '#f5f5f5' }}>
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1 className="text-3xl font-bold">{t('permissions.title')}</h1>
-          <p className="text-gray-600">{t('permissions.permissionManagement')}</p>
+          <h1 style={{ fontSize: 28, fontWeight: 700 }}>{t('permissions.title')}</h1>
+          <p style={{ color: '#888' }}>{t('permissions.permissionManagement')}</p>
         </div>
         {canCreate(user) && (
-          <Button onClick={() => setShowCreateModal(true)} className="flex items-center gap-2">
-            <Plus className="w-4 h-4" />
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => setShowCreateModal(true)}>
             {t('permissions.createNewPermission')}
           </Button>
         )}

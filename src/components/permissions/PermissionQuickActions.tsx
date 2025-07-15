@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, Button, Typography, Space } from 'antd';
 import { Copy, Users, Activity } from 'lucide-react';
+
+const { Title } = Typography;
 
 interface PermissionQuickActionsProps {
   onDuplicate?: () => void;
@@ -18,35 +19,35 @@ export default function PermissionQuickActions({
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>{t('permissions.quickActions')}</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-2">
+      <div style={{ marginBottom: 16 }}>
+        <Title level={4} style={{ margin: 0 }}>{t('permissions.quickActions')}</Title>
+      </div>
+      <Space direction="vertical" style={{ width: '100%' }}>
         <Button 
-          variant="outline" 
-          className="w-full justify-start"
+          type="default"
+          block
+          icon={<Copy style={{ width: 16, height: 16, marginRight: 8 }} />} 
           onClick={onDuplicate}
         >
-          <Copy className="w-4 h-4 mr-2" />
           {t('permissions.duplicatePermission')}
         </Button>
         <Button 
-          variant="outline" 
-          className="w-full justify-start"
+          type="default"
+          block
+          icon={<Users style={{ width: 16, height: 16, marginRight: 8 }} />} 
           onClick={onManageAssignments}
         >
-          <Users className="w-4 h-4 mr-2" />
           {t('permissions.manageAssignments')}
         </Button>
         <Button 
-          variant="outline" 
-          className="w-full justify-start"
+          type="default"
+          block
+          icon={<Activity style={{ width: 16, height: 16, marginRight: 8 }} />} 
           onClick={onViewActivityLog}
         >
-          <Activity className="w-4 h-4 mr-2" />
           {t('permissions.viewActivityLog')}
         </Button>
-      </CardContent>
+      </Space>
     </Card>
   );
 } 

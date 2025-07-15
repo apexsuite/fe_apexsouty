@@ -1,11 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/lib/store';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Card, Input, Typography, Select, Tag, Space } from 'antd';
 import { Shield, Eye, Edit, Activity, CheckCircle, XCircle } from 'lucide-react';
 import { canUpdate } from '@/lib/utils';
+
+const { Title, Text } = Typography;
+const { Option } = Select;
 
 interface Permission {
   id: string;
@@ -48,17 +49,15 @@ export default function PermissionBasicInfo({
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'read': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'write': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'admin': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'read': return 'blue';
+      case 'write': return 'orange';
+      case 'admin': return 'red';
+      default: return 'default';
     }
   };
 
   const getStatusColor = (status: string) => {
-    return status === 'active' 
-      ? 'bg-green-100 text-green-800 border-green-200' 
-      : 'bg-gray-100 text-gray-800 border-gray-200';
+    return status === 'active' ? 'green' : 'default';
   };
 
   // Kullanıcının Update izni yoksa sadece görüntüleme modunda göster
@@ -66,100 +65,98 @@ export default function PermissionBasicInfo({
   const displayMode = isEditing && canEdit ? 'editing' : 'viewing';
 
   return (
-    <Card className='bg-background'>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-green-800 dark:text-green-300">
+    <Card>
+      <div style={{ marginBottom: 16 }}>
+        <Title level={4} style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
           <Shield className="w-5 h-5" />
           {t('permissions.basicInformation')}
           {!canEdit && (
-            <span className="text-xs text-muted-foreground ml-2">
+            <Text type="secondary" style={{ fontSize: 12 }}>
               (Salt Okunur)
-            </span>
+            </Text>
           )}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+        </Title>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <div>
-          <Label className="text-sm font-medium text-gray-700 text-green-800 dark:text-green-300">{t('permissions.permissionName')}</Label>
+          <Text strong style={{ display: 'block', marginBottom: 8 }}>{t('permissions.permissionName')}</Text>
           {displayMode === 'editing' ? (
             <Input
               value={editedPermission.name || ''}
               onChange={(e) => setEditedPermission({ ...editedPermission, name: e.target.value })}
-              className="mt-1 text-green-800 dark:text-green-300 bg-background"
             />
           ) : (
-              <p className="mt-1 text-gray-600">{permission.name}</p>
+            <Text>{permission.name}</Text>
           )}  
         </div>
         
         <div>
-          <Label className="text-sm font-medium text-gray-700 text-green-800 dark:text-green-300 bg-background">{t('permissions.description')}</Label>
+          <Text strong style={{ display: 'block', marginBottom: 8 }}>{t('permissions.description')}</Text>
           {displayMode === 'editing' ? (
             <Input
               value={editedPermission.description || ''}
               onChange={(e) => setEditedPermission({ ...editedPermission, description: e.target.value })}
-              className="mt-1 bg-background "
             />
           ) : (
-            <p className="mt-1 text-gray-600">{permission.description}</p>
+            <Text>{permission.description}</Text>
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           <div>
-            <Label className="text-sm font-medium text-gray-700 text-green-800 dark:text-green-300 bg-background">{t('permissions.type')}</Label>
+            <Text strong style={{ display: 'block', marginBottom: 8 }}>{t('permissions.type')}</Text>
             {displayMode === 'editing' ? (
-              <select
+              <Select
                 value={editedPermission.type || 'read'}
-                onChange={(e) => setEditedPermission({ 
+                onChange={(value) => setEditedPermission({ 
                   ...editedPermission, 
-                  type: e.target.value as 'read' | 'write' | 'admin' 
+                  type: value as 'read' | 'write' | 'admin' 
                 })}
-                className="mt-1 w-full px-3 py-2 border rounded-md bg-background"
+                style={{ width: '100%' }}
               >
-                <option value="read">{t('permissions.read')}</option>
-                <option value="write">{t('permissions.write')}</option>
-                <option value="admin">{t('permissions.admin')}</option> 
-              </select>
+                <Option value="read">{t('permissions.read')}</Option>
+                <Option value="write">{t('permissions.write')}</Option>
+                <Option value="admin">{t('permissions.admin')}</Option> 
+              </Select>
             ) : (
-              <div className="mt-1 flex items-center gap-2">
+              <Space>
                 {getTypeIcon(permission.type)}
-                <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getTypeColor(permission.type)}`}>
+                <Tag color={getTypeColor(permission.type)}>
                   {t(`permissions.${permission.type}`)}
-                </span>
-              </div>
+                </Tag>
+              </Space>
             )}
           </div>
           
           <div>
-            <Label className="text-sm font-medium text-gray-700 text-green-800 dark:text-green-300 bg-background">{t('permissions.status')}</Label>
+            <Text strong style={{ display: 'block', marginBottom: 8 }}>{t('permissions.status')}</Text>
             {displayMode === 'editing' ? (
-              <select
+              <Select
                 value={editedPermission.status || 'active'}
-                onChange={(e) => setEditedPermission({ 
+                onChange={(value) => setEditedPermission({ 
                   ...editedPermission, 
-                  status: e.target.value as 'active' | 'inactive' 
+                  status: value as 'active' | 'inactive' 
                 })}
-                className="mt-1 w-full px-3 py-2 border rounded-md bg-background"
+                style={{ width: '100%' }}
               >
-                <option value="active">{t('permissions.active')}</option>
-                <option value="inactive">{t('permissions.inactive')}</option>
-              </select>
+                <Option value="active">{t('permissions.active')}</Option>
+                <Option value="inactive">{t('permissions.inactive')}</Option>
+              </Select>
             ) : (
-              <div className="mt-1 flex items-center gap-2">
+              <Space>
                 {permission.status === 'active' ? (
-                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <CheckCircle className="w-4 h-4" style={{ color: '#52c41a' }} />
                 ) : (
-                  <XCircle className="w-4 h-4 text-gray-600" />
+                  <XCircle className="w-4 h-4" style={{ color: '#8c8c8c' }} />
                 )}
-                <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(permission.status)}`}>
+                <Tag color={getStatusColor(permission.status)}>
                   {t(`permissions.${permission.status}`)}
-                </span>
-              </div>
+                </Tag>
+              </Space>
             )}
           </div>
         </div>
-      </CardContent>
+      </div>
     </Card>
   );
 } 

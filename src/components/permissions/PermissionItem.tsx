@@ -1,12 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/lib/store';
-import { Button } from '@/components/ui/button';
+import { Button, Card, Typography, Tag, Space, Modal } from 'antd';
 import { Eye, Edit, Trash2, Activity } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { formatDate, canRead, canUpdate, canDelete } from '@/lib/utils';
-import ConfirmationDialog from '@/components/ui/confirmation-dialog';
+
+const { Text, Title } = Typography;
 
 interface Permission {
   id: string;
@@ -51,111 +52,106 @@ export default function PermissionItem({ permission, onDelete }: PermissionItemP
 
   const handleDeleteConfirm = () => {
     onDelete(permission.id);
+    setShowDeleteDialog(false);
   };
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'read': return <Eye className="w-4 h-4" />;
-      case 'write': return <Edit className="w-4 h-4" />;
-      case 'admin': return <Activity className="w-4 h-4" />;
-      default: return <Activity className="w-4 h-4" />;
+      case 'read': return <Eye style={{ width: 16, height: 16 }} />;
+      case 'write': return <Edit style={{ width: 16, height: 16 }} />;
+      case 'admin': return <Activity style={{ width: 16, height: 16 }} />;
+      default: return <Activity style={{ width: 16, height: 16 }} />;
     }
   };
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'read': return 'bg-blue-100 text-blue-800';
-      case 'write': return 'bg-yellow-100 text-yellow-800';
-      case 'admin': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'read': return 'blue';
+      case 'write': return 'orange';
+      case 'admin': return 'red';
+      default: return 'default';
     }
   };
 
   const getStatusColor = (status: string) => {
-    return status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800';
+    return status === 'active' ? 'green' : 'default';
   };
 
   return (
     <>
-      <div className="flex items-center justify-between p-4 border rounded-lg  dark:hover:bg-green-300 transition-colors">
-        <div className="flex items-center gap-4 flex-1">
-          <div className="flex items-center gap-2">
-            {getTypeIcon(permission.type)}
-            <div>
-              <h3 className="font-medium">{permission.name}</h3>
-              <p className="text-sm text-gray-600">{permission.description}</p>
-            </div>
+      <Card
+        style={{ marginBottom: 8 }}
+        bodyStyle={{ padding: 16 }}
+      >
+        <div className="flex flex-col md:flex-row items-center md:items-center justify-between gap-2 md:gap-0 text-center md:text-left">
+          <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4 flex-1 w-full">
+            <Space direction="horizontal" className="justify-center md:justify-start w-full">
+              {getTypeIcon(permission.type)}
+              <div>
+                <Title level={5} style={{ margin: 0, wordBreak: 'break-word' }}>{permission.name}</Title>
+                <Text type="secondary" style={{ wordBreak: 'break-word', display: 'block' }}>{permission.description}</Text>
+              </div>
+            </Space>
           </div>
+          <Space direction="horizontal" className="justify-center md:justify-start w-full md:w-auto mt-2 md:mt-0" style={{ marginRight: 0 }}>
+            <Tag color={getTypeColor(permission.type)}>
+              {t(`permissions.${permission.type}`)}
+            </Tag>
+            <Tag color={getStatusColor(permission.status)}>
+              {t(`permissions.${permission.status}`)}
+            </Tag>
+          </Space>
+          <Space direction="horizontal" className="justify-center md:justify-end w-full md:w-auto mt-2 md:mt-0">
+            <Text type="secondary" style={{ fontSize: 12 }}>
+              {formattedDate}
+            </Text>
+            <Space size="small">
+              {canRead(user) && (
+                <Button
+                  type="text"
+                  size="small"
+                  icon={<Eye style={{ width: 16, height: 16 }} />}
+                  onClick={handleViewClick}
+                  title="Detayları Görüntüle"
+                />
+              )}
+              {canUpdate(user) && (
+                <Button
+                  type="text"
+                  size="small"
+                  icon={<Edit style={{ width: 16, height: 16 }} />}
+                  onClick={handleEditClick}
+                  title="Düzenle"
+                />
+              )}
+              {canDelete(user) && (
+                <Button
+                  type="text"
+                  size="small"
+                  icon={<Trash2 style={{ width: 16, height: 16 }} />}
+                  onClick={handleDeleteClick}
+                  title="Sil"
+                  danger
+                />
+              )}
+            </Space>
+          </Space>
         </div>
-        
-        <div className="flex items-center gap-2 mr-2">
-          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(permission.type)}`}>
-            {t(`permissions.${permission.type}`)}
-          </span>
-          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(permission.status)}`}>
-            {t(`permissions.${permission.status}`)}
-          </span>
-        </div>
+      </Card>
 
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-500" suppressHydrationWarning>
-            {formattedDate}
-          </span>
-          <div className="flex gap-1">
-            {/* View Button - sadece Read izni varsa göster */}
-            {canRead(user) && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className='cursor-pointer'
-                onClick={handleViewClick}
-                title="Detayları Görüntüle"
-              >
-                <Eye className="w-4 h-4" />
-              </Button>
-            )}
-            
-            {/* Edit Button - sadece Update izni varsa göster */}
-            {canUpdate(user) && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className='cursor-pointer'
-                onClick={handleEditClick}
-                title="Düzenle"
-              >
-                <Edit className="w-4 h-4" />
-              </Button>
-            )}
-            
-            {/* Delete Button - sadece Delete izni varsa göster */}
-            {canDelete(user) && (
-              <Button
-                variant="ghost"
-                className='cursor-pointer'
-                size="sm"
-                onClick={handleDeleteClick}
-                title="Sil"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Delete Confirmation Dialog - sadece Delete izni varsa göster */}
+      {/*sadece Delete izni varsa göster */}
       {canDelete(user) && (
-        <ConfirmationDialog
-          isOpen={showDeleteDialog}
-          onClose={() => setShowDeleteDialog(false)}
-          onConfirm={handleDeleteConfirm}
+        <Modal
           title={t('permissions.deleteConfirmTitle')}
-          message={t('permissions.deleteConfirmMessage')}
-          confirmText={t('permissions.deleteConfirmDelete')}
+          open={showDeleteDialog}
+          onOk={handleDeleteConfirm}
+          onCancel={() => setShowDeleteDialog(false)}
+          okText={t('permissions.deleteConfirmDelete')}
           cancelText={t('permissions.deleteConfirmCancel')}
-          variant="danger"
-        />
+          okButtonProps={{ danger: true }}
+        >
+          <p>{t('permissions.deleteConfirmMessage')}</p>
+        </Modal>
       )}
     </>
   );

@@ -1,8 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/lib/store';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Card, Input, Typography } from 'antd';
 import { Users } from 'lucide-react';
 import { canUpdate } from '@/lib/utils';
 
@@ -42,8 +41,8 @@ export default function PermissionAssignedUsers({
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+      <Card.Header>
+        <Typography.Title level={5} className="flex items-center gap-2">
           <Users className="w-5 h-5" />
           {t('permissions.assignedTo')}
           {!canEdit && (
@@ -51,9 +50,9 @@ export default function PermissionAssignedUsers({
               (Salt Okunur)
             </span>
           )}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+        </Typography.Title>
+      </Card.Header>
+      <Card.Content>
         {displayMode === 'editing' ? (
           <Input
             value={editedPermission.assignedTo?.join(', ') || ''}
@@ -75,7 +74,7 @@ export default function PermissionAssignedUsers({
             ))}
           </div>
         )}
-      </CardContent>
+      </Card.Content>
     </Card>
   );
 } 

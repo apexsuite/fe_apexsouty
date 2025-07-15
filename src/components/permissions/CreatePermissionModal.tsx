@@ -1,19 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/lib/store';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Button, Input, Typography, Checkbox, Modal, Form, Space } from 'antd';
 import { canCreate } from '@/lib/utils';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogClose,
-} from '@/components/ui/dialog';
+
+const { Title, Text } = Typography;
 
 interface NewPermission {
   name: string;
@@ -56,87 +47,73 @@ export default function CreatePermissionModal({
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>{t('permissions.createNewPermission')}</DialogTitle>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              {t('permissions.permissionName')}
-            </Label>
-            <Input
-              id="name"
-              value={newPermission.name}
-              onChange={(e) =>
-                setNewPermission({ ...newPermission, name: e.target.value })
-              }
-              className="col-span-3"
-              placeholder={t('permissions.enterPermissionName')}
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="description" className="text-right">
-              {t('permissions.description')}
-            </Label>
-            <Input
-              id="description"
-              value={newPermission.description}
-              onChange={(e) =>
-                setNewPermission({
-                 ...newPermission,
-                  description: e.target.value,
-                })
-              }
-              className="col-span-3"
-              placeholder={t('permissions.enterDescription')}
-            />
-          </div>
-          <div className="grid grid-cols-4 items-start gap-4">
-            <Label className="text-right pt-2">
-              {t('permissions.actions')}
-            </Label>
-            <div className="col-span-3 grid grid-cols-2 gap-4">
-              {CRUD_ACTIONS.map((action) => (
-                <div key={action} className="flex items-center gap-2">
-                  <Checkbox
-                    id={`action-${action}`}
-                    checked={(newPermission.actions || []).includes(action)}
-                    onCheckedChange={() => handleActionChange(action)}
-                  />
-                  <Label htmlFor={`action-${action}`} className="font-normal capitalize">
-                    {t(`permissions.${action}`)}
-                  </Label>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="assignedTo" className="text-right">
-              {t('permissions.assignedTo')}
-            </Label>
-            <Input
-              id="assignedTo"
-              value={newPermission.assignedTo}
-              onChange={(e) =>
-                setNewPermission({
-                 ...newPermission,
-                  assignedTo: e.target.value,
-                })
-              }
-              className="col-span-3"
-              placeholder={t('permissions.enterUserName')}
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline">{t('permissions.cancel')}</Button>
-          </DialogClose>
-          <Button onClick={onSubmit}>{t('permissions.createPermission')}</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <Modal
+      title={t('permissions.createNewPermission')}
+      open={isOpen}
+      onCancel={onClose}
+      footer={[
+        <Button key="cancel" onClick={onClose}>
+          {t('permissions.cancel')}
+        </Button>,
+        <Button key="submit" type="primary" onClick={onSubmit}>
+          {t('permissions.createPermission')}
+        </Button>,
+      ]}
+      width={500}
+    >
+      <Form layout="vertical">
+        <Form.Item label={t('permissions.permissionName')}>
+          <Input
+            value={newPermission.name}
+            onChange={(e) =>
+              setNewPermission({ ...newPermission, name: e.target.value })
+            }
+            placeholder={t('permissions.enterPermissionName')}
+          />
+        </Form.Item>
+        
+        <Form.Item label={t('permissions.description')}>
+          <Input
+            value={newPermission.description}
+            onChange={(e) =>
+              setNewPermission({
+               ...newPermission,
+                description: e.target.value,
+              })
+            }
+            placeholder={t('permissions.enterDescription')}
+          />
+        </Form.Item>
+        
+        <Form.Item label={t('permissions.actions')}>
+          <Space direction="vertical" style={{ width: '100%' }}>
+            {CRUD_ACTIONS.map((action) => (
+              <Checkbox
+                key={action}
+                checked={(newPermission.actions || []).includes(action)}
+                onChange={() => handleActionChange(action)}
+              >
+                <Text style={{ textTransform: 'capitalize' }}>
+                  {t(`permissions.${action}`)}
+                </Text>
+              </Checkbox>
+            ))}
+          </Space>
+        </Form.Item>
+        
+        <Form.Item label={t('permissions.assignedTo')}>
+          <Input
+            value={newPermission.assignedTo}
+            onChange={(e) =>
+              setNewPermission({
+               ...newPermission,
+                assignedTo: e.target.value,
+              })
+            }
+            placeholder={t('permissions.enterUserName')}
+          />
+        </Form.Item>
+      </Form>
+    </Modal>
   );
 } 

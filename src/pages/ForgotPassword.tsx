@@ -1,9 +1,6 @@
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { Card, Form, Input, Button, Typography } from "antd";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
-import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { useTranslation } from "react-i18next";
@@ -23,51 +20,28 @@ export default function ForgotPassword() {
     return (
         <>
             <Navbar />
-            <div className="min-h-screen flex items-center justify-center bg-muted/50S">
-                <Card className="w-full max-w-md p-8 shadow-lg">
-                    <div className="mb-4">
-                        <Link to="/" className="inline-flex items-center gap-2 text-primary hover:underline text-sm">
-                            <ArrowLeft size={18} /> {t('forgot.back')}
+            <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5' }}>
+                <Card style={{ width: '100%', maxWidth: 400, boxShadow: '0 2px 8px #f0f1f2' }}>
+                    <div style={{ marginBottom: 16 }}>
+                        <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: '#1677ff', fontSize: 14 }}>
+                            <ArrowLeftOutlined /> {t('forgot.back')}
                         </Link>
                     </div>
-                    <h1 className="text-2xl font-bold mb-6 text-center">{t('forgot.title')}</h1>
-                    <form className="space-y-4">
-                        <div>
-                            <Label htmlFor="email">{t('forgot.email')}</Label>
+                    <Typography.Title level={2} style={{ textAlign: 'center', marginBottom: 24 }}>{t('forgot.title')}</Typography.Title>
+                    <Form layout="vertical">
+                        <Form.Item label={t('forgot.email')} name="email" rules={[{ required: true, message: t('forgot.email') }]}> 
                             <Input
-                                id="email"
                                 type="email"
                                 placeholder={t('forgot.email')}
                                 value={email}
                                 onChange={e => setEmail(e.target.value)}
                                 autoComplete="email"
                             />
-                        </div>
-                        {/* 
-                        <div>
-                            <Label htmlFor="language">{t('forgot.language')}</Label>
-                            <select
-                                id="language"
-                                className="w-full border rounded-md px-3 py-2 mt-1 bg-background"
-                                value={lang}
-                                disabled
-                            >
-                                {lang === "en" ? (
-                                    <>
-                                        <option value="en">English</option>
-                                        <option value="tr">Turkish</option>
-                                    </>
-                                ) : (
-                                    <>
-                                        <option value="en">İngilizce</option>
-                                        <option value="tr">Türkçe</option>
-                                    </>
-                                )}
-                            </select>
-                        </div>
-                        */}
-                        <Button type="submit" className="w-full mt-2">{t('forgot.button')}</Button>
-                    </form>
+                        </Form.Item>
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit" block>{t('forgot.button')}</Button>
+                        </Form.Item>
+                    </Form>
                 </Card>
             </div>
         </>

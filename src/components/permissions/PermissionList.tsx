@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import PermissionItem from './PermissionItem';
+import { Card } from "antd";
 
 interface Permission {
   id: string;
@@ -31,30 +31,28 @@ export default function PermissionList({
   const { t } = useTranslation();
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('permissions.title')}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {permissions.map((permission) => (
-            <PermissionItem
-              key={permission.id}
-              permission={permission}
-              onDelete={onDelete}
-            />
-          ))}
-          
-          {permissions.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              {searchTerm || statusFilter !== 'all' || typeFilter !== 'all' 
-                ? t('permissions.noPermissionsFoundCriteria')
-                : t('permissions.noPermissionsFound')
-              }
-            </div>
-          )}
-        </div>
-      </CardContent>
+    <Card style={{ marginBottom: 24 }}>
+      <Card.Meta
+        title={t('permissions.title')}
+        style={{ marginBottom: 16 }}
+      />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {permissions.map((permission) => (
+          <PermissionItem
+            key={permission.id}
+            permission={permission}
+            onDelete={onDelete}
+          />
+        ))}
+        {permissions.length === 0 && (
+          <div style={{ textAlign: 'center', padding: '32px 0', color: '#888' }}>
+            {searchTerm || statusFilter !== 'all' || typeFilter !== 'all' 
+              ? t('permissions.noPermissionsFoundCriteria')
+              : t('permissions.noPermissionsFound')
+            }
+          </div>
+        )}
+      </div>
     </Card>
   );
 } 

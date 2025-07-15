@@ -1,9 +1,10 @@
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
+import { Card, Typography, Tag } from 'antd';
 import { Calendar } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { formatDate } from '@/lib/utils';
+
+const { Title, Text } = Typography;
 
 interface Permission {
   id: string;
@@ -35,54 +36,54 @@ export default function PermissionMetadata({ permission }: PermissionMetadataPro
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high': return 'bg-red-100 text-red-800 border-red-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'low': return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'high': return 'red';
+      case 'medium': return 'orange';
+      case 'low': return 'green';
+      default: return 'default';
     }
   };
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Calendar className="w-5 h-5" />
+      <div style={{ marginBottom: 16 }}>
+        <Title level={4} style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Calendar style={{ width: 20, height: 20 }} />
           {t('permissions.metadata')}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+        </Title>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <div>
-          <Label className="text-sm font-medium text-gray-700">{t('permissions.created')}</Label>
-          <p className="mt-1 text-sm text-gray-600" suppressHydrationWarning>
+          <Text strong style={{ display: 'block', marginBottom: 8 }}>{t('permissions.created')}</Text>
+          <Text type="secondary" style={{ fontSize: 14 }}>
             {formattedCreatedDate}
-          </p>
+          </Text>
         </div>
         
         <div>
-          <Label className="text-sm font-medium text-gray-700">{t('permissions.lastModified')}</Label>
-          <p className="mt-1 text-sm text-gray-600" suppressHydrationWarning>
+          <Text strong style={{ display: 'block', marginBottom: 8 }}>{t('permissions.lastModified')}</Text>
+          <Text type="secondary" style={{ fontSize: 14 }}>
             {formattedModifiedDate}
-          </p>
+          </Text>
         </div>
 
         {permission.scope && (
           <div>
-            <Label className="text-sm font-medium text-gray-700">{t('permissions.scope')}</Label>
-            <p className="mt-1 text-sm text-gray-600 capitalize">{permission.scope}</p>
+            <Text strong style={{ display: 'block', marginBottom: 8 }}>{t('permissions.scope')}</Text>
+            <Text type="secondary" style={{ fontSize: 14, textTransform: 'capitalize' }}>
+              {permission.scope}
+            </Text>
           </div>
         )}
 
         {permission.priority && (
           <div>
-            <Label className="text-sm font-medium text-gray-700">{t('permissions.priority')}</Label>
-            <div className="mt-1">
-              <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getPriorityColor(permission.priority)}`}>
-                {t(`permissions.${permission.priority}`)}
-              </span>
-            </div>
+            <Text strong style={{ display: 'block', marginBottom: 8 }}>{t('permissions.priority')}</Text>
+            <Tag color={getPriorityColor(permission.priority)}>
+              {t(`permissions.${permission.priority}`)}
+            </Tag>
           </div>
         )}
-      </CardContent>
+      </div>
     </Card>
   );
 } 

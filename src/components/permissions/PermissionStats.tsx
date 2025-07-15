@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, Row, Col, Typography } from "antd";
 import { Shield, Activity, Users } from 'lucide-react';
 
 interface PermissionStatsProps {
@@ -17,46 +17,43 @@ export default function PermissionStats({ stats }: PermissionStatsProps) {
   const { t } = useTranslation();
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 bg-background">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">{t('permissions.totalPermissions')}</CardTitle>
-          <Shield className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{stats.total}</div>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">{t('permissions.activePermissions')}</CardTitle>
-          <Activity className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold text-green-600">{stats.active}</div>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">{t('permissions.inactivePermissions')}</CardTitle>
-          <Users className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold text-gray-600">{stats.inactive}</div>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">{t('permissions.userRoles')}</CardTitle>
-          <Users className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{stats.admin + stats.write + stats.read}</div>
-        </CardContent>
-      </Card>
-    </div>
+    <Row gutter={[24, 24]} style={{ marginBottom: 24 }}>
+      <Col xs={24} md={12} lg={6}>
+        <Card>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Typography.Text type="secondary">{t('permissions.totalPermissions')}</Typography.Text>
+            <Shield style={{ fontSize: 20, color: '#bfbfbf' }} />
+          </div>
+          <div style={{ fontSize: 24, fontWeight: 700, marginTop: 12 }}>{stats.total}</div>
+        </Card>
+      </Col>
+      <Col xs={24} md={12} lg={6}>
+        <Card>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Typography.Text type="secondary">{t('permissions.activePermissions')}</Typography.Text>
+            <Activity style={{ fontSize: 20, color: '#bfbfbf' }} />
+          </div>
+          <div style={{ fontSize: 24, fontWeight: 700, marginTop: 12, color: '#16a34a' }}>{stats.active}</div>
+        </Card>
+      </Col>
+      <Col xs={24} md={12} lg={6}>
+        <Card>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Typography.Text type="secondary">{t('permissions.inactivePermissions')}</Typography.Text>
+            <Users style={{ fontSize: 20, color: '#bfbfbf' }} />
+          </div>
+          <div style={{ fontSize: 24, fontWeight: 700, marginTop: 12, color: '#6b7280' }}>{stats.inactive}</div>
+        </Card>
+      </Col>
+      <Col xs={24} md={12} lg={6}>
+        <Card>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Typography.Text type="secondary">{t('permissions.userRoles')}</Typography.Text>
+            <Users style={{ fontSize: 20, color: '#bfbfbf' }} />
+          </div>
+          <div style={{ fontSize: 24, fontWeight: 700, marginTop: 12 }}>{stats.admin + stats.write + stats.read}</div>
+        </Card>
+      </Col>
+    </Row>
   );
 } 

@@ -5,8 +5,7 @@ import Navbar from "@/components/Navbar";
 import { RootState } from "@/lib/store";
 import i18n from "@/lib/i18n";
 import { useSelector } from "react-redux";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Card, Form, Input, Button, Typography } from "antd";
 
 export default function RegisterPage() {
   const lang = useSelector((state: RootState) => state.lang.language);
@@ -57,73 +56,36 @@ export default function RegisterPage() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen flex items-center justify-center bg-muted/50">
-        <Card className="w-full max-w-md p-8 shadow-lg">
-          <form onSubmit={handleSubmit} className="bg-transparent p-0 shadow-none border-none">
-            <h2 className="text-2xl font-bold mb-6 text-center">{t("register.title")}</h2>
-            <div className="mb-4">
-              <label className="block mb-1 font-medium">{t("register.name")}</label>
-              <Input
-                type="text"
-                name="name"
-                value={form.name}
-                onChange={handleChange}
-                placeholder={t("register.name")}
-              />
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5' }}>
+        <Card style={{ width: '100%', maxWidth: 400, boxShadow: '0 2px 8px #f0f1f2' }}>
+          <Form layout="vertical" onFinish={handleSubmit}>
+            <Typography.Title level={2} style={{ textAlign: 'center', marginBottom: 24 }}>{t("register.title")}</Typography.Title>
+            <Form.Item label={t("register.name")} name="name" rules={[{ required: true, message: t("register.fillAllFields") }]}> 
+              <Input name="name" value={form.name} onChange={handleChange} placeholder={t("register.name")} />
+            </Form.Item>
+            <Form.Item label={t("register.email")} name="email" rules={[{ required: true, message: t("register.fillAllFields") }]}> 
+              <Input name="email" value={form.email} onChange={handleChange} placeholder={t("register.email")} />
+            </Form.Item>
+            <Form.Item label={t("register.username")} name="username" rules={[{ required: true, message: t("register.fillAllFields") }]}> 
+              <Input name="username" value={form.username} onChange={handleChange} placeholder={t("register.username")} />
+            </Form.Item>
+            <Form.Item label={t("register.password")} name="password" rules={[{ required: true, message: t("register.fillAllFields") }]}> 
+              <Input.Password name="password" value={form.password} onChange={handleChange} placeholder={t("register.password")} />
+            </Form.Item>
+            <Form.Item label={t("register.password2")} name="password2" rules={[{ required: true, message: t("register.fillAllFields") }]}> 
+              <Input.Password name="password2" value={form.password2} onChange={handleChange} placeholder={t("register.password2")} />
+            </Form.Item>
+            {error && <div style={{ color: 'red', marginBottom: 12 }}>{error}</div>}
+            {success && <div style={{ color: 'green', marginBottom: 12 }}>{success}</div>}
+            <Form.Item>
+              <Button type="primary" htmlType="submit" block>
+                {t("register.submit")}
+              </Button>
+            </Form.Item>
+            <div style={{ textAlign: 'center', fontSize: 14 }}>
+              {t("register.haveAccount")} <Link to="/" style={{ color: '#1677ff' }}>{t("register.login")}</Link>
             </div>
-            <div className="mb-4">
-              <label className="block mb-1 font-medium">{t("register.email")}</label>
-              <Input
-                type="email"
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                placeholder={t("register.email")}
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block mb-1 font-medium">{t("register.username")}</label>
-              <Input
-                type="text"
-                name="username"
-                value={form.username}
-                onChange={handleChange}
-                placeholder={t("register.username")}
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block mb-1 font-medium">{t("register.password")}</label>
-              <Input
-                type="password"
-                name="password"
-                value={form.password}
-                onChange={handleChange}
-                placeholder={t("register.password")}
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block mb-1 font-medium">{t("register.password2")}</label>
-              <Input
-                type="password"
-                name="password2"
-                value={form.password2}
-                onChange={handleChange}
-                placeholder={t("register.password2")}
-              />
-            </div>
-            {error && <div className="mb-4 text-red-600 text-sm">{error}</div>}
-            {success && <div className="mb-4 text-green-600 text-sm">{success}</div>}
-            <button
-              type="submit"
-              className="w-full bg-green-700 hover:bg-green-800 text-white font-semibold py-2 rounded transition-colors"
-            >
-              {t("register.submit")}
-            </button>
-            <div className="mt-4 text-center text-sm">
-              {t("register.haveAccount")} {" "}
-              <Link to="/" className="text-green-700 hover:underline">{t("register.login")}</Link>
-            </div>
-          </form>
+          </Form>
         </Card>
       </div>
     </>
