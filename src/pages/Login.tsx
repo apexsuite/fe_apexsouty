@@ -1,8 +1,6 @@
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Eye, EyeOff } from "lucide-react";
+import { Card } from "antd";
+import { Input, Button, Form, Typography } from "antd";
+import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
@@ -92,13 +90,11 @@ export default function Login() {
 
   if (i18n.language !== lang) return null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (values: { username: string; password: string }) => {
     setIsLoading(true);
-
     try {
+      const { username, password } = values;
       const testUser = TEST_USERS[username as keyof typeof TEST_USERS];
-      
       if (testUser && testUser.password === password) {
         dispatch(login(testUser.userData));
         toast.success(t("login.success"));
@@ -115,57 +111,38 @@ export default function Login() {
 
   return (
     <>
-    <Navbar />
-      <div className="min-h-screen overflow-hidden flex items-center justify-center bg-muted/50">
-        <Card className="w-full max-w-md p-8 shadow-lg">
-          <h1 className="text-2xl font-bold  text-center">{t('login.title')}</h1>
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            <div>
-              <Label htmlFor="username" className="text-sm mb-2">{t('login.username')}</Label>
+      <Navbar />
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5' }}>
+        <Card style={{ width: '100%', maxWidth: 400, boxShadow: '0 2px 8px #f0f1f2' }}>
+          <Typography.Title level={2} style={{ textAlign: 'center', marginBottom: 24 }}>{t('login.title')}</Typography.Title>
+          <Form layout="vertical" onFinish={handleSubmit} initialValues={{ username, password }}>
+            <Form.Item label={t('login.username')} name="username" rules={[{ required: true, message: t('login.username') }]}> 
               <Input 
-                id="username" 
-                type="text" 
                 placeholder={t('login.username')} 
                 autoComplete="username"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
+                onChange={e => setUsername(e.target.value)}
               />
+            </Form.Item>
+            <Form.Item label={t('login.password')} name="password" rules={[{ required: true, message: t('login.password') }]}> 
+              <Input.Password
+                placeholder={t('login.password')}
+                autoComplete="current-password"
+                iconRender={visible => visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+              />
+            </Form.Item>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+              <Link to="/register">{t('register.title')}</Link>
+              <Link to="/forgot-password">{t('login.forgot')}</Link>
             </div>
-            <div>
-              <Label htmlFor="password" className="text-sm mb-2">{t('login.password')}</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder={t('login.password')}
-                  autoComplete="current-password"
-                  className="pr-10"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-                <button
-                  type="button"
-                  tabIndex={-1}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground"
-                  onClick={() => setShowPassword((v) => !v)}
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-              <div className="text-right mt-1 flex justify-between mt-4">
-                <Link to="/register" className="text-xs text-green-700 hover:underline">{t('register.title')}</Link>
-                <Link to="/forgot-password" className="text-xs text-green-700 hover:underline">{t('login.forgot')}</Link>
-              </div>
-            </div>
-            <Button type="submit" className="w-full mt-2" disabled={isLoading}>
-              {isLoading ? "Giriş yapılıyor..." : t('login.button')}
-            </Button>
-            
-            {/* Test Kullanıcıları Bilgisi */}
-           
-          </form>
+            <Form.Item>
+              <Button type="primary" htmlType="submit" block loading={isLoading}>
+                {isLoading ? "Giriş yapılıyor..." : t('login.button')}
+              </Button>
+            </Form.Item>
+          </Form>
         </Card>
       </div>
     </>

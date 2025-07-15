@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Search, User, Shield } from 'lucide-react';
+import { Card, Input, Typography, Row, Col } from "antd";
+import { SearchOutlined, UserOutlined, SafetyOutlined } from "@ant-design/icons";
 import usersData from '@/data/users.json';
 
 interface User {
@@ -34,44 +33,40 @@ export default function PermissionManagementPage() {
   );
 
   return (
-    <div className="p-6 space-y-6 bg-background min-h-full">
+    <div style={{ padding: 24, minHeight: '100vh', background: '#f5f5f5' }}>
       <Card>
-        <CardHeader>
-          <CardTitle>{t('sidebar.permissionsManagement')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex-1 relative mb-4">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <Input
-              placeholder={t('navbar.search')}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredUsers.map(user => (
-              <Card 
-                key={user.id} 
-                className="cursor-pointer hover:shadow-lg transition-shadow"
+        <Typography.Title level={3}>{t('sidebar.permissionsManagement')}</Typography.Title>
+        <div style={{ position: 'relative', marginBottom: 16 }}>
+          <Input
+            prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
+            placeholder={t('navbar.search')}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ paddingLeft: 32 }}
+          />
+        </div>
+        <Row gutter={[24, 24]}>
+          {filteredUsers.map(user => (
+            <Col xs={24} md={12} lg={8} key={user.id}>
+              <Card
+                hoverable
                 onClick={() => navigate(`/permissions-management/${user.id}`)}
+                style={{ textAlign: 'center' }}
               >
-                <CardContent className="pt-6 flex flex-col items-center text-center">
-                  <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
-                    <User className="w-8 h-8 text-muted-foreground" />
-                  </div>
-                  <h3 className="font-semibold text-lg">{user.name}</h3>
-                  <p className="text-sm text-muted-foreground">@{user.username}</p>
-                  <p className="text-sm text-muted-foreground">{user.email}</p>
-                  <div className="mt-4 flex items-center gap-2 text-xs">
-                    <Shield className="w-4 h-4" />
-                    <span>{user.permissions.length} Permissions</span>
-                  </div>
-                </CardContent>
+                <div style={{ width: 64, height: 64, borderRadius: '50%', background: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                  <UserOutlined style={{ fontSize: 32, color: '#bfbfbf' }} />
+                </div>
+                <Typography.Title level={5}>{user.name}</Typography.Title>
+                <div style={{ color: '#888', fontSize: 14 }}>@{user.username}</div>
+                <div style={{ color: '#888', fontSize: 14 }}>{user.email}</div>
+                <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, fontSize: 12 }}>
+                  <SafetyOutlined />
+                  <span>{user.permissions.length} Permissions</span>
+                </div>
               </Card>
-            ))}
-          </div>
-        </CardContent>
+            </Col>
+          ))}
+        </Row>
       </Card>
     </div>
   );

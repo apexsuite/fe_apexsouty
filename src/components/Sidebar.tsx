@@ -8,10 +8,11 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { logout } from "@/lib/authSlice";
 import { filterMenuItemsByPermissions, canRead, type MenuItem } from "@/lib/utils";
+import { Drawer } from "antd";
 
 const ICONS = { Home, BarChart2, Layers, Grid, Folder, Zap, Database, Cloud, Server, Sliders, AppWindow, HardDrive, Network, Activity, Users, Shield, Star };
 
-export default function Sidebar() {
+export default function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen?: boolean, onMobileClose?: () => void }) {
   const { t, i18n } = useTranslation();
   const lang = useSelector((state: RootState) => state.lang.language);
   const user = useSelector((state: RootState) => state.auth.user);
@@ -64,15 +65,21 @@ export default function Sidebar() {
   const favorites = children.filter((c: MenuItem) => c.favorite === 1);
   const others = children.filter((c: MenuItem) => c.favorite !== 1);
 
+  const handleNavigate = (href: string) => {
+    navigate(href);
+    if (onMobileClose) onMobileClose();
+  };
   const handleLogout = () => {
     dispatch(logout());
     navigate("/");
     toast.success(t("sidebar.logoutSuccess", "Başarıyla çıkış yapıldı!"));
+    if (onMobileClose) onMobileClose();
   };
 
-  return (
-    <aside className="h-screen w-64 bg-background border-r border-border flex flex-col py-6 px-4 md:fixed top-0 left-0 z-40">
-      <div onClick={() => navigate("/dashboard")} className="mb-8 cursor-pointer font-bold  text-center hover:text-green-600 dark:hover:text-green-300 text-3xl">ApexScouty</div>
+  // Sidebar içeriği
+  const sidebarContent = (
+    <div className="h-full flex flex-col">
+      <div onClick={() => handleNavigate("/dashboard")} className="mb-8 cursor-pointer font-bold  text-center hover:text-green-600 dark:hover:text-green-300 text-3xl">ApexScouty</div>
       <nav className="flex-1">
         <ul className="space-y-2">
           {fixedMenus.map((item: MenuItem) => {
@@ -80,7 +87,8 @@ export default function Sidebar() {
             if (!item.href) return null;
             return (
               <li key={item.href}>
-                <Link to={item.href} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-green-100 dark:hover:bg-green-300 transition-colors  dark:text-green-700 font-medium">
+                <Link to={item.href} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-green-100 dark:hover:bg-green-300 transition-colors  dark:text-green-700 font-medium"
+                  onClick={() => handleNavigate(item.href!)}>
                   {Icon && <Icon size={20} className="shrink-0" />}
                   <span>{t(`sidebar.${item.key}`)}</span>
                 </Link>
@@ -111,7 +119,8 @@ export default function Sidebar() {
                           if (!item.href) return null;
                           return (
                             <li key={item.href}>
-                              <Link to={item.href} className="flex items-center gap-3 px-3 py-2 rounded-lg text-yellow-500 hover:bg-yellow-100  transition-colors  font-medium">
+                              <Link to={item.href} className="flex items-center gap-3 px-3 py-2 rounded-lg text-yellow-500 hover:bg-yellow-100  transition-colors  font-medium"
+                                onClick={() => handleNavigate(item.href!)}>
                                 {Icon && <Icon size={18} className="shrink-0" />}
                                 <span>{t(`sidebar.${item.key}`)}</span>
                                 <span className="ml-auto text-yellow-400">★</span>
@@ -128,7 +137,8 @@ export default function Sidebar() {
                       if (!item.href) return null;
                       return (
                         <li key={item.href}>
-                          <Link to={item.href} className="flex items-center gap-3 px-3 py-2 rounded-lg  dark:hover:bg-green-500 transition-colors  font-medium">
+                          <Link to={item.href} className="flex items-center gap-3 px-3 py-2 rounded-lg  dark:hover:bg-green-500 transition-colors  font-medium"
+                            onClick={() => handleNavigate(item.href!)}>
                             {Icon && <Icon size={18} className="shrink-0" />}
                             <span>{t(`sidebar.${item.key}`)}</span>
                           </Link>
@@ -152,6 +162,28 @@ export default function Sidebar() {
         </button>
         <div className="text-xs text-muted-foreground text-center">© 2024 ApexScouty</div>
       </div>
-    </aside>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Masaüstü için klasik sidebar */}
+      <aside className="hidden lg:flex h-screen w-64 bg-background border-r border-border flex-col py-6 px-4 fixed top-0 left-0 z-40">
+        {sidebarContent}
+      </aside>
+      {/* Mobil ve tablet için Drawer */}
+      <Drawer
+        placement="left"
+        open={!!mobileOpen}
+        onClose={onMobileClose}
+        width={260}
+        bodyStyle={{ padding: 0 }}
+        className="lg:hidden"
+        closeIcon={false}
+        maskClosable={true}
+      >
+        {sidebarContent}
+      </Drawer>
+    </>
   );
 } 

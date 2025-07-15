@@ -100,6 +100,8 @@ const resources = {
         favorite: 'Favorite',
         resources: 'Resources',
         seeAll: 'See all',
+        closeDetails: 'Close Details',
+        showDetails: 'Show Details',
       },
       permissions: {
         title: 'Permissions',
@@ -248,6 +250,8 @@ const resources = {
         favorite: 'Favori',
         resources: 'Kaynaklar',
         seeAll: 'Hepsini Gör',
+        closeDetails: 'Detayları Kapat',
+        showDetails: 'Detayları Görüntüle',
       },
       permissions: {
         title: 'İzinler',
