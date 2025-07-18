@@ -4,7 +4,7 @@ import type { RootState } from '@/lib/store';
 import { Button, Input, Typography, Checkbox, Modal, Form, Space } from 'antd';
 import { canCreate } from '@/lib/utils';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 interface NewPermission {
   name: string;

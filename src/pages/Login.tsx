@@ -67,7 +67,6 @@ const TEST_USERS = {
 };
 
 export default function Login() {
-  const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
