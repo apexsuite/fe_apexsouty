@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Card, Button, Typography, Space } from 'antd';
+import { Card, Button, Typography } from 'antd';
 import { Copy } from 'lucide-react';
 
 const { Title } = Typography;

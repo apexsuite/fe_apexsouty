@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Card, Input, Typography } from 'antd';
+import { Card, Input } from 'antd';
 import { Search } from 'lucide-react';
 
 interface PermissionFiltersProps {

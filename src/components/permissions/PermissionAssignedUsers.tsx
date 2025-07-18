@@ -41,7 +41,7 @@ export default function PermissionAssignedUsers({
 
   return (
     <Card>
-      <Card.Header>
+      <div className="card-header">
         <Typography.Title level={5} className="flex items-center gap-2">
           <Users className="w-5 h-5" />
           {t('permissions.assignedTo')}
@@ -51,8 +51,8 @@ export default function PermissionAssignedUsers({
             </span>
           )}
         </Typography.Title>
-      </Card.Header>
-      <Card.Content>
+      </div>
+      <div className="card-content">
         {displayMode === 'editing' ? (
           <Input
             value={editedPermission.assignedTo?.join(', ') || ''}
@@ -74,7 +74,7 @@ export default function PermissionAssignedUsers({
             ))}
           </div>
         )}
-      </Card.Content>
+      </div>
     </Card>
   );
 } 

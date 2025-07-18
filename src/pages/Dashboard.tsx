@@ -1,4 +1,4 @@
-import { Card, Table as AntdTable, Button, Row, Col, Tabs, Collapse } from "antd";
+import { Card, Table as AntdTable, Button, Row, Col, Tabs } from "antd";
 import { Users, ShoppingCart, TrendingUp, DollarSign } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import FavoriteServicesBar from "@/components/FavoriteServicesBar";
@@ -147,7 +147,7 @@ export default function Dashboard() {
           </div>
         ) : (
           <div style={{ marginTop: 16, width: '100%', display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {filteredResources.map((item, idx) => (
+            {filteredResources.map((item) => (
               <Card
                 key={item.name + item.type}
                 style={{ cursor: 'pointer' }}
