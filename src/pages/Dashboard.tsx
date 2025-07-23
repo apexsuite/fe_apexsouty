@@ -62,58 +62,58 @@ export default function Dashboard() {
     : resources.filter(r => r.favorite === 1);
 
   return (
-    <div style={{ padding: 24, minHeight: '100vh', background: '#f5f5f5' }}>
+    <div className="min-h-screen w-full px-6 md:px-12 py-12 bg-background">
       <div style={{ marginBottom: 32 }}>
         <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 32 }}>{t("sidebar.dashboard")}</h1>
         <Row gutter={[24, 24]}>
           <Col xs={24} md={12} lg={6}>
-            <Card>
+            <Card className="bg-background text-foreground" bodyStyle={{ background: 'inherit' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                <div style={{ background: '#d1fae5', padding: 12, borderRadius: '50%' }}>
+                <div className="bg-green-100 dark:bg-green-900" style={{ padding: 12, borderRadius: '50%' }}>
                   <Users className="text-green-700 dark:text-green-300" size={28} />
                 </div>
                 <div>
                   <div style={{ fontSize: 22, fontWeight: 700 }}>1,245</div>
-                  <div style={{ color: '#6b7280', fontSize: 14 }}>{t("dashboard.users")}</div>
+                  <div className="text-muted-foreground" style={{ fontSize: 14 }}>{t("dashboard.users")}</div>
                 </div>
               </div>
             </Card>
           </Col>
           <Col xs={24} md={12} lg={6}>
-            <Card>
+            <Card className="bg-background text-foreground" bodyStyle={{ background: 'inherit' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                <div style={{ background: '#dbeafe', padding: 12, borderRadius: '50%' }}>
+                <div className="bg-blue-100 dark:bg-blue-900" style={{ padding: 12, borderRadius: '50%' }}>
                   <ShoppingCart className="text-blue-700 dark:text-blue-300" size={28} />
                 </div>
                 <div>
                   <div style={{ fontSize: 22, fontWeight: 700 }}>320</div>
-                  <div style={{ color: '#6b7280', fontSize: 14 }}>{t("dashboard.orders")}</div>
+                  <div className="text-muted-foreground" style={{ fontSize: 14 }}>{t("dashboard.orders")}</div>
                 </div>
               </div>
             </Card>
           </Col>
           <Col xs={24} md={12} lg={6}>
-            <Card>
+            <Card className="bg-background text-foreground" bodyStyle={{ background: 'inherit' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                <div style={{ background: '#fef9c3', padding: 12, borderRadius: '50%' }}>
+                <div className="bg-yellow-100 dark:bg-yellow-900" style={{ padding: 12, borderRadius: '50%' }}>
                   <TrendingUp className="text-yellow-700 dark:text-yellow-300" size={28} />
                 </div>
                 <div>
                   <div style={{ fontSize: 22, fontWeight: 700 }}>%18</div>
-                  <div style={{ color: '#6b7280', fontSize: 14 }}>{t("dashboard.growth")}</div>
+                  <div className="text-muted-foreground" style={{ fontSize: 14 }}>{t("dashboard.growth")}</div>
                 </div>
               </div>
             </Card>
           </Col>
           <Col xs={24} md={12} lg={6}>
-            <Card>
+            <Card className="bg-background text-foreground" bodyStyle={{ background: 'inherit' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                <div style={{ background: '#ede9fe', padding: 12, borderRadius: '50%' }}>
+                <div className="bg-purple-100 dark:bg-purple-900" style={{ padding: 12, borderRadius: '50%' }}>
                   <DollarSign className="text-purple-700 dark:text-purple-300" size={28} />
                 </div>
                 <div>
                   <div style={{ fontSize: 22, fontWeight: 700 }}>₺12.500</div>
-                  <div style={{ color: '#6b7280', fontSize: 14 }}>{t("dashboard.revenue")}</div>
+                  <div className="text-muted-foreground" style={{ fontSize: 14 }}>{t("dashboard.revenue")}</div>
                 </div>
               </div>
             </Card>
@@ -128,11 +128,12 @@ export default function Dashboard() {
           onChange={key => setActiveTab(key as 'recent' | 'favorite')}
           items={[{
             key: 'recent',
-            label: t("table.recent"),
+            label: <span className="text-foreground">{t("table.recent")}</span>,
           }, {
             key: 'favorite',
-            label: t("table.favorite"),
+            label: <span className="text-foreground hover:text-blue-400 dark:hover:text-blue-300">{t("table.favorite")}</span>,
           }]}
+          className="custom-tabs"
         />
         {/* Masaüstü: Tablo, Mobil: Card List */}
         {!isMobile ? (
@@ -143,6 +144,7 @@ export default function Dashboard() {
               pagination={false}
               rowKey={(r) => r.name + r.type}
               scroll={{ x: true }}
+              className="bg-background text-foreground"
             />
           </div>
         ) : (
@@ -150,9 +152,10 @@ export default function Dashboard() {
             {filteredResources.map((item) => (
               <Card
                 key={item.name + item.type}
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: 'pointer', background: 'inherit' }}
+                className="bg-background dark:bg-zinc-900 text-foreground"
+                bodyStyle={{ padding: 16, background: 'inherit' }}
                 onClick={() => setOpenCard(openCard === item.name ? null : item.name)}
-                bodyStyle={{ padding: 16 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>

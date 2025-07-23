@@ -9,6 +9,8 @@ import AllServices from '@/pages/AllServices';
 import AllResources from '@/pages/AllResources';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
+import VerifyEmail from '@/pages/VerifyEmail';
+import ResetPassword from '@/pages/ResetPassword';
 import Providers from '@/components/Providers';
 import ToastProvider from '@/components/ToastProvider';
 import ClientLayout from '@/components/ClientLayout';
@@ -25,6 +27,8 @@ function AppContent() {
           <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/dashboard" element={
             isAuthenticated ? (
               <ClientLayout>

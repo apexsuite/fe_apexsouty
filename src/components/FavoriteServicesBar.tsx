@@ -37,10 +37,10 @@ export default function FavoriteServicesBar() {
 
   return (
     <Card
-      className="w-full rounded-lg shadow px-2 py-4 md:px-8 md:py-6 bg-white"
+      className="w-full rounded-lg shadow px-2 py-4 md:px-8 md:py-6 bg-background text-foreground"
       style={{ margin: '0 auto' }}
     >
-      <span className="text-lg font-semibold mb-4 block text-center">Azure services</span>
+      <span className="text-lg font-semibold mb-4 block text-center text-foreground">Azure services</span>
       <div className="grid grid-cols-2 gap-4 md:flex md:flex-row md:gap-8 w-full items-center md:items-start justify-center">
         {favorites.map((fav) => {
           const Icon = ICONS[fav.icon];
@@ -51,10 +51,15 @@ export default function FavoriteServicesBar() {
               onClick={() => fav.href && navigate(fav.href)}
               style={{ background: 'none', border: 'none', padding: 0 }}
             >
-              <div className="flex items-center justify-center w-14 h-14 rounded-full bg-yellow-100 text-yellow-700 group-hover:bg-yellow-200 transition-colors mb-1">
+              <div className="flex items-center justify-center w-14 h-14 rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-200 group-hover:bg-yellow-200 dark:group-hover:bg-yellow-800 transition-colors mb-1">
                 {Icon && <Icon size={32} />}
               </div>
-              <span className="text-xs text-center text-gray-600 max-w-[80px] truncate" style={{ fontSize: 13 }}>{t(`sidebar.${fav.key}`)}</span>
+              <span
+                className="favorite-bar-label text-xs text-center max-w-[80px] truncate font-medium"
+                style={{ fontSize: 13 }}
+              >
+                {t(`sidebar.${fav.key}`)}
+              </span>
             </button>
           );
         })}
@@ -63,10 +68,15 @@ export default function FavoriteServicesBar() {
           onClick={() => navigate("/all-services")}
           style={{ background: 'none', border: 'none', padding: 0 }}
         >
-          <div className="flex items-center justify-center w-14 h-14 rounded-full bg-blue-100 text-blue-700 group-hover:bg-blue-200 transition-colors mb-1">
+          <div className="flex items-center justify-center w-14 h-14 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 group-hover:bg-blue-200 dark:group-hover:bg-blue-800 transition-colors mb-1">
             <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </div>
-          <span className="text-xs text-center text-blue-600 max-w-[80px] truncate" style={{ fontSize: 13 }}>{t("sidebar.allServices", "More services")}</span>
+          <span
+            className="favorite-bar-label text-xs text-center max-w-[80px] truncate font-medium"
+            style={{ fontSize: 13 }}
+          >
+            {t("sidebar.allServices", "More services")}
+          </span>
         </button>
       </div>
     </Card>

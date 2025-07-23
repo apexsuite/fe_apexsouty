@@ -1,28 +1,42 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Navbar from "@/components/Navbar";
-import { RootState } from "@/lib/store";
+import { RootState, AppDispatch } from "@/lib/store";
 import i18n from "@/lib/i18n";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Card, Form, Input, Button, Typography } from "antd";
+import { toast } from "react-toastify";
+import { registerUser, clearError } from "@/lib/authSlice";
+import { useEffect, useState } from "react";
 
 export default function RegisterPage() {
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const lang = useSelector((state: RootState) => state.lang.language);
+  const { error, isAuthenticated } = useSelector((state: RootState) => state.auth);
   const { t } = useTranslation();
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    username: "",
-    password: "",
-    password2: "",
-  });
-  const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
     if (i18n.language !== lang) i18n.changeLanguage(lang);
+    // Dil değiştiğinde form'daki language alanını da güncelle
+    // setForm(prev => ({ ...prev, language: lang })); // This line was removed as per the edit hint
   }, [lang]);
+
+  // Eğer kullanıcı zaten giriş yapmışsa dashboard'a yönlendir
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
+
+  // Redux'tan gelen hataları dinle
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch(clearError());
+    }
+  }, [error, dispatch]);
 
   if (i18n.language !== lang) {
     return (
@@ -32,49 +46,62 @@ export default function RegisterPage() {
     );
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    setError("");
-    setSuccess("");
-  };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.name || !form.email || !form.username || !form.password || !form.password2) {
-      setError(t("register.fillAllFields"));
+
+  const handleSubmit = async (values: any) => {
+    // Form değerlerini state'e güncelle
+    // setForm(values); // This line was removed as per the edit hint
+    
+    if (!values.firstname || !values.lastname || !values.email || !values.password) {
       return;
     }
-    if (form.password !== form.password2) {
-      setError(t("register.passwordsNotMatch"));
-      return;
+
+    const registerData = {
+      firstname: values.firstname,
+      lastname: values.lastname,
+      email: values.email,
+      language: lang, 
+      password: values.password,
+    };
+
+    try {
+      const result = await dispatch(registerUser(registerData)).unwrap();
+      if (result.success) {
+        toast.success('Successfully registered!');
+        setSuccess(t("register.success"));
+        // setForm({ firstname: "", lastname: "", email: "", password: "" }); // This line was removed as per the edit hint
+        // Başarılı kayıt sonrası login sayfasına yönlendir
+        setTimeout(() => {
+          navigate('/');
+        }, 2000);
+      }
+    } catch (error: any) {
+      console.error('Registration failed:', error);
+      toast.error(error || 'Registration failed');
     }
-    // Burada backend'e kayıt isteği gönderilebilir
-    setSuccess(t("register.success"));
-    setForm({ name: "", email: "", username: "", password: "", password2: "" });
   };
 
   return (
     <>
-      <Navbar />
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5' }}>
-        <Card style={{ width: '100%', maxWidth: 400, boxShadow: '0 2px 8px #f0f1f2' }}>
-          <Form layout="vertical" onFinish={handleSubmit}>
-            <Typography.Title level={2} style={{ textAlign: 'center', marginBottom: 24 }}>{t("register.title")}</Typography.Title>
-            <Form.Item label={t("register.name")} name="name" rules={[{ required: true, message: t("register.fillAllFields") }]}> 
-              <Input name="name" value={form.name} onChange={handleChange} placeholder={t("register.name")} />
+      <Navbar minimal={!isAuthenticated} />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Card className="bg-background text-foreground" style={{ width: '100%', maxWidth: 400, boxShadow: '0 2px 8px #f0f1f2' }}>
+          <Form layout="vertical" onFinish={handleSubmit} initialValues={{}} className="text-foreground">
+            <Typography.Title level={2} className="text-foreground" style={{ textAlign: 'center', marginBottom: 24 }}>{t("register.title")}</Typography.Title>
+            <Form.Item label={t("register.firstname")} name="firstname" rules={[{ required: true, message: t("register.fillAllFields") }]}> 
+              <Input placeholder={t("register.firstname")} />
+            </Form.Item>
+            <Form.Item label={t("register.lastname")} name="lastname" rules={[{ required: true, message: t("register.fillAllFields") }]}> 
+              <Input placeholder={t("register.lastname")} />
             </Form.Item>
             <Form.Item label={t("register.email")} name="email" rules={[{ required: true, message: t("register.fillAllFields") }]}> 
-              <Input name="email" value={form.email} onChange={handleChange} placeholder={t("register.email")} />
+              <Input placeholder={t("register.email")} />
             </Form.Item>
-            <Form.Item label={t("register.username")} name="username" rules={[{ required: true, message: t("register.fillAllFields") }]}> 
-              <Input name="username" value={form.username} onChange={handleChange} placeholder={t("register.username")} />
-            </Form.Item>
+            {/* Dil seçimi kaldırıldı */}
             <Form.Item label={t("register.password")} name="password" rules={[{ required: true, message: t("register.fillAllFields") }]}> 
-              <Input.Password name="password" value={form.password} onChange={handleChange} placeholder={t("register.password")} />
+              <Input.Password placeholder={t("register.password")} />
             </Form.Item>
-            <Form.Item label={t("register.password2")} name="password2" rules={[{ required: true, message: t("register.fillAllFields") }]}> 
-              <Input.Password name="password2" value={form.password2} onChange={handleChange} placeholder={t("register.password2")} />
-            </Form.Item>
+
             {error && <div style={{ color: 'red', marginBottom: 12 }}>{error}</div>}
             {success && <div style={{ color: 'green', marginBottom: 12 }}>{success}</div>}
             <Form.Item>

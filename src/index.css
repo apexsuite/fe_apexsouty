@@ -101,4 +101,172 @@ input:-webkit-autofill:active {
 .dark input:-webkit-autofill:focus,
 .dark input:-webkit-autofill:active {
   -webkit-box-shadow: 0 0 0 30px var(--background) inset !important;
+}
+
+/* Ant Design dark mode overrides */
+.dark .ant-typography,
+.dark .ant-typography h1,
+.dark .ant-typography h2,
+.dark .ant-typography h3,
+.dark .ant-typography h4,
+.dark .ant-typography h5,
+.dark .ant-typography h6,
+.dark .ant-form-item-label > label,
+.dark .ant-input,
+.dark .ant-input-password,
+.dark .ant-input-affix-wrapper,
+.dark .ant-select-selector,
+.dark .ant-btn {
+  color: #fff !important;
+}
+.dark .ant-input,
+.dark .ant-input-password,
+.dark .ant-input-affix-wrapper,
+.dark .ant-select-selector {
+  background-color: #181c24 !important;
+  border-color: #333 !important;
+  color: #fff !important;
+}
+.dark .ant-input::placeholder,
+.dark .ant-input-password input::placeholder {
+  color: #bbb !important;
+  opacity: 1 !important;
+}
+.dark .ant-input,
+.dark .ant-input-password input {
+  color: #fff !important;
+}
+.dark .ant-select-dropdown {
+  background-color: #181c24 !important;
+}
+.dark .ant-select-item,
+.dark .ant-select-item-option-content {
+  color: #fff !important;
+}
+.dark .ant-select-item-option-active:not(.ant-select-item-option-disabled),
+.dark .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  background-color: #23272f !important;
+  color: #fff !important;
+}
+
+/* Light mode Ant Design override for contrast */
+.light .ant-typography,
+.light .ant-typography h1,
+.light .ant-typography h2,
+.light .ant-typography h3,
+.light .ant-typography h4,
+.light .ant-typography h5,
+.light .ant-typography h6,
+.light .ant-form-item-label > label,
+.light .ant-input,
+.light .ant-input-password,
+.light .ant-input-affix-wrapper,
+.light .ant-select-selector,
+.light .ant-btn {
+  color: #111 !important;
+}
+.light .ant-input,
+.light .ant-input-password,
+.light .ant-input-affix-wrapper,
+.light .ant-select-selector {
+  background-color: #fff !important;
+  border-color: #d9d9d9 !important;
+  color: #111 !important;
+}
+.light .ant-input::placeholder,
+.light .ant-input-password input::placeholder {
+  color: #888 !important;
+  opacity: 1 !important;
+} 
+
+/* Browser autofill ve öneri kutusu dark mode düzeltmesi */
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:focus,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:active {
+  -webkit-text-fill-color: #fff !important;
+  box-shadow: 0 0 0 1000px #181c24 inset !important;
+  background-color: #181c24 !important;
+  color: #fff !important;
+}
+.dark input::selection {
+  background: #23272f !important;
+  color: #fff !important;
+}
+/* Ant Design autocomplete dropdown dark mode */
+.dark .ant-select-dropdown,
+.dark .ant-select-dropdown-menu,
+.dark .ant-select-dropdown-menu-item {
+  background-color: #181c24 !important;
+  color: #fff !important;
+}
+.dark .ant-select-dropdown-menu-item-active,
+.dark .ant-select-dropdown-menu-item-selected {
+  background-color: #23272f !important;
+  color: #fff !important;
+} 
+
+/* Ant Design Table dark mode overrides */
+.dark .ant-table,
+.dark .ant-table-container,
+.dark .ant-table-content,
+.dark .ant-table-thead > tr > th,
+.dark .ant-table-tbody > tr > td {
+  background-color: #181c24 !important;
+  color: #fff !important;
+}
+.dark .ant-table-thead > tr > th {
+  border-bottom: 1px solid #333 !important;
+  color: #fff !important;
+}
+.dark .ant-table-tbody > tr > td {
+  border-bottom: 1px solid #23272f !important;
+  color: #fff !important;
+}
+.dark .ant-table-row:hover > td {
+  background-color: #23272f !important;
+} 
+
+/* Ant Design Card and Table border dark mode override */
+.dark .ant-card,
+.dark .ant-card-bordered,
+.dark .ant-table,
+.dark .ant-table-container,
+.dark .ant-table-content,
+.dark .ant-table-thead > tr > th,
+.dark .ant-table-tbody > tr > td {
+  border-color: #23272f !important;
+}
+.dark .ant-card {
+  box-shadow: 0 2px 8px 0 #10131a33 !important;
+} 
+
+/* Ant Design Tabs dark mode overrides */
+.dark .ant-tabs-nav .ant-tabs-tab {
+  color: #bbb !important;
+}
+.dark .ant-tabs-nav .ant-tabs-tab-active,
+.dark .ant-tabs-nav .ant-tabs-tab-active:focus,
+.dark .ant-tabs-nav .ant-tabs-tab-active:hover {
+  color: #3b82f6 !important;
+}
+.dark .ant-tabs-ink-bar {
+  background: #3b82f6 !important; /* Tailwind blue-500 */
+  height: 3px !important;
+  border-radius: 2px 2px 0 0;
+}
+.dark .ant-tabs-nav::before {
+  border-bottom: 1px solid #23272f !important;
+} 
+
+/* FavoriteServicesBar label renkleri */
+.favorite-bar-label {
+  color: #222 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+.dark .favorite-bar-label {
+  color: #e5e7eb !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
 } 

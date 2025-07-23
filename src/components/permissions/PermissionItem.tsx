@@ -37,12 +37,10 @@ export default function PermissionItem({ permission, onDelete }: PermissionItemP
   }, [permission.lastModified]);
 
   const handleViewClick = () => {
-    console.log('Eye clicked, navigating to:', `/permissions/${permission.id}`);
     navigate(`/permissions/${permission.id}`);
   };
 
   const handleEditClick = () => {
-    console.log('Edit clicked, navigating to:', `/permissions/${permission.id}`);
     navigate(`/permissions/${permission.id}`);
   };
 
