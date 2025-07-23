@@ -1,6 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { Search, Loader2, Star, Grid, Folder, Sliders, Network, AppWindow, HardDrive, Activity, Cloud, Database, Server, Zap, BarChart2, Layers } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "@/lib/store";
+import { fetchMenu, selectMenu, MenuItem, addFavorite } from "@/lib/menuSlice";
+import * as LucideIcons from "lucide-react";
 
 interface SearchResult {
   id: string | number;
@@ -20,11 +24,12 @@ interface FavoriteMenuItem {
 interface SearchBarProps {
   onSearch: (query: string) => Promise<SearchResult[]>;
   placeholder?: string;
+  minimal?: boolean;
 }
 
 const ICONS = { Grid, Folder, Sliders, Network, AppWindow, HardDrive, Activity, Cloud, Database, Server, Zap, BarChart2, Layers };
 
-export default function SearchBar({ onSearch, placeholder = "Ara..." }: SearchBarProps) {
+export default function SearchBar({ onSearch, placeholder = "Ara...", minimal = false }: SearchBarProps) {
   const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -35,7 +40,14 @@ export default function SearchBar({ onSearch, placeholder = "Ara..." }: SearchBa
   const timeoutRef = useRef<number | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [favorites, setFavorites] = useState<FavoriteMenuItem[]>([]);
+  const dispatch = useDispatch<AppDispatch>();
+  const favorites: MenuItem[] = useSelector(selectMenu);
+  const [menuFetched, setMenuFetched] = useState(false);
+
+  const dispatchRedux = useDispatch<AppDispatch>();
+  const handleFavorite = (id: string, pageRouteID?: string) => {
+    dispatchRedux(addFavorite(pageRouteID || id));
+  };
 
   const [history, setHistory] = useState<SearchResult[]>([
     { id: 1, label: "Kubernetes services" },
@@ -98,24 +110,37 @@ export default function SearchBar({ onSearch, placeholder = "Ara..." }: SearchBa
 
   const handleClearHistory = () => setHistory([]);
 
-  function getAllFavorites(menu: FavoriteMenuItem[]): FavoriteMenuItem[] {
-    let favs: FavoriteMenuItem[] = [];
-    for (const item of menu) {
-      if (item.favorite === 1) favs.push(item);
-      if (item.children) favs = favs.concat(getAllFavorites(item.children));
+  const handleOpenDropdown = () => {
+    setShowDropdown(true);
+    if (!menuFetched) {
+      dispatch(fetchMenu());
+      setMenuFetched(true);
     }
-    return favs;
-  }
+  };
 
-  useEffect(() => {
-    import("@/data/sidebarMenu.json").then((menu) => {
-      setFavorites(getAllFavorites(menu.default as FavoriteMenuItem[]));
-    });
-  }, []);
+  if (minimal) {
+    return (
+      <div className="relative w-full max-w-xs">
+        <div className="flex items-center border rounded bg-background px-2 py-1">
+          <Search size={18} className="text-gray-500 dark:text-gray-400 mr-1" />
+          <input
+            type="text"
+            className="flex-1 bg-transparent outline-none text-sm text-gray-900 dark:text-gray-100"
+            placeholder={placeholder}
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            style={{ minWidth: 0 }}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div ref={containerRef} className="relative w-full max-w-4xl">
-      <div className="flex items-center border rounded-lg bg-background px-3.5 py-2.5 focus-within:ring-2 focus-within:ring-green-500">
+      <div className="flex items-center border rounded-lg bg-background px-3.5 py-2.5 focus-within:ring-2 focus-within:ring-green-500"
+        onClick={handleOpenDropdown}
+      >
         <Search size={20} className="text-gray-500 dark:text-gray-400 mr-2.5" />
         <input
           ref={inputRef}
@@ -124,8 +149,7 @@ export default function SearchBar({ onSearch, placeholder = "Ara..." }: SearchBa
           placeholder={placeholder}
           value={query}
           onChange={e => setQuery(e.target.value)}
-          onFocus={() => setShowDropdown(true)}
-          onClick={() => setShowDropdown(true)}
+          onFocus={handleOpenDropdown}
           onKeyDown={handleKeyDown}
         />
         {loading && <Loader2 size={20} className="animate-spin ml-2.5 text-gray-500 dark:text-gray-400" />}
@@ -158,18 +182,32 @@ export default function SearchBar({ onSearch, placeholder = "Ara..." }: SearchBa
                 <Star size={14} className="text-yellow-500" />
                 <span className="text-xs font-bold  ">{t("searchBar.favorites")}</span>
               </div>
-              <div className="flex flex-wrap gap-3 px-4 py-2">
-                {favorites.map((fav) => {
-                  const Icon = ICONS[fav.icon];
+              <div className="flex flex-col gap-2 px-4 py-2">
+                {favorites.map((fav: MenuItem) => {
+                  const Icon = fav.icon && (LucideIcons as any)[fav.icon];
+                  const isFav = fav.isFavourite === true;
                   return (
-                    <div key={fav.href} className="flex flex-col items-center gap-1">
+                    <div key={fav.id} className="flex items-center justify-between rounded-md border border-border bg-background dark:bg-yellow-950/80 px-3 py-2 hover:shadow transition-all dark:border-yellow-900 dark:hover:bg-yellow-900/80">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="flex items-center justify-center w-8 h-8 min-w-[30px] min-h-[30px] rounded-full bg-yellow-100 dark:bg-yellow-800 text-yellow-700 dark:text-yellow-100">
+                          {Icon ? <Icon size={18} style={{ display: 'block' }} /> : (
+                            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" style={{ display: 'block' }}>
+                              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+                            </svg>
+                          )}
+                        </span>
+                        <div className="flex flex-col min-w-0">
+                          <span className="font-medium truncate text-sm text-gray-900 dark:text-yellow-100">{fav.label}</span>
+                          {fav.description && <span className="text-xs text-gray-500 dark:text-yellow-200 truncate">{fav.description}</span>}
+                        </div>
+                      </div>
                       <button
-                        className="flex items-center justify-center w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-200 font-medium hover:bg-yellow-200 dark:hover:bg-yellow-800 transition-colors"
-                        onMouseDown={() => handleSelect(fav)}
+                        className="ml-2 p-1 rounded-full hover:bg-yellow-100 dark:hover:bg-yellow-700 transition"
+                        onClick={() => handleFavorite(fav.id, (fav as any).pageRouteID)}
+                        title="Favorilere ekle"
                       >
-                        {Icon && <Icon size={24} />}
+                        <Star size={20} fill={isFav ? '#facc15' : 'none'} stroke="#facc15" />
                       </button>
-                      <span className="text-xs  ">{t(`sidebar.${fav.key}`)}</span>
                     </div>
                   );
                 })}
@@ -200,16 +238,16 @@ export default function SearchBar({ onSearch, placeholder = "Ara..." }: SearchBa
               </div>
               <div className="flex flex-wrap gap-3 px-4 py-2">
                 {favorites.map((fav) => {
-                  const Icon = ICONS[fav.icon];
+                  const Icon = fav.icon && (LucideIcons as any)[fav.icon];
                   return (
-                    <div key={fav.href} className="flex cursor-pointer flex-col items-center gap-1">
+                    <div key={fav.id} className="flex cursor-pointer flex-col items-center gap-1">
                       <button
                         className="flex items-center justify-center w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-200 font-medium hover:bg-yellow-200 dark:hover:bg-yellow-800 transition-colors"
                         onMouseDown={() => handleSelect(fav)}
                       >
                         {Icon && <Icon size={24} />}
                       </button>
-                      <span className="text-xs text-gray-900 dark:text-gray-200">{t(`sidebar.${fav.key}`)}</span>
+                      <span className="text-xs text-gray-900 dark:text-gray-200">{t(`sidebar.${typeof (fav as any).key === 'string' ? (fav as any).key : (typeof fav.label === 'string' ? fav.label : fav.id)}`)}</span>
                     </div>
                   );
                 })}

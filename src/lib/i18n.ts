@@ -18,6 +18,21 @@ const getInitialLang = () => {
 const resources = {
   en: {
     translation: {
+      notification: {
+        success: 'Successfully logged in!',
+        error: 'Error',
+        warning: 'Warning',
+        info: 'Info', 
+        noFavorites: 'No favorites found',
+        logoutSuccess: 'Successfully logged out, redirecting you',
+      },
+      reset: {
+        title: 'Reset Password',
+        password: 'Password',
+        password2: 'Confirm Password',
+        button: 'Reset Password',
+        back: 'Back to Login',
+      },
       navbar: {
         search: 'Search',
         light: 'Light',
@@ -26,7 +41,7 @@ const resources = {
       },
       login: {
         title: 'Log In to ApexScouty',
-        username: 'Username',
+        email: 'Email',
         password: 'Password',
         forgot: 'Forgot password?',
         button: 'Login',
@@ -46,9 +61,10 @@ const resources = {
         email: 'Email',
         username: 'Username',
         password: 'Password',
-        password2: 'Confirm Password',
+        language: 'Language',
         fillAllFields: 'Please fill all fields',
-        passwordsNotMatch: 'Passwords do not match',
+        firstname: 'Firstname',
+        lastname: 'Lastname',
         success: 'Registration successful! You can now log in.',
         haveAccount: 'Already have an account?',
         login: 'Login',
@@ -168,6 +184,21 @@ const resources = {
   },
   tr: {
     translation: {
+      notification: {
+        success: 'Başarıyla giriş yapıldı!',
+        error: 'Hata',
+        warning: 'Uyarı',
+        info: 'Bilgi',
+        noFavorites: 'Favori bulunamadı',
+        logoutSuccess: 'Başarıyla çıkış yapıldı, yönlendiriliyorsunuz',
+      },
+      reset: {
+        title: 'Reset Password',
+        password: 'Password',
+        password2: 'Confirm Password',
+        button: 'Reset Password',
+        back: 'Back to Login',
+      },
       navbar: {
         search: 'Ara',
         light: 'Açık',
@@ -176,7 +207,7 @@ const resources = {
       },
       login: {
         title: 'ApexScouty Giriş',
-        username: 'Kullanıcı Adı',
+        email: 'E-posta',
         password: 'Şifre',
         forgot: 'Şifremi unuttum?',
         button: 'Giriş Yap',
@@ -192,13 +223,12 @@ const resources = {
       register: {
         title: 'Üye Ol',
         submit: 'Kayıt Ol',
-        name: 'Ad Soyad',
         email: 'E-posta',
-        username: 'Kullanıcı Adı',
+        language: 'Dil',
         password: 'Şifre',
-        password2: 'Şifre Tekrar',
         fillAllFields: 'Lütfen tüm alanları doldurun.',
-        passwordsNotMatch: 'Şifreler eşleşmiyor.',
+        firstname: 'Ad',
+        lastname: 'Soyad',
         success: 'Kayıt başarılı! Giriş yapabilirsiniz.',
         haveAccount: 'Zaten hesabınız var mı?',
         login: 'Giriş Yap',
