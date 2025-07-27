@@ -33,7 +33,9 @@ const getUserFromStorage = (): User | null => {
 // localStorage'dan authentication durumunu al
 const getAuthStatusFromStorage = (): boolean => {
   if (typeof window !== 'undefined') {
-    return localStorage.getItem('isAuthenticated') === 'true';
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    return !!(token && user);
   }
   return false;
 };
@@ -73,6 +75,19 @@ export const loginUser = createAsyncThunk(
   async (data: LoginData) => {
     try {
       const response = await authService.login(data);
+      
+      // Sadece başarılı response'ları kabul et
+      if (!response) {
+        throw new Error('No response received');
+      }
+      
+      // Farklı success formatlarını kontrol et
+      const isSuccess = !response.error;
+      console.log('AuthSlice Is Success:', isSuccess);
+      if (!isSuccess) {
+        throw new Error(response.message || response.error || 'Login failed');
+      }
+      
       return response;
     } catch (error: any) {
       // API'den gelen hata yapısını kontrol et
@@ -83,9 +98,9 @@ export const loginUser = createAsyncThunk(
           const validationMessages = error.data.error.validations.map((v: any) => v.message).join(', ');
           errorMessage = `${errorMessage}: ${validationMessages}`;
         }
-        return { success: false, message: errorMessage };
+        throw new Error(errorMessage);
       }
-      return { success: false, message: error.message || 'Login failed' };
+      throw new Error(error.message || 'Login failed');
     }
   }
 );
@@ -99,9 +114,8 @@ export const logoutUser = createAsyncThunk(
       // API hatası olsa bile localden çıkış yapmaya devam et
     }
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('isAuthenticated');
-      localStorage.removeItem('user');
       localStorage.removeItem('token');
+      localStorage.removeItem('user');
     }
     return { success: true, message: 'Logged out successfully' };
   }
@@ -221,23 +235,36 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         
-        // Login başarılı oldu (200 response), isAuthenticated'ı true yap
-        state.isAuthenticated = true;
+        console.log('LoginUser fulfilled payload:', action.payload);
         
-        // localStorage'a kaydet
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('isAuthenticated', 'true');
-          // Token varsa kaydet
-          if ('data' in action.payload && action.payload.data && action.payload.data.token) {
-            localStorage.setItem('token', action.payload.data.token);
+        // Sadece başarılı response'larda authentication yap
+        const isSuccess = action.payload && !action.payload.error;
+        
+        console.log('LoginUser fulfilled Is Success:', isSuccess);
+        
+        if (isSuccess) {
+          state.isAuthenticated = true;
+          console.log('Setting isAuthenticated to true');
+          
+          // localStorage'a sadece token ve user kaydet
+          if (typeof window !== 'undefined') {
+            // Token varsa kaydet
+            if ('data' in action.payload && action.payload.data && action.payload.data.token) {
+              localStorage.setItem('token', action.payload.data.token);
+            }
+            // User bilgileri checkAuth'tan gelecek
           }
+        } else {
+          // Başarısız response'da authentication yapma
+          state.isAuthenticated = false;
+          state.error = action.payload?.message || action.payload?.error || 'Login failed';
+          console.log('Setting isAuthenticated to false');
         }
-        
-        // User bilgileri checkAuth'tan gelecek
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.isAuthenticated = false; // Rejected durumunda authentication false
+        state.error = action.error.message || 'Login failed';
       });
 
     // Logout
@@ -252,9 +279,8 @@ const authSlice = createSlice({
         
         // localStorage'dan temizle
         if (typeof window !== 'undefined') {
-          localStorage.removeItem('isAuthenticated');
-          localStorage.removeItem('user');
           localStorage.removeItem('token');
+          localStorage.removeItem('user');
         }
         // i18n ile notification
         toast.success(i18n.t('notification.logoutSuccess', 'Başarıyla çıkış yapıldı!'));

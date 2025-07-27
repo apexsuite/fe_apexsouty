@@ -15,7 +15,10 @@ export default function Login() {
   const lang = useSelector((state: RootState) => state.lang.language);
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('isAuthenticated') === 'true';
+      // Sadece token ve user varsa authenticated
+      const token = localStorage.getItem('token');
+      const user = localStorage.getItem('user');
+      return !!(token && user);
     }
     return false;
   });
@@ -48,20 +51,39 @@ export default function Login() {
         email: values.email,
         password: values.password
       };
-      await dispatch(loginUser(loginData)).unwrap();
-      toast.success(t('notification.success'));
-      try {
-        await dispatch(checkAuth()).unwrap();
-        navigate("/dashboard");
-        setIsAuthenticated(true);
-      } catch (error) {
-        console.error('CheckAuth failed after login:', error);
-        navigate("/dashboard");
-        setIsAuthenticated(true);
+      
+      // Login işlemini yap
+      const loginResult = await dispatch(loginUser(loginData)).unwrap();
+      
+      console.log('Login page result:', loginResult);
+      
+      // Sadece başarılı login sonrası işlem yap
+      const isSuccess = loginResult && !loginResult.error;
+      
+      console.log('Login page Is Success:', isSuccess);
+      
+      if (isSuccess) {
+        console.log('Login successful, navigating to dashboard');
+        toast.success(t('notification.success'));
+        
+        try {
+          // Kullanıcı bilgilerini al
+          await dispatch(checkAuth()).unwrap();
+          navigate("/dashboard");
+          setIsAuthenticated(true);
+        } catch (checkError) {
+          console.error('CheckAuth failed after login:', checkError);
+          // CheckAuth başarısız olsa bile login başarılıysa dashboard'a git
+          navigate("/dashboard");
+          setIsAuthenticated(true);
+        }
+      } else {
+        // Login başarısız
+        toast.error(loginResult?.message || loginResult?.error || "Login failed");
       }
     } catch (error: any) {
       console.error('Login failed:', error);
-      toast.error(error || "Login failed");
+      toast.error(error.message || "Login failed");
     }
   };
 

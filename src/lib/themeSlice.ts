@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export type Theme = 'light' | 'dark' | 'system';
+export type Theme = 'light' | 'dark';
 
 interface ThemeState {
   theme: Theme;
 }
 
 const initialState: ThemeState = {
-  theme: typeof window !== 'undefined' && localStorage.getItem('theme') ? (localStorage.getItem('theme') as Theme) : 'system',
+  theme: typeof window !== 'undefined' && localStorage.getItem('theme') ? (localStorage.getItem('theme') as Theme) : 'light',
 };
 
 const themeSlice = createSlice({
