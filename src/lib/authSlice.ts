@@ -33,9 +33,8 @@ const getUserFromStorage = (): User | null => {
 // localStorage'dan authentication durumunu al
 const getAuthStatusFromStorage = (): boolean => {
   if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    return !!(token && user);
+    const isAuth = localStorage.getItem('isAuth');
+    return isAuth === 'true';
   }
   return false;
 };
@@ -114,7 +113,7 @@ export const logoutUser = createAsyncThunk(
       // API hatası olsa bile localden çıkış yapmaya devam et
     }
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('token');
+      localStorage.removeItem('isAuth');
       localStorage.removeItem('user');
     }
     return { success: true, message: 'Logged out successfully' };
@@ -213,11 +212,8 @@ const authSlice = createSlice({
           
           // localStorage'a kaydet
           if (typeof window !== 'undefined') {
-            localStorage.setItem('isAuthenticated', 'true');
+            localStorage.setItem('isAuth', 'true');
             localStorage.setItem('user', JSON.stringify(action.payload.user));
-            if ('token' in action.payload && action.payload.token) {
-              localStorage.setItem('token', action.payload.token);
-            }
           }
         }
       })
@@ -246,13 +242,18 @@ const authSlice = createSlice({
           state.isAuthenticated = true;
           console.log('Setting isAuthenticated to true');
           
-          // localStorage'a sadece token ve user kaydet
+          // localStorage'a isAuth ve user kaydet
           if (typeof window !== 'undefined') {
-            // Token varsa kaydet
-            if ('data' in action.payload && action.payload.data && action.payload.data.token) {
-              localStorage.setItem('token', action.payload.data.token);
+            localStorage.setItem('isAuth', 'true');
+            
+            // User bilgilerini kaydet (eğer varsa)
+            if ('data' in action.payload && action.payload.data && action.payload.data.user) {
+              localStorage.setItem('user', JSON.stringify(action.payload.data.user));
+              state.user = action.payload.data.user;
+            } else if ('user' in action.payload && action.payload.user) {
+              localStorage.setItem('user', JSON.stringify(action.payload.user));
+              state.user = action.payload.user;
             }
-            // User bilgileri checkAuth'tan gelecek
           }
         } else {
           // Başarısız response'da authentication yapma
@@ -279,7 +280,7 @@ const authSlice = createSlice({
         
         // localStorage'dan temizle
         if (typeof window !== 'undefined') {
-          localStorage.removeItem('token');
+          localStorage.removeItem('isAuth');
           localStorage.removeItem('user');
         }
         // i18n ile notification
@@ -341,8 +342,9 @@ const authSlice = createSlice({
           };
           state.user = userData;
           
-          // localStorage'a user bilgilerini kaydet
+          // localStorage'a isAuth ve user bilgilerini kaydet
           if (typeof window !== 'undefined') {
+            localStorage.setItem('isAuth', 'true');
             localStorage.setItem('user', JSON.stringify(userData));
           }
         }
@@ -351,6 +353,11 @@ const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = false;
         state.user = null;
+        // localStorage'dan temizle
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('isAuth');
+          localStorage.removeItem('user');
+        }
       });
   },
 });
