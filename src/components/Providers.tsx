@@ -3,6 +3,7 @@ import { store } from "@/lib/store";
 import "@/lib/i18n";
 import { useEffect, useState, useRef } from "react";
 import { setLanguage } from "@/lib/langSlice";
+import { setTheme } from "@/lib/themeSlice";
 import i18n from "@/lib/i18n";
 
 function Spinner() {
@@ -13,6 +14,20 @@ function Spinner() {
   );
 }
 
+// Tema uygulama fonksiyonu
+function applyTheme(theme: string) {
+  const root = window.document.documentElement;
+  
+  // Önce tüm tema sınıflarını temizle
+  root.classList.remove('dark', 'light');
+  
+  if (theme === 'dark') {
+    root.classList.add('dark');
+  } else {
+    root.classList.add('light');
+  }
+}
+
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
   const [isThemeChanging, setIsThemeChanging] = useState(false);
@@ -20,11 +35,20 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   const theme = store.getState().theme.theme;
 
   useEffect(() => {
+    // Dil ayarlarını yükle
     const storedLang = typeof window === "undefined" ? "en" : localStorage.getItem("lang") || "en";
     if (storedLang) {
       dispatchRef.current(setLanguage(storedLang));
       i18n.changeLanguage(storedLang);
     }
+    
+    // Tema ayarlarını yükle ve uygula
+    const storedTheme = localStorage.getItem('theme') as 'light' | 'dark' || 'light';
+    dispatchRef.current(setTheme(storedTheme));
+    
+    // Tema uygula
+    applyTheme(storedTheme);
+    
     setReady(true);
   }, []);
 
@@ -36,16 +60,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       if (newTheme !== theme) {
         setIsThemeChanging(true);
         setTimeout(() => {
-          const root = window.document.documentElement;
-          if (newTheme === "dark") {
-            root.classList.add("dark");
-            root.classList.remove("light");
-          } else {
-            root.classList.add("light");
-            root.classList.remove("dark");
-          }
+          applyTheme(newTheme);
           setIsThemeChanging(false);
-        }, 100); // 500ms loading gösterimi
+        }, 100);
       }
     });
 

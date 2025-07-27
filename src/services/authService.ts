@@ -68,6 +68,7 @@ export interface AuthResponse {
   };
   error?: any;
   success?: boolean;
+  status?: string;
   message?: string;
   user?: {
     id: string;
@@ -94,10 +95,31 @@ export const authService = {
 
   // Login user
   async login(data: LoginData): Promise<AuthResponse> {
-    return apiRequest('/auth/login', {
+    const response = await apiRequest('/auth/login', {
       method: 'POST',
       body: JSON.stringify(data),
     });
+    
+    console.log('Login Response:', response);
+    console.log('Response.error:', response?.error);
+    console.log('Response.success:', response?.success);
+    console.log('Response.status:', response?.status);
+    console.log('Response.message:', response?.message);
+    
+    // Response kontrolü
+    if (!response) {
+      throw new Error('No response received');
+    }
+    
+    // Success kontrolü - sadece error null ise başarılı
+    const isSuccess = !response.error;
+    console.log('Is Success:', isSuccess);
+    
+    if (!isSuccess) {
+      throw new Error(response.message || response.error || 'Login failed');
+    }
+    
+    return response;
   },
 
   // Logout user

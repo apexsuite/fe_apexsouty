@@ -44,13 +44,24 @@ export const apiRequest = async (endpoint: string, options: any = {}) => {
 
   try {
     const response = await axios(config);
-    return response.data;
+    
+    // HTTP status code kontrolü
+    if (response.status >= 200 && response.status < 300) {
+      return response.data;
+    } else {
+      throw {
+        status: response.status,
+        data: response.data,
+        message: `HTTP ${response.status}: ${response.statusText}`
+      };
+    }
   } catch (error: any) {
     if (error.response) {
       // API'den gelen hata response'unu fırlat
       throw {
         status: error.response.status,
         data: error.response.data,
+        message: error.response.data?.message || `HTTP ${error.response.status}: ${error.response.statusText}`
       };
     }
     console.error('API request failed:', error);
