@@ -1,28 +1,25 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import sidebarMenu from "@/data/sidebarMenu.json";
-import { Home, BarChart2, Layers, Grid, Folder, Zap, Database, Cloud, Server, Sliders, AppWindow, HardDrive, Network, Activity, Users, Shield, Star } from "lucide-react";
+import { Home, BarChart2, Layers, Grid, Folder, Zap, Database, Cloud, Server, Sliders, AppWindow, HardDrive, Network, Activity, Users, Shield, Star, FileText } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "@/lib/store";
 import { useEffect, useState } from "react";
 import { logoutUser } from "@/lib/authSlice";
-import { filterMenuItemsByPermissions, type MenuItem } from "@/lib/utils";
 import { Drawer } from "antd";
-import { fetchFavorites, selectFavorites, deleteFavorite, updateFavoriteOrder, reorderFavoritesLocally } from "@/lib/menuSlice";
+import { fetchMenu, fetchFavorites, selectFavorites, deleteFavorite, updateFavoriteOrder, reorderFavoritesLocally, selectMenu } from "@/lib/menuSlice";
 import * as LucideIcons from "lucide-react";
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 
-const ICONS = { Home, BarChart2, Layers, Grid, Folder, Zap, Database, Cloud, Server, Sliders, AppWindow, HardDrive, Network, Activity, Users, Shield, Star };
+
 
 export default function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen?: boolean, onMobileClose?: () => void }) {
   const { t, i18n } = useTranslation();
   const lang = useSelector((state: RootState) => state.lang.language);
-  const user = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch<AppDispatch>();
-  const [allServicesOpen, setAllServicesOpen] = useState(false);
   const favoritesMenu = useSelector(selectFavorites);
   const menuItems = useSelector((state: RootState) => state.menu.items);
   useEffect(() => {
+    dispatch(fetchMenu());
     dispatch(fetchFavorites());
   }, [dispatch]);
   const navigate = useNavigate();
@@ -32,10 +29,9 @@ export default function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen?: bo
   }, [lang, i18n]);
 
   if (i18n.language !== lang) return null;
-  const filteredMenu = filterMenuItemsByPermissions(sidebarMenu as MenuItem[], user);
-    const fixedMenus = filteredMenu.filter((item: MenuItem) => item.fixed);
-  const allServices = filteredMenu.find((item: MenuItem) => item.key === "allServices");
-  const children = allServices?.children || [];
+  
+  // API'den gelen menü verilerini kullan
+  const apiMenuItems = useSelector(selectMenu);
 
   const handleNavigate = (href: string) => {
     navigate(href);
@@ -76,19 +72,6 @@ export default function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen?: bo
       <div onClick={() => handleNavigate("/dashboard")} className="mb-8 cursor-pointer font-bold  text-center hover:text-green-600 dark:hover:text-green-300 text-3xl">ApexScouty</div>
       <nav className="flex-1">
         <ul className="space-y-2">
-          {fixedMenus.map((item: MenuItem) => {
-            const Icon = ICONS[item.icon as keyof typeof ICONS];
-            if (!item.href) return null;
-            return (
-              <li key={item.href}>
-                <Link to={item.href} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-green-100 dark:hover:bg-green-300 transition-colors  dark:text-green-700 font-medium"
-                  onClick={() => handleNavigate(item.href!)}>
-                  {Icon && <Icon size={20} className="shrink-0" />}
-                  <span>{t(`sidebar.${item.key}`)}</span>
-                </Link>
-              </li>
-            );
-          })}
           {favoritesMenu.length > 0 && (
             <>
               <div className="text-xs font-bold text-gray-800 dark:text-gray-400 mb-1 flex items-center gap-1 mt-2">
@@ -133,38 +116,6 @@ export default function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen?: bo
                 </Droppable>
               </DragDropContext>
             </>
-          )}
-          {allServices && (
-            <li>
-              <button
-                className="flex items-center gap-3 px-3 py-2 w-full rounded-lg dark:text-green-700 dark:hover:bg-green-400 transition-colors  font-medium focus:outline-none"
-                onClick={() => setAllServicesOpen((v) => !v)}
-                aria-expanded={allServicesOpen}
-              >
-                <Layers size={20} className="shrink-0" />
-                <span>{t("sidebar.allServices")}</span>
-                <svg className={`ml-auto transition-transform ${allServicesOpen ? "rotate-90" : "rotate-0"}`} width="16" height="16" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              </button>
-              {allServicesOpen && (
-                <div className="pl-4 mt-2">
-                  <ul>
-                    {children.map((item: MenuItem) => {
-                      const Icon = ICONS[item.icon as keyof typeof ICONS];
-                      if (!item.href) return null;
-                      return (
-                        <li key={item.href}>
-                          <Link to={item.href} className="flex items-center gap-3 px-3 py-2 rounded-lg  dark:hover:bg-green-500 transition-colors  font-medium"
-                            onClick={() => handleNavigate(item.href!)}>
-                            {Icon && <Icon size={18} className="shrink-0" />}
-                            <span>{t(`sidebar.${item.key}`)}</span>
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              )}
-            </li>
           )}
         </ul>
       </nav>

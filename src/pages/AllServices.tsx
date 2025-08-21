@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Grid, Folder, Sliders, Network, AppWindow, HardDrive, Activity, Cloud, Database, Server, Zap, BarChart2, Layers } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -16,26 +16,7 @@ interface ServiceMenuItem {
 
 export default function ServicesPage() {
   const { t } = useTranslation();
-  const [services, setServices] = useState<ServiceMenuItem[]>([]);
-
-  function getAllServices(menu: ServiceMenuItem[]): ServiceMenuItem[] {
-    let all: ServiceMenuItem[] = [];
-    for (const item of menu) {
-      if (item.children) {
-        all = all.concat(getAllServices(item.children));
-      } else if (item.href) {
-        all.push(item);
-      }
-    }
-    return all;
-  }
-
-  useEffect(() => {
-    import("@/data/sidebarMenu.json").then((menu) => {
-      const allServices = getAllServices(menu.default as ServiceMenuItem[]);
-      setServices(allServices);
-    });
-  }, []);
+  const [services] = useState<ServiceMenuItem[]>([]);
 
   return (
     <div className="w-full  px-6 md:px-12 py-12">

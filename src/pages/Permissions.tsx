@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import PermissionStats from '@/components/permissions/PermissionStats';
-import PermissionFilters from '@/components/permissions/PermissionFilters';
+
 import PermissionList from '@/components/permissions/PermissionList';
 import CreatePermissionModal from '@/components/permissions/CreatePermissionModal';
 import { canRead, canCreate } from '@/lib/utils';
@@ -28,9 +28,9 @@ export default function PermissionsPage() {
   const navigate = useNavigate();
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [filteredPermissions, setFilteredPermissions] = useState<Permission[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
-  const [typeFilter, setTypeFilter] = useState<'all' | 'read' | 'write' | 'admin'>('all');
+  const [searchTerm] = useState('');
+  const [statusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [typeFilter] = useState<'all' | 'read' | 'write' | 'admin'>('all');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newPermission, setNewPermission] = useState<{
     name: string;
@@ -195,7 +195,7 @@ export default function PermissionsPage() {
       {/* Stats Cards */}
       <PermissionStats stats={stats} />
 
-      {/* Search and Filters */}
+      {/* Search and Filters 
       <PermissionFilters
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -204,7 +204,7 @@ export default function PermissionsPage() {
         typeFilter={typeFilter}
         setTypeFilter={setTypeFilter}
       />
-
+*/}
       {/* Permissions List */}
       <PermissionList
         permissions={filteredPermissions}

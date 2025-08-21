@@ -4,6 +4,7 @@ import type { RootState } from "@/lib/store";
 import { setLanguage } from "@/lib/langSlice";
 import { setTheme } from "@/lib/themeSlice";
 import { useTranslation } from "react-i18next";
+import i18n from "@/lib/i18n";
 import SearchBar from "@/components/SearchBar";
 import { useState } from "react";
 
@@ -74,14 +75,28 @@ export default function Navbar({ minimal = false, onMenuClick, hideSearchAndMenu
           <Globe size={18} className="text-muted-foreground" />
           <button
             className={`font-semibold px-1 cursor-pointer ${lang === "en" ? "text-red-700" : "text-muted-foreground"}`}
-            onClick={() => dispatch(setLanguage("en"))}
+            onClick={() => {
+              try {
+                dispatch(setLanguage("en"));
+                i18n.changeLanguage("en");
+              } catch (error) {
+                console.error('Language change error:', error);
+              }
+            }}
           >
             EN
           </button>
           <span className="text-muted-foreground">|</span>
           <button
             className={`font-semibold px-1 cursor-pointer ${lang === "tr" ? "text-red-700" : "text-muted-foreground"}`}
-            onClick={() => dispatch(setLanguage("tr"))}
+            onClick={() => {
+              try {
+                dispatch(setLanguage("tr"));
+                i18n.changeLanguage("tr");
+              } catch (error) {
+                console.error('Language change error:', error);
+              }
+            }}
           >
             TR
           </button>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { Grid, Folder, Sliders, Network, AppWindow, HardDrive, Activity, Cloud, Database, Server, Zap, BarChart2, Layers } from "lucide-react";
@@ -8,7 +8,7 @@ const ICONS = { Grid, Folder, Sliders, Network, AppWindow, HardDrive, Activity, 
 
 interface FavoriteMenuItem {
   key: string;
-  icon: keyof typeof ICONS;
+  icon: keyof typeof ICONS; 
   href?: string;
   label?: string;
   favorite?: number;
@@ -18,22 +18,8 @@ interface FavoriteMenuItem {
 export default function FavoriteServicesBar() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [favorites, setFavorites] = useState<FavoriteMenuItem[]>([]);
+  const [favorites] = useState<FavoriteMenuItem[]>([]);
 
-  function getAllFavorites(menu: FavoriteMenuItem[]): FavoriteMenuItem[] {
-    let favs: FavoriteMenuItem[] = [];
-    for (const item of menu) {
-      if (item.favorite === 1) favs.push(item);
-      if (item.children) favs = favs.concat(getAllFavorites(item.children));
-    }
-    return favs;
-  }
-
-  useEffect(() => {
-    import("@/data/sidebarMenu.json").then((menu) => {
-      setFavorites(getAllFavorites(menu.default as FavoriteMenuItem[]));
-    });
-  }, []);
 
   return (
     <Card

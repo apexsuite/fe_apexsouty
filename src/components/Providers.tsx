@@ -57,12 +57,20 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     
     const unsubscribe = store.subscribe(() => {
       const newTheme = store.getState().theme.theme;
+      const newLang = store.getState().lang.language;
+      
+      // Tema değişikliği kontrolü
       if (newTheme !== theme) {
         setIsThemeChanging(true);
         setTimeout(() => {
           applyTheme(newTheme);
           setIsThemeChanging(false);
         }, 100);
+      }
+      
+      // Dil değişikliği kontrolü
+      if (newLang && newLang !== i18n.language) {
+        i18n.changeLanguage(newLang);
       }
     });
 

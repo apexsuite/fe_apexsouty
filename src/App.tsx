@@ -14,6 +14,16 @@ import ResetPassword from '@/pages/ResetPassword';
 import Providers from '@/components/Providers';
 import ToastProvider from '@/components/ToastProvider';
 import ClientLayout from '@/components/ClientLayout';
+import PagesRoute from '@/pages/PagesRoute';
+import PageDetailRoute from '@/components/pagesRoute/PageDetailRoute';
+import PageFormRoute from '@/components/pagesRoute/PageFormRoute';
+import PageRoutePermissionsRoute from '@/pages/PageRoutePermissionsRoute';
+import PageRoutePermissionDetailRoute from '@/components/pageRoutePermissions/PageRoutePermissionDetailRoute';
+import PageRoutePermissionFormRoute from '@/components/pageRoutePermissions/PageRoutePermissionFormRoute';
+import Roles from '@/pages/Roles';
+import RoleCreate from '@/pages/RoleCreate';
+import RoleEdit from '@/pages/RoleEdit';
+import RoleDetail from '@/pages/RoleDetail';
 
 function AppContent() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -92,6 +102,127 @@ function AppContent() {
               <Navigate to="/login" />
             )
           } />
+          <Route path="/page-routes" element={
+            isAuthenticated ? (
+              <ClientLayout>
+                <PagesRoute />
+              </ClientLayout>
+            ) : (
+              <Navigate to="/login" />
+            )
+          } />
+          <Route path="/page-routes/:id" element={
+            isAuthenticated ? (
+              <ClientLayout>
+                <PageDetailRoute />
+              </ClientLayout>
+            ) : (
+              <Navigate to="/login" />
+            )
+          } />
+          <Route path="/page-routes/create" element={
+            isAuthenticated ? (
+              <ClientLayout>
+                <PageFormRoute />
+              </ClientLayout>
+            ) : (
+              <Navigate to="/login" />
+            )
+          } />
+          <Route path="/page-routes/:id/edit" element={
+            isAuthenticated ? (
+              <ClientLayout>
+                <PageFormRoute />
+              </ClientLayout>
+            ) : (
+              <Navigate to="/login" />
+            )
+          } />
+          
+          {/* Page Route Permissions Routes */}
+          <Route path="/page-route-permissions" element={
+            isAuthenticated ? (
+              <ClientLayout>
+                <PageRoutePermissionsRoute />
+              </ClientLayout>
+            ) : (
+              <Navigate to="/login" />
+            )
+          } />
+          <Route path="/page-route-permissions/:pageRouteId/permissions" element={
+            isAuthenticated ? (
+              <ClientLayout>
+                <PageRoutePermissionsRoute />
+              </ClientLayout>
+            ) : (
+              <Navigate to="/login" />
+            )
+          } />
+          <Route path="/page-route-permissions/:pageRouteId/permissions/:permissionId" element={
+            isAuthenticated ? (
+              <ClientLayout>
+                <PageRoutePermissionDetailRoute />
+              </ClientLayout>
+            ) : (
+              <Navigate to="/login" />
+            )
+          } />
+          <Route path="/page-route-permissions/:pageRouteId/permissions/create" element={
+            isAuthenticated ? (
+              <ClientLayout>
+                <PageRoutePermissionFormRoute />
+              </ClientLayout>
+            ) : (
+              <Navigate to="/login" />
+            )
+          } />
+          <Route path="/page-route-permissions/:pageRouteId/permissions/:permissionId/edit" element={
+            isAuthenticated ? (
+              <ClientLayout>
+                <PageRoutePermissionFormRoute />
+              </ClientLayout>
+            ) : (
+              <Navigate to="/login" />
+            )
+          } />
+          
+                     {/* Roles Routes */}
+           <Route path="/roles" element={
+             isAuthenticated ? (
+               <ClientLayout>
+                 <Roles />
+               </ClientLayout>
+             ) : (
+               <Navigate to="/login" />
+             )
+           } />
+           <Route path="/roles/create" element={
+             isAuthenticated ? (
+               <ClientLayout>
+                 <RoleCreate />
+               </ClientLayout>
+             ) : (
+               <Navigate to="/login" />
+             )
+           } />
+           <Route path="/roles/:id" element={
+             isAuthenticated ? (
+               <ClientLayout>
+                 <RoleDetail />
+               </ClientLayout>
+             ) : (
+               <Navigate to="/login" />
+             )
+           } />
+           <Route path="/roles/:id/edit" element={
+             isAuthenticated ? (
+               <ClientLayout>
+                 <RoleEdit />
+               </ClientLayout>
+             ) : (
+               <Navigate to="/login" />
+             )
+           } />
         </Routes>
       </Router>
     </>
