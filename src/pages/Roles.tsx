@@ -11,12 +11,11 @@ import {
   setCurrentPageNumber,
   setPageSize
 } from '@/lib/roleSlice';
-import { Plus, Shield } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { message, Card, Typography } from 'antd';
 
 // Import components
 import RoleTable from '@/components/roles/RoleTable';
-import RoleFilters from '@/components/roles/RoleFilters';
 import RolePagination from '@/components/roles/RolePagination';
 import RoleEmptyState from '@/components/roles/RoleEmptyState';
 import RoleDeleteModal from '@/components/roles/RoleDeleteModal';
@@ -34,8 +33,8 @@ const Roles: React.FC = () => {
   // Debug için roles state'ini logla
   console.log('Roles State:', { roles, loading, error, totalPages, currentPageNumber, pageSize });
   
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRoleValue, setSelectedRoleValue] = useState<string>('all');
+  const [searchTerm] = useState('');
+  const [selectedRoleValue] = useState<string>('all');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [roleToDelete, setRoleToDelete] = useState<{ id: string; name: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -74,11 +73,6 @@ const Roles: React.FC = () => {
 
     console.log('Loading roles with params:', params);
     dispatch(fetchRoles(params));
-  };
-
-  const handleSearch = () => {
-    dispatch(setCurrentPageNumber(1));
-    // loadRoles() kaldırıldı çünkü useEffect zaten tetiklenecek
   };
 
   const handlePageChange = (page: number, newPageSize?: number) => {

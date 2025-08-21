@@ -1,12 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Home, BarChart2, Layers, Grid, Folder, Zap, Database, Cloud, Server, Sliders, AppWindow, HardDrive, Network, Activity, Users, Shield, Star, FileText } from "lucide-react";
+import { Star } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "@/lib/store";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { logoutUser } from "@/lib/authSlice";
 import { Drawer } from "antd";
-import { fetchMenu, fetchFavorites, selectFavorites, deleteFavorite, updateFavoriteOrder, reorderFavoritesLocally, selectMenu } from "@/lib/menuSlice";
+import { fetchMenu, fetchFavorites, selectFavorites, deleteFavorite, updateFavoriteOrder, reorderFavoritesLocally } from "@/lib/menuSlice";
 import * as LucideIcons from "lucide-react";
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 
@@ -18,10 +18,12 @@ export default function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen?: bo
   const dispatch = useDispatch<AppDispatch>();
   const favoritesMenu = useSelector(selectFavorites);
   const menuItems = useSelector((state: RootState) => state.menu.items);
+  
   useEffect(() => {
     dispatch(fetchMenu());
     dispatch(fetchFavorites());
   }, [dispatch]);
+  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,14 +31,12 @@ export default function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen?: bo
   }, [lang, i18n]);
 
   if (i18n.language !== lang) return null;
-  
-  // API'den gelen menü verilerini kullan
-  const apiMenuItems = useSelector(selectMenu);
 
   const handleNavigate = (href: string) => {
     navigate(href);
     if (onMobileClose) onMobileClose();
   };
+  
   const handleLogout = () => {
     dispatch(logoutUser());
     if (onMobileClose) onMobileClose();

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { AppDispatch, RootState, store } from '@/lib/store';
 import { fetchPageRoutes, setCurrentPageNumber, setPageSize, clearError } from '@/lib/pageSlice';
 
-import { Eye, Edit, Trash2, Plus } from 'lucide-react';
+import { Eye, Edit, Plus } from 'lucide-react';
 import { Table, Pagination, Button, Space, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 
@@ -45,7 +45,6 @@ const PagesRoute: React.FC = () => {
 
   const [searchTerm] = useState('');
   const [selectedCategory] = useState('');
-  const [showFilters] = useState(false);
 
   useEffect(() => {
     dispatch(clearError());
