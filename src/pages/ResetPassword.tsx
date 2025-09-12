@@ -31,7 +31,7 @@ export default function ResetPassword() {
 
   if (i18n.language !== lang) return null;
 
-  const handleSubmit = async (values: { password: string }) => {
+  const handleSubmit = async (values: { password: string; email: string }) => {
     const id = searchParams.get('id');
     const token = searchParams.get('token');
     if (!id || !token) {
@@ -43,7 +43,8 @@ export default function ResetPassword() {
       const resetData = {
         id,
         token,
-        password: values.password
+        password: values.password,
+        email: values.email
       };
       
       const result = await dispatch(resetPassword(resetData)).unwrap();
@@ -72,6 +73,20 @@ export default function ResetPassword() {
           </div>
           <Typography.Title level={2} style={{ textAlign: 'center', marginBottom: 24 }}>{t('reset.title')}</Typography.Title>
           <Form layout="vertical" onFinish={handleSubmit}>
+            <Form.Item 
+              label={t('reset.email')} 
+              name="email" 
+              rules={[
+                { required: true, message: t('reset.emailRequired') },
+                { type: 'email', message: t('reset.emailInvalid') }
+              ]}
+            > 
+              <Input
+                placeholder={t('reset.email')}
+                autoComplete="email"
+                type="email"
+              />
+            </Form.Item>
             <Form.Item label={t('reset.password')} name="password" rules={[{ required: true, message: t('reset.password') }]}> 
               <Input.Password
                 placeholder={t('reset.password')}

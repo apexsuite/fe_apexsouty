@@ -11,13 +11,11 @@ import {
   setCurrentPageNumber,
   setPageSize
 } from '@/lib/roleSlice';
-import { Plus } from 'lucide-react';
-import { message, Card, Typography } from 'antd';
+import { Plus, Search } from 'lucide-react';
+import { message, Card, Typography, Pagination } from 'antd';
 
 // Import components
 import RoleTable from '@/components/roles/RoleTable';
-import RolePagination from '@/components/roles/RolePagination';
-import RoleEmptyState from '@/components/roles/RoleEmptyState';
 import RoleDeleteModal from '@/components/roles/RoleDeleteModal';
 
 const { Title, Paragraph } = Typography;
@@ -33,7 +31,7 @@ const Roles: React.FC = () => {
   // Debug için roles state'ini logla
   console.log('Roles State:', { roles, loading, error, totalPages, currentPageNumber, pageSize });
   
-  const [searchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedRoleValue] = useState<string>('all');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [roleToDelete, setRoleToDelete] = useState<{ id: string; name: string } | null>(null);
@@ -52,8 +50,8 @@ const Roles: React.FC = () => {
   useEffect(() => {
     if (searchTerm !== '' || selectedRoleValue !== 'all') {
       dispatch(setCurrentPageNumber(1));
-      loadRoles();
     }
+    loadRoles();
   }, [searchTerm, selectedRoleValue]);
 
   const loadRoles = () => {
@@ -75,15 +73,6 @@ const Roles: React.FC = () => {
     dispatch(fetchRoles(params));
   };
 
-  const handlePageChange = (page: number, newPageSize?: number) => {
-    if (newPageSize && newPageSize !== pageSize) {
-      dispatch(setPageSize(newPageSize));
-      dispatch(setCurrentPageNumber(1));
-    } else {
-      dispatch(setCurrentPageNumber(page));
-    }
-    // loadRoles() kaldırıldı çünkü useEffect zaten tetiklenecek
-  };
 
   const handleCreateRole = () => {
     navigate('/roles/create');
@@ -130,7 +119,22 @@ const Roles: React.FC = () => {
     }
   };
 
-  if (loading && roles.length === 0) {
+  const handlePageChange = (page: number, newPageSize?: number) => {
+    if (newPageSize && newPageSize !== pageSize) {
+      dispatch(setPageSize(newPageSize));
+      dispatch(setCurrentPageNumber(1));
+    } else {
+      dispatch(setCurrentPageNumber(page));
+    }
+  };
+
+  const handlePageSizeChange = (size: number) => {
+    dispatch(setPageSize(size));
+    dispatch(setCurrentPageNumber(1));
+  };
+
+  // Sadece ilk yükleme sırasında loading göster
+  if (loading && roles.length === 0 && !searchTerm && selectedRoleValue === 'all') {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
@@ -162,15 +166,33 @@ const Roles: React.FC = () => {
           </div>
         </Card>
 
-        {/* Filters 
-        <RoleFilters
-          searchTerm={searchTerm}
-          selectedRoleValue={selectedRoleValue}
-          onSearchChange={setSearchTerm}
-          onRoleValueChange={setSelectedRoleValue}
-          onSearch={handleSearch}
-        />
-*/}
+        {/* Filters */}
+        <Card
+          style={{
+            backgroundColor: 'var(--ant-color-bg-container)',
+            borderColor: 'var(--ant-color-border)',
+            marginBottom: '1.5rem'
+          }}
+        >
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search roles..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                />
+                <Search 
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" 
+                  size={20} 
+                />
+              </div>
+            </div>
+
+          </div>
+        </Card>
         {/* Error Message */}
         {error && (
           <Card className="mb-6 border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800">
@@ -180,33 +202,57 @@ const Roles: React.FC = () => {
           </Card>
         )}
 
-        {/* Roles Table or Empty State */}
-        {roles.length > 0 ? (
-          <>
-            <RoleTable
-              roles={roles}
-              loading={loading}
-              onView={handleViewRole}
-              onEdit={handleEditRole}
-              onDelete={handleDeleteRole}
-              onStatusChange={handleStatusChange}
+        {/* Roles Table */}
+        <RoleTable
+          roles={roles}
+          loading={loading}
+          onView={handleViewRole}
+          onEdit={handleEditRole}
+          onDelete={handleDeleteRole}
+          onStatusChange={handleStatusChange}
+          searchTerm={searchTerm}
+          selectedRoleValue={selectedRoleValue}
+        />
+        
+        <div style={{
+          marginTop: '16px',
+          display: 'flex',
+          justifyContent: 'right',
+          padding: '16px',
+          backgroundColor: 'var(--ant-color-bg-container)',
+          border: '1px solid var(--ant-color-border)',
+          borderRadius: '8px'
+        }}>
+            <Pagination
+              current={currentPageNumber}
+              total={totalPages * pageSize}
+              pageSize={pageSize}
+              showSizeChanger
+              showQuickJumper
+              showTotal={(_, range) => (
+                <span style={{ 
+                  color: 'var(--ant-color-text)',
+                  fontSize: '14px',
+                  fontWeight: '500'
+                }}>
+                  {searchTerm || selectedRoleValue !== 'all' ? (
+                    `${roles?.length || 0} items found`
+                  ) : (
+                    `${range[0]}-${range[1]} of ${totalPages * pageSize} items`
+                  )}
+                </span>
+              )}
+              onChange={(page, size) => {
+                handlePageChange(page, size);
+              }}
+              onShowSizeChange={(_current, size) => {
+                handlePageSizeChange(size);
+              }}
+              style={{
+                color: 'var(--ant-color-text)'
+              }}
             />
-            
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <RolePagination
-                current={currentPageNumber}
-                total={totalPages * pageSize}
-                pageSize={pageSize}
-                onChange={handlePageChange}
-              />
-            )}
-          </>
-        ) : (
-          <Card>
-            <RoleEmptyState onCreateRole={handleCreateRole} />
-          </Card>
-        )}
+          </div>
       </div>
 
       {/* Delete Modal */}

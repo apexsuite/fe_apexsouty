@@ -5,9 +5,27 @@ import { useTranslation } from 'react-i18next';
 import { AppDispatch, RootState, store } from '@/lib/store';
 import { fetchPageRoutes, setCurrentPageNumber, setPageSize, clearError } from '@/lib/pageSlice';
 
-import { Eye, Edit, Plus } from 'lucide-react';
-import { Table, Pagination, Button, Space, Tag } from 'antd';
+import { Eye, Edit, Plus, Search } from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
+import { Table, Pagination, Button, Space, Tag, Card } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
+
+// Function to get Lucide icon dynamically
+const getLucideIcon = (iconName: string) => {
+  if (!iconName) return LucideIcons.Circle;
+  
+  // Convert icon name to PascalCase (e.g., 'home' -> 'Home', 'file-text' -> 'FileText')
+  const pascalCaseName = iconName
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join('');
+  
+  // Get the icon component from LucideIcons
+  const IconComponent = (LucideIcons as any)[pascalCaseName];
+  
+  // Return the icon component or fallback to Circle
+  return IconComponent || LucideIcons.Circle;
+};
 
 const PagesRoute: React.FC = () => {
   const { t } = useTranslation();
@@ -17,13 +35,8 @@ const PagesRoute: React.FC = () => {
     (state: RootState) => state.page
   );
   
-  // Debug için pageRoutes'u logla
-  console.log('PageRoutes in component:', pageRoutes);
-  console.log('PageRoutes length:', pageRoutes?.length);
+
   const theme = useSelector((state: RootState) => state.theme.theme);
-  
-  // Debug için tema değerini logla ve force re-render için key kullan
-  console.log('Current theme in PagesRoute:', theme);
   
   // Tema değişikliğini zorlamak için key kullan
   const themeKey = theme === 'light' ? 'light' : 'dark';
@@ -43,20 +56,25 @@ const PagesRoute: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-  const [searchTerm] = useState('');
-  const [selectedCategory] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     dispatch(clearError());
     loadPages();
-  }, [currentPageNumber, pageSize, searchTerm, selectedCategory]);
+  }, [currentPageNumber, pageSize, searchTerm]);
+
+  // Arama kelimesi değiştiğinde sayfa numarasını sıfırla
+  useEffect(() => {
+    if (searchTerm !== '') {
+      dispatch(setCurrentPageNumber(1));
+    }
+  }, [searchTerm]);
 
   const loadPages = () => {
     dispatch(fetchPageRoutes({
       page: currentPageNumber,
       limit: pageSize,
-      search: searchTerm || undefined,
-      category: selectedCategory || undefined,
+      name: searchTerm,
     }));
   };
 
@@ -85,22 +103,19 @@ const PagesRoute: React.FC = () => {
 
   const columns: ColumnsType<any> = [
     {
-      title: 'Component',
-      key: 'component',
-      dataIndex: 'component',
-      render: (component: string, record: any) => (
-        <Space>
-          <span style={{ fontSize: '16px' }}>{record.icon}</span>
-          <span style={{ fontWeight: 500 }}>{component}</span>
-        </Space>
-      ),
-    },
-    {
       title: 'Name',
       key: 'name',
       dataIndex: 'name',
       render: (name: string) => (
         <span style={{ fontWeight: 500 }}>{name}</span>
+      ),
+    },
+    {
+      title: 'Component',
+      key: 'component',
+      dataIndex: 'component',
+      render: (component: string) => (
+        <span style={{ fontWeight: 500 }}>{component}</span>
       ),
     },
     {
@@ -114,14 +129,17 @@ const PagesRoute: React.FC = () => {
       ),
     },
     {
-      title: 'Description',
-      key: 'description',
-      dataIndex: 'description',
-      render: (description: string) => (
-        <div style={{ maxWidth: '300px' }} title={description}>
-          {description}
-        </div>
-      ),
+      title: 'Icon',
+      key: 'icon',
+      dataIndex: 'icon',
+      render: (icon: string) => {
+        const IconComponent = getLucideIcon(icon);
+        return (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <IconComponent size={20} style={{ color: '#1890ff' }} />
+          </div>
+        );
+      },
     },
     {
       title: 'Status',
@@ -130,6 +148,26 @@ const PagesRoute: React.FC = () => {
       render: (isActive: boolean) => (
         <Tag color={isActive ? 'green' : 'red'}>
           {isActive ? 'Active' : 'Inactive'}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Visible',
+      key: 'visible',
+      dataIndex: 'is_visible',
+      render: (isVisible: boolean) => (
+        <Tag color={isVisible ? 'green' : 'red'}>
+          {isVisible ? 'Visible' : 'Hidden'}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Permission Count',
+      key: 'permission_count',
+      dataIndex: 'permission_count',
+      render: (count: number) => (
+        <Tag color="purple">
+          {count || 0}
         </Tag>
       ),
     },
@@ -171,7 +209,8 @@ const PagesRoute: React.FC = () => {
     },
   ];
 
-  if (loading && pageRoutes.length === 0) {
+  // Sadece ilk yükleme sırasında loading göster
+  if (loading && pageRoutes.length === 0 && !searchTerm) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
@@ -224,6 +263,44 @@ const PagesRoute: React.FC = () => {
       
         </div>
 
+        {/* Search and Filters */}
+        <Card
+          style={{
+            backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
+            borderColor: theme === 'dark' ? '#374151' : '#e5e7eb',
+            marginBottom: '1.5rem'
+          }}
+        >
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search pages..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                    theme === 'dark' 
+                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                      : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                  }`}
+                  style={{
+                    backgroundColor: theme === 'dark' ? '#374151' : '#ffffff',
+                    borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
+                    color: theme === 'dark' ? '#ffffff' : '#111827'
+                  }}
+                />
+                <Search 
+                  className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-400'}`} 
+                  size={20} 
+                />
+              </div>
+            </div>
+            
+
+          </div>
+        </Card>
+
         {/* Error Message */}
         {error && (
           <div className={`mb-6 rounded-lg p-4 transition-colors duration-200 ${
@@ -253,27 +330,65 @@ const PagesRoute: React.FC = () => {
               backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
             }}
             className={theme === 'dark' ? 'dark-table' : ''}
+            locale={{
+              emptyText: (
+                <div style={{ 
+                  padding: '40px 20px',
+                  textAlign: 'center',
+                  color: theme === 'dark' ? '#9ca3af' : '#6b7280'
+                }}>
+                  {searchTerm ? (
+                    <div>
+                      <p style={{ fontSize: '16px', marginBottom: '8px' }}>
+                        No pages found matching your search criteria
+                      </p>
+                      <p style={{ fontSize: '14px', opacity: 0.7 }}>
+                        Try adjusting your search terms or filters
+                      </p>
+                    </div>
+                  ) : (
+                    <div>
+                      <p style={{ fontSize: '16px', marginBottom: '8px' }}>
+                        No pages available
+                      </p>
+                      <p style={{ fontSize: '14px', opacity: 0.7 }}>
+                        Create your first page to get started
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )
+            }}
           />
         </div>
 
-        {/* Ant Design Pagination */}
-        {totalPages > 1 && (
-          <div style={{ 
-            marginTop: '16px', 
-            display: 'flex', 
-            justifyContent: 'center',
-            padding: '16px',
-            backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
-            border: `1px solid ${theme === 'dark' ? '#374151' : '#e5e7eb'}`,
-            borderRadius: '8px'
-          }}>
+        <div style={{
+          marginTop: '16px',
+          display: 'flex',
+          justifyContent: 'right',
+          padding: '16px',
+            backgroundColor: 'var(--ant-color-bg-container)',
+            border: '1px solid var(--ant-color-border)',
+          borderRadius: '8px'
+        }}>
             <Pagination
               current={currentPageNumber}
               total={totalPages * pageSize}
               pageSize={pageSize}
               showSizeChanger
-              showQuickJumper
-              showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
+              showTotal={(_, range) => (
+                <span style={{ 
+                  color: theme === 'dark' ? '#d1d5db' : '#374151',
+                  fontSize: '14px',
+                  fontWeight: '500'
+                }}>
+                  {searchTerm ? (
+                    `${pageRoutes?.length || 0} items found`
+                  ) : (
+                    `${range[0]}-${range[1]} of ${totalPages * pageSize} items`
+                  )}
+                </span>
+              )}
               onChange={(page, size) => {
                 handlePageChange(page);
                 if (size !== pageSize) {
@@ -283,11 +398,11 @@ const PagesRoute: React.FC = () => {
               onShowSizeChange={(_current, size) => {
                 handlePageSizeChange(size);
               }}
+              style={{
+                color: theme === 'dark' ? '#f9fafb' : '#111827'
+              }}
             />
           </div>
-        )}
-
-     
 
       </div>
     </div>

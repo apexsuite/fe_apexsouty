@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Search, Loader2, Star, Grid, Folder, Sliders, Network, AppWindow, HardDrive, Activity, Cloud, Database, Server, Zap, BarChart2, Layers } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { AppDispatch } from "@/lib/store";
 import { fetchMenu, selectMenu, MenuItem, addFavorite } from "@/lib/menuSlice";
 import * as LucideIcons from "lucide-react";
@@ -9,6 +10,7 @@ import * as LucideIcons from "lucide-react";
 interface SearchResult {
   id: string | number;
   label: string;
+  path?: string;
 }
 
 interface FavoriteMenuItem {
@@ -31,6 +33,7 @@ const ICONS = { Grid, Folder, Sliders, Network, AppWindow, HardDrive, Activity, 
 
 export default function SearchBar({ onSearch, placeholder = "Ara...", minimal = false }: SearchBarProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -45,8 +48,8 @@ export default function SearchBar({ onSearch, placeholder = "Ara...", minimal = 
   const [menuFetched, setMenuFetched] = useState(false);
 
   const dispatchRedux = useDispatch<AppDispatch>();
-  const handleFavorite = (id: string, pageRouteID?: string) => {
-    dispatchRedux(addFavorite(pageRouteID || id));
+  const handleFavorite = (pageRouteID: string) => {
+    dispatchRedux(addFavorite(pageRouteID));
   };
 
   const [history, setHistory] = useState<SearchResult[]>([
@@ -95,6 +98,8 @@ export default function SearchBar({ onSearch, placeholder = "Ara...", minimal = 
     setActiveIndex(-1);
     if ('href' in item && item.href) {
       window.location.href = item.href;
+    } else if ('path' in item && item.path) {
+      navigate(item.path);
     }
   };
 
@@ -122,7 +127,7 @@ export default function SearchBar({ onSearch, placeholder = "Ara...", minimal = 
     return (
       <div className="relative w-full max-w-xs">
         <div className="flex items-center border rounded bg-background px-2 py-1">
-          <Search size={18} className="text-gray-500 dark:text-gray-400 mr-1" />
+          <Search size={18} className="text-gray-600 dark:text-gray-300 mr-1" />
           <input
             type="text"
             className="flex-1 bg-transparent outline-none text-sm text-gray-900 dark:text-gray-100"
@@ -141,7 +146,7 @@ export default function SearchBar({ onSearch, placeholder = "Ara...", minimal = 
       <div className="flex items-center border rounded-lg bg-background px-3.5 py-2.5 focus-within:ring-2 focus-within:ring-green-500"
         onClick={handleOpenDropdown}
       >
-        <Search size={20} className="text-gray-500 dark:text-gray-400 mr-2.5" />
+        <Search size={20} className="text-gray-600 dark:text-gray-300 mr-2.5" />
         <input
           ref={inputRef}
           type="text"
@@ -152,7 +157,7 @@ export default function SearchBar({ onSearch, placeholder = "Ara...", minimal = 
           onFocus={handleOpenDropdown}
           onKeyDown={handleKeyDown}
         />
-        {loading && <Loader2 size={20} className="animate-spin ml-2.5 text-gray-500 dark:text-gray-400" />}
+        {loading && <Loader2 size={20} className="animate-spin ml-2.5 text-gray-600 dark:text-gray-300" />}
       </div>
       {showDropdown && (
         <div ref={dropdownRef} className="absolute left-0 right-0 mt-1 bg-background border border-gray-200 dark:border-gray-700 rounded shadow-lg z-50 max-h-96 overflow-auto">
@@ -187,7 +192,16 @@ export default function SearchBar({ onSearch, placeholder = "Ara...", minimal = 
                   const Icon = fav.icon && (LucideIcons as any)[fav.icon];
                   const isFav = fav.isFavourite === true;
                   return (
-                    <div key={fav.id} className="flex items-center justify-between rounded-md border border-border bg-background dark:bg-yellow-950/80 px-3 py-2 hover:shadow transition-all dark:border-yellow-900 dark:hover:bg-yellow-900/80">
+                    <div 
+                      key={fav.id} 
+                      className="flex items-center justify-between rounded-md border border-border bg-background dark:bg-yellow-950/80 px-3 py-2 hover:shadow transition-all dark:border-yellow-900 dark:hover:bg-yellow-900/80 cursor-pointer"
+                      onClick={() => {
+                        if (fav.path) {
+                          navigate(fav.path);
+                          setShowDropdown(false);
+                        }
+                      }}
+                    >
                       <div className="flex items-center gap-3 min-w-0">
                         <span className="flex items-center justify-center w-8 h-8 min-w-[30px] min-h-[30px] rounded-full bg-yellow-100 dark:bg-yellow-800 text-yellow-700 dark:text-yellow-100">
                           {Icon ? <Icon size={18} style={{ display: 'block' }} /> : (
@@ -203,7 +217,10 @@ export default function SearchBar({ onSearch, placeholder = "Ara...", minimal = 
                       </div>
                       <button
                         className="ml-2 p-1 rounded-full hover:bg-yellow-100 dark:hover:bg-yellow-700 transition"
-                        onClick={() => handleFavorite(fav.id, (fav as any).pageRouteID)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleFavorite(fav.pageRouteID || fav.id);
+                        }}
                         title="Favorilere ekle"
                       >
                         <Star size={20} fill={isFav ? '#facc15' : 'none'} stroke="#facc15" />

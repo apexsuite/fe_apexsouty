@@ -62,6 +62,7 @@ export interface ApiResponse<T> {
 // Permission state interface
 interface PermissionState {
   permissions: Permission[];
+  filteredPermissions: Permission[]; // Client-side filtered permissions
   currentPermission: Permission | null;
   myPermissions: string[]; // For /api/permissions/my-permissions
   loading: boolean;
@@ -73,11 +74,13 @@ interface PermissionState {
   updateLoading: boolean;
   deleteLoading: boolean;
   statusChangeLoading: boolean;
+  isSearching: boolean; // Arama yapılıp yapılmadığını takip et
 }
 
 // Initial state
 const initialState: PermissionState = {
   permissions: [],
+  filteredPermissions: [],
   currentPermission: null,
   myPermissions: [],
   loading: false,
@@ -89,6 +92,7 @@ const initialState: PermissionState = {
   updateLoading: false,
   deleteLoading: false,
   statusChangeLoading: false,
+  isSearching: false,
 };
 
 // Async thunks
@@ -246,6 +250,16 @@ const permissionSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
+    setSearching: (state, action) => {
+      state.isSearching = action.payload;
+    },
+    setFilteredPermissions: (state, action) => {
+      state.filteredPermissions = action.payload;
+    },
+    clearSearch: (state) => {
+      state.isSearching = false;
+      state.filteredPermissions = [];
+    },
   },
   extraReducers: (builder) => {
     // fetchPermissions
@@ -258,7 +272,17 @@ const permissionSlice = createSlice({
         state.loading = false;
         // Filter out null values from the permissions array
         const validPermissions = (action.payload.data?.items || []).filter((permission: any) => permission !== null);
-        state.permissions = validPermissions;
+        
+        // Eğer arama yapılıyorsa ve sonuç boşsa, mevcut permissions'ı koru
+        if (state.isSearching && validPermissions.length === 0) {
+          // Arama yapılıyor ve sonuç boş - mevcut permissions'ı koru
+          state.filteredPermissions = [];
+        } else {
+          // Normal yükleme veya arama sonucu var
+          state.permissions = validPermissions;
+          state.filteredPermissions = validPermissions;
+        }
+        
         state.totalPages = action.payload.data?.pageCount || 0;
         state.currentPageNumber = action.payload.data?.page || 1;
       })
@@ -377,5 +401,13 @@ const permissionSlice = createSlice({
   },
 });
 
-export const { setCurrentPageNumber, setPageSize, clearCurrentPermission, clearError } = permissionSlice.actions;
+export const { 
+  setCurrentPageNumber, 
+  setPageSize, 
+  clearCurrentPermission, 
+  clearError, 
+  setSearching, 
+  setFilteredPermissions, 
+  clearSearch 
+} = permissionSlice.actions;
 export default permissionSlice.reducer; 

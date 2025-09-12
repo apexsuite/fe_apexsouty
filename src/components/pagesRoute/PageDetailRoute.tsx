@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { AppDispatch, RootState } from '@/lib/store';
 import { fetchPageRouteById, deletePageRoute, clearCurrentPageRoute, clearError } from '@/lib/pageSlice';
-import { ArrowLeft, Edit, Trash2, Eye, Calendar, Tag } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Calendar, Tag } from 'lucide-react';
 
 const PageDetailRoute: React.FC = () => {
   const { t } = useTranslation();
@@ -150,10 +150,6 @@ const PageDetailRoute: React.FC = () => {
                   <Calendar size={16} />
                   {formatDate(currentPageRoute.createdAt)}
                 </div>
-                <div className="flex items-center gap-1">
-                  <Eye size={16} />
-                  {currentPageRoute.is_visible ? t('pages.visible') : t('pages.hidden')}
-                </div>
                 {currentPageRoute.IsUnderConstruction && (
                   <div className="flex items-center gap-1">
                     <Tag size={16} />
@@ -164,13 +160,6 @@ const PageDetailRoute: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className={`px-3 py-1 text-sm font-medium rounded-full ${
-                currentPageRoute.is_active 
-                  ? 'bg-green-100 text-green-800' 
-                  : 'bg-yellow-100 text-yellow-800'
-              }`}>
-                {currentPageRoute.is_active ? t('pages.status.published') : t('pages.status.draft')}
-              </span>
               <button
                 onClick={handleEdit}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
@@ -192,10 +181,10 @@ const PageDetailRoute: React.FC = () => {
         {/* Icon */}
         {currentPageRoute.icon && (
           <div className="mb-6">
-            <div className={`w-full h-64 rounded-lg shadow-sm flex items-center justify-center ${
+            <div className={`w-full h-24 rounded-lg shadow-sm flex items-center justify-center ${
               theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'
             }`}>
-              <div className={`text-6xl ${theme === 'dark' ? 'text-gray-600' : 'text-gray-500'}`}>
+              <div className={`text-3xl ${theme === 'dark' ? 'text-gray-600' : 'text-gray-500'}`}>
                 {currentPageRoute.icon}
               </div>
             </div>
@@ -248,38 +237,6 @@ const PageDetailRoute: React.FC = () => {
               </div>
             )}
 
-            <div>
-              <label className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                {t('pages.createdAt')}
-              </label>
-              <p className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>
-                {formatDate(currentPageRoute.createdAt)}
-              </p>
-            </div>
-
-            <div>
-              <label className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                {t('pages.updatedAt')}
-              </label>
-              <p className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>
-                {currentPageRoute.updatedAt ? formatDate(currentPageRoute.updatedAt) : t('pages.notUpdated')}
-              </p>
-            </div>
-
-            <div>
-              <label className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                {t('pages.status')}
-              </label>
-              <p className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>
-                <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                  currentPageRoute.is_active 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {currentPageRoute.is_active ? t('pages.status.published') : t('pages.status.draft')}
-                </span>
-              </p>
-            </div>
 
             <div>
               <label className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
@@ -292,6 +249,19 @@ const PageDetailRoute: React.FC = () => {
                     : 'bg-gray-800 text-gray-200'
                 }`}>
                   {currentPageRoute.is_visible ? t('pages.visible') : t('pages.hidden')}
+                </span>
+              </p>
+            </div>
+
+
+
+            <div>
+              <label className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                Permission Count
+              </label>
+              <p className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>
+                <span className="px-2 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-800">
+                  {currentPageRoute.permissionCount || 0}
                 </span>
               </p>
             </div>
@@ -315,6 +285,54 @@ const PageDetailRoute: React.FC = () => {
             </div>
           )}
         </div>
+
+        {/* Permissions List */}
+        {currentPageRoute.page_route_permissions && currentPageRoute.page_route_permissions.length > 0 && (
+          <div className={`rounded-lg shadow-sm p-6 mb-6 ${
+            theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+          }`}>
+            <h2 className={`text-lg font-semibold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              Page Permissions ({currentPageRoute.page_route_permissions.length})
+            </h2>
+            
+            <div className="space-y-3">
+              {currentPageRoute.page_route_permissions.map((permission: any) => (
+                <div key={permission.id} className={`p-4 rounded-lg border ${
+                  theme === 'dark' 
+                    ? 'bg-gray-700 border-gray-600' 
+                    : 'bg-gray-50 border-gray-200'
+                }`}>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h3 className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        {permission.name}
+                      </h3>
+                      <p className={`text-sm mt-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                        {permission.description}
+                      </p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className={`px-2 py-1 text-xs font-mono rounded ${
+                          theme === 'dark' 
+                            ? 'bg-gray-600 text-gray-200' 
+                            : 'bg-gray-200 text-gray-700'
+                        }`}>
+                          {permission.label}
+                        </span>
+                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                          permission.isActive 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-red-100 text-red-800'
+                        }`}>
+                          {permission.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
       </div>
 

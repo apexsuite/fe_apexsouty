@@ -11,6 +11,8 @@ interface RoleTableProps {
   onEdit: (roleId: string) => void;
   onDelete: (roleId: string, roleName: string) => void;
   onStatusChange: (roleId: string, currentStatus: boolean) => void;
+  searchTerm?: string;
+  selectedRoleValue?: string;
 }
 
 const RoleTable: React.FC<RoleTableProps> = ({
@@ -20,6 +22,8 @@ const RoleTable: React.FC<RoleTableProps> = ({
   onEdit,
   onDelete,
   onStatusChange,
+  searchTerm,
+  selectedRoleValue,
 }) => {
   const { t } = useTranslation();
 
@@ -140,7 +144,7 @@ const RoleTable: React.FC<RoleTableProps> = ({
         rowKey="id"
         pagination={false}
         className="dark:bg-gray-800"
-                rowClassName={(_record, index) =>
+        rowClassName={(_record, index) =>
           index % 2 === 0 
             ? 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700' 
             : 'bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'
@@ -154,6 +158,35 @@ const RoleTable: React.FC<RoleTableProps> = ({
               />
             ),
           },
+        }}
+        locale={{
+          emptyText: (
+            <div style={{ 
+              padding: '40px 20px',
+              textAlign: 'center',
+              color: '#6b7280'
+            }}>
+              {searchTerm || selectedRoleValue !== 'all' ? (
+                <div>
+                  <p style={{ fontSize: '16px', marginBottom: '8px' }}>
+                    No roles found matching your search criteria
+                  </p>
+                  <p style={{ fontSize: '14px', opacity: 0.7 }}>
+                    Try adjusting your search terms or filters
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <p style={{ fontSize: '16px', marginBottom: '8px' }}>
+                    No roles available
+                  </p>
+                  <p style={{ fontSize: '14px', opacity: 0.7 }}>
+                    Create your first role to get started
+                  </p>
+                </div>
+              )}
+            </div>
+          )
         }}
       />
     </div>
