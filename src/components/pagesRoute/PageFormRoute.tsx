@@ -14,7 +14,7 @@ const PageFormRoute: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { currentPageRoute, loading, error } = useSelector((state: RootState) => state.page);
   const theme = useSelector((state: RootState) => state.theme.theme);
-  
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -59,7 +59,7 @@ const PageFormRoute: React.FC = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    
+
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
       setFormData(prev => ({
@@ -93,11 +93,17 @@ const PageFormRoute: React.FC = () => {
     setIsSubmitting(true);
 
     try {
+      // Prepare payload - set parentID to empty string if it's empty
+      const payload = { ...formData };
+      if (!payload.parentID || payload.parentID.trim() === '') {
+        payload.parentID = '';
+      }
+
       if (isEditing && currentPageRoute) {
-        await dispatch(updatePageRoute({ pageRouteId: currentPageRoute.id, pageRouteData: formData })).unwrap();
+        await dispatch(updatePageRoute({ pageRouteId: currentPageRoute.id, pageRouteData: payload })).unwrap();
         message.success(t('pages.pageUpdatedSuccessfully') || 'Page updated successfully!');
       } else {
-        await dispatch(createPageRoute(formData)).unwrap();
+        await dispatch(createPageRoute(payload)).unwrap();
         message.success(t('pages.pageCreatedSuccessfully') || 'Page created successfully!');
       }
       navigate('/page-routes');
@@ -134,9 +140,8 @@ const PageFormRoute: React.FC = () => {
         <div className="mb-6">
           <button
             onClick={handleBack}
-            className={`flex items-center gap-2 mb-4 transition-colors ${
-              theme === 'dark' ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'
-            }`}
+            className={`flex items-center gap-2 mb-4 transition-colors ${theme === 'dark' ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+              }`}
           >
             <ArrowLeft size={20} />
             {t('pages.backToPages')}
@@ -144,14 +149,12 @@ const PageFormRoute: React.FC = () => {
 
           <div className="flex justify-between items-center">
             <div>
-              <h1 className={`text-3xl font-bold ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
-              }`}>
+              <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+                }`}>
                 {isEditing ? t('pages.editPage') : t('pages.createPage')}
               </h1>
-              <p className={`mt-2 ${
-                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-              }`}>
+              <p className={`mt-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                }`}>
                 {isEditing ? t('pages.editPageSubtitle') : t('pages.createPageSubtitle')}
               </p>
             </div>
@@ -159,11 +162,10 @@ const PageFormRoute: React.FC = () => {
             <div className="flex gap-2">
               <button
                 onClick={handlePreview}
-                className={`px-4 py-2 border rounded-lg flex items-center gap-2 transition-colors ${
-                  theme === 'dark' 
-                    ? 'border-gray-600 hover:bg-gray-700 text-gray-300' 
+                className={`px-4 py-2 border rounded-lg flex items-center gap-2 transition-colors ${theme === 'dark'
+                    ? 'border-gray-600 hover:bg-gray-700 text-gray-300'
                     : 'border-gray-300 hover:bg-gray-50 text-gray-700'
-                }`}
+                  }`}
               >
                 <Eye size={16} />
                 {t('pages.preview')}
@@ -183,11 +185,10 @@ const PageFormRoute: React.FC = () => {
 
         {/* Error Message */}
         {error && (
-          <div className={`mb-6 rounded-lg p-4 ${
-            theme === 'dark' 
-              ? 'bg-red-900/20 border border-red-800' 
+          <div className={`mb-6 rounded-lg p-4 ${theme === 'dark'
+              ? 'bg-red-900/20 border border-red-800'
               : 'bg-red-50 border border-red-200'
-          }`}>
+            }`}>
             <p className={theme === 'dark' ? 'text-red-400' : 'text-red-800'}>{error}</p>
           </div>
         )}
@@ -196,7 +197,7 @@ const PageFormRoute: React.FC = () => {
         <form id="pageForm" onSubmit={handleSubmit} className="space-y-6">
           <div className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-sm p-6 border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
             <h2 className={`text-lg font-semibold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{t('pages.basicInfo')}</h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
@@ -208,11 +209,10 @@ const PageFormRoute: React.FC = () => {
                   value={formData.name}
                   onChange={handleInputChange}
                   required
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    theme === 'dark' 
-                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${theme === 'dark'
+                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
                       : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                  }`}
+                    }`}
                   placeholder={t('pages.enterName')}
                 />
               </div>
@@ -227,11 +227,10 @@ const PageFormRoute: React.FC = () => {
                   value={formData.path}
                   onChange={handleInputChange}
                   required
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm ${
-                    theme === 'dark' 
-                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm ${theme === 'dark'
+                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
                       : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                  }`}
+                    }`}
                   placeholder="/sayfa-yolu"
                 />
               </div>
@@ -245,11 +244,10 @@ const PageFormRoute: React.FC = () => {
                   name="component"
                   value={formData.component}
                   onChange={handleInputChange}
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    theme === 'dark' 
-                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${theme === 'dark'
+                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
                       : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                  }`}
+                    }`}
                   placeholder="ComponentName"
                 />
               </div>
@@ -263,11 +261,10 @@ const PageFormRoute: React.FC = () => {
                   name="icon"
                   value={formData.icon}
                   onChange={handleInputChange}
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    theme === 'dark' 
-                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${theme === 'dark'
+                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
                       : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                  }`}
+                    }`}
                   placeholder="🏠"
                 />
               </div>
@@ -317,7 +314,7 @@ const PageFormRoute: React.FC = () => {
 
           <div className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-sm p-6 border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
             <h2 className={`text-lg font-semibold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{t('pages.description')}</h2>
-            
+
             <div>
               <label className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                 {t('pages.description')}
@@ -327,11 +324,10 @@ const PageFormRoute: React.FC = () => {
                 value={formData.description}
                 onChange={handleInputChange}
                 rows={6}
-                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                  theme === 'dark' 
-                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${theme === 'dark'
+                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
                     : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                }`}
+                  }`}
                 placeholder={t('pages.enterDescription')}
               />
             </div>

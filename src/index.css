@@ -267,4 +267,348 @@ input:-webkit-autofill:active {
   color: #e5e7eb !important;
   opacity: 1 !important;
   text-shadow: none !important;
+}
+
+/* Dark mode search icon styles - more specific selectors */
+.dark-search .ant-input-search-icon,
+.dark-search .ant-input-affix-wrapper .ant-input-search-icon {
+  color: #ffffff !important;
+}
+
+.dark-search .ant-input-search-icon svg,
+.dark-search .ant-input-affix-wrapper .ant-input-search-icon svg {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+.dark-search .ant-input-search-icon .anticon,
+.dark-search .ant-input-affix-wrapper .ant-input-search-icon .anticon {
+  color: #ffffff !important;
+}
+
+/* Force override for search icon */
+.dark-search .ant-input-search .ant-input-search-icon,
+.dark-search .ant-input-search .ant-input-affix-wrapper .ant-input-search-icon {
+  color: #ffffff !important;
+}
+
+.dark-search .ant-input-search .ant-input-search-icon svg,
+.dark-search .ant-input-search .ant-input-affix-wrapper .ant-input-search-icon svg {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+/* Clear icon styling */
+.dark-search .ant-input-clear-icon {
+  color: #a6a6a6 !important;
+}
+
+.dark-search .ant-input-clear-icon:hover {
+  color: #ffffff !important;
+}
+
+/* Ultra high specificity selectors for dark mode search */
+.dark-search.ant-input-search .ant-input-affix-wrapper .ant-input-search-icon,
+.dark-search.ant-input-search .ant-input-affix-wrapper .ant-input-search-icon svg,
+.dark-search.ant-input-search .ant-input-affix-wrapper .ant-input-search-icon .anticon {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+/* Global dark mode override for search icons */
+[data-theme="dark"] .ant-input-search .ant-input-search-icon,
+[data-theme="dark"] .ant-input-search .ant-input-affix-wrapper .ant-input-search-icon {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .ant-input-search .ant-input-search-icon svg,
+[data-theme="dark"] .ant-input-search .ant-input-affix-wrapper .ant-input-search-icon svg {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+/* Force override with !important and high specificity */
+.dark-search .ant-input-search .ant-input-affix-wrapper .ant-input-search-icon {
+  color: #ffffff !important;
+}
+
+.dark-search .ant-input-search .ant-input-affix-wrapper .ant-input-search-icon svg {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+.dark-search .ant-input-search .ant-input-affix-wrapper .ant-input-search-icon .anticon {
+  color: #ffffff !important;
+}
+
+/* Maximum specificity override for search icons */
+.dark-search.ant-input-search .ant-input-affix-wrapper .ant-input-search-icon,
+.dark-search.ant-input-search .ant-input-affix-wrapper .ant-input-search-icon svg,
+.dark-search.ant-input-search .ant-input-affix-wrapper .ant-input-search-icon .anticon,
+.dark-search.ant-input-search .ant-input-affix-wrapper .ant-input-search-icon * {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+/* Override all possible search icon states */
+.dark-search .ant-input-search .ant-input-affix-wrapper .ant-input-search-icon,
+.dark-search .ant-input-search .ant-input-affix-wrapper .ant-input-search-icon:hover,
+.dark-search .ant-input-search .ant-input-affix-wrapper .ant-input-search-icon:focus,
+.dark-search .ant-input-search .ant-input-affix-wrapper .ant-input-search-icon:active {
+  color: #ffffff !important;
+}
+
+/* Force white color for all search icon elements */
+.dark-search .ant-input-search .ant-input-affix-wrapper .ant-input-search-icon *,
+.dark-search .ant-input-search .ant-input-affix-wrapper .ant-input-search-icon svg *,
+.dark-search .ant-input-search .ant-input-affix-wrapper .ant-input-search-icon .anticon * {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+/* CSS Custom Property override */
+.dark-search .ant-input-search .ant-input-affix-wrapper .ant-input-search-icon {
+  --ant-input-search-icon-color: #ffffff !important;
+  color: #ffffff !important;
+}
+
+.dark-search .ant-input-search .ant-input-affix-wrapper .ant-input-search-icon svg {
+  --ant-input-search-icon-color: #ffffff !important;
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+/* Ultimate override with CSS custom property */
+.dark-search .ant-input-search .ant-input-affix-wrapper .ant-input-search-icon,
+.dark-search .ant-input-search .ant-input-affix-wrapper .ant-input-search-icon svg,
+.dark-search .ant-input-search .ant-input-affix-wrapper .ant-input-search-icon .anticon {
+  --ant-input-search-icon-color: #ffffff !important;
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+/* Dark mode input styles */
+.dark-search .ant-input {
+  color: #ffffff !important;
+}
+
+.dark-search .ant-input::placeholder {
+  color: #a6a6a6 !important;
+}
+
+/* Dark mode clear button */
+.dark-search .ant-input-clear-icon {
+  color: #a6a6a6 !important;
+}
+
+.dark-search .ant-input-clear-icon:hover {
+  color: #ffffff !important;
+}
+
+/* Custom Switch styles to fix icon display issues */
+.custom-switch.ant-switch .ant-switch-inner {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.custom-switch.ant-switch .ant-switch-inner .anticon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 12px !important;
+}
+
+/* Ensure only one icon is visible at a time */
+.custom-switch.ant-switch .ant-switch-inner .anticon:not(:first-child) {
+  display: none !important;
+}
+
+/* Fix for checked state */
+.custom-switch.ant-switch-checked .ant-switch-inner .anticon:first-child {
+  display: flex !important;
+}
+
+/* Fix for unchecked state */
+.custom-switch.ant-switch:not(.ant-switch-checked) .ant-switch-inner .anticon:last-child {
+  display: flex !important;
+}
+
+/* Dark mode Switch styling - inactive state red */
+.dark-switch.ant-switch:not(.ant-switch-checked) {
+  background-color: #dc2626 !important; /* Tailwind red-600 */
+}
+
+.dark-switch.ant-switch:not(.ant-switch-checked):hover {
+  background-color: #b91c1c !important; /* Tailwind red-700 */
+}
+
+.dark-switch.ant-switch:not(.ant-switch-checked):focus {
+  background-color: #dc2626 !important;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2) !important;
+}
+
+/* Dark mode Pagination styles */
+.dark .ant-pagination-item {
+  background: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #f9fafb !important;
+}
+
+.dark .ant-pagination-item:hover {
+  background: #4b5563 !important;
+  border-color: #6b7280 !important;
+  color: #ffffff !important;
+}
+
+.dark .ant-pagination-item-active {
+  background: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #ffffff !important;
+}
+
+.dark .ant-pagination-item-active a {
+  color: #ffffff !important;
+}
+
+.dark .ant-pagination-prev,
+.dark .ant-pagination-next {
+  background: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #ffffff !important;
+}
+
+.dark .ant-pagination-prev a,
+.dark .ant-pagination-next a {
+  color: #ffffff !important;
+}
+
+.dark .ant-pagination-prev:hover,
+.dark .ant-pagination-next:hover {
+  background: #4b5563 !important;
+  border-color: #6b7280 !important;
+  color: #ffffff !important;
+}
+
+.dark .ant-pagination-prev:hover a,
+.dark .ant-pagination-next:hover a {
+  color: #ffffff !important;
+}
+
+.dark .ant-pagination-jump-prev,
+.dark .ant-pagination-jump-next {
+  background: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #ffffff !important;
+}
+
+.dark .ant-pagination-jump-prev a,
+.dark .ant-pagination-jump-next a {
+  color: #ffffff !important;
+}
+
+.dark .ant-pagination-jump-prev:hover,
+.dark .ant-pagination-jump-next:hover {
+  background: #4b5563 !important;
+  border-color: #6b7280 !important;
+  color: #ffffff !important;
+}
+
+.dark .ant-pagination-jump-prev:hover a,
+.dark .ant-pagination-jump-next:hover a {
+  color: #ffffff !important;
+}
+
+.dark .ant-pagination-options .ant-select-selector {
+  background: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #f9fafb !important;
+}
+
+.dark .ant-pagination-options .ant-select-selector:hover {
+  border-color: #6b7280 !important;
+}
+
+.dark .ant-pagination-options .ant-select-focused .ant-select-selector {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+}
+
+.dark .ant-pagination-options .ant-select-selection-item {
+  color: #f9fafb !important;
+}
+
+.dark .ant-pagination-options .ant-select-arrow {
+  color: #9ca3af !important;
+}
+
+.dark .ant-pagination-options .ant-pagination-options-quick-jumper {
+  color: #d1d5db !important;
+}
+
+.dark .ant-pagination-options .ant-pagination-options-quick-jumper input {
+  background: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #f9fafb !important;
+}
+
+.dark .ant-pagination-options .ant-pagination-options-quick-jumper input:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+}
+
+.dark .ant-pagination-options .ant-pagination-options-quick-jumper input:hover {
+  border-color: #6b7280 !important;
+}
+
+/* Pagination total text dark mode */
+.dark .ant-pagination-total-text {
+  color: #d1d5db !important;
+}
+
+/* More specific pagination styles for dark mode */
+.dark .ant-pagination .ant-pagination-item a {
+  color: #f9fafb !important;
+}
+
+.dark .ant-pagination .ant-pagination-item-active a {
+  color: #ffffff !important;
+}
+
+.dark .ant-pagination .ant-pagination-prev .ant-pagination-item-link,
+.dark .ant-pagination .ant-pagination-next .ant-pagination-item-link {
+  color: #ffffff !important;
+  background: #374151 !important;
+  border-color: #4b5563 !important;
+}
+
+.dark .ant-pagination .ant-pagination-prev:hover .ant-pagination-item-link,
+.dark .ant-pagination .ant-pagination-next:hover .ant-pagination-item-link {
+  color: #ffffff !important;
+  background: #4b5563 !important;
+  border-color: #6b7280 !important;
+}
+
+.dark .ant-pagination .ant-pagination-jump-prev .ant-pagination-item-link,
+.dark .ant-pagination .ant-pagination-jump-next .ant-pagination-item-link {
+  color: #ffffff !important;
+  background: #374151 !important;
+  border-color: #4b5563 !important;
+}
+
+.dark .ant-pagination .ant-pagination-jump-prev:hover .ant-pagination-item-link,
+.dark .ant-pagination .ant-pagination-jump-next:hover .ant-pagination-item-link {
+  color: #ffffff !important;
+  background: #4b5563 !important;
+  border-color: #6b7280 !important;
+}
+
+/* Force white color for all pagination links in dark mode */
+.dark .ant-pagination a {
+  color: #ffffff !important;
+}
+
+.dark .ant-pagination .ant-pagination-item-active a {
+  color: #ffffff !important;
+  font-weight: 600 !important;
 } 

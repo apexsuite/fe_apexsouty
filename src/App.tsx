@@ -24,6 +24,10 @@ import Roles from '@/pages/Roles';
 import RoleCreate from '@/pages/RoleCreate';
 import RoleEdit from '@/pages/RoleEdit';
 import RoleDetail from '@/pages/RoleDetail';
+import Products from '@/pages/Products';
+import ProductCreate from '@/pages/ProductCreate';
+import ProductEdit from '@/pages/ProductEdit';
+import ProductDetail from '@/pages/ProductDetail';
 
 function AppContent() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -218,6 +222,44 @@ function AppContent() {
              isAuthenticated ? (
                <ClientLayout>
                  <RoleEdit />
+               </ClientLayout>
+             ) : (
+               <Navigate to="/login" />
+             )
+           } />
+           
+           {/* Products Routes */}
+           <Route path="/products" element={
+             isAuthenticated ? (
+               <ClientLayout>
+                 <Products />
+               </ClientLayout>
+             ) : (
+               <Navigate to="/login" />
+             )
+           } />
+           <Route path="/products/create" element={
+             isAuthenticated ? (
+               <ClientLayout>
+                 <ProductCreate />
+               </ClientLayout>
+             ) : (
+               <Navigate to="/login" />
+             )
+           } />
+           <Route path="/products/:productId" element={
+             isAuthenticated ? (
+               <ClientLayout>
+                 <ProductDetail />
+               </ClientLayout>
+             ) : (
+               <Navigate to="/login" />
+             )
+           } />
+           <Route path="/products/:productId/edit" element={
+             isAuthenticated ? (
+               <ClientLayout>
+                 <ProductEdit />
                </ClientLayout>
              ) : (
                <Navigate to="/login" />

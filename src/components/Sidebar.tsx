@@ -55,11 +55,11 @@ export default function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen?: bo
       let pageRouteID = fav.pageRouteID;
       if (!pageRouteID) {
         // Menüde eşleşen item'ı bul
-        const match = menuItems.find((item: any) => item.favouriteID === fav.favouriteID || item.id === fav.id);
+        const match = menuItems.find((item: any) => item.favouriteId === fav.favouriteId || item.id === fav.id);
         pageRouteID = match?.pageRouteID;
       }
       return {
-        favouriteID: fav.favouriteID,
+        favouriteId: fav.favouriteId,
         pageRouteID,
       };
     });
@@ -82,9 +82,10 @@ export default function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen?: bo
                   {(provided) => (
                     <ul className="mb-2" ref={provided.innerRef} {...provided.droppableProps}>
                       {[...favoritesMenu].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((item: any, idx: number) => {
+                        console.log(item , "item");
                         const LucideIcon = item.icon && (LucideIcons as any)[item.icon];
                         return (
-                          <Draggable key={item.favouriteID || item.id} draggableId={String(item.favouriteID || item.id)} index={idx}>
+                          <Draggable key={item.favouriteId || item.id} draggableId={String(item.favouriteId || item.id)} index={idx}>
                             {(provided, snapshot) => (
                               <li
                                 ref={provided.innerRef}
@@ -101,7 +102,7 @@ export default function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen?: bo
                                 <button
                                   className="ml-2 p-1 rounded-full hover:bg-yellow-100 dark:hover:bg-yellow-800 transition"
                                   title="Favoriden çıkar"
-                                  onClick={() => dispatch(deleteFavorite(item.favouriteID))}
+                                  onClick={() => dispatch(deleteFavorite(item.favouriteId))}
                                 >
                                   <Star size={18} fill="#facc15" stroke="#facc15" />
                                 </button>

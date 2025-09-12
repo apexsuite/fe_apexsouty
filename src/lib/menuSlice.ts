@@ -8,7 +8,7 @@ export interface MenuItem {
   path?: string;
   description?: string;
   pageRouteID?: string;
-  favouriteID?: string;
+  favouriteId?: string;
   name?: string;
   order?: number;
   isFavourite?: boolean;
@@ -37,13 +37,14 @@ export const fetchMenu = createAsyncThunk<MenuItem[]>(
       const data = await apiRequest('/navigations/top-bar-menu-list', { withCredentials: true });
       const list = data?.data?.serviceList;
       if (Array.isArray(list)) {
+        console.log(list , "itm1231231232345zsxfc")
         return list.map((item: any) => ({
           id: item.pageRouteID || item.path || item.name,
           label: item.name,
           icon: item.icon,
           path: item.path,
           description: item.desctiption,
-          pageRouteID: item.pageRouteID,
+          pageRouteID: item.pageRouteId,
           isFavourite: item.isFavourite,
         }));
       }
@@ -80,8 +81,8 @@ export const fetchFavorites = createAsyncThunk(
       const data = await apiRequest('/navigations/favourites', { method: 'GET', withCredentials: true });
       return Array.isArray(data?.data)
         ? data.data.map((item: any) => ({
-            id: item.favouriteID || item.path || item.name,
-            favouriteID: item.favouriteID,
+            id: item.favouriteId || item.path || item.name,
+            favouriteId: item.favouriteId,
             name: item.name,
             path: item.path,
             icon: item.icon,
@@ -97,16 +98,16 @@ export const fetchFavorites = createAsyncThunk(
 
 export const deleteFavorite = createAsyncThunk(
   'menu/deleteFavorite',
-  async (favouriteID: string, { dispatch, rejectWithValue }) => {
+  async (favouriteId: string, { dispatch, rejectWithValue }) => {
     try {
-      await apiRequest(`/navigations/favourites/${favouriteID}`, {
+      await apiRequest(`/navigations/favourites/${favouriteId}`, {
         method: 'DELETE',
         withCredentials: true,
       });
       // Favori silindikten sonra favori listesini ve menü listesini güncelle
       await dispatch(fetchFavorites() as any);
       await dispatch(fetchMenu() as any);
-      return favouriteID;
+      return favouriteId;
     } catch (err: any) {
       return rejectWithValue(err?.data?.message || 'Favorite delete failed');
     }
@@ -116,12 +117,12 @@ export const deleteFavorite = createAsyncThunk(
 // Favori sırasını güncelleyen thunk
 export const updateFavoriteOrder = createAsyncThunk(
   'menu/updateFavoriteOrder',
-  async (favorites: { favouriteID: string; pageRouteID: string }[], { dispatch, rejectWithValue }) => {
+  async (favorites: { favouriteId: string; pageRouteID: string }[], { dispatch, rejectWithValue }) => {
     try {
       // Her bir favori için yeni order ile API'ye güncelleme at
       for (let i = 0; i < favorites.length; i++) {
         const fav = favorites[i];
-        await apiRequest(`/navigations/favourites/${fav.favouriteID}`, {
+        await apiRequest(`/navigations/favourites/${fav.favouriteId}`, {
           method: 'PUT',
           body: JSON.stringify({ listOrder: i, pageRouteID: fav.pageRouteID }),
           headers: { 'Content-Type': 'application/json' },
@@ -168,7 +169,7 @@ const menuSlice = createSlice({
         state.favorites = action.payload;
       })
       .addCase(deleteFavorite.fulfilled, (state, action) => {
-        state.favorites = state.favorites.filter(fav => fav.favouriteID !== action.payload);
+        state.favorites = state.favorites.filter(fav => fav.favouriteId !== action.payload);
       });
   },
 });

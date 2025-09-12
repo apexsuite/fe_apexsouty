@@ -6,6 +6,7 @@ import menuReducer from './menuSlice';
 import pageReducer from './pageSlice';
 import permissionReducer from './pageRoutePermissionSlice';
 import roleReducer from './roleSlice';
+import productReducer from './productSlice';
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     page: pageReducer,
     permission: permissionReducer,
     role: roleReducer,
+    product: productReducer,
   },
 });
 

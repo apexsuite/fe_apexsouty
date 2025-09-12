@@ -3,11 +3,13 @@ import { apiRequest } from '@/services/api';
 
 // API Response interfaces based on documentation
 export interface PageRoutePermission {
-  createdAt: string;
-  description: string;
   id: string;
+  createdAt: string;
   name: string;
-  // Add other fields as needed
+  description: string;
+  label: string;
+  pageRouteId: string;
+  isActive: boolean;
 }
 
 export interface PageRouteFavourite {
@@ -35,6 +37,7 @@ export interface PageRoute {
   updatedAt?: string;
   favourite?: PageRouteFavourite;
   page_route_permissions?: PageRoutePermission[];
+  permissionCount?: number;
 }
 
 // API Response wrapper
@@ -85,12 +88,12 @@ const initialState: PageState = {
 // GET /api/page-routes - Get page route list
 export const fetchPageRoutes = createAsyncThunk(
   'page/fetchPageRoutes',
-  async (params: { page?: number; limit?: number; search?: string; category?: string } = {}, { rejectWithValue }) => {
+  async (params: { page?: number; limit?: number; name?: string; category?: string } = {}, { rejectWithValue }) => {
     try {
       const queryParams = new URLSearchParams();
       if (params.page) queryParams.append('page', params.page.toString());
       if (params.limit) queryParams.append('limit', params.limit.toString());
-      if (params.search) queryParams.append('search', params.search);
+      if (params.name) queryParams.append('name', params.name);
       if (params.category) queryParams.append('category', params.category);
 
       // Geçici olarak tam URL ile test edelim

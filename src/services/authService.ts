@@ -27,6 +27,7 @@ export interface ResetPasswordData {
   id: string;
   password: string;
   token: string;
+  email: string;
 }
 
 export interface ValidationError {
