@@ -30,6 +30,10 @@ import ProductEdit from '@/pages/ProductEdit';
 import ProductDetail from '@/pages/ProductDetail';
 import PriceDetail from '@/pages/PriceDetail';
 import BillingForm from '@/components/billing/BillingForm';
+import Marketplaces from '@/pages/Marketplaces';
+import MarketplaceDetail from '@/pages/MarketplaceDetail';
+import MarketplaceEdit from '@/pages/MarketplaceEdit';
+import MarketplaceCreate from '@/pages/MarketplaceCreate';
 
 function AppContent() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -282,6 +286,44 @@ function AppContent() {
              isAuthenticated ? (
                <ClientLayout>
                  <BillingForm />
+               </ClientLayout>
+             ) : (
+               <Navigate to="/login" />
+             )
+           } />
+           
+           {/* Marketplaces Routes */}
+           <Route path="/marketplaces" element={
+             isAuthenticated ? (
+               <ClientLayout>
+                 <Marketplaces />
+               </ClientLayout>
+             ) : (
+               <Navigate to="/login" />
+             )
+           } />
+           <Route path="/marketplaces/:id" element={
+             isAuthenticated ? (
+               <ClientLayout>
+                 <MarketplaceDetail />
+               </ClientLayout>
+             ) : (
+               <Navigate to="/login" />
+             )
+           } />
+           <Route path="/marketplaces/:id/edit" element={
+             isAuthenticated ? (
+               <ClientLayout>
+                 <MarketplaceEdit />
+               </ClientLayout>
+             ) : (
+               <Navigate to="/login" />
+             )
+           } />
+           <Route path="/marketplaces/create" element={
+             isAuthenticated ? (
+               <ClientLayout>
+                 <MarketplaceCreate />
                </ClientLayout>
              ) : (
                <Navigate to="/login" />

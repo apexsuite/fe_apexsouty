@@ -1,0 +1,120 @@
+{
+  "data": {
+    "items": [
+      {
+        "id": "mp_001",
+        "name": "Amazon",
+        "description": "World's largest online marketplace with global reach",
+        "website": "amazon.com",
+        "country": "United States",
+        "currency": "USD",
+        "isActive": true,
+        "commissionRate": 15.0,
+        "monthlyFee": 39.99,
+        "features": ["FBA", "Prime", "Global Shipping", "Analytics"],
+        "createdAt": "2024-01-15T10:30:00Z",
+        "updatedAt": "2024-01-15T10:30:00Z"
+      },
+      {
+        "id": "mp_002",
+        "name": "eBay",
+        "description": "Online auction and shopping website",
+        "website": "ebay.com",
+        "country": "United States",
+        "currency": "USD",
+        "isActive": true,
+        "commissionRate": 12.9,
+        "monthlyFee": 0,
+        "features": ["Auction", "Fixed Price", "Global Shipping", "Seller Tools"],
+        "createdAt": "2024-01-16T14:20:00Z",
+        "updatedAt": "2024-01-16T14:20:00Z"
+      },
+      {
+        "id": "mp_003",
+        "name": "Shopify",
+        "description": "E-commerce platform for online stores",
+        "website": "shopify.com",
+        "country": "Canada",
+        "currency": "USD",
+        "isActive": true,
+        "commissionRate": 2.9,
+        "monthlyFee": 29.99,
+        "features": ["Store Builder", "Payment Processing", "Inventory Management", "Analytics"],
+        "createdAt": "2024-01-17T09:15:00Z",
+        "updatedAt": "2024-01-17T09:15:00Z"
+      },
+      {
+        "id": "mp_004",
+        "name": "Etsy",
+        "description": "Global marketplace for unique and creative goods",
+        "website": "etsy.com",
+        "country": "United States",
+        "currency": "USD",
+        "isActive": true,
+        "commissionRate": 6.5,
+        "monthlyFee": 0,
+        "features": ["Handmade", "Vintage", "Custom", "Community"],
+        "createdAt": "2024-01-18T16:45:00Z",
+        "updatedAt": "2024-01-18T16:45:00Z"
+      },
+      {
+        "id": "mp_005",
+        "name": "WooCommerce",
+        "description": "WordPress e-commerce plugin",
+        "website": "woocommerce.com",
+        "country": "United States",
+        "currency": "USD",
+        "isActive": false,
+        "commissionRate": 0,
+        "monthlyFee": 0,
+        "features": ["WordPress Integration", "Customizable", "Extensions", "Open Source"],
+        "createdAt": "2024-01-19T11:30:00Z",
+        "updatedAt": "2024-01-19T11:30:00Z"
+      },
+      {
+        "id": "mp_006",
+        "name": "Magento",
+        "description": "Adobe commerce platform for B2B and B2C",
+        "website": "magento.com",
+        "country": "United States",
+        "currency": "USD",
+        "isActive": true,
+        "commissionRate": 0,
+        "monthlyFee": 2000,
+        "features": ["B2B", "B2C", "Multi-store", "Enterprise"],
+        "createdAt": "2024-01-20T13:20:00Z",
+        "updatedAt": "2024-01-20T13:20:00Z"
+      },
+      {
+        "id": "mp_007",
+        "name": "Walmart Marketplace",
+        "description": "Walmart's third-party marketplace",
+        "website": "marketplace.walmart.com",
+        "country": "United States",
+        "currency": "USD",
+        "isActive": true,
+        "commissionRate": 8.0,
+        "monthlyFee": 0,
+        "features": ["Walmart Integration", "Fast Shipping", "Customer Service", "Analytics"],
+        "createdAt": "2024-01-21T08:10:00Z",
+        "updatedAt": "2024-01-21T08:10:00Z"
+      },
+      {
+        "id": "mp_008",
+        "name": "AliExpress",
+        "description": "Global online marketplace by Alibaba",
+        "website": "aliexpress.com",
+        "country": "China",
+        "currency": "USD",
+        "isActive": true,
+        "commissionRate": 5.0,
+        "monthlyFee": 0,
+        "features": ["Global Shipping", "Bulk Orders", "Trade Assurance", "Mobile App"],
+        "createdAt": "2024-01-22T15:35:00Z",
+        "updatedAt": "2024-01-22T15:35:00Z"
+      }
+    ],
+    "pageCount": 1,
+    "totalCount": 8
+  }
+}

@@ -8,6 +8,7 @@ import permissionReducer from './pageRoutePermissionSlice';
 import roleReducer from './roleSlice';
 import productReducer from './productSlice';
 import billingReducer from './billingSlice';
+import marketplaceReducer from './marketplaceSlice';
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
     role: roleReducer,
     product: productReducer,
     billing: billingReducer,
+    marketplace: marketplaceReducer,
   },
 });
 
