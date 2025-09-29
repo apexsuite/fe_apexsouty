@@ -2,7 +2,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal, Button, Typography } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Marketplace } from '@/lib/marketplaceSlice';
 
 const { Text } = Typography;
 

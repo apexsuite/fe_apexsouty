@@ -12,7 +12,7 @@ const MarketplaceCreate: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
-  const { loading, error } = useSelector((state: RootState) => state.marketplace);
+  const { error } = useSelector((state: RootState) => state.marketplace);
   const [form] = Form.useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
