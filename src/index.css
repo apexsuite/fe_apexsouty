@@ -2,6 +2,123 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Dark mode için Ant Design Modal stilleri */
+.dark .ant-modal-content {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+}
+
+.dark .ant-modal-header {
+  background-color: #1f2937 !important;
+  border-bottom: 1px solid #374151 !important;
+}
+
+.dark .ant-modal-title {
+  color: #f9fafb !important;
+}
+
+.dark .ant-modal-close {
+  color: #9ca3af !important;
+}
+
+.dark .ant-modal-close:hover {
+  color: #f9fafb !important;
+}
+
+/* Dark mode için Ant Design Table stilleri */
+.dark .ant-table {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+}
+
+.dark .ant-table-thead > tr > th {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+  border-bottom: 1px solid #374151 !important;
+}
+
+.dark .ant-table-tbody > tr > td {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+  border-bottom: 1px solid #374151 !important;
+}
+
+.dark .ant-table-tbody > tr:hover > td {
+  background-color: #374151 !important;
+}
+
+/* Dark mode için Ant Design Form stilleri */
+.dark .ant-form-item-label > label {
+  color: #d1d5db !important;
+}
+
+.dark .ant-input {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #f9fafb !important;
+}
+
+.dark .ant-input::placeholder {
+  color: #9ca3af !important;
+}
+
+.dark .ant-select-selector {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #f9fafb !important;
+}
+
+.dark .ant-select-selection-placeholder {
+  color: #9ca3af !important;
+}
+
+.dark .ant-input-number {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #f9fafb !important;
+}
+
+.dark .ant-input-number-input {
+  background-color: transparent !important;
+  color: #f9fafb !important;
+}
+
+.dark .ant-input-number-input::placeholder {
+  color: #9ca3af !important;
+}
+
+/* Dark mode için Ant Design Button stilleri */
+.dark .ant-btn-default {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #f9fafb !important;
+}
+
+.dark .ant-btn-default:hover {
+  background-color: #4b5563 !important;
+  border-color: #6b7280 !important;
+  color: #f9fafb !important;
+}
+
+/* Dark mode için Ant Design Select dropdown stilleri */
+.dark .ant-select-dropdown {
+  background-color: #374151 !important;
+  border: 1px solid #4b5563 !important;
+}
+
+.dark .ant-select-item {
+  color: #f9fafb !important;
+}
+
+.dark .ant-select-item:hover {
+  background-color: #4b5563 !important;
+}
+
+.dark .ant-select-item-option-selected {
+  background-color: #1d4ed8 !important;
+  color: #f9fafb !important;
+}
+
 
 :root {
   --radius: 0.625rem;

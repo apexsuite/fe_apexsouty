@@ -6,10 +6,10 @@ import { AppDispatch, RootState } from '@/lib/store';
 import { fetchBilling, createBilling, updateBilling, clearError } from '@/lib/billingSlice';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, AddressElement } from '@stripe/react-stripe-js';
-import { ArrowLeft, Save, Loader, Plus, Trash2 } from 'lucide-react';
+import { Save, Loader, Plus, Trash2 } from 'lucide-react';
 import { message, Button, Card, Typography, Input, Switch } from 'antd';
 
-const { Title, Paragraph } = Typography;
+const { Title } = Typography;
 
 // Stripe public key - .env dosyasındaki VITE_STRIPE_PKEY kullanılıyor
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PKEY || 'pk_test_your_stripe_publishable_key_here');
@@ -114,25 +114,91 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
   };
 
   const handleAddressChange = (event: any) => {
-    // Stripe Address Element'ten gelen verileri işle
-    if (event.complete) {
-      const addressData = event.value.address;
-      console.log(addressData, "123123123");
-      setFormData(prev => ({
-        ...prev,
-        line1: addressData.line1 || prev.line1,
-        line2: addressData.line2 || prev.line2,
-        city: addressData.city || prev.city,
-        state: addressData.state || prev.state,
-        postalCode: addressData.postal_code || prev.postalCode,
-        country: addressData.country || prev.country,
-      }));
+    console.log('AddressElement onChange event:', event);
+    console.log('Event complete:', event.complete);
+    console.log('Event value:', event.value);
+    
+    // AddressElement'ten gelen verileri işle
+    if (event.value) {
+      console.log('Event value exists, checking structure...');
+      
+      // Farklı veri yapılarını kontrol et
+      const addressData = event.value.address || event.value;
+      const nameData = event.value.name || addressData?.name;
+      const phoneData = event.value.phone || addressData?.phone;
+      
+      console.log('Address data:', addressData);
+      console.log('Name data:', nameData);
+      console.log('Phone data:', phoneData);
+      
+      setFormData(prev => {
+        const newFormData = {
+          ...prev,
+          name: nameData || prev.name,
+          line1: addressData?.line1 || prev.line1,
+          line2: addressData?.line2 || prev.line2,
+          city: addressData?.city || prev.city,
+          state: addressData?.state || prev.state,
+          postalCode: addressData?.postal_code || prev.postalCode,
+          country: addressData?.country || prev.country,
+          phone: phoneData || prev.phone,
+        };
+        console.log('Updated formData:', newFormData);
+        return newFormData;
+      });
+    } else {
+      console.log('AddressElement data not available yet');
     }
   };
 
   const onFinish = async () => {
+    console.log('onFinish called, formData:', formData);
     setSubmitting(true);
     try {
+      // Validate required fields
+      if (!formData.name.trim()) {
+        console.log('Name validation failed:', formData.name);
+        message.error('Lütfen adres formundaki "Ad ve soyadı" alanını doldurun');
+        setSubmitting(false);
+        return;
+      }
+
+      if (!formData.line1.trim()) {
+        message.error('Lütfen adres formundaki "Adres satırı 1" alanını doldurun');
+        setSubmitting(false);
+        return;
+      }
+
+      if (!formData.city.trim()) {
+        message.error('Lütfen adres formundaki "İl" alanını doldurun');
+        setSubmitting(false);
+        return;
+      }
+
+      if (!formData.state.trim()) {
+        message.error('Lütfen adres formundaki "İlçe" alanını doldurun');
+        setSubmitting(false);
+        return;
+      }
+
+      if (!formData.postalCode.trim()) {
+        message.error('Lütfen adres formundaki "Posta kodu" alanını doldurun');
+        setSubmitting(false);
+        return;
+      }
+
+      if (!formData.country.trim()) {
+        message.error('Lütfen adres formundaki "Ülke" alanını doldurun');
+        setSubmitting(false);
+        return;
+      }
+
+      if (!formData.phone.trim()) {
+        message.error('Lütfen adres formundaki "Telefon numarası" alanını doldurun');
+        setSubmitting(false);
+        return;
+      }
+
       // Convert extra fields to object
       const extraObject = extraFields.reduce((acc, field) => {
         if (field.key.trim() && field.value.trim()) {
@@ -142,15 +208,15 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
       }, {} as Record<string, string>);
 
       const billingData = {
-        name: formData.name,
-        line1: formData.line1,
-        line2: formData.line2,
-        city: formData.city,
-        state: formData.state,
-        postalCode: formData.postalCode,
-        country: formData.country,
-        phone: formData.phone,
-        footer: formData.footer,
+        name: formData.name.trim(),
+        line1: formData.line1.trim(),
+        line2: formData.line2.trim(),
+        city: formData.city.trim(),
+        state: formData.state.trim(),
+        postalCode: formData.postalCode.trim(),
+        country: formData.country.trim(),
+        phone: formData.phone.trim(),
+        footer: formData.footer.trim(),
         extra: extraObject,
       };
 
@@ -236,6 +302,19 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
                         phone: {
                           required: 'always',
                         },
+                      },
+                      allowedCountries: ['TR', 'US', 'GB', 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'AT', 'CH', 'SE', 'NO', 'DK', 'FI'],
+                      defaultValues: {
+                        name: formData.name,
+                        address: {
+                          line1: formData.line1,
+                          line2: formData.line2,
+                          city: formData.city,
+                          state: formData.state,
+                          postal_code: formData.postalCode,
+                          country: formData.country,
+                        },
+                        phone: formData.phone,
                       },
                     }}
                     onChange={handleAddressChange}
@@ -352,7 +431,10 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
                 size="large"
                 loading={submitting}
                 icon={<Save size={16} />}
-                onClick={onFinish}
+                onClick={() => {
+                  console.log('Save button clicked');
+                  onFinish();
+                }}
                 className="bg-blue-600 hover:bg-blue-700 border-blue-600 hover:border-blue-700"
               >
                 {submitting ? (t('billing.saving') || 'Saving...') : (t('billing.save') || 'Save')}

@@ -107,9 +107,7 @@ export const fetchRoles = createAsyncThunk(
       if (params.description) queryParams.append('description', params.description);
       if (params.roleValue) queryParams.append('roleValue', params.roleValue.toString());
 
-      console.log('🔍 Fetching roles with params:', params);
       const response = await apiRequest(`/roles?${queryParams.toString()}`);
-      console.log('📡 API Response:', response);
       
       return response;
     } catch (error: any) {
@@ -278,14 +276,11 @@ const roleSlice = createSlice({
     // Fetch roles
     builder
       .addCase(fetchRoles.pending, (state) => {
-        console.log('⏳ Fetching roles...');
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchRoles.fulfilled, (state, action) => {
-        console.log('✅ Roles fetched successfully');
-        console.log('📊 Action payload:', action.payload);
-        
+       
         state.loading = false;
         
         // API response formatını kontrol et
@@ -293,12 +288,10 @@ const roleSlice = createSlice({
           // Format: {data: {items: [...], page: 1, pageSize: 10, pageCount: 1, totalCount: 3}, error: null}
           state.roles = action.payload.data.items;
           state.totalPages = action.payload.data.pageCount || 1;
-          console.log(`📋 Loaded ${state.roles.length} roles`);
         } else if (action.payload && action.payload.items) {
           // Format: {items: [...], page: 1, pageSize: 10, pageCount: 1, totalCount: 3}
           state.roles = action.payload.items;
           state.totalPages = action.payload.pageCount || 1;
-          console.log(`📋 Loaded ${state.roles.length} roles`);
         } else {
           console.warn('⚠️ Unexpected API response format:', action.payload);
           state.roles = [];

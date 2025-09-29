@@ -98,8 +98,6 @@ export const fetchPageRoutes = createAsyncThunk(
 
       // Geçici olarak tam URL ile test edelim
       const response = await apiRequest(`/page-routes?${queryParams.toString()}`);
-      console.log('API Request URL:', `/page-routes?${queryParams.toString()}`);
-      console.log('API Response:', response);
       return response;
     } catch (error: any) {
       return rejectWithValue(error.message || 'Page routes yüklenirken hata oluştu');
@@ -261,8 +259,6 @@ const pageSlice = createSlice({
       })
       .addCase(fetchPageRoutes.fulfilled, (state, action) => {
         state.loading = false;
-        console.log('API Response:', action.payload);
-        console.log('Items:', action.payload.data?.items);
         state.pageRoutes = action.payload.data?.items || [];
         state.totalPages = action.payload.data?.pageCount || 0;
         state.currentPageNumber = action.payload.data?.page || 1;

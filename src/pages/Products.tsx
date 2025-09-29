@@ -33,7 +33,6 @@ const Products: React.FC = () => {
   const [productToDelete, setProductToDelete] = useState<{ id: string; name: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  console.log('Products State:', { products, loading, error, currentPageNumber, pageSize });
 
   const loadProducts = () => {
     const params: any = {
@@ -45,7 +44,6 @@ const Products: React.FC = () => {
       params.name = searchTerm.trim();
     }
 
-    console.log('Loading products with params:', params);
     dispatch(fetchProducts(params));
   };
 

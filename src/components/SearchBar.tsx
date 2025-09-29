@@ -48,7 +48,11 @@ export default function SearchBar({ onSearch, placeholder = "Ara...", minimal = 
   const [menuFetched, setMenuFetched] = useState(false);
 
   const dispatchRedux = useDispatch<AppDispatch>();
-  const handleFavorite = (pageRouteID: string) => {
+  const handleFavorite = (pageRouteID: string, isCurrentlyFavorite: boolean) => {
+    // Eğer zaten favori ise istek atma
+    if (isCurrentlyFavorite) {
+      return;
+    }
     dispatchRedux(addFavorite(pageRouteID));
   };
 
@@ -219,9 +223,9 @@ export default function SearchBar({ onSearch, placeholder = "Ara...", minimal = 
                         className="ml-2 p-1 rounded-full hover:bg-yellow-100 dark:hover:bg-yellow-700 transition"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleFavorite(fav.pageRouteID || fav.id);
+                          handleFavorite(fav.pageRouteID || fav.id, isFav);
                         }}
-                        title="Favorilere ekle"
+                        title={isFav ? "Favorilerden çıkar" : "Favorilere ekle"}
                       >
                         <Star size={20} fill={isFav ? '#facc15' : 'none'} stroke="#facc15" />
                       </button>

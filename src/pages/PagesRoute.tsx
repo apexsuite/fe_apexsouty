@@ -43,14 +43,13 @@ const PagesRoute: React.FC = () => {
   
   // Tema değişikliğini dinle
   useEffect(() => {
-    console.log('Theme changed to:', theme);
   }, [theme]);
   
   // Redux store'u kontrol et
   useEffect(() => {
     const unsubscribe = store.subscribe(() => {
       const currentTheme = store.getState().theme.theme;
-      console.log('Store theme changed to:', currentTheme);
+      ('Store theme changed to:', currentTheme);
     });
     
     return () => unsubscribe();

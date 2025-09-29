@@ -16,6 +16,20 @@ export interface Product {
   unitLabel: string;
   createdAt: string;
   updatedAt: string;
+  prices?: Price[];
+  defaultPriceId?: string;
+}
+
+export interface Price {
+  id: string;
+  createdAt: string;
+  currency: string;
+  interval: string;
+  isActive: boolean;
+  productId: string;
+  unitAmount: number;
+  statementDescriptor?: string;
+  unitLabel?: string;
 }
 
 interface ProductTableProps {

@@ -81,7 +81,6 @@ export default function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen?: bo
                   {(provided) => (
                     <ul className="mb-2" ref={provided.innerRef} {...provided.droppableProps}>
                       {[...favoritesMenu].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((item: any, idx: number) => {
-                        console.log(item , "item");
                         const LucideIcon = item.icon && (LucideIcons as any)[item.icon];
                         return (
                           <Draggable key={item.favouriteId || item.id} draggableId={String(item.favouriteId || item.id)} index={idx}>

@@ -82,7 +82,6 @@ export const loginUser = createAsyncThunk(
       
       // Farklı success formatlarını kontrol et
       const isSuccess = !response.error;
-      console.log('AuthSlice Is Success:', isSuccess);
       if (!isSuccess) {
         throw new Error(response.message || response.error || 'Login failed');
       }
@@ -231,16 +230,13 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         
-        console.log('LoginUser fulfilled payload:', action.payload);
         
         // Sadece başarılı response'larda authentication yap
         const isSuccess = action.payload && !action.payload.error;
         
-        console.log('LoginUser fulfilled Is Success:', isSuccess);
         
         if (isSuccess) {
           state.isAuthenticated = true;
-          console.log('Setting isAuthenticated to true');
           
           // localStorage'a isAuth ve user kaydet
           if (typeof window !== 'undefined') {
@@ -259,7 +255,6 @@ const authSlice = createSlice({
           // Başarısız response'da authentication yapma
           state.isAuthenticated = false;
           state.error = action.payload?.message || action.payload?.error || 'Login failed';
-          console.log('Setting isAuthenticated to false');
         }
       })
       .addCase(loginUser.rejected, (state, action) => {

@@ -37,7 +37,6 @@ export const fetchMenu = createAsyncThunk<MenuItem[]>(
       const data = await apiRequest('/navigations/top-bar-menu-list', { withCredentials: true });
       const list = data?.data?.serviceList;
       if (Array.isArray(list)) {
-        console.log(list , "itm1231231232345zsxfc")
         return list.map((item: any) => ({
           id: item.pageRouteID || item.path || item.name,
           label: item.name,
