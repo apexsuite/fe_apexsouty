@@ -114,36 +114,22 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
   };
 
   const handleAddressChange = (event: any) => {
-    console.log('AddressElement onChange event:', event);
-    console.log('Event complete:', event.complete);
-    console.log('Event value:', event.value);
-    
-    // AddressElement'ten gelen verileri işle
     if (event.value) {
-      console.log('Event value exists, checking structure...');
-      
-      // Farklı veri yapılarını kontrol et
       const addressData = event.value.address || event.value;
       const nameData = event.value.name || addressData?.name;
       const phoneData = event.value.phone || addressData?.phone;
-      
-      console.log('Address data:', addressData);
-      console.log('Name data:', nameData);
-      console.log('Phone data:', phoneData);
-      
       setFormData(prev => {
         const newFormData = {
           ...prev,
           name: nameData || prev.name,
           line1: addressData?.line1 || prev.line1,
-          line2: addressData?.line2 || prev.line2,
+          line2: addressData?.line2 || '', // Boş string olarak set et
           city: addressData?.city || prev.city,
           state: addressData?.state || prev.state,
           postalCode: addressData?.postal_code || prev.postalCode,
           country: addressData?.country || prev.country,
           phone: phoneData || prev.phone,
         };
-        console.log('Updated formData:', newFormData);
         return newFormData;
       });
     } else {
@@ -152,12 +138,9 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
   };
 
   const onFinish = async () => {
-    console.log('onFinish called, formData:', formData);
     setSubmitting(true);
     try {
-      // Validate required fields
       if (!formData.name.trim()) {
-        console.log('Name validation failed:', formData.name);
         message.error('Lütfen adres formundaki "Ad ve soyadı" alanını doldurun');
         setSubmitting(false);
         return;
@@ -210,7 +193,7 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
       const billingData = {
         name: formData.name.trim(),
         line1: formData.line1.trim(),
-        line2: formData.line2.trim(),
+        line2: formData.line2.trim() || undefined,
         city: formData.city.trim(),
         state: formData.state.trim(),
         postalCode: formData.postalCode.trim(),
@@ -219,6 +202,11 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
         footer: formData.footer.trim(),
         extra: extraObject,
       };
+
+      // line2 boşsa billingData'dan çıkar
+      if (!formData.line2.trim()) {
+        delete billingData.line2;
+      }
 
       if (billing) {
         await dispatch(updateBilling(billingData)).unwrap();
@@ -432,7 +420,6 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
                 loading={submitting}
                 icon={<Save size={16} />}
                 onClick={() => {
-                  console.log('Save button clicked');
                   onFinish();
                 }}
                 className="bg-blue-600 hover:bg-blue-700 border-blue-600 hover:border-blue-700"
