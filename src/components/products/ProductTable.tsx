@@ -1,8 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { Table, Button, Space, Tag, Switch, Tooltip, Dropdown, theme } from 'antd';
-import { Edit, Eye, Trash2, MoreHorizontal } from 'lucide-react';
+import { Table, Button, Space, Tag, Switch, Tooltip, theme } from 'antd';
+import { Edit, Eye } from 'lucide-react';
 import type { ColumnsType } from 'antd/es/table';
 import { RootState } from '@/lib/store';
 
@@ -46,7 +46,6 @@ const ProductTable: React.FC<ProductTableProps> = ({
   loading,
   onEdit,
   onView,
-  onDelete,
   onStatusChange,
 }) => {
   const { t } = useTranslation();

@@ -10,7 +10,7 @@ import {
   message,
   theme
 } from 'antd';
-import { Shield, Plus, Info, Tag, Activity } from 'lucide-react';
+import { Shield, Info, Tag, Activity } from 'lucide-react';
 import { RootState, AppDispatch } from '@/lib/store';
 import { createPermission } from '@/lib/pageRoutePermissionSlice';
 

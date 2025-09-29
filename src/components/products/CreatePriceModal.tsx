@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import {
   Modal,
   Form,
-  Input,
   Select,
   InputNumber,
   Button,
@@ -39,7 +38,7 @@ const CreatePriceModal: React.FC<CreatePriceModalProps> = ({
   productId,
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { } = theme.useToken();
   const dispatch = useDispatch<AppDispatch>();
   const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
   
@@ -186,7 +185,7 @@ const CreatePriceModal: React.FC<CreatePriceModalProps> = ({
                 color: currentTheme === 'dark' ? '#ffffff' : '#000000',
               }}
               formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-              parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
+              parser={() => 1}
             />
           </Form.Item>
         </div>

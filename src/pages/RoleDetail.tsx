@@ -43,17 +43,6 @@ const RoleDetail: React.FC = () => {
     navigate('/roles');
   };
 
-  // Handle permission changes
-  const handlePermissionsChange = (permissions: any[]) => {
-    setRolePermissions(permissions);
-  };
-
-  // Refresh role data
-  const handlePermissionsUpdate = () => {
-    if (id) {
-      dispatch(fetchRoleById(id));
-    }
-  };
 
   if (loading) {
     return (
@@ -209,7 +198,6 @@ const RoleDetail: React.FC = () => {
           <RolePermissionTable
             roleId={id!}
             rolePermissions={rolePermissions}
-            onPermissionsChange={handlePermissionsChange}
           />
         </Card>
       </div>

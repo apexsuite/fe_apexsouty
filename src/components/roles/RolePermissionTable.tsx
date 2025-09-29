@@ -11,13 +11,11 @@ import type { ColumnsType } from 'antd/es/table';
 interface RolePermissionTableProps {
   roleId: string;
   rolePermissions: any[];
-  onPermissionsChange: (permissions: any[]) => void;
 }
 
 const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
   roleId,
   rolePermissions,
-  onPermissionsChange,
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();

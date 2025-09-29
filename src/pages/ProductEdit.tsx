@@ -27,8 +27,8 @@ const ProductEdit: React.FC = () => {
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { token } = theme.useToken();
-  const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
+  const { } = theme.useToken();
+  const { theme: _ } = useSelector((state: RootState) => state.theme);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);

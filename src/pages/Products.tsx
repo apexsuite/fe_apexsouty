@@ -12,20 +12,20 @@ import {
   setPageSize
 } from '@/lib/productSlice';
 import { Plus, Search } from 'lucide-react';
-import { message, Card, Typography, Button, theme, Pagination } from 'antd';
+import { message, Card, Typography, theme, Pagination } from 'antd';
 
 // Import components
 import ProductTable from '@/components/products/ProductTable';
 import ProductDeleteModal from '@/components/products/ProductDeleteModal';
 
-const { Title, Paragraph } = Typography;
+const { } = Typography;
 
 
 const Products: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { token } = theme.useToken();
+  const { } = theme.useToken();
   const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
   const { products, loading, error, currentPageNumber, pageSize, totalPages, totalCount } = useSelector((state: RootState) => state.product);
   const [searchTerm, setSearchTerm] = useState('');

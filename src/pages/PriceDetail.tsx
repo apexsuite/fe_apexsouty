@@ -20,11 +20,11 @@ const { Title, Text } = Typography;
 
 const PriceDetail: React.FC = () => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { } = theme.useToken();
   const { productId, priceId } = useParams<{ productId: string; priceId: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
+  const { theme: _ } = useSelector((state: RootState) => state.theme);
   
   const [loading, setLoading] = useState(true);
   const [price, setPrice] = useState<any>(null);

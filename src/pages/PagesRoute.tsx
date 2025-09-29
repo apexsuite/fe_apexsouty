@@ -49,7 +49,7 @@ const PagesRoute: React.FC = () => {
   useEffect(() => {
     const unsubscribe = store.subscribe(() => {
       const currentTheme = store.getState().theme.theme;
-      ('Store theme changed to:', currentTheme);
+      console.log('Store theme changed to:', currentTheme);
     });
     
     return () => unsubscribe();

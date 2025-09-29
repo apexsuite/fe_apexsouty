@@ -5,7 +5,6 @@ import {
   Modal,
   Button,
   Typography,
-  Space,
   theme
 } from 'antd';
 import { AlertTriangle, Trash2 } from 'lucide-react';
