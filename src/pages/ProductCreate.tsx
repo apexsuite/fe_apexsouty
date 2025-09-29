@@ -38,6 +38,8 @@ const ProductCreate: React.FC = () => {
         name: values.name,
         description: values.description || '',
         isActive: values.isActive !== false, // default true
+        isDefault: values.isDefault || false,
+        isStripe: values.isStripe || false,
         marketingFeatures: values.marketingFeatures || [],
         statementDescriptor: values.statementDescriptor || '',
         unitLabel: values.unitLabel || '',
@@ -97,6 +99,8 @@ const ProductCreate: React.FC = () => {
           onFinish={onFinish}
           initialValues={{
             isActive: true,
+            isDefault: false,
+            isStripe: false,
             marketingFeatures: [''],
           }}
         >
@@ -190,6 +194,28 @@ const ProductCreate: React.FC = () => {
                 <Switch 
                   checkedChildren={t('common.active')}
                   unCheckedChildren={t('common.inactive')}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="isDefault"
+                label={t('product.isDefault')}
+                valuePropName="checked"
+              >
+                <Switch 
+                  checkedChildren={t('common.yes')}
+                  unCheckedChildren={t('common.no')}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="isStripe"
+                label={t('product.isStripe')}
+                valuePropName="checked"
+              >
+                <Switch 
+                  checkedChildren={t('common.yes')}
+                  unCheckedChildren={t('common.no')}
                 />
               </Form.Item>
 

@@ -45,26 +45,25 @@ export default function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen?: bo
   // Favori sırası değişince API'ye güncelleme at
   const handleFavoriteReorder = (result: DropResult) => {
     if (!result.destination) return;
+    
     const reordered = Array.from(favoritesMenu);
     const [removed] = reordered.splice(result.source.index, 1);
     reordered.splice(result.destination.index, 0, removed);
-    // Her favorinin order alanını yeni index ile güncelle
+    
     const reorderedWithOrder = reordered.map((fav: any, idx: number) => ({ ...fav, order: idx }));
-    // Sadece gerekli alanları içeren yeni sıralı favori dizisi
-    const payload = reorderedWithOrder.map((fav: any) => {
-      let pageRouteID = fav.pageRouteID;
-      if (!pageRouteID) {
-        // Menüde eşleşen item'ı bul
-        const match = menuItems.find((item: any) => item.favouriteId === fav.favouriteId || item.id === fav.id);
-        pageRouteID = match?.pageRouteID;
-      }
-      return {
-        favouriteId: fav.favouriteId,
-        pageRouteID,
-      };
-    });
-    dispatch(reorderFavoritesLocally(reorderedWithOrder)); // Önce anlık güncelle
-    dispatch(updateFavoriteOrder(payload));
+    const movedItem = reorderedWithOrder[result.destination.index];
+    let pageRouteID = movedItem.pageRouteID;
+    if (!pageRouteID) {
+      const match = menuItems.find((item: any) => item.favouriteId === movedItem.favouriteId || item.id === movedItem.id);
+      pageRouteID = match?.pageRouteID;
+    }
+
+    dispatch(reorderFavoritesLocally(reorderedWithOrder));
+    dispatch(updateFavoriteOrder({ 
+      favouriteId: movedItem.favouriteId, 
+      pageRouteID, 
+      newOrder: result.destination.index 
+    }));
   };
 
   const sidebarContent = (

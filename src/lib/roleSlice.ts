@@ -227,6 +227,36 @@ export const deleteRole = createAsyncThunk(
   }
 );
 
+// Role Permission Management
+export const assignPermissionsToRole = createAsyncThunk(
+  'role/assignPermissions',
+  async ({ roleId, permissions }: { roleId: string; permissions: any[] }, { rejectWithValue }) => {
+    try {
+      const response = await apiRequest(`/roles/${roleId}/permissions`, {
+        method: 'POST',
+        body: JSON.stringify({ permissions }),
+      });
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Permissions atanırken hata oluştu');
+    }
+  }
+);
+
+export const unassignPermissionFromRole = createAsyncThunk(
+  'role/unassignPermission',
+  async ({ roleId, permissionId }: { roleId: string; permissionId: string }, { rejectWithValue }) => {
+    try {
+      const response = await apiRequest(`/roles/${roleId}/permissions/${permissionId}`, {
+        method: 'DELETE',
+      });
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Permission kaldırılırken hata oluştu');
+    }
+  }
+);
+
 const roleSlice = createSlice({
   name: 'role',
   initialState,

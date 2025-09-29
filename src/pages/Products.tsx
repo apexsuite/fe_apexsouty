@@ -195,7 +195,7 @@ const Products: React.FC = () => {
             borderColor: token.colorPrimary
           }}
         >
-          {t('product.create')}
+          {t('product.create')}asdfdg
         </Button>
         </Card>
         

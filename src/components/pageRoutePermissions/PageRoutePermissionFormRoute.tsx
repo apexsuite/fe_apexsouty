@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { AppDispatch, RootState } from '@/lib/store';
 import { fetchPermissionById, createPermission, updatePermission, clearCurrentPermission, clearError } from '@/lib/pageRoutePermissionSlice';
+import { fetchPageRoutes } from '@/lib/pageSlice';
 import { ArrowLeft, Save } from 'lucide-react';
 
 const PageRoutePermissionFormRoute: React.FC = () => {
@@ -14,6 +15,7 @@ const PageRoutePermissionFormRoute: React.FC = () => {
   const { currentPermission, loading, error } = useSelector(
     (state: RootState) => state.permission
   );
+  const { pageRoutes } = useSelector((state: RootState) => state.page);
   const theme = useSelector((state: RootState) => state.theme.theme);
   
   const [formData, setFormData] = useState({
@@ -33,6 +35,13 @@ const PageRoutePermissionFormRoute: React.FC = () => {
       dispatch(fetchPermissionById(permissionId));
     }
 
+    // Load page routes for dropdown
+    dispatch(fetchPageRoutes({
+      page: 1,
+      limit: 100, // Get all page routes
+      name: '',
+    }));
+
     return () => {
       dispatch(clearCurrentPermission());
     };
@@ -47,10 +56,16 @@ const PageRoutePermissionFormRoute: React.FC = () => {
         isActive: currentPermission.isActive || true,
         pageRouteID: currentPermission.pageRouteID || pageRouteId || '',
       });
+    } else if (!isEditing && pageRouteId) {
+      // If creating new permission and pageRouteId is provided in URL, set it
+      setFormData(prev => ({
+        ...prev,
+        pageRouteID: pageRouteId,
+      }));
     }
-  }, [currentPermission, isEditing]);
+  }, [currentPermission, isEditing, pageRouteId]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     
     if (type === 'checkbox') {
@@ -198,6 +213,30 @@ const PageRoutePermissionFormRoute: React.FC = () => {
                   }`}
                   placeholder="Enter label"
                 />
+              </div>
+
+              <div>
+                <label className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                  {t('pages.pageRoute')} *
+                </label>
+                <select
+                  name="pageRouteID"
+                  value={formData.pageRouteID}
+                  onChange={handleInputChange}
+                  required
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                    theme === 'dark' 
+                      ? 'bg-gray-700 border-gray-600 text-white' 
+                      : 'bg-white border-gray-300 text-gray-900'
+                  }`}
+                >
+                  <option value="">{t('pages.selectPageRoute')}</option>
+                  {pageRoutes?.map((pageRoute: any) => (
+                    <option key={pageRoute.id} value={pageRoute.id}>
+                      {pageRoute.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="flex items-center gap-2">

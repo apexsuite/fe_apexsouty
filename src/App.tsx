@@ -28,6 +28,7 @@ import Products from '@/pages/Products';
 import ProductCreate from '@/pages/ProductCreate';
 import ProductEdit from '@/pages/ProductEdit';
 import ProductDetail from '@/pages/ProductDetail';
+import BillingForm from '@/components/billing/BillingForm';
 
 function AppContent() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -260,6 +261,17 @@ function AppContent() {
              isAuthenticated ? (
                <ClientLayout>
                  <ProductEdit />
+               </ClientLayout>
+             ) : (
+               <Navigate to="/login" />
+             )
+           } />
+           
+           {/* Billing Routes */}
+           <Route path="/billings" element={
+             isAuthenticated ? (
+               <ClientLayout>
+                 <BillingForm />
                </ClientLayout>
              ) : (
                <Navigate to="/login" />

@@ -3,11 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AppDispatch, RootState, store } from '@/lib/store';
-import { fetchPageRoutes, setCurrentPageNumber, setPageSize, clearError } from '@/lib/pageSlice';
+import { fetchPageRoutes, setCurrentPageNumber, setPageSize, clearError, changePageRouteStatus } from '@/lib/pageSlice';
 
 import { Eye, Edit, Plus, Search } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
-import { Table, Pagination, Button, Space, Tag, Card } from 'antd';
+import { Table, Pagination, Button, Space, Tag, Card, Switch, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 
 // Function to get Lucide icon dynamically
@@ -31,7 +31,7 @@ const PagesRoute: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { pageRoutes, loading, error, totalPages, currentPageNumber, pageSize } = useSelector(
+  const { pageRoutes, loading, error, totalPages, currentPageNumber, pageSize, statusChangeLoading } = useSelector(
     (state: RootState) => state.page
   );
   
@@ -99,6 +99,25 @@ const PagesRoute: React.FC = () => {
     navigate('/page-routes/create');
   };
 
+  const handleStatusChange = async (pageRouteId: string, currentStatus: boolean) => {
+    try {
+      await dispatch(changePageRouteStatus({ 
+        pageRouteId, 
+        status: !currentStatus 
+      })).unwrap();
+      message.success(t('pages.statusChangeSuccess'));
+      
+      // Status değişikliği sonrası verileri yeniden yükle
+      dispatch(fetchPageRoutes({
+        page: currentPageNumber,
+        limit: pageSize,
+        name: searchTerm,
+      }));
+    } catch (error: any) {
+      message.error(error || t('pages.statusChangeError'));
+    }
+  };
+
 
 
   const columns: ColumnsType<any> = [
@@ -144,17 +163,25 @@ const PagesRoute: React.FC = () => {
     {
       title: 'Status',
       key: 'status',
-      dataIndex: 'is_active',
-      render: (isActive: boolean) => (
-        <Tag color={isActive ? 'green' : 'red'}>
-          {isActive ? 'Active' : 'Inactive'}
-        </Tag>
+      dataIndex: 'isActive',
+      render: (isActive: boolean, record: any) => (
+        <div className="flex items-center gap-2">
+          <Switch
+            checked={isActive}
+            onChange={() => handleStatusChange(record.id, isActive)}
+            loading={statusChangeLoading}
+            className={`custom-switch ${theme === 'dark' ? 'dark-switch' : ''}`}
+          />
+          <Tag color={isActive ? 'success' : 'default'}>
+            {isActive ? 'Active' : 'Inactive'}
+          </Tag>
+        </div>
       ),
     },
     {
       title: 'Visible',
       key: 'visible',
-      dataIndex: 'is_visible',
+      dataIndex: 'isVisible',
       render: (isVisible: boolean) => (
         <Tag color={isVisible ? 'green' : 'red'}>
           {isVisible ? 'Visible' : 'Hidden'}

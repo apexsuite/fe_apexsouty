@@ -114,23 +114,26 @@ export const deleteFavorite = createAsyncThunk(
   }
 );
 
-// Favori sırasını güncelleyen thunk
+// Favori sırasını güncelleyen thunk - sadece kaydırılan menünün yeni pozisyonunu günceller
 export const updateFavoriteOrder = createAsyncThunk(
   'menu/updateFavoriteOrder',
-  async (favorites: { favouriteId: string; pageRouteID: string }[], { dispatch, rejectWithValue }) => {
+  async (payload: { 
+    favouriteId: string; 
+    pageRouteID: string; 
+    newOrder: number 
+  }, { rejectWithValue }) => {
     try {
-      // Her bir favori için yeni order ile API'ye güncelleme at
-      for (let i = 0; i < favorites.length; i++) {
-        const fav = favorites[i];
-        await apiRequest(`/navigations/favourites/${fav.favouriteId}`, {
-          method: 'PUT',
-          body: JSON.stringify({ listOrder: i, pageRouteID: fav.pageRouteID }),
-          headers: { 'Content-Type': 'application/json' },
-          withCredentials: true,
-        });
-      }
-      // Favori listesini güncelle
-      await dispatch(fetchFavorites() as any);
+      // Sadece kaydırılan menünün yeni pozisyonunu güncelle
+      await apiRequest(`/navigations/favourites/${payload.favouriteId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ 
+          listOrder: payload.newOrder, 
+          pageRouteID: payload.pageRouteID 
+        }),
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      });
+      
       return true;
     } catch (err: any) {
       return rejectWithValue(err?.data?.message || 'Favorite order update failed');
