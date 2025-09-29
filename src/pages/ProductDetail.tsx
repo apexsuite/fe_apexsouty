@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AppDispatch, RootState } from '@/lib/store';
 import { fetchProduct } from '@/lib/productSlice';
-import { ArrowLeft, Edit, Calendar, Clock } from 'lucide-react';
+import { ArrowLeft, Edit, Calendar,  } from 'lucide-react';
 import { 
   Button, 
   Card, 
@@ -13,23 +13,20 @@ import {
   Tag as AntTag, 
   message,
   Spin,
-  Row,
-  Col,
-  theme
 } from 'antd';
+import PriceTable from '@/components/products/PriceTable';
 
-const { Title, Paragraph, Text } = Typography;
+const { Title } = Typography;
 
 const ProductDetail: React.FC = () => {
   const { t } = useTranslation();
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { token } = theme.useToken();
-  const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
   const [loading, setLoading] = useState(true);
 
-  const { product, loading: fetchLoading } = useSelector(
+
+  const { product,  loading: fetchLoading, } = useSelector(
     (state: RootState) => state.product
   );
 
@@ -38,6 +35,10 @@ const ProductDetail: React.FC = () => {
       loadProduct();
     }
   }, [productId]);
+
+
+
+
 
   const loadProduct = async () => {
     try {
@@ -50,6 +51,7 @@ const ProductDetail: React.FC = () => {
     }
   };
 
+
   const handleEdit = () => {
     navigate(`/products/${productId}/edit`);
   };
@@ -57,6 +59,7 @@ const ProductDetail: React.FC = () => {
   const handleBack = () => {
     navigate('/products');
   };
+
 
   if (loading || fetchLoading) {
     return (
@@ -83,131 +86,152 @@ const ProductDetail: React.FC = () => {
     return new Date(dateString).toLocaleString();
   };
 
+
   return (
-    <div 
-      className="p-6 min-h-screen" 
-      style={{ 
-        backgroundColor: currentTheme === 'dark' ? '#141414' : token.colorBgContainer,
-        color: token.colorText
-      }}
-    >
-      <div className="mb-6">
-        <Button
-          icon={<ArrowLeft size={16} />}
-          onClick={handleBack}
-          style={{
-            backgroundColor: currentTheme === 'dark' ? '#262626' : token.colorBgContainer,
-            borderColor: token.colorBorder,
-            color: token.colorText
-          }}
-        >
-          {t('common.back')}
-        </Button>
-        
-        <div className="flex justify-between items-start">
-          <div>
-            <Title level={2} style={{ color: token.colorText }}>{product.name}</Title>
-            <Paragraph style={{ color: token.colorTextSecondary }}>
-              {product.description || t('product.noDescription')}
-            </Paragraph>
-          </div>
-          
-          <Button
-            type="primary"
-            icon={<Edit size={16} />}
-            onClick={handleEdit}
-            size="large"
-          >
-            {t('common.edit')}
-          </Button>
-        </div>
-      </div>
-
-      <Row gutter={[24, 24]}>
-        {/* Ana Bilgiler */}
-        <Col xs={24} lg={16}>
-          <Card title={t('product.basicInfo')} className="mb-6" style={{ backgroundColor: currentTheme === 'dark' ? '#1f1f1f' : token.colorBgElevated }}>
-            <Descriptions column={1} size="middle">
-              <Descriptions.Item label={t('product.name')}>
-                <Text strong>{product.name}</Text>
-              </Descriptions.Item>
-              
-              <Descriptions.Item label={t('product.description')}>
-                <Text>{product.description || t('product.noDescription')}</Text>
-              </Descriptions.Item>
-              
-              <Descriptions.Item label={t('product.unitLabel')}>
-                <Text>{product.unitLabel || t('product.noUnitLabel')}</Text>
-              </Descriptions.Item>
-              
-              <Descriptions.Item label={t('product.statementDescriptor')}>
-                <Text>{product.statementDescriptor || t('product.noStatementDescriptor')}</Text>
-              </Descriptions.Item>
-            </Descriptions>
-          </Card>
-
-          {/* Pazarlama Özellikleri */}
-          <Card title={t('product.marketingFeatures')} className="mb-6" style={{ backgroundColor: currentTheme === 'dark' ? '#1f1f1f' : token.colorBgElevated }}>
-            {product.marketingFeatures && product.marketingFeatures.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {product.marketingFeatures.map((feature, index) => (
-                  <AntTag key={index} color="blue" className="text-sm py-1 px-3">
-                    {feature}
-                  </AntTag>
-                ))}
-              </div>
-            ) : (
-              <Text type="secondary">{t('product.noMarketingFeatures')}</Text>
-            )}
-          </Card>
-        </Col>
-
-        {/* Yan Panel */}
-        <Col xs={24} lg={8}>
-          {/* Durum */}
-          <Card title={t('product.status')} className="mb-6" style={{ backgroundColor: currentTheme === 'dark' ? '#1f1f1f' : token.colorBgElevated }}>
-            <div className="flex items-center gap-3">
-              <AntTag 
-                color={product.isActive ? 'success' : 'default'}
-                className="text-sm py-1 px-3"
+    <div className="p-6 min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <Card className="mb-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={handleBack}
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
-                {product.isActive ? t('common.active') : t('common.inactive')}
-              </AntTag>
-            </div>
-          </Card>
-
-          {/* Tarih Bilgileri */}
-              <Card title={t('product.timestamps')} className="mb-6" style={{ backgroundColor: currentTheme === 'dark' ? '#1f1f1f' : token.colorBgElevated }}>
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <Calendar size={16} style={{ color: currentTheme === 'dark' ? '#ffffff' : '#9ca3af' }} />
-                <div>
-                  <Text type="secondary" className="text-xs">
-                    {t('product.createdAt')}
-                  </Text>
-                  <div className="text-sm font-medium">
-                    {formatDate(product.createdAt)}
-                  </div>
+                <ArrowLeft size={20} className="text-gray-600 dark:text-gray-300" />
+              </button>
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-900">
+                  <Edit size={24} className="text-blue-600 dark:text-blue-400" />
                 </div>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <Clock size={16} style={{ color: currentTheme === 'dark' ? '#ffffff' : '#9ca3af' }} />
                 <div>
-                  <Text type="secondary" className="text-xs">
-                    {t('product.updatedAt')}
-                  </Text>
-                  <div className="text-sm font-medium">
-                    {formatDate(product.updatedAt)}
+                  <Title level={2} className="mb-1 text-gray-900 dark:text-white">
+                    {product.name}
+                  </Title>
+                  <div className="flex gap-2">
+                    <AntTag color={product.isActive ? 'green' : 'red'}>
+                      {product.isActive ? t('common.active') : t('common.inactive')}
+                    </AntTag>
                   </div>
                 </div>
               </div>
             </div>
-          </Card>
+            <Button
+              type="primary"
+              icon={<Edit size={16} />}
+              onClick={handleEdit}
+              className="bg-blue-600 hover:bg-blue-700 border-blue-600 hover:border-blue-700"
+            >
+              {t('common.edit')}
+            </Button>
+          </div>
+        </Card>
 
+        {/* Product Information */}
+        <Card className="mb-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <Title level={3} className="mb-4 text-gray-900 dark:text-white">
+            {t('product.basicInfo')}
+          </Title>
           
-        </Col>
-      </Row>
+          <Descriptions
+            column={{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
+            className="dark:text-gray-300"
+            labelStyle={{ color: 'inherit' }}
+            contentStyle={{ color: 'inherit' }}
+          >
+            <Descriptions.Item
+              label={
+                <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+                  <Edit size={16} className="text-gray-500 dark:text-gray-400" />
+                  {t('product.name')}
+                </span>
+              }
+            >
+              <span className="font-medium text-gray-900 dark:text-white">
+                {product.name}
+              </span>
+            </Descriptions.Item>
+            
+            <Descriptions.Item
+              label={
+                <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+                  <Edit size={16} className="text-gray-500 dark:text-gray-400" />
+                  {t('product.description')}
+                </span>
+              }
+            >
+              <span className="text-gray-600 dark:text-gray-300">
+                {product.description || t('product.noDescription')}
+              </span>
+            </Descriptions.Item>
+            
+            <Descriptions.Item
+              label={
+                <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+                  <Edit size={16} className="text-gray-500 dark:text-gray-400" />
+                  {t('product.unitLabel')}
+                </span>
+              }
+            >
+              <span className="font-medium text-gray-900 dark:text-white">
+                {product.unitLabel || t('product.noUnitLabel')}
+              </span>
+            </Descriptions.Item>
+            
+            <Descriptions.Item
+              label={
+                <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+                  <Edit size={16} className="text-gray-500 dark:text-gray-400" />
+                  {t('product.statementDescriptor')}
+                </span>
+              }
+            >
+              <span className="font-medium text-gray-900 dark:text-white">
+                {product.statementDescriptor || t('product.noStatementDescriptor')}
+              </span>
+            </Descriptions.Item>
+            
+            <Descriptions.Item
+              label={
+                <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+                  <Calendar size={16} className="text-gray-500 dark:text-gray-400" />
+                  {t('product.createdAt')}
+                </span>
+              }
+            >
+              <span className="text-gray-600 dark:text-gray-300">
+                {formatDate(product.createdAt)}
+              </span>
+            </Descriptions.Item>
+          </Descriptions>
+        </Card>
+
+        {/* Marketing Features */}
+        {product.marketingFeatures && product.marketingFeatures.length > 0 && (
+          <Card className="mb-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+            <Title level={3} className="mb-4 text-gray-900 dark:text-white">
+              {t('product.marketingFeatures')}
+            </Title>
+            <div className="flex flex-wrap gap-2">
+              {product.marketingFeatures.map((feature, index) => (
+                <AntTag key={index} color="blue" className="text-sm">
+                  {feature}
+                </AntTag>
+              ))}
+            </div>
+          </Card>
+        )}
+
+        {/* Prices Section */}
+        <PriceTable
+          prices={product.prices || []}
+          productId={productId!}
+          defaultPriceId={product.defaultPriceId}
+          loading={loading}
+          onRefresh={loadProduct}
+        />
+
+      </div>
     </div>
   );
 };

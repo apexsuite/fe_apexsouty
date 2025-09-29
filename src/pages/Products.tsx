@@ -12,20 +12,20 @@ import {
   setPageSize
 } from '@/lib/productSlice';
 import { Plus, Search } from 'lucide-react';
-import { message, Card, Typography, Button, theme, Pagination } from 'antd';
+import { message, Card, Typography, theme, Pagination } from 'antd';
 
 // Import components
 import ProductTable from '@/components/products/ProductTable';
 import ProductDeleteModal from '@/components/products/ProductDeleteModal';
 
-const { Title, Paragraph } = Typography;
+const { } = Typography;
 
 
 const Products: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { token } = theme.useToken();
+  const { } = theme.useToken();
   const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
   const { products, loading, error, currentPageNumber, pageSize, totalPages, totalCount } = useSelector((state: RootState) => state.product);
   const [searchTerm, setSearchTerm] = useState('');
@@ -33,7 +33,6 @@ const Products: React.FC = () => {
   const [productToDelete, setProductToDelete] = useState<{ id: string; name: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  console.log('Products State:', { products, loading, error, currentPageNumber, pageSize });
 
   const loadProducts = () => {
     const params: any = {
@@ -45,7 +44,6 @@ const Products: React.FC = () => {
       params.name = searchTerm.trim();
     }
 
-    console.log('Loading products with params:', params);
     dispatch(fetchProducts(params));
   };
 
@@ -127,31 +125,56 @@ const Products: React.FC = () => {
   }
 
   return (
-    <>
-      <div 
-        className="p-6 min-h-screen" 
-        style={{ 
-          backgroundColor: currentTheme === 'dark' ? '#141414' : token.colorBgContainer,
-          color: token.colorText
-        }}
-      >
-        <div className="mb-6">
-          <Title level={2} style={{ color: token.colorText }}>
-            {t('product.title')}
-          </Title>
-          <Paragraph style={{ color: token.colorTextSecondary }}>
-            {t('product.description')}
-          </Paragraph>
+    <div 
+      style={{
+        padding: '1.5rem',
+        minHeight: '100vh',
+        backgroundColor: currentTheme === 'dark' ? '#111827' : '#f9fafb',
+        color: currentTheme === 'dark' ? '#ffffff' : '#111827'
+      }}
+    >
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <h1 
+                style={{ 
+                  fontSize: '1.875rem',
+                  fontWeight: 'bold',
+                  color: currentTheme === 'dark' ? '#ffffff' : '#111827'
+                }}
+              >
+                {t('product.title')}
+              </h1>
+              <p 
+                style={{ 
+                  marginTop: '0.5rem',
+                  color: currentTheme === 'dark' ? '#d1d5db' : '#4b5563'
+                }}
+              >
+                {t('product.description')}
+              </p>
+            </div>
+            <button
+              onClick={handleCreateProduct}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+            >
+              <Plus size={20} />
+              {t('product.create')}
+            </button>
+          </div>
         </div>
-        {/* Search */}
-        <Card 
-          className="mb-6" 
-          style={{ 
-            backgroundColor: currentTheme === 'dark' ? '#1f1f1f' : token.colorBgElevated,
-            borderColor: token.colorBorder
+
+        {/* Search and Filters */}
+        <Card
+          style={{
+            backgroundColor: currentTheme === 'dark' ? '#1f2937' : '#ffffff',
+            borderColor: currentTheme === 'dark' ? '#374151' : '#e5e7eb',
+            marginBottom: '1.5rem'
           }}
         >
-          <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+          <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
                 <input
@@ -178,72 +201,70 @@ const Products: React.FC = () => {
             </div>
           </div>
         </Card>
-        <Card
-          className="mb-6"
-          style={{
-            backgroundColor: currentTheme === 'dark' ? '#1f1f1f' : token.colorBgElevated,
-            borderColor: token.colorBorder
-          }}
-        >
-        <Button
-          type="primary"
-          icon={<Plus size={16} />}
-          onClick={handleCreateProduct}
-          size="large"
-          style={{
-            backgroundColor: token.colorPrimary,
-            borderColor: token.colorPrimary
-          }}
-        >
-          {t('product.create')}
-        </Button>
-        </Card>
-        
-            <ProductTable
-              products={products}
-              loading={loading}
-              onEdit={handleEditProduct}
-              onView={handleViewProduct}
-              onDelete={handleDeleteProduct}
-              onStatusChange={handleStatusChange}
-            />
 
-              <div style={{
-                marginTop: '16px',
-                display: 'flex',
-                justifyContent: 'right',
-                padding: '16px',
-                backgroundColor: 'var(--ant-color-bg-container)',
-                border: '1px solid var(--ant-color-border)',
-                borderRadius: '8px'
+        {/* Error Message */}
+        {error && (
+          <div className={`mb-6 rounded-lg p-4 transition-colors duration-200 ${
+            currentTheme === 'dark' 
+              ? 'bg-red-900/20 border border-red-800' 
+              : 'bg-red-50 border border-red-200'
+          }`}>
+            <p className={`transition-colors duration-200 ${currentTheme === 'dark' ? 'text-red-400' : 'text-red-800'}`}>{error}</p>
+          </div>
+        )}
+
+        {/* Products Table */}
+        <div style={{ 
+          backgroundColor: currentTheme === 'dark' ? '#1f2937' : '#ffffff',
+          border: `1px solid ${currentTheme === 'dark' ? '#374151' : '#e5e7eb'}`,
+          borderRadius: '8px',
+          overflow: 'hidden'
+        }}>
+          <ProductTable
+            products={products}
+            loading={loading}
+            onEdit={handleEditProduct}
+            onView={handleViewProduct}
+            onDelete={handleDeleteProduct}
+            onStatusChange={handleStatusChange}
+          />
+        </div>
+
+        <div style={{
+          marginTop: '16px',
+          display: 'flex',
+          justifyContent: 'right',
+          padding: '16px',
+          backgroundColor: currentTheme === 'dark' ? '#1f2937' : '#ffffff',
+          border: `1px solid ${currentTheme === 'dark' ? '#374151' : '#e5e7eb'}`,
+          borderRadius: '8px'
+        }}>
+          <Pagination
+            current={currentPageNumber}
+            total={totalPages * pageSize}
+            pageSize={pageSize}
+            showSizeChanger
+            showQuickJumper
+            showTotal={(total, range) => (
+              <span style={{ 
+                color: currentTheme === 'dark' ? '#d1d5db' : '#374151',
+                fontSize: '14px',
+                fontWeight: '500'
               }}>
-                  <Pagination
-                    current={currentPageNumber}
-                    total={totalPages * pageSize}
-                    pageSize={pageSize}
-                    showSizeChanger
-                    showQuickJumper
-                    showTotal={(total, range) => (
-                      <span style={{ 
-                        color: currentTheme === 'dark' ? '#d1d5db' : '#374151',
-                        fontSize: '14px',
-                        fontWeight: '500'
-                      }}>
-                        {`${range[0]}-${range[1]} of ${totalCount || total} items`}
-                      </span>
-                    )}
-                    onChange={(page, size) => {
-                      handlePageChange(page, size);
-                    }}
-                    onShowSizeChange={(_current, size) => {
-                      handlePageSizeChange(size);
-                    }}
-                    style={{
-                      color: currentTheme === 'dark' ? '#f9fafb' : '#111827'
-                    }}
-                  />
-                </div>
-
+                {`${range[0]}-${range[1]} of ${totalCount || total} items`}
+              </span>
+            )}
+            onChange={(page, size) => {
+              handlePageChange(page, size);
+            }}
+            onShowSizeChange={(_current, size) => {
+              handlePageSizeChange(size);
+            }}
+            style={{
+              color: currentTheme === 'dark' ? '#f9fafb' : '#111827'
+            }}
+          />
+        </div>
 
         <ProductDeleteModal
           visible={showDeleteModal}
@@ -256,7 +277,7 @@ const Products: React.FC = () => {
           loading={isDeleting}
         />
       </div>
-    </>
+    </div>
   );
 };
 

@@ -103,7 +103,7 @@ const PermissionInfo: React.FC<PermissionInfoProps> = ({ permission, theme }) =>
             Page Route ID
           </label>
           <p className={`${theme === 'dark' ? 'text-white bg-gray-700' : 'text-gray-900 bg-gray-50'} px-3 py-2 rounded-lg font-mono text-sm`}>
-            {permission.pageRouteID}
+            {permission.pageRouteId}
           </p>
         </div>
       </div>

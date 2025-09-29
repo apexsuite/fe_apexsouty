@@ -107,9 +107,7 @@ export const fetchRoles = createAsyncThunk(
       if (params.description) queryParams.append('description', params.description);
       if (params.roleValue) queryParams.append('roleValue', params.roleValue.toString());
 
-      console.log('🔍 Fetching roles with params:', params);
       const response = await apiRequest(`/roles?${queryParams.toString()}`);
-      console.log('📡 API Response:', response);
       
       return response;
     } catch (error: any) {
@@ -227,6 +225,52 @@ export const deleteRole = createAsyncThunk(
   }
 );
 
+// Role Permission Management
+export const assignPermissionsToRole = createAsyncThunk(
+  'role/assignPermissions',
+  async ({ roleId, permissions }: { roleId: string; permissions: any[] }, { rejectWithValue }) => {
+    try {
+      const response = await apiRequest(`/roles/${roleId}/permissions`, {
+        method: 'POST',
+        body: JSON.stringify({ permissions }),
+      });
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Permissions atanırken hata oluştu');
+    }
+  }
+);
+
+export const unassignPermissionFromRole = createAsyncThunk(
+  'role/unassignPermission',
+  async ({ roleId, permissionId }: { roleId: string; permissionId: string }, { rejectWithValue }) => {
+    try {
+      const response = await apiRequest(`/roles/${roleId}/permissions/${permissionId}`, {
+        method: 'DELETE',
+      });
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Permission kaldırılırken hata oluştu');
+    }
+  }
+);
+
+// Set role permissions (bulk update)
+export const setRolePermissionsBulk = createAsyncThunk(
+  'role/setRolePermissionsBulk',
+  async ({ roleId, permissions }: { roleId: string; permissions: any[] }, { rejectWithValue }) => {
+    try {
+      const response = await apiRequest(`/roles/${roleId}/permissions`, {
+        method: 'POST',
+        body: JSON.stringify({ permissions }),
+      });
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Role izinleri ayarlanırken hata oluştu');
+    }
+  }
+);
+
 const roleSlice = createSlice({
   name: 'role',
   initialState,
@@ -248,14 +292,11 @@ const roleSlice = createSlice({
     // Fetch roles
     builder
       .addCase(fetchRoles.pending, (state) => {
-        console.log('⏳ Fetching roles...');
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchRoles.fulfilled, (state, action) => {
-        console.log('✅ Roles fetched successfully');
-        console.log('📊 Action payload:', action.payload);
-        
+       
         state.loading = false;
         
         // API response formatını kontrol et
@@ -263,12 +304,10 @@ const roleSlice = createSlice({
           // Format: {data: {items: [...], page: 1, pageSize: 10, pageCount: 1, totalCount: 3}, error: null}
           state.roles = action.payload.data.items;
           state.totalPages = action.payload.data.pageCount || 1;
-          console.log(`📋 Loaded ${state.roles.length} roles`);
         } else if (action.payload && action.payload.items) {
           // Format: {items: [...], page: 1, pageSize: 10, pageCount: 1, totalCount: 3}
           state.roles = action.payload.items;
           state.totalPages = action.payload.pageCount || 1;
-          console.log(`📋 Loaded ${state.roles.length} roles`);
         } else {
           console.warn('⚠️ Unexpected API response format:', action.payload);
           state.roles = [];

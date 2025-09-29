@@ -60,6 +60,7 @@ const RoleEdit: React.FC = () => {
     navigate('/roles');
   };
 
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -187,6 +188,7 @@ const RoleEdit: React.FC = () => {
                 <Switch className="dark:bg-gray-600" />
               </Form.Item>
             </div>
+
 
             {/* Actions */}
             <Form.Item className="mb-0">

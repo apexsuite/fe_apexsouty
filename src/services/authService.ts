@@ -101,11 +101,6 @@ export const authService = {
       body: JSON.stringify(data),
     });
     
-    console.log('Login Response:', response);
-    console.log('Response.error:', response?.error);
-    console.log('Response.success:', response?.success);
-    console.log('Response.status:', response?.status);
-    console.log('Response.message:', response?.message);
     
     // Response kontrolü
     if (!response) {
@@ -114,7 +109,6 @@ export const authService = {
     
     // Success kontrolü - sadece error null ise başarılı
     const isSuccess = !response.error;
-    console.log('Is Success:', isSuccess);
     
     if (!isSuccess) {
       throw new Error(response.message || response.error || 'Login failed');

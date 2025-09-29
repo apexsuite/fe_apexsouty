@@ -113,6 +113,64 @@ export const changeProductStatus = createAsyncThunk(
   }
 );
 
+// Price-related async thunks
+export const createPrice = createAsyncThunk(
+  'product/createPrice',
+  async ({ productId, priceData }: {
+    productId: string;
+    priceData: {
+      currency: string;
+      interval: string;
+      unitAmount: number;
+    };
+  }) => {
+    const response = await apiRequest(`/products/${productId}/prices`, {
+      method: 'POST',
+      body: JSON.stringify(priceData),
+    });
+    return response;
+  }
+);
+
+export const updatePriceStatus = createAsyncThunk(
+  'product/updatePriceStatus',
+  async ({ productId, priceId, isActive }: {
+    productId: string;
+    priceId: string;
+    isActive: boolean;
+  }) => {
+    const response = await apiRequest(`/products/${productId}/prices/${priceId}/change-status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ isActive }),
+    });
+    return response;
+  }
+);
+
+export const setDefaultPrice = createAsyncThunk(
+  'product/setDefaultPrice',
+  async ({ productId, priceId }: {
+    productId: string;
+    priceId: string;
+  }) => {
+    const response = await apiRequest(`/products/${productId}/prices/${priceId}/set-default-price`, {
+      method: 'PATCH',
+    });
+    return response;
+  }
+);
+
+export const getPriceDetail = createAsyncThunk(
+  'product/getPriceDetail',
+  async ({ productId, priceId }: {
+    productId: string;
+    priceId: string;
+  }) => {
+    const response = await apiRequest(`/products/${productId}/prices/${priceId}`);
+    return response;
+  }
+);
+
 // Slice
 const productSlice = createSlice({
   name: 'product',
@@ -254,6 +312,66 @@ const productSlice = createSlice({
       .addCase(changeProductStatus.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to change product status';
+      });
+
+    // createPrice
+    builder
+      .addCase(createPrice.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createPrice.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(createPrice.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to create price';
+      });
+
+    // updatePriceStatus
+    builder
+      .addCase(updatePriceStatus.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updatePriceStatus.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(updatePriceStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to update price status';
+      });
+
+    // setDefaultPrice
+    builder
+      .addCase(setDefaultPrice.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(setDefaultPrice.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(setDefaultPrice.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to set default price';
+      });
+
+    // getPriceDetail
+    builder
+      .addCase(getPriceDetail.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getPriceDetail.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(getPriceDetail.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to get price detail';
       });
   },
 });

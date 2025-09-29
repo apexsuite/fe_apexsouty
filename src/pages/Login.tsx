@@ -55,15 +55,12 @@ export default function Login() {
       // Login işlemini yap
       const loginResult = await dispatch(loginUser(loginData)).unwrap();
       
-      console.log('Login page result:', loginResult);
       
       // Sadece başarılı login sonrası işlem yap
       const isSuccess = loginResult && !loginResult.error;
       
-      console.log('Login page Is Success:', isSuccess);
       
       if (isSuccess) {
-        console.log('Login successful, navigating to dashboard');
         toast.success(t('notification.success'));
         
         try {

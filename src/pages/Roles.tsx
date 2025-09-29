@@ -29,7 +29,6 @@ const Roles: React.FC = () => {
   );
   
   // Debug için roles state'ini logla
-  console.log('Roles State:', { roles, loading, error, totalPages, currentPageNumber, pageSize });
   
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRoleValue] = useState<string>('all');
@@ -38,9 +37,6 @@ const Roles: React.FC = () => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    console.log('Roles component mounted/updated');
-    console.log('Current page:', currentPageNumber);
-    console.log('Page size:', pageSize);
     
     dispatch(clearError());
     loadRoles();
@@ -69,7 +65,6 @@ const Roles: React.FC = () => {
       params.roleValue = parseInt(selectedRoleValue);
     }
 
-    console.log('Loading roles with params:', params);
     dispatch(fetchRoles(params));
   };
 

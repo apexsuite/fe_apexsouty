@@ -94,7 +94,9 @@ const PageFormRoute: React.FC = () => {
 
     try {
       // Prepare payload - set parentID to empty string if it's empty
-      const payload = { ...formData };
+      const payload = { 
+        ...formData
+      };
       if (!payload.parentID || payload.parentID.trim() === '') {
         payload.parentID = '';
       }
@@ -125,6 +127,7 @@ const PageFormRoute: React.FC = () => {
     console.log('Preview:', formData);
   };
 
+
   if (loading && isEditing) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -146,7 +149,6 @@ const PageFormRoute: React.FC = () => {
             <ArrowLeft size={20} />
             {t('pages.backToPages')}
           </button>
-
           <div className="flex justify-between items-center">
             <div>
               <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -335,6 +337,7 @@ const PageFormRoute: React.FC = () => {
 
 
         </form>
+
       </div>
     </div>
   );

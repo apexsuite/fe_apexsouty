@@ -15,6 +15,7 @@ import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea
 export default function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen?: boolean, onMobileClose?: () => void }) {
   const { t, i18n } = useTranslation();
   const lang = useSelector((state: RootState) => state.lang.language);
+  const theme = useSelector((state: RootState) => state.theme.theme);
   const dispatch = useDispatch<AppDispatch>();
   const favoritesMenu = useSelector(selectFavorites);
   const menuItems = useSelector((state: RootState) => state.menu.items);
@@ -45,26 +46,25 @@ export default function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen?: bo
   // Favori sırası değişince API'ye güncelleme at
   const handleFavoriteReorder = (result: DropResult) => {
     if (!result.destination) return;
+    
     const reordered = Array.from(favoritesMenu);
     const [removed] = reordered.splice(result.source.index, 1);
     reordered.splice(result.destination.index, 0, removed);
-    // Her favorinin order alanını yeni index ile güncelle
+    
     const reorderedWithOrder = reordered.map((fav: any, idx: number) => ({ ...fav, order: idx }));
-    // Sadece gerekli alanları içeren yeni sıralı favori dizisi
-    const payload = reorderedWithOrder.map((fav: any) => {
-      let pageRouteID = fav.pageRouteID;
-      if (!pageRouteID) {
-        // Menüde eşleşen item'ı bul
-        const match = menuItems.find((item: any) => item.favouriteId === fav.favouriteId || item.id === fav.id);
-        pageRouteID = match?.pageRouteID;
-      }
-      return {
-        favouriteId: fav.favouriteId,
-        pageRouteID,
-      };
-    });
-    dispatch(reorderFavoritesLocally(reorderedWithOrder)); // Önce anlık güncelle
-    dispatch(updateFavoriteOrder(payload));
+    const movedItem = reorderedWithOrder[result.destination.index];
+    let pageRouteID = movedItem.pageRouteID;
+    if (!pageRouteID) {
+      const match = menuItems.find((item: any) => item.favouriteId === movedItem.favouriteId || item.id === movedItem.id);
+      pageRouteID = match?.pageRouteID;
+    }
+
+    dispatch(reorderFavoritesLocally(reorderedWithOrder));
+    dispatch(updateFavoriteOrder({ 
+      favouriteId: movedItem.favouriteId, 
+      pageRouteID, 
+      newOrder: result.destination.index 
+    }));
   };
 
   const sidebarContent = (
@@ -82,7 +82,6 @@ export default function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen?: bo
                   {(provided) => (
                     <ul className="mb-2" ref={provided.innerRef} {...provided.droppableProps}>
                       {[...favoritesMenu].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((item: any, idx: number) => {
-                        console.log(item , "item");
                         const LucideIcon = item.icon && (LucideIcons as any)[item.icon];
                         return (
                           <Draggable key={item.favouriteId || item.id} draggableId={String(item.favouriteId || item.id)} index={idx}>
@@ -144,7 +143,7 @@ export default function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen?: bo
         onClose={onMobileClose}
         width={260}
         bodyStyle={{ padding: 16 }}
-        className="lg:hidden"
+        className={`lg:hidden ${theme === 'dark' ? 'dark-drawer' : ''}`}
         closeIcon={false}
         maskClosable={true}
       >

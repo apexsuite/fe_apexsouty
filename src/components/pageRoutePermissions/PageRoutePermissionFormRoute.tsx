@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { AppDispatch, RootState } from '@/lib/store';
 import { fetchPermissionById, createPermission, updatePermission, clearCurrentPermission, clearError } from '@/lib/pageRoutePermissionSlice';
+import { fetchPageRoutes } from '@/lib/pageSlice';
 import { ArrowLeft, Save } from 'lucide-react';
 
 const PageRoutePermissionFormRoute: React.FC = () => {
@@ -14,6 +15,7 @@ const PageRoutePermissionFormRoute: React.FC = () => {
   const { currentPermission, loading, error } = useSelector(
     (state: RootState) => state.permission
   );
+  const { pageRoutes } = useSelector((state: RootState) => state.page);
   const theme = useSelector((state: RootState) => state.theme.theme);
   
   const [formData, setFormData] = useState({
@@ -21,7 +23,7 @@ const PageRoutePermissionFormRoute: React.FC = () => {
     description: '',
     label: '',
     isActive: true,
-    pageRouteID: pageRouteId || '',
+    pageRouteId: pageRouteId || '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -32,6 +34,13 @@ const PageRoutePermissionFormRoute: React.FC = () => {
       dispatch(clearError());
       dispatch(fetchPermissionById(permissionId));
     }
+
+    // Load page routes for dropdown
+    dispatch(fetchPageRoutes({
+      page: 1,
+      limit: 100, // Get all page routes
+      name: '',
+    }));
 
     return () => {
       dispatch(clearCurrentPermission());
@@ -45,13 +54,51 @@ const PageRoutePermissionFormRoute: React.FC = () => {
         description: currentPermission.description || '',
         label: currentPermission.label || '',
         isActive: currentPermission.isActive || true,
-        pageRouteID: currentPermission.pageRouteID || pageRouteId || '',
+        pageRouteId: currentPermission.pageRouteId || pageRouteId || '',
       });
+    } else if (!isEditing && pageRouteId) {
+      // If creating new permission and pageRouteId is provided in URL, set it
+      setFormData(prev => ({
+        ...prev,
+        pageRouteId: pageRouteId,
+      }));
     }
-  }, [currentPermission, isEditing]);
+  }, [currentPermission, isEditing, pageRouteId]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  // Debug: Log the current state
+  useEffect(() => {
+    console.log('=== PAGE ROUTES DEBUG ===');
+    console.log('pageRoutes:', pageRoutes);
+    console.log('pageRoutes length:', pageRoutes?.length);
+    console.log('isDisabled:', !pageRoutes || pageRoutes.length === 0);
+    console.log('========================');
+  }, [isEditing, currentPermission, formData.pageRouteId, pageRoutes]);
+
+  // Ensure pageRouteId is set when both currentPermission and pageRoutes are available
+  useEffect(() => {
+    if (isEditing && currentPermission && pageRoutes && pageRoutes.length > 0) {
+      // Check if the current pageRouteId is valid
+      const isValidPageRoute = pageRoutes.some((route: any) => route.id === currentPermission.pageRouteId);
+      
+      if (isValidPageRoute) {
+        console.log('Setting pageRouteId from currentPermission:', currentPermission.pageRouteId);
+        setFormData(prev => ({
+          ...prev,
+          pageRouteId: currentPermission.pageRouteId,
+        }));
+      }
+    }
+  }, [isEditing, currentPermission, pageRoutes]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
+    
+    console.log('=== HANDLE INPUT CHANGE DEBUG ===');
+    console.log('name:', name);
+    console.log('value:', value);
+    console.log('type:', type);
+    console.log('Current formData.pageRouteId:', formData.pageRouteId);
+    console.log('================================');
     
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
@@ -60,10 +107,14 @@ const PageRoutePermissionFormRoute: React.FC = () => {
         [name]: checked,
       }));
     } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: value,
-      }));
+      setFormData(prev => {
+        const newData = {
+          ...prev,
+          [name]: value,
+        };
+        console.log('New formData:', newData);
+        return newData;
+      });
     }
   };
 
@@ -74,13 +125,18 @@ const PageRoutePermissionFormRoute: React.FC = () => {
     try {
       if (isEditing && currentPermission) {
         await dispatch(updatePermission({ 
+          pageRouteId: formData.pageRouteId,
           permissionId: currentPermission.id, 
           permissionData: formData 
         })).unwrap();
       } else {
-        await dispatch(createPermission(formData)).unwrap();
+        // Create permission için pageRouteId parametresi gerekli
+        await dispatch(createPermission({ 
+          pageRouteId: formData.pageRouteId,
+          permissionData: formData 
+        })).unwrap();
       }
-      navigate(`/page-route-permissions/${pageRouteId}/permissions`);
+      navigate(`/page-route-permissions/${formData.pageRouteId}/permissions`);
     } catch (error) {
       console.error('Permission kaydedilirken hata oluştu:', error);
     } finally {
@@ -89,7 +145,7 @@ const PageRoutePermissionFormRoute: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate(`/page-route-permissions/${pageRouteId}/permissions`);
+    navigate(`/page-route-permissions/${formData.pageRouteId || pageRouteId}/permissions`);
   };
 
   if (loading && isEditing) {
@@ -198,6 +254,37 @@ const PageRoutePermissionFormRoute: React.FC = () => {
                   }`}
                   placeholder="Enter label"
                 />
+              </div>
+
+              <div>
+                <label className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                  {t('pages.pageRoute')} *
+                </label>
+                <select
+                  key={`pageRoute-${formData.pageRouteId}-${pageRoutes?.length || 0}`}
+                  name="pageRouteId"
+                  value={formData.pageRouteId}
+                  onChange={handleInputChange}
+                  required
+                  disabled={!pageRoutes || pageRoutes.length === 0}
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                    theme === 'dark' 
+                      ? 'bg-gray-700 border-gray-600 text-white' 
+                      : 'bg-white border-gray-300 text-gray-900'
+                  } ${(!pageRoutes || pageRoutes.length === 0) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  <option value="">
+                    {(!pageRoutes || pageRoutes.length === 0) 
+                      ? t('pages.loadingPageRoutes') || 'Loading page routes...'
+                      : t('pages.selectPageRoute') || 'Select Page Route'
+                    }
+                  </option>
+                  {pageRoutes?.map((pageRoute: any) => (
+                    <option key={pageRoute.id} value={pageRoute.id}>
+                      {pageRoute.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="flex items-center gap-2">

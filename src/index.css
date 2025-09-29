@@ -2,6 +2,123 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Dark mode için Ant Design Modal stilleri */
+.dark .ant-modal-content {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+}
+
+.dark .ant-modal-header {
+  background-color: #1f2937 !important;
+  border-bottom: 1px solid #374151 !important;
+}
+
+.dark .ant-modal-title {
+  color: #f9fafb !important;
+}
+
+.dark .ant-modal-close {
+  color: #9ca3af !important;
+}
+
+.dark .ant-modal-close:hover {
+  color: #f9fafb !important;
+}
+
+/* Dark mode için Ant Design Table stilleri */
+.dark .ant-table {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+}
+
+.dark .ant-table-thead > tr > th {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+  border-bottom: 1px solid #374151 !important;
+}
+
+.dark .ant-table-tbody > tr > td {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+  border-bottom: 1px solid #374151 !important;
+}
+
+.dark .ant-table-tbody > tr:hover > td {
+  background-color: #374151 !important;
+}
+
+/* Dark mode için Ant Design Form stilleri */
+.dark .ant-form-item-label > label {
+  color: #d1d5db !important;
+}
+
+.dark .ant-input {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #f9fafb !important;
+}
+
+.dark .ant-input::placeholder {
+  color: #9ca3af !important;
+}
+
+.dark .ant-select-selector {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #f9fafb !important;
+}
+
+.dark .ant-select-selection-placeholder {
+  color: #9ca3af !important;
+}
+
+.dark .ant-input-number {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #f9fafb !important;
+}
+
+.dark .ant-input-number-input {
+  background-color: transparent !important;
+  color: #f9fafb !important;
+}
+
+.dark .ant-input-number-input::placeholder {
+  color: #9ca3af !important;
+}
+
+/* Dark mode için Ant Design Button stilleri */
+.dark .ant-btn-default {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #f9fafb !important;
+}
+
+.dark .ant-btn-default:hover {
+  background-color: #4b5563 !important;
+  border-color: #6b7280 !important;
+  color: #f9fafb !important;
+}
+
+/* Dark mode için Ant Design Select dropdown stilleri */
+.dark .ant-select-dropdown {
+  background-color: #374151 !important;
+  border: 1px solid #4b5563 !important;
+}
+
+.dark .ant-select-item {
+  color: #f9fafb !important;
+}
+
+.dark .ant-select-item:hover {
+  background-color: #4b5563 !important;
+}
+
+.dark .ant-select-item-option-selected {
+  background-color: #1d4ed8 !important;
+  color: #f9fafb !important;
+}
+
 
 :root {
   --radius: 0.625rem;
@@ -176,6 +293,49 @@ input:-webkit-autofill:active {
   color: #888 !important;
   opacity: 1 !important;
 } 
+
+/* Dark mode için Ant Design Drawer stilleri */
+.dark .ant-drawer-content {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+}
+
+.dark .ant-drawer-header {
+  background-color: #1f2937 !important;
+  border-bottom: 1px solid #374151 !important;
+}
+
+.dark .ant-drawer-title {
+  color: #f9fafb !important;
+}
+
+.dark .ant-drawer-close {
+  color: #9ca3af !important;
+}
+
+.dark .ant-drawer-close:hover {
+  color: #f9fafb !important;
+}
+
+.dark .ant-drawer-body {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+}
+
+.dark .ant-drawer-mask {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Sidebar Drawer için özel dark mode sınıfı */
+.dark-drawer .ant-drawer-content {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+}
+
+.dark-drawer .ant-drawer-body {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+}
 
 /* Browser autofill ve öneri kutusu dark mode düzeltmesi */
 .dark input:-webkit-autofill,
@@ -611,4 +771,354 @@ input:-webkit-autofill:active {
 .dark .ant-pagination .ant-pagination-item-active a {
   color: #ffffff !important;
   font-weight: 600 !important;
+}
+
+/* Switch component styling for PagesRoute */
+.custom-switch.ant-switch {
+  transition: all 0.3s ease;
+}
+
+.custom-switch.ant-switch-checked {
+  background-color: #52c41a !important; /* Green for active */
+}
+
+.custom-switch.ant-switch:not(.ant-switch-checked) {
+  background-color: #ff4d4f !important; /* Red for inactive */
+}
+
+/* Dark mode switch styling */
+.dark-switch.ant-switch-checked {
+  background-color: #52c41a !important; /* Green for active */
+}
+
+.dark-switch.ant-switch:not(.ant-switch-checked) {
+  background-color: #ff4d4f !important; /* Red for inactive */
+}
+
+.dark-switch.ant-switch:not(.ant-switch-checked):hover {
+  background-color: #ff7875 !important; /* Lighter red on hover */
+}
+
+.dark-switch.ant-switch-checked:hover {
+  background-color: #73d13d !important; /* Lighter green on hover */
+}
+
+/* Dark mode table styling */
+.dark-table .ant-table {
+  background-color: #1f2937 !important; /* bg-gray-800 */
+}
+
+.dark-table .ant-table-thead > tr > th {
+  background-color: #374151 !important; /* bg-gray-700 */
+  border-color: #4b5563 !important; /* border-gray-600 */
+  color: #f9fafb !important; /* text-gray-100 */
+}
+
+.dark-table .ant-table-tbody > tr > td {
+  background-color: #1f2937 !important; /* bg-gray-800 */
+  border-color: #4b5563 !important; /* border-gray-600 */
+  color: #f3f4f6 !important; /* text-gray-200 */
+}
+
+.dark-table .ant-table-tbody > tr:hover > td {
+  background-color: #374151 !important; /* bg-gray-700 */
+}
+
+.dark-table .ant-table-container {
+  border-color: #4b5563 !important; /* border-gray-600 */
+}
+
+.dark-table .ant-table-pagination .ant-pagination-item {
+  background-color: #374151 !important; /* bg-gray-700 */
+  border-color: #4b5563 !important; /* border-gray-600 */
+}
+
+.dark-table .ant-table-pagination .ant-pagination-item a {
+  color: #f3f4f6 !important; /* text-gray-200 */
+}
+
+.dark-table .ant-table-pagination .ant-pagination-item-active {
+  background-color: #3b82f6 !important; /* bg-blue-600 */
+  border-color: #3b82f6 !important;
+}
+
+.dark-table .ant-table-pagination .ant-pagination-item-active a {
+  color: #ffffff !important;
+}
+
+/* Dark mode modal styling */
+.dark-modal .ant-modal-content {
+  background-color: #1f2937 !important; /* bg-gray-800 */
+  border-color: #4b5563 !important; /* border-gray-600 */
+}
+
+.dark-modal .ant-modal-header {
+  background-color: #1f2937 !important; /* bg-gray-800 */
+  border-bottom-color: #4b5563 !important; /* border-gray-600 */
+}
+
+.dark-modal .ant-modal-title {
+  color: #f3f4f6 !important; /* text-gray-200 */
+}
+
+.dark-modal .ant-modal-footer {
+  background-color: #1f2937 !important; /* bg-gray-800 */
+  border-top-color: #4b5563 !important; /* border-gray-600 */
+}
+
+.dark-modal .ant-modal-close {
+  color: #f3f4f6 !important; /* text-gray-200 */
+}
+
+.dark-modal .ant-modal-close:hover {
+  color: #ffffff !important;
+}
+
+/* Dark mode input styling */
+.dark-input .ant-input {
+  background-color: #374151 !important; /* bg-gray-700 */
+  border-color: #4b5563 !important; /* border-gray-600 */
+  color: #f3f4f6 !important; /* text-gray-200 */
+}
+
+.dark-input .ant-input::placeholder {
+  color: #9ca3af !important; /* text-gray-400 */
+}
+
+.dark-input .ant-input:focus {
+  background-color: #374151 !important; /* bg-gray-700 */
+  border-color: #3b82f6 !important; /* border-blue-600 */
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
+}
+
+.dark-input .ant-input-prefix {
+  color: #9ca3af !important; /* text-gray-400 */
+}
+
+/* Dark mode modal backdrop */
+.dark-modal .ant-modal-mask {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Dark mode button styling in modal */
+.dark-modal .ant-btn-default {
+  background-color: #374151 !important; /* bg-gray-700 */
+  border-color: #4b5563 !important; /* border-gray-600 */
+  color: #f3f4f6 !important; /* text-gray-200 */
+}
+
+.dark-modal .ant-btn-default:hover {
+  background-color: #4b5563 !important; /* bg-gray-600 */
+  border-color: #6b7280 !important; /* border-gray-500 */
+  color: #ffffff !important;
+}
+
+.dark-modal .ant-btn-primary {
+  background-color: #3b82f6 !important; /* bg-blue-600 */
+  border-color: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+.dark-modal .ant-btn-primary:hover {
+  background-color: #2563eb !important; /* bg-blue-700 */
+  border-color: #2563eb !important;
+}
+
+/* Dark mode scrollbar styling */
+.dark-modal ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dark-modal ::-webkit-scrollbar-track {
+  background-color: #374151 !important; /* bg-gray-700 */
+  border-radius: 4px;
+}
+
+.dark-modal ::-webkit-scrollbar-thumb {
+  background-color: #6b7280 !important; /* bg-gray-500 */
+  border-radius: 4px;
+}
+
+.dark-modal ::-webkit-scrollbar-thumb:hover {
+  background-color: #9ca3af !important; /* bg-gray-400 */
+}
+
+/* Dark mode table scroll container */
+.dark-modal .ant-table-body {
+  scrollbar-width: thin;
+  scrollbar-color: #6b7280 #374151; /* Firefox */
+}
+
+/* Dark mode search input focus improvements */
+.dark-input .ant-input:focus,
+.dark-input .ant-input-focused {
+  background-color: #374151 !important; /* bg-gray-700 */
+  border-color: #3b82f6 !important; /* border-blue-600 */
+  color: #f3f4f6 !important; /* text-gray-200 */
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
+}
+
+.dark-input .ant-input:hover {
+  border-color: #6b7280 !important; /* border-gray-500 */
+}
+
+/* Dark mode input group styling */
+.dark-input .ant-input-group-addon {
+  background-color: #374151 !important; /* bg-gray-700 */
+  border-color: #4b5563 !important; /* border-gray-600 */
+  color: #f3f4f6 !important; /* text-gray-200 */
+}
+
+/* Dark mode checkbox styling */
+.dark-modal .ant-checkbox-wrapper {
+  color: #f3f4f6 !important; /* text-gray-200 */
+}
+
+.dark-modal .ant-checkbox {
+  background-color: #374151 !important; /* bg-gray-700 */
+  border-color: #4b5563 !important; /* border-gray-600 */
+}
+
+.dark-modal .ant-checkbox:hover {
+  border-color: #6b7280 !important; /* border-gray-500 */
+}
+
+.dark-modal .ant-checkbox-checked {
+  background-color: #3b82f6 !important; /* bg-blue-600 */
+  border-color: #3b82f6 !important;
+}
+
+.dark-modal .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #3b82f6 !important; /* bg-blue-600 */
+  border-color: #3b82f6 !important;
+}
+
+.dark-modal .ant-checkbox-inner {
+  background-color: #374151 !important; /* bg-gray-700 */
+  border-color: #4b5563 !important; /* border-gray-600 */
+}
+
+.dark-modal .ant-checkbox-inner::after {
+  border-color: #ffffff !important;
+}
+
+/* Dark mode table cell borders */
+.dark-modal .ant-table-thead > tr > th {
+  border-bottom-color: #4b5563 !important; /* border-gray-600 */
+}
+
+.dark-modal .ant-table-tbody > tr > td {
+  border-bottom-color: #4b5563 !important; /* border-gray-600 */
+}
+
+/* Dark mode selected count styling */
+.dark-modal .ant-typography {
+  color: #f3f4f6 !important; /* text-gray-200 */
+}
+
+/* Dark mode select styling */
+select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+/* Dark mode select option styling */
+select option {
+  background-color: #1f2937 !important; /* bg-gray-800 */
+  color: #f3f4f6 !important; /* text-gray-200 */
+}
+
+/* Dark mode select option hover */
+select option:hover {
+  background-color: #374151 !important; /* bg-gray-700 */
+}
+
+/* Stripe Address Element Dark Mode Styles */
+.stripe-address-element.dark input,
+.stripe-address-element.dark select,
+.stripe-address-element.dark textarea {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #f9fafb !important;
+  font-size: 16px !important;
+  padding: 12px 16px !important;
+  border-radius: 8px !important;
+}
+
+.stripe-address-element.dark input:focus,
+.stripe-address-element.dark select:focus,
+.stripe-address-element.dark textarea:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+  outline: none !important;
+}
+
+.stripe-address-element.dark input::placeholder,
+.stripe-address-element.dark select::placeholder,
+.stripe-address-element.dark textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+.stripe-address-element.dark label {
+  color: #d1d5db !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  margin-bottom: 6px !important;
+}
+
+.stripe-address-element.dark select option {
+  background-color: #374151 !important;
+  color: #f9fafb !important;
+}
+
+.stripe-address-element.dark .StripeElement--focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+.stripe-address-element.dark .StripeElement--invalid {
+  border-color: #ef4444 !important;
+}
+
+.stripe-address-element.dark .StripeElement--complete {
+  border-color: #10b981 !important;
+}
+
+/* Light mode styles */
+.stripe-address-element.light input,
+.stripe-address-element.light select,
+.stripe-address-element.light textarea {
+  background-color: #ffffff !important;
+  border-color: #d1d5db !important;
+  color: #1f2937 !important;
+  font-size: 16px !important;
+  padding: 12px 16px !important;
+  border-radius: 8px !important;
+}
+
+.stripe-address-element.light input:focus,
+.stripe-address-element.light select:focus,
+.stripe-address-element.light textarea:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+  outline: none !important;
+}
+
+.stripe-address-element.light input::placeholder,
+.stripe-address-element.light select::placeholder,
+.stripe-address-element.light textarea::placeholder {
+  color: #6b7280 !important;
+}
+
+.stripe-address-element.light label {
+  color: #374151 !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  margin-bottom: 6px !important;
+}
+
+.stripe-address-element.light select option {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
 } 

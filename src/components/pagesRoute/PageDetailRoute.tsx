@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { AppDispatch, RootState } from '@/lib/store';
 import { fetchPageRouteById, deletePageRoute, clearCurrentPageRoute, clearError } from '@/lib/pageSlice';
 import { ArrowLeft, Edit, Trash2, Calendar, Tag } from 'lucide-react';
+import PermissionTable from './PermissionTable';
 
 const PageDetailRoute: React.FC = () => {
   const { t } = useTranslation();
@@ -16,6 +17,7 @@ const PageDetailRoute: React.FC = () => {
   
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [pagePermissions, setPagePermissions] = useState<any[]>([]);
 
   useEffect(() => {
     if (id) {
@@ -27,6 +29,12 @@ const PageDetailRoute: React.FC = () => {
       dispatch(clearCurrentPageRoute());
     };
   }, [id, dispatch]);
+
+  useEffect(() => {
+    if (currentPageRoute) {
+      setPagePermissions(currentPageRoute.page_route_permissions || []);
+    }
+  }, [currentPageRoute]);
 
   const handleEdit = () => {
     if (currentPageRoute) {
@@ -51,6 +59,18 @@ const PageDetailRoute: React.FC = () => {
 
   const handleBack = () => {
     navigate('/page-routes');
+  };
+
+  // Handle permission changes
+  const handlePermissionsChange = (permissions: any[]) => {
+    setPagePermissions(permissions);
+  };
+
+  // Refresh page route data
+  const handlePermissionsUpdate = () => {
+    if (id) {
+      dispatch(fetchPageRouteById(id));
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -286,53 +306,17 @@ const PageDetailRoute: React.FC = () => {
           )}
         </div>
 
-        {/* Permissions List */}
-        {currentPageRoute.page_route_permissions && currentPageRoute.page_route_permissions.length > 0 && (
-          <div className={`rounded-lg shadow-sm p-6 mb-6 ${
-            theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-          }`}>
-            <h2 className={`text-lg font-semibold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-              Page Permissions ({currentPageRoute.page_route_permissions.length})
-            </h2>
-            
-            <div className="space-y-3">
-              {currentPageRoute.page_route_permissions.map((permission: any) => (
-                <div key={permission.id} className={`p-4 rounded-lg border ${
-                  theme === 'dark' 
-                    ? 'bg-gray-700 border-gray-600' 
-                    : 'bg-gray-50 border-gray-200'
-                }`}>
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h3 className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                        {permission.name}
-                      </h3>
-                      <p className={`text-sm mt-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
-                        {permission.description}
-                      </p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <span className={`px-2 py-1 text-xs font-mono rounded ${
-                          theme === 'dark' 
-                            ? 'bg-gray-600 text-gray-200' 
-                            : 'bg-gray-200 text-gray-700'
-                        }`}>
-                          {permission.label}
-                        </span>
-                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                          permission.isActive 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-red-100 text-red-800'
-                        }`}>
-                          {permission.isActive ? 'Active' : 'Inactive'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Permissions Management */}
+        <div className={`rounded-lg shadow-sm p-6 mb-6 ${
+          theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+        }`}>
+          <PermissionTable
+            pageRouteId={id!}
+            pageRoutePermissions={pagePermissions}
+            onPermissionsUpdate={handlePermissionsUpdate}
+            onPermissionsChange={handlePermissionsChange}
+          />
+        </div>
 
       </div>
 
