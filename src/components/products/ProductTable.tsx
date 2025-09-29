@@ -144,35 +144,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
               style={{ color: currentTheme === 'dark' ? '#ffffff' : token.colorSuccess }}
             />
           </Tooltip>
-          
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  key: 'delete',
-                  label: t('common.delete'),
-                  icon: <Trash2 size={16} />,
-                  danger: true,
-                  onClick: () => onDelete(record.id, record.name),
-                },
-              ],
-            }}
-            trigger={['click']}
-            overlayStyle={{
-              backgroundColor: currentTheme === 'dark' ? '#1f1f1f' : token.colorBgElevated,
-              border: `1px solid ${token.colorBorder}`,
-              borderRadius: token.borderRadiusLG,
-              boxShadow: token.boxShadow
-            }}
-            overlayClassName={currentTheme === 'dark' ? 'dark-dropdown' : ''}
-          >
-            <Button
-              type="text"
-              size="small"
-              icon={<MoreHorizontal size={16} />}
-              style={{ color: currentTheme === 'dark' ? '#ffffff' : token.colorTextSecondary }}
-            />
-          </Dropdown>
+      
         </Space>
       ),
     },
