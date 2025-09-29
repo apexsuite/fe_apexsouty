@@ -43,7 +43,7 @@ export interface Permission {
   description: string;
   label: string;
   isActive: boolean;
-  pageRouteID: string;
+  pageRouteId: string;
   createdAt: string;
   updatedAt?: string;
   pageRoute: PageRoute;
@@ -222,6 +222,21 @@ export const deletePermission = createAsyncThunk(
   }
 );
 
+// DELETE /api/permissions/{permission_id} - Delete permission directly
+export const deletePermissionDirect = createAsyncThunk(
+  'permission/deletePermissionDirect',
+  async (permissionId: string, { rejectWithValue }) => {
+    try {
+      const response = await apiRequest(`/permissions/${permissionId}`, {
+        method: 'DELETE',
+      });
+      return { permissionId, response };
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Permission silinirken hata oluştu');
+    }
+  }
+);
+
 // PATCH /api/page-routes/{page_route_id}/permissions/{permission_id}/change-status - Change permission status
 export const changePermissionStatus = createAsyncThunk(
   'permission/changePermissionStatus',
@@ -382,6 +397,25 @@ const permissionSlice = createSlice({
         }
       })
       .addCase(deletePermission.rejected, (state, action) => {
+        state.deleteLoading = false;
+        state.error = action.payload as string;
+      });
+
+    // deletePermissionDirect
+    builder
+      .addCase(deletePermissionDirect.pending, (state) => {
+        state.deleteLoading = true;
+        state.error = null;
+      })
+      .addCase(deletePermissionDirect.fulfilled, (state, action) => {
+        state.deleteLoading = false;
+        const { permissionId } = action.payload;
+        state.permissions = state.permissions.filter(p => p.id !== permissionId);
+        if (state.currentPermission?.id === permissionId) {
+          state.currentPermission = null;
+        }
+      })
+      .addCase(deletePermissionDirect.rejected, (state, action) => {
         state.deleteLoading = false;
         state.error = action.payload as string;
       });

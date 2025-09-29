@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { AppDispatch, RootState } from '@/lib/store';
-import { fetchPermissionById, deletePermission, clearCurrentPermission, clearError } from '@/lib/pageRoutePermissionSlice';
+import { fetchPermissionById, deletePermissionDirect, clearCurrentPermission, clearError } from '@/lib/pageRoutePermissionSlice';
 import { ArrowLeft, Edit, Trash2, Calendar, Shield, CheckCircle, XCircle } from 'lucide-react';
 
 // Import components
@@ -41,11 +41,11 @@ const PageRoutePermissionDetailRoute: React.FC = () => {
   };
 
   const handleDelete = async () => {
-    if (!currentPermission || !pageRouteId) return;
+    if (!currentPermission) return;
 
     setIsDeleting(true);
     try {
-      await dispatch(deletePermission(currentPermission.id)).unwrap();
+      await dispatch(deletePermissionDirect(currentPermission.id)).unwrap();
       navigate(`/page-route-permissions/${pageRouteId || 'all'}/permissions`);
     } catch (error) {
       console.error('Permission silinirken hata oluştu:', error);

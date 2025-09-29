@@ -51,7 +51,7 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
       if (permission) {
         return {
           id: `temp-${Date.now()}-${Math.random()}`, // Temporary ID for new assignments
-          permissionID: permission.id,
+          permissionId: permission.id,
           rolePermissionID: roleId,
           isActive: true,
           permission: permission,
@@ -62,7 +62,6 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
 
     const updatedPermissions = [...localPermissions, ...newPermissions];
     setLocalPermissions(updatedPermissions);
-    onPermissionsChange(updatedPermissions);
     
     message.success(t('pages.permissionsAssigned'));
     setShowPermissionModal(false);
@@ -70,10 +69,20 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
   };
 
   const handleUnassignPermission = (permissionId: string) => {
+    console.log('=== UNASSIGN DEBUG ===');
+    console.log('Unassigning permission ID:', permissionId);
+    console.log('Current localPermissions:', localPermissions);
+    
     // Remove permission from local permissions array
-    const updatedPermissions = localPermissions.filter(p => p.permissionID !== permissionId);
+    // Try multiple possible field names for permission ID
+    const updatedPermissions = localPermissions.filter(p => 
+      p.permissionId !== permissionId && 
+      p.permission?.id !== permissionId && 
+      p.id !== permissionId
+    );
+    console.log('Updated permissions after unassign:', updatedPermissions);
+    
     setLocalPermissions(updatedPermissions);
-    onPermissionsChange(updatedPermissions);
     
     message.success(t('pages.permissionUnassigned'));
   };
@@ -90,18 +99,19 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
     setIsSaving(true);
     try {
       const permissionsToSend = localPermissions.map(permission => {
-        const isExistingPermission = permission.rolePermissionID && 
-                                   permission.rolePermissionID !== roleId && 
-                                   !permission.rolePermissionID.startsWith('temp-');
+        // Check if this is an existing permission (not a newly assigned one)
+        const isNewlyAssigned = permission.id && permission.id.startsWith('temp-');
         
-        if (isExistingPermission) {
+        if (isNewlyAssigned) {
+          // New permission - only send permissionId
           return {
-            permissionId: permission.permissionID,
-            rolePermissionId: permission.rolePermissionID
+            permissionId: permission.permissionId
           };
         } else {
+          // Existing permission - send both permissionId and rolePermissionId
           return {
-            permissionId: permission.permissionID
+            permissionId: permission.permissionId,
+            rolePermissionId: permission.rolePermissionID || permission.id
           };
         }
       });
@@ -109,19 +119,27 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
       // Debug: Log permissions being sent
       console.log('=== API REQUEST DEBUG ===');
       console.log('Role ID:', roleId);
+      console.log('Local permissions:', localPermissions);
       console.log('Permissions to send:', permissionsToSend);
       console.log('Full request body:', { permissions: permissionsToSend });
+      
+      // Debug each permission type
+      permissionsToSend.forEach((perm, index) => {
+        const localPerm = localPermissions[index];
+        console.log(`Permission ${index}:`, {
+          local: localPerm,
+          sent: perm,
+          isNewlyAssigned: localPerm.id && localPerm.id.startsWith('temp-')
+        });
+      });
 
-      await dispatch(setRolePermissionsBulk({ 
-        roleId, 
-        permissions: permissionsToSend 
+      await dispatch(setRolePermissionsBulk({
+        roleId,
+        permissions: permissionsToSend
       })).unwrap();
 
       message.success(t('pages.permissionsSaved') || 'Permissions saved successfully');
-      
-      // Notify parent component about the change
-      onPermissionsChange(localPermissions);
-      
+
     } catch (error: any) {
       const errorMessage = error.data?.message || error.message || t('pages.permissionsSaveError') || 'Failed to save permissions';
       message.error(errorMessage);
@@ -131,12 +149,12 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
   };
 
   const currentRolePermissionIds = rolePermissions.map(rp => {
-    return rp.permissionID || rp.permission?.id || rp.id;
-  }).filter(Boolean); 
+    return rp.permissionId || rp.permission?.id || rp.id;
+  }).filter(Boolean);
   const availablePermissions = allPermissions.filter(permission => {
     const isNotAssigned = !currentRolePermissionIds.includes(permission.id);
     const matchesSearch = permission.name.toLowerCase().includes(permissionSearchTerm.toLowerCase());
-    
+
     return isNotAssigned && matchesSearch;
   });
 
@@ -188,7 +206,15 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
             type="text"
             danger
             icon={<Trash2 size={16} />}
-            onClick={() => handleUnassignPermission(record.permissionID)}
+            onClick={() => {
+              console.log('=== RECORD DEBUG ===');
+              console.log('record:', record);
+              console.log('record.permissionId:', record.permissiınId);
+              console.log('record.permission?.id:', record.permission?.id);
+              console.log('record.id:', record.id);
+              console.log('==================');
+              handleUnassignPermission(record.permissionId || record.permission?.id || record.id);
+            }}
             size="small"
           >
             {t('pages.unassign')}
@@ -240,7 +266,7 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
         <Table
           columns={columns}
           dataSource={localPermissions}
-          rowKey="permissionID"
+          rowKey="permissionId"
           pagination={false}
           size="small"
           className={`${theme === 'dark' ? 'dark-table' : ''}`}
