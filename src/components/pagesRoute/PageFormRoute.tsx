@@ -6,7 +6,6 @@ import { AppDispatch, RootState } from '@/lib/store';
 import { fetchPageRouteById, createPageRoute, updatePageRoute, clearCurrentPageRoute, clearError } from '@/lib/pageSlice';
 import { ArrowLeft, Save, Eye } from 'lucide-react';
 import { message } from 'antd';
-import PermissionTable from './PermissionTable';
 
 const PageFormRoute: React.FC = () => {
   const { t } = useTranslation();
@@ -28,7 +27,6 @@ const PageFormRoute: React.FC = () => {
     parentID: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [pagePermissions, setPagePermissions] = useState<any[]>([]);
 
   const isEditing = Boolean(id);
 
@@ -56,9 +54,6 @@ const PageFormRoute: React.FC = () => {
         isUnderConstruction: currentPageRoute.IsUnderConstruction || false,
         parentID: currentPageRoute.parentID || '',
       });
-      
-      // Initialize permissions
-      setPagePermissions(currentPageRoute.page_route_permissions || []);
     }
   }, [currentPageRoute, isEditing]);
 
@@ -100,8 +95,7 @@ const PageFormRoute: React.FC = () => {
     try {
       // Prepare payload - set parentID to empty string if it's empty
       const payload = { 
-        ...formData,
-        page_route_permissions: pagePermissions // Include permissions in payload
+        ...formData
       };
       if (!payload.parentID || payload.parentID.trim() === '') {
         payload.parentID = '';
@@ -133,17 +127,6 @@ const PageFormRoute: React.FC = () => {
     console.log('Preview:', formData);
   };
 
-  // Handle permission changes
-  const handlePermissionsChange = (permissions: any[]) => {
-    setPagePermissions(permissions);
-  };
-
-  // Refresh page route data
-  const handlePermissionsUpdate = () => {
-    if (id) {
-      dispatch(fetchPageRouteById(id));
-    }
-  };
 
   if (loading && isEditing) {
     return (
@@ -352,17 +335,6 @@ const PageFormRoute: React.FC = () => {
             </div>
           </div>
 
-          {/* Permission Management Section - Only show in edit mode */}
-          {isEditing && (
-            <div className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-sm p-6 border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
-              <PermissionTable
-                pageRouteId={id!}
-                pageRoutePermissions={pagePermissions}
-                onPermissionsUpdate={handlePermissionsUpdate}
-                onPermissionsChange={handlePermissionsChange}
-              />
-            </div>
-          )}
 
         </form>
 

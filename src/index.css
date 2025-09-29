@@ -294,6 +294,49 @@ input:-webkit-autofill:active {
   opacity: 1 !important;
 } 
 
+/* Dark mode için Ant Design Drawer stilleri */
+.dark .ant-drawer-content {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+}
+
+.dark .ant-drawer-header {
+  background-color: #1f2937 !important;
+  border-bottom: 1px solid #374151 !important;
+}
+
+.dark .ant-drawer-title {
+  color: #f9fafb !important;
+}
+
+.dark .ant-drawer-close {
+  color: #9ca3af !important;
+}
+
+.dark .ant-drawer-close:hover {
+  color: #f9fafb !important;
+}
+
+.dark .ant-drawer-body {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+}
+
+.dark .ant-drawer-mask {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Sidebar Drawer için özel dark mode sınıfı */
+.dark-drawer .ant-drawer-content {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+}
+
+.dark-drawer .ant-drawer-body {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+}
+
 /* Browser autofill ve öneri kutusu dark mode düzeltmesi */
 .dark input:-webkit-autofill,
 .dark input:-webkit-autofill:focus,

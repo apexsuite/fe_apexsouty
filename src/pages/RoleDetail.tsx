@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -6,6 +6,7 @@ import { AppDispatch, RootState } from '@/lib/store';
 import { fetchRoleById, clearCurrentRole } from '@/lib/roleSlice';
 import { ArrowLeft, Edit, Shield, Users, Calendar, Hash } from 'lucide-react';
 import { Button, Card, Typography, Tag, Descriptions, Spin } from 'antd';
+import RolePermissionTable from '@/components/roles/RolePermissionTable';
 
 const { Title, Paragraph } = Typography;
 
@@ -15,6 +16,7 @@ const RoleDetail: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { id } = useParams<{ id: string }>();
   const { currentRole, loading, error } = useSelector((state: RootState) => state.role);
+  const [rolePermissions, setRolePermissions] = useState<any[]>([]);
 
   useEffect(() => {
     if (id) {
@@ -25,6 +27,12 @@ const RoleDetail: React.FC = () => {
     };
   }, [id, dispatch]);
 
+  useEffect(() => {
+    if (currentRole) {
+      setRolePermissions(currentRole.rolePermissions || []);
+    }
+  }, [currentRole]);
+
   const handleEdit = () => {
     if (id) {
       navigate(`/roles/${id}/edit`);
@@ -33,6 +41,18 @@ const RoleDetail: React.FC = () => {
 
   const handleBack = () => {
     navigate('/roles');
+  };
+
+  // Handle permission changes
+  const handlePermissionsChange = (permissions: any[]) => {
+    setRolePermissions(permissions);
+  };
+
+  // Refresh role data
+  const handlePermissionsUpdate = () => {
+    if (id) {
+      dispatch(fetchRoleById(id));
+    }
   };
 
   if (loading) {
@@ -184,21 +204,14 @@ const RoleDetail: React.FC = () => {
           </Paragraph>
         </Card>
 
-        {/* Permissions Preview */}
-        {currentRole.rolePermissions && currentRole.rolePermissions.length > 0 && (
-          <Card className="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-            <Title level={3} className="mb-4 text-gray-900 dark:text-white">
-              {t('roles.assignedPermissions') || 'Assigned Permissions'}
-            </Title>
-            <div className="flex flex-wrap gap-2">
-              {currentRole.rolePermissions.map((permission: any) => (
-                <Tag key={permission.id} color="blue" className="text-sm">
-                  {permission.name}
-                </Tag>
-              ))}
-            </div>
-          </Card>
-        )}
+        {/* Permissions Management */}
+        <Card className="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <RolePermissionTable
+            roleId={id!}
+            rolePermissions={rolePermissions}
+            onPermissionsChange={handlePermissionsChange}
+          />
+        </Card>
       </div>
     </div>
   );

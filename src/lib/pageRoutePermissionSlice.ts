@@ -155,18 +155,20 @@ export const fetchPermissionById = createAsyncThunk(
   }
 );
 
-// POST /permissions - Create permission
+// POST /api/page-routes/{page_route_id}/permissions - Create permission
 export const createPermission = createAsyncThunk(
   'permission/createPermission',
-  async (permissionData: {
-    name: string;
-    description: string;
-    label: string;
-    isActive: boolean;
-    pageRouteID: string;
+  async ({ pageRouteId, permissionData }: {
+    pageRouteId: string;
+    permissionData: {
+      name: string;
+      description: string;
+      label: string;
+      isActive: boolean;
+    };
   }, { rejectWithValue }) => {
     try {
-      const response = await apiRequest('/permissions', {
+      const response = await apiRequest(`/page-routes/${pageRouteId}/permissions`, {
         method: 'POST',
         body: JSON.stringify(permissionData),
       });
@@ -177,21 +179,21 @@ export const createPermission = createAsyncThunk(
   }
 );
 
-// PUT /permissions/{permission_id} - Update permission
+// PUT /api/page-routes/{page_route_id}/permissions/{permission_id} - Update permission
 export const updatePermission = createAsyncThunk(
   'permission/updatePermission',
-  async ({ permissionId, permissionData }: {
+  async ({ pageRouteId, permissionId, permissionData }: {
+    pageRouteId: string;
     permissionId: string;
     permissionData: {
       name: string;
       description: string;
       label: string;
       isActive: boolean;
-      pageRouteID: string;
     };
   }, { rejectWithValue }) => {
     try {
-      const response = await apiRequest(`/permissions/${permissionId}`, {
+      const response = await apiRequest(`/page-routes/${pageRouteId}/permissions/${permissionId}`, {
         method: 'PUT',
         body: JSON.stringify(permissionData),
       });
@@ -202,12 +204,15 @@ export const updatePermission = createAsyncThunk(
   }
 );
 
-// DELETE /permissions/{permission_id} - Delete permission
+// DELETE /api/page-routes/{page_route_id}/permissions/{permission_id} - Delete permission
 export const deletePermission = createAsyncThunk(
   'permission/deletePermission',
-  async (permissionId: string, { rejectWithValue }) => {
+  async ({ pageRouteId, permissionId }: {
+    pageRouteId: string;
+    permissionId: string;
+  }, { rejectWithValue }) => {
     try {
-      const response = await apiRequest(`/permissions/${permissionId}`, {
+      const response = await apiRequest(`/page-routes/${pageRouteId}/permissions/${permissionId}`, {
         method: 'DELETE',
       });
       return { permissionId, response };
@@ -217,14 +222,18 @@ export const deletePermission = createAsyncThunk(
   }
 );
 
-// PATCH /permissions/{permission_id}/change-status - Change permission status
+// PATCH /api/page-routes/{page_route_id}/permissions/{permission_id}/change-status - Change permission status
 export const changePermissionStatus = createAsyncThunk(
   'permission/changePermissionStatus',
-  async ({ permissionId, status }: { permissionId: string; status: boolean }, { rejectWithValue }) => {
+  async ({ pageRouteId, permissionId, status }: { 
+    pageRouteId: string; 
+    permissionId: string; 
+    status: boolean 
+  }, { rejectWithValue }) => {
     try {
-      const response = await apiRequest(`/permissions/${permissionId}/change-status`, {
+      const response = await apiRequest(`/page-routes/${pageRouteId}/permissions/${permissionId}/change-status`, {
         method: 'PATCH',
-        body: JSON.stringify({ status }),
+        body: JSON.stringify({ isActive: status }),
       });
       return { permissionId, status, response };
     } catch (error: any) {

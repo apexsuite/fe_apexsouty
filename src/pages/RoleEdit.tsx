@@ -6,7 +6,6 @@ import { AppDispatch, RootState } from '@/lib/store';
 import { fetchRoleById, updateRole, clearCurrentRole } from '@/lib/roleSlice';
 import { ArrowLeft, Save, Loader } from 'lucide-react';
 import { Form, Input, Button, Card, Typography, Switch, message } from 'antd';
-import RolePermissionTable from '@/components/roles/RolePermissionTable';
 
 const { Title, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -19,7 +18,6 @@ const RoleEdit: React.FC = () => {
   const { currentRole, loading, error } = useSelector((state: RootState) => state.role);
   const [form] = Form.useForm();
   const [submitting, setSubmitting] = useState(false);
-  const [rolePermissions, setRolePermissions] = useState<any[]>([]);
 
   useEffect(() => {
     if (id) {
@@ -39,9 +37,6 @@ const RoleEdit: React.FC = () => {
         isActive: currentRole.isActive,
         isDefault: currentRole.isDefault,
       });
-      
-      // Initialize permissions
-      setRolePermissions(currentRole.rolePermissions || []);
     }
   }, [currentRole, form]);
 
@@ -50,13 +45,7 @@ const RoleEdit: React.FC = () => {
     
     setSubmitting(true);
     try {
-      // Include permissions in the update
-      const roleData = {
-        ...values,
-        rolePermissions: rolePermissions,
-      };
-      
-      await dispatch(updateRole({ roleId: id, roleData })).unwrap();
+      await dispatch(updateRole({ roleId: id, roleData: values })).unwrap();
       message.success(t('roles.roleUpdatedSuccessfully') || 'Role updated successfully!');
       navigate('/roles');
     } catch (error: any) {
@@ -71,17 +60,6 @@ const RoleEdit: React.FC = () => {
     navigate('/roles');
   };
 
-  // Handle permission changes
-  const handlePermissionsChange = (permissions: any[]) => {
-    setRolePermissions(permissions);
-  };
-
-  // Refresh role data
-  const handlePermissionsUpdate = () => {
-    if (id) {
-      dispatch(fetchRoleById(id));
-    }
-  };
 
   if (loading) {
     return (
@@ -211,15 +189,6 @@ const RoleEdit: React.FC = () => {
               </Form.Item>
             </div>
 
-            {/* Permission Management Section */}
-            <Card className="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-              <RolePermissionTable
-                roleId={id!}
-                rolePermissions={rolePermissions}
-                onPermissionsUpdate={handlePermissionsUpdate}
-                onPermissionsChange={handlePermissionsChange}
-              />
-            </Card>
 
             {/* Actions */}
             <Form.Item className="mb-0">

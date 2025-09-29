@@ -89,13 +89,18 @@ const PageRoutePermissionFormRoute: React.FC = () => {
     try {
       if (isEditing && currentPermission) {
         await dispatch(updatePermission({ 
+          pageRouteId: formData.pageRouteID,
           permissionId: currentPermission.id, 
           permissionData: formData 
         })).unwrap();
       } else {
-        await dispatch(createPermission(formData)).unwrap();
+        // Create permission için pageRouteId parametresi gerekli
+        await dispatch(createPermission({ 
+          pageRouteId: formData.pageRouteID,
+          permissionData: formData 
+        })).unwrap();
       }
-      navigate(`/page-route-permissions/${pageRouteId}/permissions`);
+      navigate(`/page-route-permissions/${formData.pageRouteID}/permissions`);
     } catch (error) {
       console.error('Permission kaydedilirken hata oluştu:', error);
     } finally {
@@ -104,7 +109,7 @@ const PageRoutePermissionFormRoute: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate(`/page-route-permissions/${pageRouteId}/permissions`);
+    navigate(`/page-route-permissions/${formData.pageRouteID || pageRouteId}/permissions`);
   };
 
   if (loading && isEditing) {

@@ -255,6 +255,22 @@ export const unassignPermissionFromRole = createAsyncThunk(
   }
 );
 
+// Set role permissions (bulk update)
+export const setRolePermissionsBulk = createAsyncThunk(
+  'role/setRolePermissionsBulk',
+  async ({ roleId, permissions }: { roleId: string; permissions: any[] }, { rejectWithValue }) => {
+    try {
+      const response = await apiRequest(`/roles/${roleId}/permissions`, {
+        method: 'POST',
+        body: JSON.stringify({ permissions }),
+      });
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Role izinleri ayarlanırken hata oluştu');
+    }
+  }
+);
+
 const roleSlice = createSlice({
   name: 'role',
   initialState,

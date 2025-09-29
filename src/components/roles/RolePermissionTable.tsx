@@ -3,21 +3,20 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { AppDispatch, RootState } from '@/lib/store';
 import { fetchPermissions } from '@/lib/pageRoutePermissionSlice';
-import { Trash2, Search, Check, Plus } from 'lucide-react';
+import { setRolePermissionsBulk } from '@/lib/roleSlice';
+import { Trash2, Search, Check, Plus, Save } from 'lucide-react';
 import { message, Button, Tag, Modal, Input, Table, Space } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 
 interface RolePermissionTableProps {
   roleId: string;
   rolePermissions: any[];
-  onPermissionsUpdate: () => void;
   onPermissionsChange: (permissions: any[]) => void;
 }
 
 const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
   roleId,
   rolePermissions,
-  onPermissionsUpdate,
   onPermissionsChange,
 }) => {
   const { t } = useTranslation();
@@ -29,6 +28,7 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
   const [permissionSearchTerm, setPermissionSearchTerm] = useState('');
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
   const [localPermissions, setLocalPermissions] = useState<any[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Initialize local permissions when rolePermissions change
   useEffect(() => {
@@ -38,14 +38,14 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
   const loadAllPermissions = async () => {
     try {
       const response = await dispatch(fetchPermissions({})).unwrap();
-      setAllPermissions(response.data?.items || []);
+      const allPerms = response.data?.items || [];
+      setAllPermissions(allPerms);
     } catch (error) {
       console.error('Failed to load all permissions:', error);
     }
   };
 
   const handleAssignPermissions = () => {
-    // Add selected permissions to local permissions array
     const newPermissions = selectedPermissions.map(permissionId => {
       const permission = allPermissions.find(p => p.id === permissionId);
       if (permission) {
@@ -86,11 +86,59 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
     }
   };
 
-  // Filter available permissions (not assigned to current role)
-  const availablePermissions = allPermissions.filter(permission => 
-    !localPermissions.some(current => current.permissionID === permission.id) &&
-    permission.name.toLowerCase().includes(permissionSearchTerm.toLowerCase())
-  );
+  const handleSavePermissions = async () => {
+    setIsSaving(true);
+    try {
+      const permissionsToSend = localPermissions.map(permission => {
+        const isExistingPermission = permission.rolePermissionID && 
+                                   permission.rolePermissionID !== roleId && 
+                                   !permission.rolePermissionID.startsWith('temp-');
+        
+        if (isExistingPermission) {
+          return {
+            permissionId: permission.permissionID,
+            rolePermissionId: permission.rolePermissionID
+          };
+        } else {
+          return {
+            permissionId: permission.permissionID
+          };
+        }
+      });
+
+      // Debug: Log permissions being sent
+      console.log('=== API REQUEST DEBUG ===');
+      console.log('Role ID:', roleId);
+      console.log('Permissions to send:', permissionsToSend);
+      console.log('Full request body:', { permissions: permissionsToSend });
+
+      await dispatch(setRolePermissionsBulk({ 
+        roleId, 
+        permissions: permissionsToSend 
+      })).unwrap();
+
+      message.success(t('pages.permissionsSaved') || 'Permissions saved successfully');
+      
+      // Notify parent component about the change
+      onPermissionsChange(localPermissions);
+      
+    } catch (error: any) {
+      const errorMessage = error.data?.message || error.message || t('pages.permissionsSaveError') || 'Failed to save permissions';
+      message.error(errorMessage);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const currentRolePermissionIds = rolePermissions.map(rp => {
+    return rp.permissionID || rp.permission?.id || rp.id;
+  }).filter(Boolean); 
+  const availablePermissions = allPermissions.filter(permission => {
+    const isNotAssigned = !currentRolePermissionIds.includes(permission.id);
+    const matchesSearch = permission.name.toLowerCase().includes(permissionSearchTerm.toLowerCase());
+    
+    return isNotAssigned && matchesSearch;
+  });
 
   const columns: ColumnsType<any> = [
     {
@@ -160,17 +208,31 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
           </h3>
           <Tag color="blue">{localPermissions.length}</Tag>
         </div>
-        <Button
-          type="primary"
-          icon={<Plus size={16} />}
-          onClick={() => {
-            setShowPermissionModal(true);
-            loadAllPermissions();
-          }}
-          size="small"
-        >
-          {t('pages.managePermissions')}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            type="primary"
+            icon={<Save size={16} />}
+            onClick={handleSavePermissions}
+            loading={isSaving}
+            size="small"
+            disabled={isSaving}
+          >
+            {isSaving ? (t('pages.saving') || 'Saving...') : (t('pages.save') || 'Save')}
+          </Button>
+          <Button
+            type="default"
+            icon={<Plus size={16} />}
+            onClick={() => {
+              setShowPermissionModal(true);
+              setSelectedPermissions([]); // Clear previous selections
+              setPermissionSearchTerm(''); // Clear search term
+              loadAllPermissions();
+            }}
+            size="small"
+          >
+            {t('pages.managePermissions')}
+          </Button>
+        </div>
       </div>
 
       {/* Permissions Table */}
