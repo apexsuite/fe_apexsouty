@@ -27,9 +27,7 @@ const Roles: React.FC = () => {
   const { roles, loading, error, totalPages, currentPageNumber, pageSize } = useSelector(
     (state: RootState) => state.role
   );
-  
-  // Debug için roles state'ini logla
-  
+    
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRoleValue] = useState<string>('all');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -40,9 +38,8 @@ const Roles: React.FC = () => {
     
     dispatch(clearError());
     loadRoles();
-  }, [currentPageNumber, pageSize]); // currentPageNumber ve pageSize değiştiğinde de çalışsın
+  }, [currentPageNumber, pageSize]);
 
-  // searchTerm veya selectedRoleValue değiştiğinde ayrı bir useEffect
   useEffect(() => {
     if (searchTerm !== '' || selectedRoleValue !== 'all') {
       dispatch(setCurrentPageNumber(1));

@@ -141,43 +141,43 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
     setSubmitting(true);
     try {
       if (!formData.name.trim()) {
-        message.error('Lütfen adres formundaki "Ad ve soyadı" alanını doldurun');
+        message.error(t('billing.nameRequired'));
         setSubmitting(false);
         return;
       }
 
       if (!formData.line1.trim()) {
-        message.error('Lütfen adres formundaki "Adres satırı 1" alanını doldurun');
+        message.error(t('billing.line1Required'));
         setSubmitting(false);
         return;
       }
 
       if (!formData.city.trim()) {
-        message.error('Lütfen adres formundaki "İl" alanını doldurun');
+        message.error(t('billing.cityRequired'));
         setSubmitting(false);
         return;
       }
 
       if (!formData.state.trim()) {
-        message.error('Lütfen adres formundaki "İlçe" alanını doldurun');
+        message.error(t('billing.stateRequired'));
         setSubmitting(false);
         return;
       }
 
       if (!formData.postalCode.trim()) {
-        message.error('Lütfen adres formundaki "Posta kodu" alanını doldurun');
+        message.error(t('billing.postalCodeRequired'));
         setSubmitting(false);
         return;
       }
 
       if (!formData.country.trim()) {
-        message.error('Lütfen adres formundaki "Ülke" alanını doldurun');
+        message.error(t('billing.countryRequired'));
         setSubmitting(false);
         return;
       }
 
       if (!formData.phone.trim()) {
-        message.error('Lütfen adres formundaki "Telefon numarası" alanını doldurun');
+        message.error(t('billing.phoneRequired'));
         setSubmitting(false);
         return;
       }
