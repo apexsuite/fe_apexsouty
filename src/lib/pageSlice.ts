@@ -55,7 +55,7 @@ interface PageState {
   currentPageRoute: PageRoute | null;
   privatePageRoutes: PageRoute[];
   loading: boolean;
-  error: string | null;
+  error: any;
   totalPages: number;
   currentPageNumber: number;
   pageSize: number;
@@ -100,7 +100,7 @@ export const fetchPageRoutes = createAsyncThunk(
       const response = await apiRequest(`/page-routes?${queryParams.toString()}`);
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Page routes yüklenirken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -113,7 +113,7 @@ export const fetchPrivatePageRoutes = createAsyncThunk(
       const response = await apiRequest('/page-routes/private-routes');
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Private page routes yüklenirken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -126,7 +126,7 @@ export const fetchPageRouteById = createAsyncThunk(
       const response = await apiRequest(`/page-routes/${pageRouteId}`);
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Page route detayları yüklenirken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -152,7 +152,7 @@ export const createPageRoute = createAsyncThunk(
       });
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Page route oluşturulurken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -181,7 +181,7 @@ export const updatePageRoute = createAsyncThunk(
       });
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Page route güncellenirken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -196,7 +196,7 @@ export const deletePageRoute = createAsyncThunk(
       });
       return pageRouteId;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Page route silinirken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -212,7 +212,7 @@ export const changePageRouteStatus = createAsyncThunk(
       });
       return { pageRouteId, response };
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Page route durumu değiştirilirken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -227,7 +227,7 @@ export const restorePageRoute = createAsyncThunk(
       });
       return { pageRouteId, response };
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Page route geri yüklenirken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -265,7 +265,7 @@ const pageSlice = createSlice({
       })
       .addCase(fetchPageRoutes.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       });
 
     // fetchPrivatePageRoutes
@@ -281,7 +281,7 @@ const pageSlice = createSlice({
       })
       .addCase(fetchPrivatePageRoutes.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       });
 
     // fetchPageRouteById
@@ -297,7 +297,7 @@ const pageSlice = createSlice({
       })
       .addCase(fetchPageRouteById.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       });
 
     // createPageRoute
@@ -314,7 +314,7 @@ const pageSlice = createSlice({
       })
       .addCase(createPageRoute.rejected, (state, action) => {
         state.createLoading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       });
 
     // updatePageRoute
@@ -339,7 +339,7 @@ const pageSlice = createSlice({
       })
       .addCase(updatePageRoute.rejected, (state, action) => {
         state.updateLoading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       });
 
     // deletePageRoute
@@ -358,7 +358,7 @@ const pageSlice = createSlice({
       })
       .addCase(deletePageRoute.rejected, (state, action) => {
         state.deleteLoading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       });
 
     // changePageRouteStatus
@@ -383,7 +383,7 @@ const pageSlice = createSlice({
       })
       .addCase(changePageRouteStatus.rejected, (state, action) => {
         state.statusChangeLoading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       });
 
     // restorePageRoute
@@ -408,7 +408,7 @@ const pageSlice = createSlice({
       })
       .addCase(restorePageRoute.rejected, (state, action) => {
         state.restoreLoading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       });
   },
 });

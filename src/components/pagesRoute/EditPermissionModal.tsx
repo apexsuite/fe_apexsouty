@@ -7,9 +7,9 @@ import {
   Input,
   Switch,
   Button,
-  message,
   theme
 } from 'antd';
+import { useErrorHandler } from '@/lib/useErrorHandler';
 import { Edit, Info, Tag as TagIcon, Activity } from 'lucide-react';
 import { RootState, AppDispatch } from '@/lib/store';
 import { updatePermission } from '@/lib/pageRoutePermissionSlice';
@@ -40,6 +40,7 @@ const EditPermissionModal: React.FC<EditPermissionModalProps> = ({
   const { token } = theme.useToken();
   const dispatch = useDispatch<AppDispatch>();
   const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
+  const { handleError, showSuccess } = useErrorHandler();
   
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -73,12 +74,14 @@ const EditPermissionModal: React.FC<EditPermissionModalProps> = ({
       console.log('PageRouteId:', pageRouteId);
       
       await dispatch(updatePermission(payload)).unwrap();
-      message.success(t('permissions.updatedSuccessfully') || 'Permission updated successfully!');
+      showSuccess('permissionUpdatedSuccessfully');
       form.resetFields();
-      onSuccess();
+      // Success toast gösterildikten sonra sayfa yönlendirmesi yap
+      setTimeout(() => {
+        onSuccess();
+      }, 1000);
     } catch (error: any) {
-      console.error('Edit Permission Error:', error);
-      message.error(error.message || t('permissions.updateError') || 'Failed to update permission');
+      handleError(error);
     } finally {
       setLoading(false);
     }

@@ -18,7 +18,7 @@ interface AuthState {
   isAuthenticated: boolean;
   user: User | null;
   loading: boolean;
-  error: string | null;
+  error: any;
 }
 
 // localStorage'dan kullanıcı bilgilerini al
@@ -218,7 +218,7 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       });
 
     // Login
@@ -296,7 +296,7 @@ const authSlice = createSlice({
       })
       .addCase(forgotPassword.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       });
 
     // Reset Password
@@ -310,7 +310,7 @@ const authSlice = createSlice({
       })
       .addCase(resetPassword.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       });
 
     // Check Auth

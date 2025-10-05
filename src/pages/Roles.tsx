@@ -12,7 +12,8 @@ import {
   setPageSize
 } from '@/lib/roleSlice';
 import { Plus, Search } from 'lucide-react';
-import { message, Card, Typography, Pagination } from 'antd';
+import { Card, Typography, Pagination } from 'antd';
+import { useErrorHandler } from '@/lib/useErrorHandler';
 
 // Import components
 import RoleTable from '@/components/roles/RoleTable';
@@ -27,9 +28,8 @@ const Roles: React.FC = () => {
   const { roles, loading, error, totalPages, currentPageNumber, pageSize } = useSelector(
     (state: RootState) => state.role
   );
-  
-  // Debug için roles state'ini logla
-  
+  const { handleError, showSuccess } = useErrorHandler();
+    
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRoleValue] = useState<string>('all');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -40,9 +40,8 @@ const Roles: React.FC = () => {
     
     dispatch(clearError());
     loadRoles();
-  }, [currentPageNumber, pageSize]); // currentPageNumber ve pageSize değiştiğinde de çalışsın
+  }, [currentPageNumber, pageSize]);
 
-  // searchTerm veya selectedRoleValue değiştiğinde ayrı bir useEffect
   useEffect(() => {
     if (searchTerm !== '' || selectedRoleValue !== 'all') {
       dispatch(setCurrentPageNumber(1));
@@ -92,11 +91,10 @@ const Roles: React.FC = () => {
     setIsDeleting(true);
     try {
       await dispatch(deleteRole(roleToDelete.id)).unwrap();
-      message.success(t('roles.roleDeletedSuccessfully') || 'Role deleted successfully!');
+      showSuccess('roleDeletedSuccessfully');
       loadRoles();
     } catch (error: any) {
-      const errorMessage = error?.message || error?.data?.message || t('roles.errorDeletingRole') || 'Error deleting role';
-      message.error(errorMessage);
+      handleError(error);
     } finally {
       setIsDeleting(false);
       setShowDeleteModal(false);
@@ -107,10 +105,9 @@ const Roles: React.FC = () => {
   const handleStatusChange = async (roleId: string, currentStatus: boolean) => {
     try {
       await dispatch(changeRoleStatus({ roleId, status: !currentStatus })).unwrap();
-      message.success(t('roles.roleStatusChangedSuccessfully') || 'Role status changed successfully!');
+      showSuccess('roleStatusChangedSuccessfully');
     } catch (error: any) {
-      const errorMessage = error?.message || error?.data?.message || t('roles.errorChangingStatus') || 'Error changing role status';
-      message.error(errorMessage);
+      handleError(error);
     }
   };
 

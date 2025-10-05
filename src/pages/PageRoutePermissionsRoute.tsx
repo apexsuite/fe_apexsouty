@@ -31,24 +31,12 @@ const PageRoutePermissionsRoute: React.FC = () => {
       dispatch(setSearching(true));
       filterPermissions();
     }
-  }, [pageRouteId, currentPageNumber, pageSize]);
-
-  // Arama kelimesi değiştiğinde filtreleme yap
-  useEffect(() => {
-    if (searchTerm.trim() === '') {
-      dispatch(clearSearch());
-      loadPermissions();
-    } else {
-      dispatch(setSearching(true));
-      filterPermissions();
-    }
-  }, [searchTerm]);
+  }, [pageRouteId, currentPageNumber, pageSize, searchTerm]);
 
   const loadPermissions = () => {
     dispatch(fetchPermissions({
       page: currentPageNumber,
       pageSize: pageSize,
-      pageRouteID: pageRouteId,
     }));
   };
 

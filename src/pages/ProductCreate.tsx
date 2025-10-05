@@ -11,12 +11,12 @@ import {
   Button, 
   Card, 
   Typography, 
-  Switch, 
-  message,
+  Switch,
   Divider,
   theme
 } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { useErrorHandler } from '@/lib/useErrorHandler';
 
 const { Title, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -27,6 +27,7 @@ const ProductCreate: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { token } = theme.useToken();
   const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
+  const { handleError, showSuccess } = useErrorHandler();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
@@ -46,10 +47,10 @@ const ProductCreate: React.FC = () => {
       };
 
       await dispatch(createProduct(productData)).unwrap();
-      message.success(t('product.createSuccess'));
+      showSuccess('productCreatedSuccessfully');
       navigate('/products');
     } catch (error: any) {
-      message.error(error.message || t('product.createError'));
+      handleError(error);
     } finally {
       setLoading(false);
     }

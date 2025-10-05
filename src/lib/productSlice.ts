@@ -7,7 +7,7 @@ interface ProductState {
   products: Product[];
   product: Product | null;
   loading: boolean;
-  error: string | null;
+  error: any;
   totalPages: number;
   currentPageNumber: number;
   pageSize: number;

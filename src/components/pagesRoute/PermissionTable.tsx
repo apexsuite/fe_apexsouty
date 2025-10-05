@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { RootState, AppDispatch } from '@/lib/store';
 import { changePermissionStatus, deletePermission } from '@/lib/pageRoutePermissionSlice';
 import { Trash2, Plus, Edit } from 'lucide-react';
-import { message, Button, Tag, Table, Space, Switch } from 'antd';
+import { Button, Tag, Table, Space, Switch } from 'antd';
+import { useErrorHandler } from '@/lib/useErrorHandler';
 import CreatePermissionModal from './CreatePermissionModal';
 import DeletePermissionModal from './DeletePermissionModal';
 import EditPermissionModal from './EditPermissionModal';
@@ -26,6 +27,7 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
   const theme = useSelector((state: RootState) => state.theme.theme);
+  const { handleError, showSuccess } = useErrorHandler();
 
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
@@ -63,18 +65,18 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
       setLocalPermissions(updatedPermissions);
       onPermissionsChange(updatedPermissions);
       
-      message.success(t('permissions.deletedSuccessfully') || 'Permission deleted successfully');
+      showSuccess('permissionDeletedSuccessfully');
       setDeleteModalVisible(false);
       setSelectedPermission(null);
     } catch (error: any) {
-      message.error(error.message || t('permissions.deleteError') || 'Failed to delete permission');
+      handleError(error);
     }
   };
 
   const handleEditSuccess = () => {
     setEditModalVisible(false);
     setSelectedPermission(null);
-    onPermissionsUpdate(); // Refresh the list
+    onPermissionsUpdate(); // Permissions listesini yenile
   };
 
   const handleStatusChange = async (permissionId: string, isActive: boolean) => {
@@ -93,9 +95,9 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
       setLocalPermissions(updatedPermissions);
       onPermissionsChange(updatedPermissions);
       
-      message.success(t('permissions.statusUpdated') || 'Permission status updated successfully');
+      showSuccess('permissionStatusChangedSuccessfully');
     } catch (error: any) {
-      message.error(error.message || t('permissions.statusUpdateError') || 'Failed to update permission status');
+      handleError(error);
     } finally {
       setLoadingStates(prev => ({ ...prev, [permissionId]: false }));
     }

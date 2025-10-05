@@ -16,7 +16,7 @@ interface MarketplaceState {
   marketplaces: Marketplace[];
   marketplace: Marketplace | null;
   loading: boolean;
-  error: string | null;
+  error: any;
   totalPages: number;
   currentPageNumber: number;
   pageSize: number;

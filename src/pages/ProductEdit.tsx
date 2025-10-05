@@ -11,13 +11,13 @@ import {
   Button, 
   Card, 
   Typography, 
-  Switch, 
-  message,
+  Switch,
   Divider,
   Spin,
   theme
 } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { useErrorHandler } from '@/lib/useErrorHandler';
 
 const { Title, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -29,6 +29,7 @@ const ProductEdit: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { } = theme.useToken();
   const { theme: _ } = useSelector((state: RootState) => state.theme);
+  const { handleError, showSuccess } = useErrorHandler();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -64,7 +65,7 @@ const ProductEdit: React.FC = () => {
     try {
       await dispatch(fetchProduct(productId!)).unwrap();
     } catch (error: any) {
-      message.error(error.message || t('product.fetchError'));
+      handleError(error);
       navigate('/products');
     }
   };
@@ -85,10 +86,10 @@ const ProductEdit: React.FC = () => {
       };
 
       await dispatch(updateProduct({ productId, productData })).unwrap();
-      message.success(t('product.updateSuccess'));
+      showSuccess('productUpdatedSuccessfully');
       navigate('/products');
     } catch (error: any) {
-      message.error(error.message || t('product.updateError'));
+      handleError(error);
     } finally {
       setLoading(false);
     }

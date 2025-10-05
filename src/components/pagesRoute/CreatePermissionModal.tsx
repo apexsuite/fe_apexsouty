@@ -7,9 +7,9 @@ import {
   Input,
   Switch,
   Button,
-  message,
   theme
 } from 'antd';
+import { useErrorHandler } from '@/lib/useErrorHandler';
 import { Shield, Info, Tag, Activity } from 'lucide-react';
 import { RootState, AppDispatch } from '@/lib/store';
 import { createPermission } from '@/lib/pageRoutePermissionSlice';
@@ -38,6 +38,7 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
   const { token } = theme.useToken();
   const dispatch = useDispatch<AppDispatch>();
   const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
+  const { handleError, showSuccess } = useErrorHandler();
   
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -53,11 +54,11 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
       };
       
       await dispatch(createPermission(payload)).unwrap();
-      message.success(t('permissions.createdSuccessfully') || 'Permission created successfully');
+      showSuccess('permissionCreatedSuccessfully');
       form.resetFields();
       onSuccess();
     } catch (error: any) {
-      message.error(error.message || t('permissions.createError') || 'Failed to create permission');
+      handleError(error);
     } finally {
       setLoading(false);
     }

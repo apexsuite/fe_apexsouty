@@ -7,8 +7,9 @@ import { fetchPageRoutes, setCurrentPageNumber, setPageSize, clearError, changeP
 
 import { Eye, Edit, Plus, Search } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
-import { Table, Pagination, Button, Space, Tag, Card, Switch, message } from 'antd';
+import { Table, Pagination, Button, Space, Tag, Card, Switch } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
+import { useErrorHandler } from '@/lib/useErrorHandler';
 
 // Function to get Lucide icon dynamically
 const getLucideIcon = (iconName: string) => {
@@ -37,6 +38,7 @@ const PagesRoute: React.FC = () => {
   
 
   const theme = useSelector((state: RootState) => state.theme.theme);
+  const { handleError, showSuccess } = useErrorHandler();
   
   // Tema değişikliğini zorlamak için key kullan
   const themeKey = theme === 'light' ? 'light' : 'dark';
@@ -104,7 +106,7 @@ const PagesRoute: React.FC = () => {
         pageRouteId, 
         status: !currentStatus 
       })).unwrap();
-      message.success(t('pages.statusChangeSuccess'));
+      showSuccess('pageStatusChangedSuccessfully');
       
       // Status değişikliği sonrası verileri yeniden yükle
       dispatch(fetchPageRoutes({
@@ -113,7 +115,7 @@ const PagesRoute: React.FC = () => {
         name: searchTerm,
       }));
     } catch (error: any) {
-      message.error(error || t('pages.statusChangeError'));
+      handleError(error);
     }
   };
 

@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AppDispatch, RootState } from '@/lib/store';
-import { fetchMarketplace, clearError } from '@/lib/marketplaceSlice';
+import { fetchMarketplace } from '@/lib/marketplaceSlice';
 import { ArrowLeft, Edit, ExternalLink } from 'lucide-react';
-import { Card, Button, Tag, Spin, message } from 'antd';
+import { Card, Button, Tag, Spin } from 'antd';
 
 const MarketplaceDetail: React.FC = () => {
   const { t } = useTranslation();
@@ -13,20 +13,14 @@ const MarketplaceDetail: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { id } = useParams<{ id: string }>();
   const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
-  const { marketplace, loading, error } = useSelector((state: RootState) => state.marketplace);
+  const { marketplace, loading } = useSelector((state: RootState) => state.marketplace);
 
   useEffect(() => {
     if (id) {
-      dispatch(clearError());
       dispatch(fetchMarketplace(id));
     }
   }, [id, dispatch]);
 
-  useEffect(() => {
-    if (error) {
-      message.error(error);
-    }
-  }, [error]);
 
   const handleEdit = () => {
     if (id) {

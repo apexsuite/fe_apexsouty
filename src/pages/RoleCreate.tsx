@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { AppDispatch } from '@/lib/store';
 import { createRole } from '@/lib/roleSlice';
 import { ArrowLeft, Save } from 'lucide-react';
-import { Form, Input, Button, Card, Typography, Switch, message } from 'antd';
+import { Form, Input, Button, Card, Typography, Switch } from 'antd';
+import { useErrorHandler } from '@/lib/useErrorHandler';
 
 const { Title, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -14,17 +15,22 @@ const RoleCreate: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+  const { handleError, showSuccess } = useErrorHandler();
   const [loading, setLoading] = useState(false);
 
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
-      await dispatch(createRole(values)).unwrap();
-      message.success(t('roles.roleCreatedSuccessfully') || 'Role created successfully!');
+      // Ensure roleValue is converted to number
+      const roleData = {
+        ...values,
+        roleValue: Number(values.roleValue)
+      };
+      await dispatch(createRole(roleData)).unwrap();
+      showSuccess('roleCreatedSuccessfully');
       navigate('/roles');
     } catch (error: any) {
-      const errorMessage = error?.message || error?.data?.message || t('roles.errorCreatingRole') || 'Error creating role';
-      message.error(errorMessage);
+      handleError(error);
     } finally {
       setLoading(false);
     }
@@ -91,7 +97,15 @@ const RoleCreate: React.FC = () => {
                 name="roleValue"
                 rules={[
                   { required: true, message: t('roles.roleValueRequired') || 'Role value is required' },
-                  { type: 'number', min: 1, message: t('roles.roleValueMin') || 'Role value must be at least 1' }
+                  {
+                    validator: (_, value) => {
+                      const numValue = Number(value);
+                      if (isNaN(numValue) || numValue < 1) {
+                        return Promise.reject(new Error(t('roles.roleValueMin') || 'Role value must be at least 1'));
+                      }
+                      return Promise.resolve();
+                    }
+                  }
                 ]}
               >
                 <Input

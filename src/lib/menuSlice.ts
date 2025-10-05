@@ -17,7 +17,7 @@ export interface MenuItem {
 interface MenuState {
   items: MenuItem[];
   loading: boolean;
-  error: string | null;
+  error: any;
   favoriteIds: string[];
   favorites: MenuItem[];
 }
@@ -160,7 +160,7 @@ const menuSlice = createSlice({
       })
       .addCase(fetchMenu.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       })
       .addCase(addFavorite.fulfilled, (state, action) => {
         if (action.payload && !state.favoriteIds.includes(action.payload)) {

@@ -12,7 +12,8 @@ import {
   setPageSize
 } from '@/lib/productSlice';
 import { Plus, Search } from 'lucide-react';
-import { message, Card, Typography, theme, Pagination } from 'antd';
+import { Card, Typography, theme, Pagination } from 'antd';
+import { useErrorHandler } from '@/lib/useErrorHandler';
 
 // Import components
 import ProductTable from '@/components/products/ProductTable';
@@ -28,6 +29,7 @@ const Products: React.FC = () => {
   const { } = theme.useToken();
   const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
   const { products, loading, error, currentPageNumber, pageSize, totalPages, totalCount } = useSelector((state: RootState) => state.product);
+  const { handleError, showSuccess } = useErrorHandler();
   const [searchTerm, setSearchTerm] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [productToDelete, setProductToDelete] = useState<{ id: string; name: string } | null>(null);
@@ -91,12 +93,12 @@ const Products: React.FC = () => {
     setIsDeleting(true);
     try {
       await dispatch(deleteProduct(productToDelete.id)).unwrap();
-      message.success(t('product.deleteSuccess'));
+      showSuccess('productDeletedSuccessfully');
       setShowDeleteModal(false);
       setProductToDelete(null);
       loadProducts();
     } catch (error: any) {
-      message.error(error.message || t('product.deleteError'));
+      handleError(error);
     } finally {
       setIsDeleting(false);
     }
@@ -105,10 +107,10 @@ const Products: React.FC = () => {
   const handleStatusChange = async (productId: string) => {
     try {
       await dispatch(changeProductStatus(productId)).unwrap();
-      message.success(t('product.statusChangeSuccess'));
+      showSuccess('productStatusChangedSuccessfully');
       loadProducts();
     } catch (error: any) {
-      message.error(error.message || t('product.statusChangeError'));
+      handleError(error);
     }
   };
 
@@ -120,9 +122,6 @@ const Products: React.FC = () => {
 
 
 
-  if (error) {
-    message.error(error);
-  }
 
   return (
     <div 
