@@ -21,7 +21,12 @@ const RoleCreate: React.FC = () => {
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
-      await dispatch(createRole(values)).unwrap();
+      // Ensure roleValue is converted to number
+      const roleData = {
+        ...values,
+        roleValue: Number(values.roleValue)
+      };
+      await dispatch(createRole(roleData)).unwrap();
       showSuccess('roleCreatedSuccessfully');
       navigate('/roles');
     } catch (error: any) {
@@ -92,7 +97,15 @@ const RoleCreate: React.FC = () => {
                 name="roleValue"
                 rules={[
                   { required: true, message: t('roles.roleValueRequired') || 'Role value is required' },
-                  { type: 'number', min: 1, message: t('roles.roleValueMin') || 'Role value must be at least 1' }
+                  {
+                    validator: (_, value) => {
+                      const numValue = Number(value);
+                      if (isNaN(numValue) || numValue < 1) {
+                        return Promise.reject(new Error(t('roles.roleValueMin') || 'Role value must be at least 1'));
+                      }
+                      return Promise.resolve();
+                    }
+                  }
                 ]}
               >
                 <Input

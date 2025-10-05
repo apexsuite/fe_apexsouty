@@ -47,7 +47,12 @@ const RoleEdit: React.FC = () => {
     
     setSubmitting(true);
     try {
-      await dispatch(updateRole({ roleId: id, roleData: values })).unwrap();
+      // Ensure roleValue is converted to number
+      const roleData = {
+        ...values,
+        roleValue: Number(values.roleValue)
+      };
+      await dispatch(updateRole({ roleId: id, roleData })).unwrap();
       showSuccess('roleUpdatedSuccessfully');
       navigate('/roles');
     } catch (error: any) {
@@ -143,7 +148,15 @@ const RoleEdit: React.FC = () => {
                 name="roleValue"
                 rules={[
                   { required: true, message: t('roles.roleValueRequired') || 'Role value is required' },
-                  { type: 'number', min: 1, message: t('roles.roleValueMin') || 'Role value must be at least 1' }
+                  {
+                    validator: (_, value) => {
+                      const numValue = Number(value);
+                      if (isNaN(numValue) || numValue < 1) {
+                        return Promise.reject(new Error(t('roles.roleValueMin') || 'Role value must be at least 1'));
+                      }
+                      return Promise.resolve();
+                    }
+                  }
                 ]}
               >
                 <Input

@@ -63,7 +63,6 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
     const updatedPermissions = [...localPermissions, ...newPermissions];
     setLocalPermissions(updatedPermissions);
     
-    showSuccess('permissionCreatedSuccessfully');
     setShowPermissionModal(false);
     setSelectedPermissions([]);
   };
@@ -83,8 +82,6 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
     console.log('Updated permissions after unassign:', updatedPermissions);
     
     setLocalPermissions(updatedPermissions);
-    
-    showSuccess('permissionDeletedSuccessfully');
   };
 
   const handlePermissionSelection = (permissionId: string, checked: boolean) => {
