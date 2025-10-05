@@ -6,6 +6,7 @@ import { AppDispatch, RootState } from '@/lib/store';
 import { fetchPageRouteById, deletePageRoute, clearCurrentPageRoute, clearError } from '@/lib/pageSlice';
 import { ArrowLeft, Edit, Trash2, Calendar, Tag } from 'lucide-react';
 import PermissionTable from './PermissionTable';
+import { useErrorHandler } from '@/lib/useErrorHandler';
 
 const PageDetailRoute: React.FC = () => {
   const { t } = useTranslation();
@@ -14,6 +15,7 @@ const PageDetailRoute: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { currentPageRoute, loading, error } = useSelector((state: RootState) => state.page);
   const theme = useSelector((state: RootState) => state.theme.theme);
+  const { handleError } = useErrorHandler();
   
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -49,8 +51,8 @@ const PageDetailRoute: React.FC = () => {
     try {
       await dispatch(deletePageRoute(currentPageRoute.id)).unwrap();
       navigate('/page-routes');
-    } catch (error) {
-      console.error('Sayfa silinirken hata oluştu:', error);
+    } catch (error: any) {
+      handleError(error);
     } finally {
       setIsDeleting(false);
       setShowDeleteModal(false);

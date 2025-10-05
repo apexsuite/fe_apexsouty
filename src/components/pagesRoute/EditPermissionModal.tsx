@@ -76,7 +76,10 @@ const EditPermissionModal: React.FC<EditPermissionModalProps> = ({
       await dispatch(updatePermission(payload)).unwrap();
       showSuccess('permissionUpdatedSuccessfully');
       form.resetFields();
-      onSuccess();
+      // Success toast gösterildikten sonra sayfa yönlendirmesi yap
+      setTimeout(() => {
+        onSuccess();
+      }, 1000);
     } catch (error: any) {
       handleError(error);
     } finally {

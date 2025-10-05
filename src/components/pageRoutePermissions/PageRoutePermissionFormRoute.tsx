@@ -131,14 +131,18 @@ const PageRoutePermissionFormRoute: React.FC = () => {
           permissionId: currentPermission.id, 
           permissionData: formData 
         })).unwrap();
+        showSuccess('permissionUpdatedSuccessfully');
       } else {
         // Create permission için pageRouteId parametresi gerekli
         await dispatch(createPermission({ 
           pageRouteId: formData.pageRouteId,
           permissionData: formData 
         })).unwrap();
+        showSuccess('permissionCreatedSuccessfully');
+        // Create işleminden sonra ana sayfaya dön
+        navigate('/page-route-permissions');
       }
-      navigate(`/page-route-permissions/${formData.pageRouteId}/permissions`);
+      // Edit işleminde sayfada kal
     } catch (error) {
       handleError(error);
     } finally {
@@ -147,7 +151,7 @@ const PageRoutePermissionFormRoute: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate(`/page-route-permissions/${formData.pageRouteId || pageRouteId}/permissions`);
+    navigate('/page-route-permissions');
   };
 
   if (loading && isEditing) {

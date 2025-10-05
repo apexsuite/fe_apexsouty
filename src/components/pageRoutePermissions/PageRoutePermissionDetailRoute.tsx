@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { AppDispatch, RootState } from '@/lib/store';
 import { fetchPermissionById, deletePermissionDirect, clearCurrentPermission, clearError } from '@/lib/pageRoutePermissionSlice';
 import { ArrowLeft, Edit, Trash2, Calendar, Shield, CheckCircle, XCircle } from 'lucide-react';
+import { useErrorHandler } from '@/lib/useErrorHandler';
 
 // Import components
 import PermissionInfo from './PermissionInfo';
@@ -19,6 +20,7 @@ const PageRoutePermissionDetailRoute: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { currentPermission, loading, error } = useSelector((state: RootState) => state.permission);
   const theme = useSelector((state: RootState) => state.theme.theme);
+  const { handleError, showSuccess } = useErrorHandler();
   
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -46,9 +48,15 @@ const PageRoutePermissionDetailRoute: React.FC = () => {
     setIsDeleting(true);
     try {
       await dispatch(deletePermissionDirect(currentPermission.id)).unwrap();
+      showSuccess('permissionDeletedSuccessfully');
       navigate(`/page-route-permissions/${pageRouteId || 'all'}/permissions`);
-    } catch (error) {
-      console.error('Permission silinirken hata oluştu:', error);
+    } catch (error: any) {
+      console.log('=== DELETE PERMISSION ERROR DEBUG ===');
+      console.log('Error object:', error);
+      console.log('Error type:', typeof error);
+      console.log('Error keys:', Object.keys(error || {}));
+      console.log('====================================');
+      handleError(error);
     } finally {
       setIsDeleting(false);
       setShowDeleteModal(false);

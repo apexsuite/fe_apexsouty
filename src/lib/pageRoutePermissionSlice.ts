@@ -106,7 +106,6 @@ export const fetchPermissions = createAsyncThunk(
     name?: string; 
     description?: string; 
     label?: string; 
-    pageRouteID?: string 
   } = {}, { rejectWithValue }) => {
     try {
       const queryParams = new URLSearchParams();
@@ -115,7 +114,6 @@ export const fetchPermissions = createAsyncThunk(
       if (params.name) queryParams.append('name', params.name);
       if (params.description) queryParams.append('description', params.description);
       if (params.label) queryParams.append('label', params.label);
-      if (params.pageRouteID) queryParams.append('pageRouteID', params.pageRouteID);
 
       const response = await apiRequest(`/permissions?${queryParams.toString()}`);
       return response;

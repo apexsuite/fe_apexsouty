@@ -62,8 +62,23 @@ export const handleValidationErrors = (error: any, t: (key: string) => string) =
     // Hata yapısını kontrol et
     if (!error?.error?.validations || !Array.isArray(error.error.validations)) {
       // Validation hatası değilse genel hata mesajını göster
-      const generalMessage = error?.error?.message || error?.message || t('notification.anErrorOccurred');
-      toast.error(generalMessage);
+      const apiMessage = error?.error?.message || error?.message;
+      
+      if (apiMessage && typeof apiMessage === 'string') {
+        // i18n key pattern'i kontrol et
+        const isTranslationKey = /^[a-z][a-zA-Z0-9]*$/.test(apiMessage) || /^[a-z]+(-[a-z]+)*$/.test(apiMessage);
+        
+        if (isTranslationKey) {
+          // Key ise translate et
+          const translatedMessage = t(`notification.${apiMessage}`) || apiMessage;
+          toast.error(translatedMessage);
+        } else {
+          // Direkt string ise olduğu gibi göster
+          toast.error(apiMessage);
+        }
+      } else {
+        toast.error(t('notification.anErrorOccurred'));
+      }
       return;
     }
 
@@ -108,10 +123,36 @@ export const handleApiError = (error: any, t: (key: string) => string) => {
     // Axios error yapısını kontrol et - asıl hata data içinde
     const actualError = error?.data || error;
     
+    console.log('=== API ERROR DEBUG ===');
+    console.log('actualError:', actualError);
+    console.log('error:', error);
+    console.log('actualError?.error:', actualError?.error);
+    console.log('========================');
+    
     // Önce validation hatalarını kontrol et
     if (actualError?.error?.validations && Array.isArray(actualError.error.validations)) {
       handleValidationErrors(actualError, t);
       return;
+    }
+    
+    // Eğer error objesi var ama validations yoksa, message'ı kontrol et
+    if (actualError?.error?.message) {
+      const apiMessage = actualError.error.message;
+      
+      if (apiMessage && typeof apiMessage === 'string') {
+        // i18n key pattern'i kontrol et
+        const isTranslationKey = /^[a-z][a-zA-Z0-9]*$/.test(apiMessage) || /^[a-z]+(-[a-z]+)*$/.test(apiMessage);
+        
+        if (isTranslationKey) {
+          // Key ise translate et
+          const translatedMessage = t(`notification.${apiMessage}`) || apiMessage;
+          toast.error(translatedMessage);
+        } else {
+          // Direkt string ise olduğu gibi göster
+          toast.error(apiMessage);
+        }
+        return;
+      }
     }
     
     // HTTP status koduna göre hata mesajı belirle
@@ -142,8 +183,32 @@ export const handleApiError = (error: any, t: (key: string) => string) => {
         errorMessage = t('notification.serviceUnavailable');
         break;
       default:
-        // API'den gelen mesajı kullan
-        errorMessage = error?.error?.message || error?.message || t('notification.anErrorOccurred');
+        // API'den gelen mesajı kullan - error objesi içindeki message
+        console.log('=== ERROR DEBUG ===');
+        console.log('actualError:', actualError);
+        console.log('error:', error);
+        console.log('actualError?.error?.message:', actualError?.error?.message);
+        console.log('error?.error?.message:', error?.error?.message);
+        console.log('error?.message:', error?.message);
+        console.log('==================');
+        
+        const apiMessage = actualError?.error?.message || error?.error?.message || error?.message;
+        
+        // Eğer mesaj direkt string ise (key değilse) direkt göster
+        if (apiMessage && typeof apiMessage === 'string') {
+          // i18n key pattern'i kontrol et (genellikle camelCase veya kebab-case)
+          const isTranslationKey = /^[a-z][a-zA-Z0-9]*$/.test(apiMessage) || /^[a-z]+(-[a-z]+)*$/.test(apiMessage);
+          
+          if (isTranslationKey) {
+            // Key ise translate et
+            errorMessage = t(`notification.${apiMessage}`) || apiMessage;
+          } else {
+            // Direkt string ise olduğu gibi göster
+            errorMessage = apiMessage;
+          }
+        } else {
+          errorMessage = t('notification.anErrorOccurred');
+        }
     }
     
     toast.error(errorMessage);

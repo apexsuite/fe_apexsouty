@@ -7,6 +7,7 @@ import { fetchPermissions, setCurrentPageNumber, setPageSize, clearError, setSea
 import { Eye, Edit, Plus, Search } from 'lucide-react';
 import { Table, Pagination, Button, Space, Tag, Card } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
+import { useErrorHandler } from '@/lib/useErrorHandler';
 
 const PageRoutePermissionsRoute: React.FC = () => {
   const { t } = useTranslation();
@@ -31,24 +32,12 @@ const PageRoutePermissionsRoute: React.FC = () => {
       dispatch(setSearching(true));
       filterPermissions();
     }
-  }, [pageRouteId, currentPageNumber, pageSize]);
-
-  // Arama kelimesi değiştiğinde filtreleme yap
-  useEffect(() => {
-    if (searchTerm.trim() === '') {
-      dispatch(clearSearch());
-      loadPermissions();
-    } else {
-      dispatch(setSearching(true));
-      filterPermissions();
-    }
-  }, [searchTerm]);
+  }, [pageRouteId, currentPageNumber, pageSize, searchTerm]);
 
   const loadPermissions = () => {
     dispatch(fetchPermissions({
       page: currentPageNumber,
       pageSize: pageSize,
-      pageRouteID: pageRouteId,
     }));
   };
 
