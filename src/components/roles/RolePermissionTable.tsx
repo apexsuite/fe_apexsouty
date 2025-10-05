@@ -5,7 +5,8 @@ import { AppDispatch, RootState } from '@/lib/store';
 import { fetchPermissions } from '@/lib/pageRoutePermissionSlice';
 import { setRolePermissionsBulk } from '@/lib/roleSlice';
 import { Trash2, Search, Check, Plus, Save } from 'lucide-react';
-import { message, Button, Tag, Modal, Input, Table, Space } from 'antd';
+import { Button, Tag, Modal, Input, Table, Space } from 'antd';
+import { useErrorHandler } from '@/lib/useErrorHandler';
 import type { ColumnsType } from 'antd/es/table';
 
 interface RolePermissionTableProps {
@@ -20,6 +21,7 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
   const theme = useSelector((state: RootState) => state.theme.theme);
+  const { handleError, showSuccess } = useErrorHandler();
 
   const [showPermissionModal, setShowPermissionModal] = useState(false);
   const [allPermissions, setAllPermissions] = useState<any[]>([]);
@@ -61,7 +63,7 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
     const updatedPermissions = [...localPermissions, ...newPermissions];
     setLocalPermissions(updatedPermissions);
     
-    message.success(t('pages.permissionsAssigned'));
+    showSuccess('permissionCreatedSuccessfully');
     setShowPermissionModal(false);
     setSelectedPermissions([]);
   };
@@ -82,7 +84,7 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
     
     setLocalPermissions(updatedPermissions);
     
-    message.success(t('pages.permissionUnassigned'));
+    showSuccess('permissionDeletedSuccessfully');
   };
 
   const handlePermissionSelection = (permissionId: string, checked: boolean) => {
@@ -136,11 +138,10 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
         permissions: permissionsToSend
       })).unwrap();
 
-      message.success(t('pages.permissionsSaved') || 'Permissions saved successfully');
+      showSuccess('permissionUpdatedSuccessfully');
 
     } catch (error: any) {
-      const errorMessage = error.data?.message || error.message || t('pages.permissionsSaveError') || 'Failed to save permissions';
-      message.error(errorMessage);
+      handleError(error);
     } finally {
       setIsSaving(false);
     }

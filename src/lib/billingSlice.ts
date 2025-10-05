@@ -65,7 +65,7 @@ export interface ApiResponse<T> {
 interface BillingState {
   billing: Billing | null;
   loading: boolean;
-  error: string | null;
+  error: any;
 }
 
 const initialState: BillingState = {
@@ -100,7 +100,7 @@ export const createBilling = createAsyncThunk(
       });
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Billing oluşturulurken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -116,7 +116,7 @@ export const updateBilling = createAsyncThunk(
       });
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Billing güncellenirken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -145,7 +145,7 @@ const billingSlice = createSlice({
       })
       .addCase(fetchBilling.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       })
 
       // Create billing
@@ -159,7 +159,7 @@ const billingSlice = createSlice({
       })
       .addCase(createBilling.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       })
 
       // Update billing
@@ -173,7 +173,7 @@ const billingSlice = createSlice({
       })
       .addCase(updateBilling.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       });
   },
 });

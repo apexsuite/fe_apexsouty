@@ -12,7 +12,8 @@ import {
   setPageSize
 } from '@/lib/marketplaceSlice';
 import { Plus, Search } from 'lucide-react';
-import { message, Card, Typography, theme, Pagination } from 'antd';
+import { Card, Typography, theme, Pagination } from 'antd';
+import { useErrorHandler } from '@/lib/useErrorHandler';
 
 // Import components
 import MarketplaceTable from '@/components/marketplaces/MarketplaceTable';
@@ -27,6 +28,7 @@ const Marketplaces: React.FC = () => {
   const { } = theme.useToken();
   const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
   const { marketplaces, loading, error, currentPageNumber, pageSize, totalPages, totalCount } = useSelector((state: RootState) => state.marketplace);
+  const { handleError, showSuccess } = useErrorHandler();
   const [searchTerm, setSearchTerm] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [marketplaceToDelete, setMarketplaceToDelete] = useState<{ id: string; name: string } | null>(null);
@@ -89,12 +91,12 @@ const Marketplaces: React.FC = () => {
     setIsDeleting(true);
     try {
       await dispatch(deleteMarketplace(marketplaceToDelete.id)).unwrap();
-      message.success(t('marketplace.deleteSuccess'));
+      showSuccess('marketplaceDeletedSuccessfully');
       setShowDeleteModal(false);
       setMarketplaceToDelete(null);
       loadMarketplaces();
     } catch (error: any) {
-      message.error(error.message || t('marketplace.deleteError'));
+      handleError(error);
     } finally {
       setIsDeleting(false);
     }
@@ -103,10 +105,10 @@ const Marketplaces: React.FC = () => {
   const handleStatusChange = async (marketplaceId: string) => {
     try {
       await dispatch(changeMarketplaceStatus(marketplaceId)).unwrap();
-      message.success(t('marketplace.statusChangeSuccess'));
+      showSuccess('marketplaceStatusChangedSuccessfully');
       loadMarketplaces();
     } catch (error: any) {
-      message.error(error.message || t('marketplace.statusChangeError'));
+      handleError(error);
     }
   };
 
@@ -115,9 +117,6 @@ const Marketplaces: React.FC = () => {
     dispatch(setCurrentPageNumber(1));
   };
 
-  if (error) {
-    message.error(error);
-  }
 
   return (
     <div 

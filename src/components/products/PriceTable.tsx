@@ -9,11 +9,11 @@ import {
   Tag, 
   Switch, 
   Tooltip, 
-  message,
   Card,
   Typography,
   theme 
 } from 'antd';
+import { useErrorHandler } from '@/lib/useErrorHandler';
 import { 
   Plus, 
   Eye, 
@@ -64,6 +64,7 @@ const PriceTable: React.FC<PriceTableProps> = ({
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
+  const { handleError, showSuccess } = useErrorHandler();
   
   const [loadingStates, setLoadingStates] = useState<{ [key: string]: boolean }>({});
   const [createModalVisible, setCreateModalVisible] = useState(false);
@@ -74,10 +75,10 @@ const PriceTable: React.FC<PriceTableProps> = ({
     setLoadingStates(prev => ({ ...prev, [priceId]: true }));
     try {
       await dispatch(updatePriceStatus({ productId, priceId, isActive })).unwrap();
-      message.success(t('price.statusUpdated'));
+      showSuccess('priceStatusChangedSuccessfully');
       onRefresh();
     } catch (error: any) {
-      message.error(error.message || t('price.statusUpdateError'));
+      handleError(error);
     } finally {
       setLoadingStates(prev => ({ ...prev, [priceId]: false }));
     }
@@ -90,10 +91,10 @@ const PriceTable: React.FC<PriceTableProps> = ({
     setLoadingStates(prev => ({ ...prev, [priceId]: true }));
     try {
       await dispatch(setDefaultPrice({ productId, priceId })).unwrap();
-      message.success(t('price.setAsDefault'));
+      showSuccess('priceSetAsDefaultSuccessfully');
       onRefresh();
     } catch (error: any) {
-      message.error(error.message || t('price.setDefaultError'));
+      handleError(error);
     } finally {
       setLoadingStates(prev => ({ ...prev, [priceId]: false }));
     }

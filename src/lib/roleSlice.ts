@@ -73,7 +73,7 @@ interface RoleState {
   roles: Role[];
   currentRole: Role | null;
   loading: boolean;
-  error: string | null;
+  error: any;
   totalPages: number;
   currentPageNumber: number;
   pageSize: number;
@@ -112,7 +112,7 @@ export const fetchRoles = createAsyncThunk(
       return response;
     } catch (error: any) {
       console.error('❌ Error fetching roles:', error);
-      return rejectWithValue(error.message || 'Roles yüklenirken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -125,7 +125,7 @@ export const fetchRoleById = createAsyncThunk(
       const response = await apiRequest(`/roles/${roleId}`);
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Role yüklenirken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -141,7 +141,7 @@ export const createRole = createAsyncThunk(
       });
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Role oluşturulurken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -157,7 +157,7 @@ export const updateRole = createAsyncThunk(
       });
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Role güncellenirken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -173,7 +173,7 @@ export const changeRoleStatus = createAsyncThunk(
       });
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Role durumu değiştirilirken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -189,7 +189,7 @@ export const setRolePermissions = createAsyncThunk(
       });
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Role izinleri ayarlanırken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -205,7 +205,7 @@ export const changeRolePermissionStatus = createAsyncThunk(
       });
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Role izin durumu değiştirilirken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -220,7 +220,7 @@ export const deleteRole = createAsyncThunk(
       });
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Role silinirken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -236,7 +236,7 @@ export const assignPermissionsToRole = createAsyncThunk(
       });
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Permissions atanırken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -250,7 +250,7 @@ export const unassignPermissionFromRole = createAsyncThunk(
       });
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Permission kaldırılırken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -266,7 +266,7 @@ export const setRolePermissionsBulk = createAsyncThunk(
       });
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Role izinleri ayarlanırken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -317,7 +317,7 @@ const roleSlice = createSlice({
       .addCase(fetchRoles.rejected, (state, action) => {
         console.error('❌ Failed to fetch roles:', action.payload);
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       });
 
     // Fetch role by ID
@@ -332,7 +332,7 @@ const roleSlice = createSlice({
       })
       .addCase(fetchRoleById.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       });
 
     // Create role

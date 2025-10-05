@@ -7,9 +7,9 @@ import {
   Select,
   InputNumber,
   Button,
-  message,
   theme
 } from 'antd';
+import { useErrorHandler } from '@/lib/useErrorHandler';
 import { DollarSign, Calendar, Activity } from 'lucide-react';
 import { RootState } from '@/lib/store';
 import { AppDispatch } from '@/lib/store';
@@ -41,6 +41,7 @@ const CreatePriceModal: React.FC<CreatePriceModalProps> = ({
   const { } = theme.useToken();
   const dispatch = useDispatch<AppDispatch>();
   const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
+  const { handleError, showSuccess } = useErrorHandler();
   
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -49,11 +50,11 @@ const CreatePriceModal: React.FC<CreatePriceModalProps> = ({
     setLoading(true);
     try {
       await dispatch(createPrice({ productId, priceData: values })).unwrap();
-      message.success(t('price.createdSuccessfully'));
+      showSuccess('priceCreatedSuccessfully');
       form.resetFields();
       onSuccess();
     } catch (error: any) {
-      message.error(error.message || t('price.createError'));
+      handleError(error);
     } finally {
       setLoading(false);
     }
@@ -66,14 +67,9 @@ const CreatePriceModal: React.FC<CreatePriceModalProps> = ({
 
   const currencyOptions = [
     { value: 'usd', label: 'USD - US Dollar' },
-    { value: 'eur', label: 'EUR - Euro' },
-    { value: 'gbp', label: 'GBP - British Pound' },
-    { value: 'try', label: 'TRY - Turkish Lira' },
   ];
 
   const intervalOptions = [
-    { value: 'day', label: t('price.intervals.day') },
-    { value: 'week', label: t('price.intervals.week') },
     { value: 'month', label: t('price.intervals.month') },
     { value: 'year', label: t('price.intervals.year') },
   ];

@@ -6,6 +6,7 @@ import { AppDispatch, RootState } from '@/lib/store';
 import { fetchPermissionById, createPermission, updatePermission, clearCurrentPermission, clearError } from '@/lib/pageRoutePermissionSlice';
 import { fetchPageRoutes } from '@/lib/pageSlice';
 import { ArrowLeft, Save } from 'lucide-react';
+import { useErrorHandler } from '@/lib/useErrorHandler';
 
 const PageRoutePermissionFormRoute: React.FC = () => {
   const { t } = useTranslation();
@@ -17,6 +18,7 @@ const PageRoutePermissionFormRoute: React.FC = () => {
   );
   const { pageRoutes } = useSelector((state: RootState) => state.page);
   const theme = useSelector((state: RootState) => state.theme.theme);
+  const { handleError, showSuccess } = useErrorHandler();
   
   const [formData, setFormData] = useState({
     name: '',
@@ -138,7 +140,7 @@ const PageRoutePermissionFormRoute: React.FC = () => {
       }
       navigate(`/page-route-permissions/${formData.pageRouteId}/permissions`);
     } catch (error) {
-      console.error('Permission kaydedilirken hata oluştu:', error);
+      handleError(error);
     } finally {
       setIsSubmitting(false);
     }
@@ -183,14 +185,6 @@ const PageRoutePermissionFormRoute: React.FC = () => {
           </div>
         </div>
 
-        {/* Error Message */}
-        {error && (
-          <div className={`mb-6 p-4 rounded-lg border ${
-            theme === 'dark' ? 'bg-red-900/20 border-red-700 text-red-400' : 'bg-red-50 border-red-200 text-red-800'
-          }`}>
-            <p className={`transition-colors duration-200 ${theme === 'dark' ? 'text-red-400' : 'text-red-800'}`}>{error}</p>
-          </div>
-        )}
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">

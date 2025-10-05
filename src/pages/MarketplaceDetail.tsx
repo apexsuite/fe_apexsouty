@@ -5,7 +5,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { AppDispatch, RootState } from '@/lib/store';
 import { fetchMarketplace, clearError } from '@/lib/marketplaceSlice';
 import { ArrowLeft, Edit, ExternalLink } from 'lucide-react';
-import { Card, Button, Tag, Spin, message } from 'antd';
+import { Card, Button, Tag, Spin } from 'antd';
+import { useErrorHandler } from '@/lib/useErrorHandler';
 
 const MarketplaceDetail: React.FC = () => {
   const { t } = useTranslation();
@@ -14,6 +15,7 @@ const MarketplaceDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
   const { marketplace, loading, error } = useSelector((state: RootState) => state.marketplace);
+  const { handleError } = useErrorHandler();
 
   useEffect(() => {
     if (id) {
@@ -22,11 +24,6 @@ const MarketplaceDetail: React.FC = () => {
     }
   }, [id, dispatch]);
 
-  useEffect(() => {
-    if (error) {
-      message.error(error);
-    }
-  }, [error]);
 
   const handleEdit = () => {
     if (id) {

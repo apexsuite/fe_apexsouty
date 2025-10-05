@@ -5,7 +5,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { AppDispatch, RootState } from '@/lib/store';
 import { fetchMarketplace, updateMarketplace, clearError } from '@/lib/marketplaceSlice';
 import { ArrowLeft, Save } from 'lucide-react';
-import { Card, Button, Input, Form, message, Spin } from 'antd';
+import { Card, Button, Input, Form, Spin } from 'antd';
+import { useErrorHandler } from '@/lib/useErrorHandler';
 
 const MarketplaceEdit: React.FC = () => {
   const { t } = useTranslation();
@@ -14,6 +15,7 @@ const MarketplaceEdit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
   const { marketplace, loading, error } = useSelector((state: RootState) => state.marketplace);
+  const { handleError, showSuccess } = useErrorHandler();
   const [form] = Form.useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -33,11 +35,6 @@ const MarketplaceEdit: React.FC = () => {
     }
   }, [marketplace, form]);
 
-  useEffect(() => {
-    if (error) {
-      message.error(error);
-    }
-  }, [error]);
 
   const handleSubmit = async (values: { marketplace: string; marketplaceURL: string }) => {
     if (!id) return;
@@ -48,10 +45,10 @@ const MarketplaceEdit: React.FC = () => {
         marketplaceId: id, 
         marketplaceData: values 
       })).unwrap();
-      message.success(t('marketplace.updateSuccess'));
+      showSuccess('marketplaceUpdatedSuccessfully');
       navigate(`/marketplaces/${id}`);
     } catch (error: any) {
-      message.error(error.message || t('marketplace.updateError'));
+      handleError(error);
     } finally {
       setIsSubmitting(false);
     }

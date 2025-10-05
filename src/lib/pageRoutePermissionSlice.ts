@@ -66,7 +66,7 @@ interface PermissionState {
   currentPermission: Permission | null;
   myPermissions: string[]; // For /api/permissions/my-permissions
   loading: boolean;
-  error: string | null;
+  error: any;
   totalPages: number;
   currentPageNumber: number;
   pageSize: number;
@@ -120,7 +120,7 @@ export const fetchPermissions = createAsyncThunk(
       const response = await apiRequest(`/permissions?${queryParams.toString()}`);
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Permissions yüklenirken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -137,7 +137,7 @@ export const fetchMyPermissions = createAsyncThunk(
       const response = await apiRequest(`/permissions/my-permissions?${queryParams.toString()}`);
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'My permissions yüklenirken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -150,7 +150,7 @@ export const fetchPermissionById = createAsyncThunk(
       const response = await apiRequest(`/permissions/${permissionId}`);
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Permission yüklenirken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -174,7 +174,7 @@ export const createPermission = createAsyncThunk(
       });
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Permission oluşturulurken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -199,7 +199,7 @@ export const updatePermission = createAsyncThunk(
       });
       return { permissionId, response };
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Permission güncellenirken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -217,7 +217,7 @@ export const deletePermission = createAsyncThunk(
       });
       return { permissionId, response };
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Permission silinirken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -232,7 +232,7 @@ export const deletePermissionDirect = createAsyncThunk(
       });
       return { permissionId, response };
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Permission silinirken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -252,7 +252,7 @@ export const changePermissionStatus = createAsyncThunk(
       });
       return { permissionId, status, response };
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Permission durumu değiştirilirken hata oluştu');
+      return rejectWithValue(error);
     }
   }
 );
@@ -312,7 +312,7 @@ const permissionSlice = createSlice({
       })
       .addCase(fetchPermissions.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       });
 
     // fetchMyPermissions
@@ -327,7 +327,7 @@ const permissionSlice = createSlice({
       })
       .addCase(fetchMyPermissions.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       });
 
     // fetchPermissionById
@@ -342,7 +342,7 @@ const permissionSlice = createSlice({
       })
       .addCase(fetchPermissionById.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       });
 
     // createPermission
@@ -357,7 +357,7 @@ const permissionSlice = createSlice({
       })
       .addCase(createPermission.rejected, (state, action) => {
         state.createLoading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       });
 
     // updatePermission
@@ -379,7 +379,7 @@ const permissionSlice = createSlice({
       })
       .addCase(updatePermission.rejected, (state, action) => {
         state.updateLoading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       });
 
     // deletePermission
@@ -398,7 +398,7 @@ const permissionSlice = createSlice({
       })
       .addCase(deletePermission.rejected, (state, action) => {
         state.deleteLoading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       });
 
     // deletePermissionDirect
@@ -417,7 +417,7 @@ const permissionSlice = createSlice({
       })
       .addCase(deletePermissionDirect.rejected, (state, action) => {
         state.deleteLoading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       });
 
     // changePermissionStatus
@@ -439,7 +439,7 @@ const permissionSlice = createSlice({
       })
       .addCase(changePermissionStatus.rejected, (state, action) => {
         state.statusChangeLoading = false;
-        state.error = action.payload as string;
+        state.error = action.payload;
       });
   },
 });

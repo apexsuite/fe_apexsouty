@@ -7,7 +7,8 @@ import { fetchBilling, createBilling, updateBilling, clearError } from '@/lib/bi
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, AddressElement } from '@stripe/react-stripe-js';
 import { Save, Loader, Plus, Trash2 } from 'lucide-react';
-import { message, Button, Card, Typography, Input, Switch } from 'antd';
+import { Button, Card, Typography, Input, Switch } from 'antd';
+import { useErrorHandler } from '@/lib/useErrorHandler';
 
 const { Title } = Typography;
 
@@ -23,6 +24,7 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { billing, loading, error } = useSelector((state: RootState) => state.billing);
   const theme = useSelector((state: RootState) => state.theme.theme);
+  const { handleError, showSuccess } = useErrorHandler();
   
   const [formData, setFormData] = useState({
     name: '',
@@ -140,47 +142,7 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
   const onFinish = async () => {
     setSubmitting(true);
     try {
-      if (!formData.name.trim()) {
-        message.error(t('billing.nameRequired'));
-        setSubmitting(false);
-        return;
-      }
-
-      if (!formData.line1.trim()) {
-        message.error(t('billing.line1Required'));
-        setSubmitting(false);
-        return;
-      }
-
-      if (!formData.city.trim()) {
-        message.error(t('billing.cityRequired'));
-        setSubmitting(false);
-        return;
-      }
-
-      if (!formData.state.trim()) {
-        message.error(t('billing.stateRequired'));
-        setSubmitting(false);
-        return;
-      }
-
-      if (!formData.postalCode.trim()) {
-        message.error(t('billing.postalCodeRequired'));
-        setSubmitting(false);
-        return;
-      }
-
-      if (!formData.country.trim()) {
-        message.error(t('billing.countryRequired'));
-        setSubmitting(false);
-        return;
-      }
-
-      if (!formData.phone.trim()) {
-        message.error(t('billing.phoneRequired'));
-        setSubmitting(false);
-        return;
-      }
+      // Client-side validation kaldırıldı - server-side validation kullanılacak
 
       // Convert extra fields to object
       const extraObject = extraFields.reduce((acc, field) => {
@@ -210,14 +172,13 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
 
       if (billing) {
         await dispatch(updateBilling(billingData)).unwrap();
-        message.success(t('billing.billingUpdatedSuccessfully') || 'Billing updated successfully!');
+        showSuccess('billingUpdatedSuccessfully');
       } else {
         await dispatch(createBilling(billingData)).unwrap();
-        message.success(t('billing.billingCreatedSuccessfully') || 'Billing created successfully!');
+        showSuccess('billingCreatedSuccessfully');
       }
     } catch (error: any) {
-      const errorMessage = error?.message || error?.data?.message || t('billing.errorUpdatingBilling') || 'Error updating billing';
-      message.error(errorMessage);
+      handleError(error);
     } finally {
       setSubmitting(false);
     }
@@ -240,14 +201,6 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
         {/* Header */}
      
 
-        {/* Error Message */}
-        {error && (
-          <Card className="mb-6 border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800">
-            <div className="text-center text-red-600 dark:text-red-400">
-              <p>{error}</p>
-            </div>
-          </Card>
-        )}
 
         {/* Form */}
         <Card className="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">

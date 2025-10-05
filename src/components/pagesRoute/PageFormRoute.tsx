@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { AppDispatch, RootState } from '@/lib/store';
 import { fetchPageRouteById, createPageRoute, updatePageRoute, clearCurrentPageRoute, clearError } from '@/lib/pageSlice';
 import { ArrowLeft, Save, Eye } from 'lucide-react';
-import { message } from 'antd';
+import { useErrorHandler } from '@/lib/useErrorHandler';
 
 const PageFormRoute: React.FC = () => {
   const { t } = useTranslation();
@@ -14,6 +14,7 @@ const PageFormRoute: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { currentPageRoute, loading, error } = useSelector((state: RootState) => state.page);
   const theme = useSelector((state: RootState) => state.theme.theme);
+  const { handleError, showSuccess } = useErrorHandler();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -103,16 +104,15 @@ const PageFormRoute: React.FC = () => {
 
       if (isEditing && currentPageRoute) {
         await dispatch(updatePageRoute({ pageRouteId: currentPageRoute.id, pageRouteData: payload })).unwrap();
-        message.success(t('pages.pageUpdatedSuccessfully') || 'Page updated successfully!');
+        showSuccess('pageUpdatedSuccessfully');
       } else {
         await dispatch(createPageRoute(payload)).unwrap();
-        message.success(t('pages.pageCreatedSuccessfully') || 'Page created successfully!');
+        showSuccess('pageCreatedSuccessfully');
       }
       navigate('/page-routes');
     } catch (error: any) {
       console.error('Sayfa kaydedilirken hata oluştu:', error);
-      const errorMessage = error?.message || error?.data?.message || t('pages.errorSavingPage') || 'Error saving page';
-      message.error(errorMessage);
+      handleError(error);
     } finally {
       setIsSubmitting(false);
     }
@@ -185,16 +185,7 @@ const PageFormRoute: React.FC = () => {
           </div>
         </div>
 
-        {/* Error Message */}
-        {error && (
-          <div className={`mb-6 rounded-lg p-4 ${theme === 'dark'
-              ? 'bg-red-900/20 border border-red-800'
-              : 'bg-red-50 border border-red-200'
-            }`}>
-            <p className={theme === 'dark' ? 'text-red-400' : 'text-red-800'}>{error}</p>
-          </div>
-        )}
-
+       
         {/* Form */}
         <form id="pageForm" onSubmit={handleSubmit} className="space-y-6">
           <div className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-sm p-6 border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
