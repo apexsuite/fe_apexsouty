@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { AppDispatch, RootState } from '@/lib/store';
-import { createMarketplace, clearError } from '@/lib/marketplaceSlice';
+import { createMarketplace } from '@/lib/marketplaceSlice';
 import { ArrowLeft, Save } from 'lucide-react';
 import { Card, Button, Input, Form } from 'antd';
 import { useErrorHandler } from '@/lib/useErrorHandler';
@@ -13,14 +13,10 @@ const MarketplaceCreate: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
-  const { error } = useSelector((state: RootState) => state.marketplace);
   const { handleError, showSuccess } = useErrorHandler();
   const [form] = Form.useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    dispatch(clearError());
-  }, [dispatch]);
 
 
   const handleSubmit = async (values: { marketplace: string; marketplaceURL: string }) => {

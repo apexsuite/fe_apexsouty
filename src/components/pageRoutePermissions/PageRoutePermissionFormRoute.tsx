@@ -13,7 +13,7 @@ const PageRoutePermissionFormRoute: React.FC = () => {
   const { pageRouteId, permissionId } = useParams<{ pageRouteId: string; permissionId: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { currentPermission, loading, error } = useSelector(
+  const { currentPermission, loading } = useSelector(
     (state: RootState) => state.permission
   );
   const { pageRoutes } = useSelector((state: RootState) => state.page);

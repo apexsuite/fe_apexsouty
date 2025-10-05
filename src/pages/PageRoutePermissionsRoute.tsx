@@ -7,7 +7,6 @@ import { fetchPermissions, setCurrentPageNumber, setPageSize, clearError, setSea
 import { Eye, Edit, Plus, Search } from 'lucide-react';
 import { Table, Pagination, Button, Space, Tag, Card } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { useErrorHandler } from '@/lib/useErrorHandler';
 
 const PageRoutePermissionsRoute: React.FC = () => {
   const { t } = useTranslation();

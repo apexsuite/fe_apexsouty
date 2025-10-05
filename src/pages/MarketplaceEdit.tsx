@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AppDispatch, RootState } from '@/lib/store';
-import { fetchMarketplace, updateMarketplace, clearError } from '@/lib/marketplaceSlice';
+import { fetchMarketplace, updateMarketplace } from '@/lib/marketplaceSlice';
 import { ArrowLeft, Save } from 'lucide-react';
 import { Card, Button, Input, Form, Spin } from 'antd';
 import { useErrorHandler } from '@/lib/useErrorHandler';
@@ -14,14 +14,13 @@ const MarketplaceEdit: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { id } = useParams<{ id: string }>();
   const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
-  const { marketplace, loading, error } = useSelector((state: RootState) => state.marketplace);
+  const { marketplace, loading } = useSelector((state: RootState) => state.marketplace);
   const { handleError, showSuccess } = useErrorHandler();
   const [form] = Form.useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (id) {
-      dispatch(clearError());
       dispatch(fetchMarketplace(id));
     }
   }, [id, dispatch]);

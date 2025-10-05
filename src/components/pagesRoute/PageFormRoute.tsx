@@ -12,7 +12,7 @@ const PageFormRoute: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { currentPageRoute, loading, error } = useSelector((state: RootState) => state.page);
+  const { currentPageRoute, loading } = useSelector((state: RootState) => state.page);
   const theme = useSelector((state: RootState) => state.theme.theme);
   const { handleError, showSuccess } = useErrorHandler();
 

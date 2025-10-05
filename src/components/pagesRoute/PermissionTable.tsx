@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { RootState, AppDispatch } from '@/lib/store';
 import { changePermissionStatus, deletePermission } from '@/lib/pageRoutePermissionSlice';
 import { Trash2, Plus, Edit } from 'lucide-react';
@@ -27,7 +26,6 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
   const theme = useSelector((state: RootState) => state.theme.theme);
   const { handleError, showSuccess } = useErrorHandler();
 

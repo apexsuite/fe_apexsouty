@@ -22,7 +22,7 @@ interface BillingFormProps {
 const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
-  const { billing, loading, error } = useSelector((state: RootState) => state.billing);
+  const { billing, loading } = useSelector((state: RootState) => state.billing);
   const theme = useSelector((state: RootState) => state.theme.theme);
   const { handleError, showSuccess } = useErrorHandler();
   
