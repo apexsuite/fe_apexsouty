@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AppDispatch, RootState, store } from '@/lib/store';
 import { fetchPageRoutes, setCurrentPageNumber, setPageSize, clearError, changePageRouteStatus } from '@/lib/pageSlice';
+import { fetchMenu, fetchFavorites } from '@/lib/menuSlice';
 
 import { Eye, Edit, Plus, Search } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
@@ -114,6 +115,18 @@ const PagesRoute: React.FC = () => {
         limit: pageSize,
         name: searchTerm,
       }));
+
+      // Sidebar menü ve search bar için lazy load - sayfayı yenilemeden güncelle
+      try {
+        await Promise.all([
+          dispatch(fetchMenu() as any),
+          dispatch(fetchFavorites() as any)
+        ]);
+        console.log('Menu and favorites updated successfully after status change');
+      } catch (menuError) {
+        console.warn('Failed to update menu/favorites after status change:', menuError);
+        // Menu güncelleme hatası sayfa işlemini durdurmasın, sadece log'la
+      }
     } catch (error: any) {
       handleError(error);
     }
