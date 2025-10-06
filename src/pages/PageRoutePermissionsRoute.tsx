@@ -7,6 +7,7 @@ import { fetchPermissions, setCurrentPageNumber, setPageSize, clearError, setSea
 import { Eye, Edit, Plus, Search } from 'lucide-react';
 import { Table, Pagination, Button, Space, Tag, Card } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
+import PermissionGuard from '@/components/PermissionGuard';
 
 const PageRoutePermissionsRoute: React.FC = () => {
   const { t } = useTranslation();
@@ -155,30 +156,41 @@ const PageRoutePermissionsRoute: React.FC = () => {
       key: 'actions',
       render: (_, record) => (
         <Space>
-          <Button
-            type="primary"
-            icon={<Eye size={16} />}
-            onClick={() => record.id && handleViewPermission(record.id)}
-            size="small"
-            style={{
-              backgroundColor: '#3b82f6',
-              borderColor: '#3b82f6'
-            }}
+          <PermissionGuard 
+            permission="get-page-route-permission" 
+            mode="hide"
           >
-            View
-          </Button>
-          <Button
-            icon={<Edit size={16} />}
-            onClick={() => record.id && handleEditPermission(record.id)}
-            size="small"
-            style={{
-              color: theme === 'dark' ? '#ffffff' : '#111827',
-              borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
-              backgroundColor: theme === 'dark' ? '#374151' : '#ffffff'
-            }}
+            <Button
+              type="primary"
+              icon={<Eye size={16} />}
+              onClick={() => record.id && handleViewPermission(record.id)}
+              size="small"
+              style={{
+                backgroundColor: '#3b82f6',
+                borderColor: '#3b82f6'
+              }}
+            >
+              View
+            </Button>
+          </PermissionGuard>
+          
+          <PermissionGuard 
+            permission="update-page-route-permission" 
+            mode="hide"
           >
-            Edit
-          </Button>
+            <Button
+              icon={<Edit size={16} />}
+              onClick={() => record.id && handleEditPermission(record.id)}
+              size="small"
+              style={{
+                color: theme === 'dark' ? '#ffffff' : '#111827',
+                borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
+                backgroundColor: theme === 'dark' ? '#374151' : '#ffffff'
+              }}
+            >
+              Edit
+            </Button>
+          </PermissionGuard>
         </Space>
       ),
     },
@@ -226,13 +238,18 @@ const PageRoutePermissionsRoute: React.FC = () => {
                 {t('pages.pageRoutePermissions.subtitle')} {pageRouteId && `- Page Route ID: ${pageRouteId}`}
               </p>
             </div>
-            <button
-              onClick={handleCreatePermission}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+            <PermissionGuard 
+              permission="create-page-route-permission" 
+              mode="hide"
             >
-              <Plus size={20} />
-              {t('pages.pageRoutePermissions.newPermission')}
-            </button>
+              <button
+                onClick={handleCreatePermission}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+              >
+                <Plus size={20} />
+                {t('pages.pageRoutePermissions.newPermission')}
+              </button>
+            </PermissionGuard>
           </div>
 
           {/* Search and Filters */}
@@ -319,12 +336,17 @@ const PageRoutePermissionsRoute: React.FC = () => {
                 : t('pages.pageRoutePermissions.noPermissionsFound')}
             </p>
             {!searchTerm && (
-              <button
-                onClick={handleCreatePermission}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+              <PermissionGuard 
+                permission="create-page-route-permission" 
+                mode="hide"
               >
-                {t('pages.pageRoutePermissions.createFirstPermission')}
-              </button>
+                <button
+                  onClick={handleCreatePermission}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+                >
+                  {t('pages.pageRoutePermissions.createFirstPermission')}
+                </button>
+              </PermissionGuard>
             )}
           </div>
         )}

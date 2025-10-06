@@ -14,10 +14,12 @@ import {
 import { Plus, Search } from 'lucide-react';
 import { Card, Typography, theme, Pagination } from 'antd';
 import { useErrorHandler } from '@/lib/useErrorHandler';
+import PermissionGuard from '@/components/PermissionGuard';
 
 // Import components
 import ProductTable from '@/components/products/ProductTable';
 import ProductDeleteModal from '@/components/products/ProductDeleteModal';
+import ProductEmptyState from '@/components/products/ProductEmptyState';
 
 const { } = Typography;
 
@@ -155,13 +157,18 @@ const Products: React.FC = () => {
                 {t('product.description')}
               </p>
             </div>
-            <button
-              onClick={handleCreateProduct}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+            <PermissionGuard 
+              permission="create-product" 
+              mode="hide"
             >
-              <Plus size={20} />
-              {t('product.create')}
-            </button>
+              <button
+                onClick={handleCreateProduct}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+              >
+                <Plus size={20} />
+                {t('product.create')}
+              </button>
+            </PermissionGuard>
           </div>
         </div>
 
@@ -212,22 +219,33 @@ const Products: React.FC = () => {
           </div>
         )}
 
-        {/* Products Table */}
-        <div style={{ 
-          backgroundColor: currentTheme === 'dark' ? '#1f2937' : '#ffffff',
-          border: `1px solid ${currentTheme === 'dark' ? '#374151' : '#e5e7eb'}`,
-          borderRadius: '8px',
-          overflow: 'hidden'
-        }}>
-          <ProductTable
-            products={products}
-            loading={loading}
-            onEdit={handleEditProduct}
-            onView={handleViewProduct}
-            onDelete={handleDeleteProduct}
-            onStatusChange={handleStatusChange}
-          />
-        </div>
+        {/* Products Table or Empty State */}
+        {products.length === 0 && !loading ? (
+          <div style={{ 
+            backgroundColor: currentTheme === 'dark' ? '#1f2937' : '#ffffff',
+            border: `1px solid ${currentTheme === 'dark' ? '#374151' : '#e5e7eb'}`,
+            borderRadius: '8px',
+            overflow: 'hidden'
+          }}>
+            <ProductEmptyState onCreateProduct={handleCreateProduct} />
+          </div>
+        ) : (
+          <div style={{ 
+            backgroundColor: currentTheme === 'dark' ? '#1f2937' : '#ffffff',
+            border: `1px solid ${currentTheme === 'dark' ? '#374151' : '#e5e7eb'}`,
+            borderRadius: '8px',
+            overflow: 'hidden'
+          }}>
+            <ProductTable
+              products={products}
+              loading={loading}
+              onEdit={handleEditProduct}
+              onView={handleViewProduct}
+              onDelete={handleDeleteProduct}
+              onStatusChange={handleStatusChange}
+            />
+          </div>
+        )}
 
         <div style={{
           marginTop: '16px',

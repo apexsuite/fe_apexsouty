@@ -5,6 +5,7 @@ import themeReducer from './themeSlice';
 import menuReducer from './menuSlice';
 import pageReducer from './pageSlice';
 import permissionReducer from './pageRoutePermissionSlice';
+import userPermissionsReducer from './permissionSlice';
 import roleReducer from './roleSlice';
 import productReducer from './productSlice';
 import billingReducer from './billingSlice';
@@ -19,6 +20,7 @@ export const store = configureStore({
     menu: menuReducer,
     page: pageReducer,
     permission: permissionReducer,
+    userPermissions: userPermissionsReducer,
     role: roleReducer,
     product: productReducer,
     billing: billingReducer,

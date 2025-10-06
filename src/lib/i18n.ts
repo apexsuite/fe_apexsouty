@@ -291,6 +291,19 @@ const resources = {
         enterRoleDescription: 'Enter role description',
         isActive: 'Is Active',
         isDefault: 'Is Default',
+        emptyState: {
+          title: 'No roles yet',
+          description: 'Get started by creating your first role to manage user permissions.',
+        },
+        mobile: {
+          view: 'View',
+          edit: 'Edit',
+          delete: 'Delete',
+          status: 'Status',
+          roleValue: 'Role Value',
+          expandDetails: 'Show Details',
+          collapseDetails: 'Hide Details',
+        },
       },
       pages: {
         title: 'Pages',
@@ -503,6 +516,16 @@ const resources = {
           title: 'No products yet',
           description: 'Get started by creating your first product to manage your services and offerings.',
         },
+        mobile: {
+          view: 'View',
+          edit: 'Edit',
+          delete: 'Delete',
+          status: 'Status',
+          unitLabel: 'Unit Label',
+          marketingFeatures: 'Marketing Features',
+          expandDetails: 'Show Details',
+          collapseDetails: 'Hide Details',
+        },
         deleteModal: {
           title: 'Delete Product',
           description: 'Are you sure you want to delete this product? This action cannot be undone.',
@@ -544,6 +567,19 @@ const resources = {
         urlInvalid: 'Please enter a valid URL',
         namePlaceholder: 'Enter marketplace name',
         urlPlaceholder: 'Enter marketplace URL (e.g., https://example.com)',
+        emptyState: {
+          title: 'No marketplaces yet',
+          description: 'Get started by creating your first marketplace to manage your integrations.',
+        },
+        mobile: {
+          view: 'View',
+          edit: 'Edit',
+          delete: 'Delete',
+          status: 'Status',
+          website: 'Website',
+          expandDetails: 'Show Details',
+          collapseDetails: 'Hide Details',
+        },
       },
       price: {
         prices: 'Prices',
@@ -910,6 +946,19 @@ const resources = {
         enterRoleDescription: 'Rol açıklamasını girin',
         isActive: 'Aktif',
         isDefault: 'Varsayılan',
+        emptyState: {
+          title: 'Henüz rol yok',
+          description: 'Kullanıcı izinlerini yönetmek için ilk rolünüzü oluşturmaya başlayın.',
+        },
+        mobile: {
+          view: 'Görüntüle',
+          edit: 'Düzenle',
+          delete: 'Sil',
+          status: 'Durum',
+          roleValue: 'Rol Değeri',
+          expandDetails: 'Detayları Göster',
+          collapseDetails: 'Detayları Gizle',
+        },
       },
       pages: {
         title: 'Sayfalar',
@@ -1123,6 +1172,16 @@ const resources = {
           title: 'Henüz ürün yok',
           description: 'Hizmetlerinizi ve tekliflerinizi yönetmek için ilk ürününüzü oluşturmaya başlayın.',
         },
+        mobile: {
+          view: 'Görüntüle',
+          edit: 'Düzenle',
+          delete: 'Sil',
+          status: 'Durum',
+          unitLabel: 'Birim Etiketi',
+          marketingFeatures: 'Pazarlama Özellikleri',
+          expandDetails: 'Detayları Göster',
+          collapseDetails: 'Detayları Gizle',
+        },
         deleteModal: {
           title: 'Ürünü Sil',
           description: 'Bu ürünü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
@@ -1164,6 +1223,19 @@ const resources = {
         urlInvalid: 'Lütfen geçerli bir URL girin',
         namePlaceholder: 'Marketplace adını girin',
         urlPlaceholder: 'Marketplace URL girin (örn: https://example.com)',
+        emptyState: {
+          title: 'Henüz marketplace yok',
+          description: 'Entegrasyonlarınızı yönetmek için ilk marketplace\'inizi oluşturmaya başlayın.',
+        },
+        mobile: {
+          view: 'Görüntüle',
+          edit: 'Düzenle',
+          delete: 'Sil',
+          status: 'Durum',
+          website: 'Website',
+          expandDetails: 'Detayları Göster',
+          collapseDetails: 'Detayları Gizle',
+        },
       },
       price: {
         prices: 'Fiyatlar',

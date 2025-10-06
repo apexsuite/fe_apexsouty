@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { Modal, Typography, Button, theme } from 'antd';
 import { AlertTriangle } from 'lucide-react';
 import { RootState } from '@/lib/store';
+import PermissionGuard from '@/components/PermissionGuard';
 
 const { Text, Paragraph } = Typography;
 
@@ -50,19 +51,24 @@ const ProductDeleteModal: React.FC<ProductDeleteModalProps> = ({
         >
           {t('common.cancel')}
         </Button>,
-        <Button 
-          key="delete" 
-          danger 
-          onClick={onConfirm}
-          loading={loading}
-          style={{
-            backgroundColor: currentTheme === 'dark' ? '#ff4d4f' : undefined,
-            borderColor: currentTheme === 'dark' ? '#ff4d4f' : undefined,
-            color: currentTheme === 'dark' ? '#ffffff' : undefined
-          }}
+        <PermissionGuard 
+          permission="delete-product" 
+          mode="hide"
         >
-          {t('common.delete')}
-        </Button>
+          <Button 
+            key="delete" 
+            danger 
+            onClick={onConfirm}
+            loading={loading}
+            style={{
+              backgroundColor: currentTheme === 'dark' ? '#ff4d4f' : undefined,
+              borderColor: currentTheme === 'dark' ? '#ff4d4f' : undefined,
+              color: currentTheme === 'dark' ? '#ffffff' : undefined
+            }}
+          >
+            {t('common.delete')}
+          </Button>
+        </PermissionGuard>
       ]}
       centered
       styles={{

@@ -14,9 +14,11 @@ import {
 import { Plus, Search } from 'lucide-react';
 import { Card, Typography, Pagination } from 'antd';
 import { useErrorHandler } from '@/lib/useErrorHandler';
+import PermissionGuard from '@/components/PermissionGuard';
 
 // Import components
 import RoleTable from '@/components/roles/RoleTable';
+import RoleEmptyState from '@/components/roles/RoleEmptyState';
 import RoleDeleteModal from '@/components/roles/RoleDeleteModal';
 
 const { Title, Paragraph } = Typography;
@@ -148,13 +150,18 @@ const Roles: React.FC = () => {
                 {t('roles.manageRoles') || 'Manage user roles and permissions'}
               </Paragraph>
             </div>
-            <button
-              onClick={handleCreateRole}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors border-blue-600 hover:border-blue-700"
+            <PermissionGuard 
+              permission="create-role" 
+              mode="hide"
             >
-              <Plus size={16} />
-              {t('roles.createRole') || 'Create Role'}
-            </button>
+              <button
+                onClick={handleCreateRole}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors border-blue-600 hover:border-blue-700"
+              >
+                <Plus size={16} />
+                {t('roles.createRole') || 'Create Role'}
+              </button>
+            </PermissionGuard>
           </div>
         </Card>
 
@@ -194,17 +201,21 @@ const Roles: React.FC = () => {
           </Card>
         )}
 
-        {/* Roles Table */}
-        <RoleTable
-          roles={roles}
-          loading={loading}
-          onView={handleViewRole}
-          onEdit={handleEditRole}
-          onDelete={handleDeleteRole}
-          onStatusChange={handleStatusChange}
-          searchTerm={searchTerm}
-          selectedRoleValue={selectedRoleValue}
-        />
+        {/* Roles Table or Empty State */}
+        {roles.length === 0 && !loading ? (
+          <RoleEmptyState onCreateRole={handleCreateRole} />
+        ) : (
+          <RoleTable
+            roles={roles}
+            loading={loading}
+            onView={handleViewRole}
+            onEdit={handleEditRole}
+            onDelete={handleDeleteRole}
+            onStatusChange={handleStatusChange}
+            searchTerm={searchTerm}
+            selectedRoleValue={selectedRoleValue}
+          />
+        )}
         
         <div style={{
           marginTop: '16px',

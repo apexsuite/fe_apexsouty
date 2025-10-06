@@ -11,6 +11,7 @@ import * as LucideIcons from 'lucide-react';
 import { Table, Pagination, Button, Space, Tag, Card, Switch } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { useErrorHandler } from '@/lib/useErrorHandler';
+import PermissionGuard from '@/components/PermissionGuard';
 
 // Function to get Lucide icon dynamically
 const getLucideIcon = (iconName: string) => {
@@ -180,12 +181,17 @@ const PagesRoute: React.FC = () => {
       dataIndex: 'isActive',
       render: (isActive: boolean, record: any) => (
         <div className="flex items-center gap-2">
-          <Switch
-            checked={isActive}
-            onChange={() => handleStatusChange(record.id, isActive)}
-            loading={statusChangeLoading}
-            className={`custom-switch ${theme === 'dark' ? 'dark-switch' : ''}`}
-          />
+          <PermissionGuard 
+            permission="change-page-route-status" 
+            mode="disable"
+          >
+            <Switch
+              checked={isActive}
+              onChange={() => handleStatusChange(record.id, isActive)}
+              loading={statusChangeLoading}
+              className={`custom-switch ${theme === 'dark' ? 'dark-switch' : ''}`}
+            />
+          </PermissionGuard>
           <Tag color={isActive ? 'success' : 'default'}>
             {isActive ? 'Active' : 'Inactive'}
           </Tag>
@@ -217,34 +223,45 @@ const PagesRoute: React.FC = () => {
       key: 'actions',
       render: (_, record: any) => (
         <Space>
-          <Button 
-            type="primary" 
-            size="small" 
-            icon={<Eye size={14} />}
-            onClick={() => handleViewPage(record.id)}
-            style={{
-              backgroundColor: theme === 'dark' ? '#1890ff' : '#1890ff',
-              borderColor: theme === 'dark' ? '#1890ff' : '#1890ff',
-              color: '#ffffff'
-            }}
+          <PermissionGuard 
+            permission="get-page-route" 
+            mode="hide"
           >
-            View
-          </Button>
-          <Button 
-            size="small" 
-            icon={<Edit size={14} />}
-            onClick={() => handleEditPage(record.id)}
-            style={{
-              backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
-              borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
-              color: theme === 'dark' ? '#ffffff' : '#374151',
-              display: 'inline-block',
-              visibility: 'visible',
-              opacity: 1
-            }}
+            <Button 
+              type="primary" 
+              size="small" 
+              icon={<Eye size={14} />}
+              onClick={() => handleViewPage(record.id)}
+              style={{
+                backgroundColor: theme === 'dark' ? '#1890ff' : '#1890ff',
+                borderColor: theme === 'dark' ? '#1890ff' : '#1890ff',
+                color: '#ffffff'
+              }}
+            >
+              View
+            </Button>
+          </PermissionGuard>
+          
+          <PermissionGuard 
+            permission="update-page-route" 
+            mode="hide"
           >
-            Edit
-          </Button>
+            <Button 
+              size="small" 
+              icon={<Edit size={14} />}
+              onClick={() => handleEditPage(record.id)}
+              style={{
+                backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
+                borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
+                color: theme === 'dark' ? '#ffffff' : '#374151',
+                display: 'inline-block',
+                visibility: 'visible',
+                opacity: 1
+              }}
+            >
+              Edit
+            </Button>
+          </PermissionGuard>
         </Space>
       ),
     },
@@ -292,13 +309,18 @@ const PagesRoute: React.FC = () => {
                 {t('pages.subtitle')}
               </p>
             </div>
-            <button
-              onClick={handleCreatePage}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+            <PermissionGuard 
+              permission="create-page-route" 
+              mode="hide"
             >
-              <Plus size={20} />
-              {t('pages.newPage')}
-            </button>
+              <button
+                onClick={handleCreatePage}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+              >
+                <Plus size={20} />
+                {t('pages.newPage')}
+              </button>
+            </PermissionGuard>
           </div>
 
       

@@ -13,6 +13,7 @@ import {
   Typography,
   theme 
 } from 'antd';
+import PermissionGuard from '@/components/PermissionGuard';
 import { useErrorHandler } from '@/lib/useErrorHandler';
 import { 
   Plus, 
@@ -179,12 +180,17 @@ const PriceTable: React.FC<PriceTableProps> = ({
       key: 'isActive',
       render: (isActive: boolean, record: Price) => (
         <div className="flex items-center gap-2">
-          <Switch
-            checked={isActive}
-            loading={loadingStates[record.id]}
-            onChange={(checked) => handleStatusChange(record.id, checked)}
-            className={`custom-switch ${currentTheme === 'dark' ? 'dark-switch' : ''}`}
-          />
+          <PermissionGuard 
+            permission="change-price-status" 
+            mode="disable"
+          >
+            <Switch
+              checked={isActive}
+              loading={loadingStates[record.id]}
+              onChange={(checked) => handleStatusChange(record.id, checked)}
+              className={`custom-switch ${currentTheme === 'dark' ? 'dark-switch' : ''}`}
+            />
+          </PermissionGuard>
           <Tag color={isActive ? 'success' : 'default'}>
             {isActive ? t('common.active') : t('common.inactive')}
           </Tag>
@@ -209,16 +215,21 @@ const PriceTable: React.FC<PriceTableProps> = ({
                 {t('price.default')}
               </Tag>
             ) : (
-              <Button
-                type="text"
-                size="small"
-                loading={loadingStates[record.id]}
-                onClick={(e) => handleSetDefault(record.id, e)}
-                className="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-300"
-                icon={<StarOff size={14} />}
+              <PermissionGuard 
+                permission="set-default-price" 
+                mode="hide"
               >
-                {t('price.setDefault')}
-              </Button>
+                <Button
+                  type="text"
+                  size="small"
+                  loading={loadingStates[record.id]}
+                  onClick={(e) => handleSetDefault(record.id, e)}
+                  className="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-300"
+                  icon={<StarOff size={14} />}
+                >
+                  {t('price.setDefault')}
+                </Button>
+              </PermissionGuard>
             )}
           </div>
         );
@@ -229,29 +240,34 @@ const PriceTable: React.FC<PriceTableProps> = ({
       key: 'actions',
       render: (_, record: Price) => (
         <Space size="small">
-          <Tooltip title={t('common.view')}>
-            <div
-              onClick={(e) => handleViewDetail(record.id, e)}
-              style={{ 
-                color: currentTheme === 'dark' ? '#ffffff' : token.colorPrimary,
-                cursor: 'pointer',
-                padding: '4px 8px',
-                borderRadius: '6px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'background-color 0.2s'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = currentTheme === 'dark' ? '#374151' : '#f3f4f6';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-              }}
-            >
-              <Eye size={16} />
-            </div>
-          </Tooltip>
+          <PermissionGuard 
+            permission="get-price" 
+            mode="hide"
+          >
+            <Tooltip title={t('common.view')}>
+              <div
+                onClick={(e) => handleViewDetail(record.id, e)}
+                style={{ 
+                  color: currentTheme === 'dark' ? '#ffffff' : token.colorPrimary,
+                  cursor: 'pointer',
+                  padding: '4px 8px',
+                  borderRadius: '6px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = currentTheme === 'dark' ? '#374151' : '#f3f4f6';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
+              >
+                <Eye size={16} />
+              </div>
+            </Tooltip>
+          </PermissionGuard>
         </Space>
       ),
     },
@@ -275,14 +291,19 @@ const PriceTable: React.FC<PriceTableProps> = ({
               </p>
             </div>
           </div>
-          <Button
-            type="primary"
-            icon={<Plus size={16} />}
-            onClick={() => setCreateModalVisible(true)}
-            className="bg-blue-600 hover:bg-blue-700 border-blue-600 hover:border-blue-700"
+          <PermissionGuard 
+            permission="create-price" 
+            mode="hide"
           >
-            {t('price.createPrice')}
-          </Button>
+            <Button
+              type="primary"
+              icon={<Plus size={16} />}
+              onClick={() => setCreateModalVisible(true)}
+              className="bg-blue-600 hover:bg-blue-700 border-blue-600 hover:border-blue-700"
+            >
+              {t('price.createPrice')}
+            </Button>
+          </PermissionGuard>
         </div>
       </Card>
 

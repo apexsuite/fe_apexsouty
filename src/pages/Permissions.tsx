@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import PermissionStats from '@/components/permissions/PermissionStats';
+import PermissionGuard from '@/components/PermissionGuard';
 
 import PermissionList from '@/components/permissions/PermissionList';
 import PermissionFilters from '@/components/permissions/PermissionFilters';
@@ -202,11 +203,14 @@ export default function PermissionsPage() {
           <h1 style={{ fontSize: 28, fontWeight: 700 }}>{t('permissions.title')}</h1>
           <p style={{ color: '#888' }}>{t('permissions.permissionManagement')}</p>
         </div>
-        {canCreate(user) && (
+        <PermissionGuard 
+          permission="create-permission" 
+          mode="hide"
+        >
           <Button type="primary" icon={<PlusOutlined />} onClick={() => setShowCreateModal(true)}>
             {t('permissions.createNewPermission')}
           </Button>
-        )}
+        </PermissionGuard>
       </div>
 
       {/* Stats Cards */}
@@ -230,8 +234,11 @@ export default function PermissionsPage() {
         typeFilter={typeFilter}
       />
 
-      {/* Create Permission Modal - sadece Create izni varsa göster */}
-      {canCreate(user) && (
+      {/* Create Permission Modal */}
+      <PermissionGuard 
+        permission="create-permission" 
+        mode="hide"
+      >
         <CreatePermissionModal
           isOpen={showCreateModal}
           onClose={() => setShowCreateModal(false)}
@@ -239,7 +246,7 @@ export default function PermissionsPage() {
           setNewPermission={setNewPermission}
           onSubmit={handleCreatePermission}
         />
-      )}
+      </PermissionGuard>
     </div>
   );
 } 

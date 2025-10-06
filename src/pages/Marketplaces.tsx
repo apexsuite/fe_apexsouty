@@ -14,10 +14,12 @@ import {
 import { Plus, Search } from 'lucide-react';
 import { Card, Typography, theme, Pagination } from 'antd';
 import { useErrorHandler } from '@/lib/useErrorHandler';
+import PermissionGuard from '@/components/PermissionGuard';
 
 // Import components
 import MarketplaceTable from '@/components/marketplaces/MarketplaceTable';
 import MarketplaceDeleteModal from '@/components/marketplaces/MarketplaceDeleteModal';
+import MarketplaceEmptyState from '@/components/marketplaces/MarketplaceEmptyState';
 
 const { } = Typography;
 
@@ -150,13 +152,18 @@ const Marketplaces: React.FC = () => {
                 {t('marketplace.description')}
               </p>
             </div>
-            <button
-              onClick={handleCreateMarketplace}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+            <PermissionGuard 
+              permission="create-marketplace" 
+              mode="hide"
             >
-              <Plus size={20} />
-              {t('marketplace.create')}
-            </button>
+              <button
+                onClick={handleCreateMarketplace}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+              >
+                <Plus size={20} />
+                {t('marketplace.create')}
+              </button>
+            </PermissionGuard>
           </div>
         </div>
 
@@ -207,22 +214,33 @@ const Marketplaces: React.FC = () => {
           </div>
         )}
 
-        {/* Marketplaces Table */}
-        <div style={{ 
-          backgroundColor: currentTheme === 'dark' ? '#1f2937' : '#ffffff',
-          border: `1px solid ${currentTheme === 'dark' ? '#374151' : '#e5e7eb'}`,
-          borderRadius: '8px',
-          overflow: 'hidden'
-        }}>
-          <MarketplaceTable
-            marketplaces={marketplaces}
-            loading={loading}
-            onEdit={handleEditMarketplace}
-            onView={handleViewMarketplace}
-            onDelete={handleDeleteMarketplace}
-            onStatusChange={handleStatusChange}
-          />
-        </div>
+        {/* Marketplaces Table or Empty State */}
+        {marketplaces.length === 0 && !loading ? (
+          <div style={{ 
+            backgroundColor: currentTheme === 'dark' ? '#1f2937' : '#ffffff',
+            border: `1px solid ${currentTheme === 'dark' ? '#374151' : '#e5e7eb'}`,
+            borderRadius: '8px',
+            overflow: 'hidden'
+          }}>
+            <MarketplaceEmptyState onCreateMarketplace={handleCreateMarketplace} />
+          </div>
+        ) : (
+          <div style={{ 
+            backgroundColor: currentTheme === 'dark' ? '#1f2937' : '#ffffff',
+            border: `1px solid ${currentTheme === 'dark' ? '#374151' : '#e5e7eb'}`,
+            borderRadius: '8px',
+            overflow: 'hidden'
+          }}>
+            <MarketplaceTable
+              marketplaces={marketplaces}
+              loading={loading}
+              onEdit={handleEditMarketplace}
+              onView={handleViewMarketplace}
+              onDelete={handleDeleteMarketplace}
+              onStatusChange={handleStatusChange}
+            />
+          </div>
+        )}
 
         <div style={{
           marginTop: '16px',

@@ -6,6 +6,7 @@ import { Eye, Edit, Trash2, Activity } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { formatDate, canRead, canUpdate, canDelete } from '@/lib/utils';
+import PermissionGuard from '@/components/PermissionGuard';
 
 const { Text, Title } = Typography;
 
@@ -104,7 +105,10 @@ export default function PermissionItem({ permission, onDelete }: PermissionItemP
               {formattedDate}
             </Text>
             <Space size="small">
-              {canRead(user) && (
+              <PermissionGuard 
+                permission="get-permission" 
+                mode="hide"
+              >
                 <Button
                   type="text"
                   size="small"
@@ -112,8 +116,12 @@ export default function PermissionItem({ permission, onDelete }: PermissionItemP
                   onClick={handleViewClick}
                   title="Detayları Görüntüle"
                 />
-              )}
-              {canUpdate(user) && (
+              </PermissionGuard>
+              
+              <PermissionGuard 
+                permission="update-permission" 
+                mode="hide"
+              >
                 <Button
                   type="text"
                   size="small"
@@ -121,8 +129,12 @@ export default function PermissionItem({ permission, onDelete }: PermissionItemP
                   onClick={handleEditClick}
                   title="Düzenle"
                 />
-              )}
-              {canDelete(user) && (
+              </PermissionGuard>
+              
+              <PermissionGuard 
+                permission="delete-permission" 
+                mode="hide"
+              >
                 <Button
                   type="text"
                   size="small"
@@ -131,14 +143,17 @@ export default function PermissionItem({ permission, onDelete }: PermissionItemP
                   title="Sil"
                   danger
                 />
-              )}
+              </PermissionGuard>
             </Space>
           </Space>
         </div>
       </Card>
 
-      {/*sadece Delete izni varsa göster */}
-      {canDelete(user) && (
+      {/* Delete Modal */}
+      <PermissionGuard 
+        permission="delete-permission" 
+        mode="hide"
+      >
         <Modal
           title={t('permissions.deleteConfirmTitle')}
           open={showDeleteDialog}
@@ -150,7 +165,7 @@ export default function PermissionItem({ permission, onDelete }: PermissionItemP
         >
           <p>{t('permissions.deleteConfirmMessage')}</p>
         </Modal>
-      )}
+      </PermissionGuard>
     </>
   );
 } 
