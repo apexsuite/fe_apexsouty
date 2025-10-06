@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
-import { AlertTriangle, Home, ArrowLeft } from 'lucide-react';
+import { AlertTriangle, Home } from 'lucide-react';
 
 const AccessDenied: React.FC = () => {
   const { t } = useTranslation();
@@ -18,9 +18,7 @@ const AccessDenied: React.FC = () => {
     navigate('/dashboard');
   };
 
-  const handleGoBack = () => {
-    navigate(-1);
-  };
+
 
   return (
     <div className={`min-h-screen flex items-center justify-center ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
@@ -55,6 +53,7 @@ const AccessDenied: React.FC = () => {
 
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
+         
             <button
               onClick={handleGoHome}
               className={`flex items-center justify-center gap-2 px-6 py-3 rounded-lg transition-colors ${
