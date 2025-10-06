@@ -9,6 +9,7 @@ import roleReducer from './roleSlice';
 import productReducer from './productSlice';
 import billingReducer from './billingSlice';
 import marketplaceReducer from './marketplaceSlice';
+import routeGuardReducer from './routeGuardSlice';
 
 export const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ export const store = configureStore({
     product: productReducer,
     billing: billingReducer,
     marketplace: marketplaceReducer,
+    routeGuard: routeGuardReducer,
   },
 });
 

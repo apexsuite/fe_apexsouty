@@ -236,6 +236,7 @@ const resources = {
       },
       roles: {
         title: 'Roles',
+        roles: 'Roles',
         subtitle: 'Manage user roles and permissions',
         roleInformation: 'Role Information',
         roleValue: 'Role Value',
@@ -440,6 +441,14 @@ const resources = {
           previous: 'Previous',
           next: 'Next',
         },
+      },
+      accessDenied: {
+        title: 'Access Denied',
+        description: 'You do not have permission to access this page.',
+        attemptedPath: 'Attempted to access:',
+        goBack: 'Go Back',
+        goHome: 'Home Page',
+        contactAdmin: 'If you think you should have access to this page, please contact your system administrator.',
       },
       product: {
         title: 'Products',
@@ -1052,6 +1061,14 @@ const resources = {
           previous: 'Önceki',
           next: 'Sonraki',
         },
+      },
+      accessDenied: {
+        title: 'Erişim Reddedildi',
+        description: 'Bu sayfaya erişim yetkiniz bulunmamaktadır.',
+        attemptedPath: 'Erişmeye çalışılan sayfa:',
+        goBack: 'Geri Dön',
+        goHome: 'Ana Sayfa',
+        contactAdmin: 'Eğer bu sayfaya erişim gerektiğini düşünüyorsanız, sistem yöneticinizle iletişime geçin.',
       },
       product: {
         title: 'Ürünler',

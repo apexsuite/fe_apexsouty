@@ -11,9 +11,11 @@ import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
 import VerifyEmail from '@/pages/VerifyEmail';
 import ResetPassword from '@/pages/ResetPassword';
+import AccessDenied from '@/pages/AccessDenied';
 import Providers from '@/components/Providers';
 import ToastProvider from '@/components/ToastProvider';
 import ClientLayout from '@/components/ClientLayout';
+import RouteGuard from '@/components/RouteGuard';
 import PagesRoute from '@/pages/PagesRoute';
 import PageDetailRoute from '@/components/pagesRoute/PageDetailRoute';
 import PageFormRoute from '@/components/pagesRoute/PageFormRoute';
@@ -42,13 +44,15 @@ function AppContent() {
     <>
       <ToastProvider />
       <Router>
-        <Routes>
+        <RouteGuard>
+          <Routes>
           <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />} />
           <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/access-denied" element={<AccessDenied />} />
           <Route path="/dashboard" element={
             isAuthenticated ? (
               <ClientLayout>
@@ -329,7 +333,8 @@ function AppContent() {
                <Navigate to="/login" />
              )
            } />
-        </Routes>
+          </Routes>
+        </RouteGuard>
       </Router>
     </>
   );
