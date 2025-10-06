@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { AppDispatch, RootState } from '@/lib/store';
 import { fetchPermissions } from '@/lib/pageRoutePermissionSlice';
 import { setRolePermissionsBulk } from '@/lib/roleSlice';
-import { Trash2, Search, Check, Plus, Save } from 'lucide-react';
-import { Button, Tag, Modal, Input, Table, Space } from 'antd';
+import { Trash2, Search, Check, Plus, Save, Shield, ChevronDown, ChevronUp } from 'lucide-react';
+import { Button, Tag, Modal, Input, Table, Space, Card } from 'antd';
 import { useErrorHandler } from '@/lib/useErrorHandler';
 import type { ColumnsType } from 'antd/es/table';
 
@@ -29,6 +29,17 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
   const [localPermissions, setLocalPermissions] = useState<any[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [openCard, setOpenCard] = useState<string | null>(null);
+
+  useEffect(() => {
+    function handleResize() {
+      setIsMobile(window.innerWidth < 768);
+    }
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Initialize local permissions when rolePermissions change
   useEffect(() => {
@@ -220,30 +231,134 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
     },
   ];
 
+  // Mobile Card Component
+  const PermissionCard: React.FC<{ permission: any }> = ({ permission }) => {
+    const isExpanded = openCard === permission.permissionId;
+    
+    return (
+      <Card
+        style={{ 
+          cursor: 'pointer',
+          backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
+          borderColor: theme === 'dark' ? '#374151' : '#e5e7eb',
+          borderRadius: '6px',
+          boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+          marginBottom: '6px'
+        }}
+        bodyStyle={{ padding: '8px 10px' }}
+        onClick={() => setOpenCard(isExpanded ? null : permission.permissionId)}
+      >
+        <div className="flex justify-between items-start">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5 mb-1">
+              <Shield 
+                size={12} 
+                className={theme === 'dark' ? 'text-blue-400' : 'text-blue-500'} 
+              />
+              <h3 
+                className="font-medium truncate flex-1"
+                style={{ color: theme === 'dark' ? '#ffffff' : '#111827', fontSize: '13px' }}
+              >
+                {permission.permission?.name}
+              </h3>
+              <Tag 
+                color={permission.isActive ? 'green' : 'red'}
+                style={{ fontSize: '10px', padding: '0 4px', lineHeight: '18px' }}
+              >
+                {permission.isActive ? 'Active' : 'Inactive'}
+              </Tag>
+            </div>
+            
+            {permission.permission?.description && (
+              <div className="mb-1">
+                <span 
+                  className="line-clamp-1"
+                  style={{ color: theme === 'dark' ? '#d1d5db' : '#6b7280', fontSize: '11px' }}
+                >
+                  {permission.permission.description}
+                </span>
+              </div>
+            )}
+            
+            {permission.permission?.label && (
+              <div>
+                <Tag color="blue" style={{ fontSize: '9px', padding: '0 4px', lineHeight: '16px' }}>
+                  {permission.permission.label}
+                </Tag>
+              </div>
+            )}
+          </div>
+          
+          <Button 
+            type="text" 
+            size="small" 
+            onClick={(e) => { 
+              e.stopPropagation(); 
+              setOpenCard(isExpanded ? null : permission.permissionId); 
+            }}
+            className="p-0 h-auto"
+            style={{ minWidth: 'auto', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          >
+            {isExpanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+          </Button>
+        </div>
+
+        {isExpanded && (
+          <div 
+            className="mt-2 pt-2 border-t"
+            style={{ borderColor: theme === 'dark' ? '#374151' : '#e5e7eb' }}
+          >
+            <div className="flex flex-wrap gap-1">
+              <Button
+                type="text"
+                danger
+                size="small"
+                icon={<Trash2 size={10} />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleUnassignPermission(permission.permissionId || permission.permission?.id || permission.id);
+                }}
+                style={{ 
+                  fontSize: '10px',
+                  height: '22px',
+                  padding: '0 6px'
+                }}
+              >
+                Unassign
+              </Button>
+            </div>
+          </div>
+        )}
+      </Card>
+    );
+  };
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-2 md:space-y-4">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2">
         <div className="flex items-center gap-2">
-          <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+          <h3 className={`text-sm md:text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
             {t('pages.permissions')}
           </h3>
-          <Tag color="blue">{localPermissions.length}</Tag>
+          <Tag color="blue" style={{ fontSize: '10px', padding: '0 6px', lineHeight: '18px' }}>{localPermissions.length}</Tag>
         </div>
         <div className="flex gap-2">
           <Button
             type="primary"
-            icon={<Save size={16} />}
+            icon={<Save size={14} />}
             onClick={handleSavePermissions}
             loading={isSaving}
             size="small"
             disabled={isSaving}
+            className="flex-1 md:flex-initial"
+            style={{ fontSize: '12px', height: '28px', padding: '0 10px' }}
           >
             {isSaving ? (t('pages.saving') || 'Saving...') : (t('pages.save') || 'Save')}
           </Button>
           <Button
             type="default"
-            icon={<Plus size={16} />}
+            icon={<Plus size={14} />}
             onClick={() => {
               setShowPermissionModal(true);
               setSelectedPermissions([]); // Clear previous selections
@@ -251,34 +366,55 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
               loadAllPermissions();
             }}
             size="small"
+            className="flex-1 md:flex-initial"
+            style={{ fontSize: '12px', height: '28px', padding: '0 10px' }}
           >
             {t('pages.managePermissions')}
           </Button>
         </div>
       </div>
 
-      {/* Permissions Table */}
-      <div className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} ${theme === 'dark' ? 'dark-modal' : ''}`}>
-        <Table
-          columns={columns}
-          dataSource={localPermissions}
-          rowKey="permissionId"
-          pagination={false}
-          size="small"
-          className={`${theme === 'dark' ? 'dark-table' : ''}`}
-          style={{
-            backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
-          }}
-          locale={{
-            emptyText: (
-              <div className={`text-center py-8 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                <p>{t('pages.noPermissionsAssigned')}</p>
-                <p className="text-sm">{t('pages.createFirstPermission')}</p>
-              </div>
-            )
-          }}
-        />
-      </div>
+      {/* Permissions Table or Cards */}
+      {isMobile ? (
+        <div>
+          {localPermissions.length === 0 ? (
+            <div className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} p-8 text-center`}>
+              <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
+                {t('pages.noPermissionsAssigned')}
+              </p>
+              <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                {t('pages.createFirstPermission')}
+              </p>
+            </div>
+          ) : (
+            localPermissions.map((permission) => (
+              <PermissionCard key={permission.permissionId || permission.id} permission={permission} />
+            ))
+          )}
+        </div>
+      ) : (
+        <div className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} ${theme === 'dark' ? 'dark-modal' : ''}`}>
+          <Table
+            columns={columns}
+            dataSource={localPermissions}
+            rowKey="permissionId"
+            pagination={false}
+            size="small"
+            className={`${theme === 'dark' ? 'dark-table' : ''}`}
+            style={{
+              backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
+            }}
+            locale={{
+              emptyText: (
+                <div className={`text-center py-8 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                  <p>{t('pages.noPermissionsAssigned')}</p>
+                  <p className="text-sm">{t('pages.createFirstPermission')}</p>
+                </div>
+              )
+            }}
+          />
+        </div>
+      )}
 
       {/* Permission Selection Modal */}
       <Modal

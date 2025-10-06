@@ -259,7 +259,13 @@ const pageSlice = createSlice({
       })
       .addCase(fetchPageRoutes.fulfilled, (state, action) => {
         state.loading = false;
-        state.pageRoutes = action.payload.data?.items || [];
+        // API'den gelen camelCase field'ları snake_case'e transform et
+        const items = action.payload.data?.items || [];
+        state.pageRoutes = items.map((item: any) => ({
+          ...item,
+          is_active: item.isActive !== undefined ? item.isActive : item.is_active,
+          is_visible: item.isVisible !== undefined ? item.isVisible : item.is_visible,
+        }));
         state.totalPages = action.payload.data?.pageCount || 0;
         state.currentPageNumber = action.payload.data?.page || 1;
       })
@@ -277,7 +283,13 @@ const pageSlice = createSlice({
       .addCase(fetchPrivatePageRoutes.fulfilled, (state, action) => {
         state.loading = false;
         const response = action.payload as ApiResponse<PageRoute[]>;
-        state.privatePageRoutes = response.data || response;
+        const items: any[] = response.data || response;
+        // Transform camelCase to snake_case
+        state.privatePageRoutes = items.map((item: any) => ({
+          ...item,
+          is_active: item.isActive !== undefined ? item.isActive : item.is_active,
+          is_visible: item.isVisible !== undefined ? item.isVisible : item.is_visible,
+        }));
       })
       .addCase(fetchPrivatePageRoutes.rejected, (state, action) => {
         state.loading = false;
@@ -293,7 +305,13 @@ const pageSlice = createSlice({
       .addCase(fetchPageRouteById.fulfilled, (state, action) => {
         state.loading = false;
         const response = action.payload as ApiResponse<PageRoute>;
-        state.currentPageRoute = response.data || response;
+        const data: any = response.data || response;
+        // Transform camelCase to snake_case
+        state.currentPageRoute = {
+          ...data,
+          is_active: data.isActive !== undefined ? data.isActive : data.is_active,
+          is_visible: data.isVisible !== undefined ? data.isVisible : data.is_visible,
+        };
       })
       .addCase(fetchPageRouteById.rejected, (state, action) => {
         state.loading = false;
@@ -309,7 +327,13 @@ const pageSlice = createSlice({
       .addCase(createPageRoute.fulfilled, (state, action) => {
         state.createLoading = false;
         const response = action.payload as ApiResponse<PageRoute>;
-        const newPageRoute = response.data || response;
+        const data: any = response.data || response;
+        // Transform camelCase to snake_case
+        const newPageRoute = {
+          ...data,
+          is_active: data.isActive !== undefined ? data.isActive : data.is_active,
+          is_visible: data.isVisible !== undefined ? data.isVisible : data.is_visible,
+        };
         state.pageRoutes.unshift(newPageRoute);
       })
       .addCase(createPageRoute.rejected, (state, action) => {
@@ -326,7 +350,13 @@ const pageSlice = createSlice({
       .addCase(updatePageRoute.fulfilled, (state, action) => {
         state.updateLoading = false;
         const response = action.payload as ApiResponse<PageRoute>;
-        const updatedPageRoute = response.data || response;
+        const data: any = response.data || response;
+        // Transform camelCase to snake_case
+        const updatedPageRoute = {
+          ...data,
+          is_active: data.isActive !== undefined ? data.isActive : data.is_active,
+          is_visible: data.isVisible !== undefined ? data.isVisible : data.is_visible,
+        };
         
         const index = state.pageRoutes.findIndex(page => page.id === updatedPageRoute.id);
         if (index !== -1) {
@@ -370,7 +400,14 @@ const pageSlice = createSlice({
       .addCase(changePageRouteStatus.fulfilled, (state, action) => {
         state.statusChangeLoading = false;
         const { pageRouteId, response } = action.payload as { pageRouteId: string; response: any };
-        const updatedPageRoute = response.data || response;
+        const updatedData: any = response.data || response;
+        
+        // Transform camelCase to snake_case
+        const updatedPageRoute = {
+          ...updatedData,
+          is_active: updatedData.isActive !== undefined ? updatedData.isActive : updatedData.is_active,
+          is_visible: updatedData.isVisible !== undefined ? updatedData.isVisible : updatedData.is_visible,
+        };
         
         const index = state.pageRoutes.findIndex(page => page.id === pageRouteId);
         if (index !== -1) {
@@ -395,7 +432,13 @@ const pageSlice = createSlice({
       .addCase(restorePageRoute.fulfilled, (state, action) => {
         state.restoreLoading = false;
         const { pageRouteId, response } = action.payload as { pageRouteId: string; response: any };
-        const restoredPageRoute = response.data || response;
+        const data: any = response.data || response;
+        // Transform camelCase to snake_case
+        const restoredPageRoute = {
+          ...data,
+          is_active: data.isActive !== undefined ? data.isActive : data.is_active,
+          is_visible: data.isVisible !== undefined ? data.isVisible : data.is_visible,
+        };
         
         const index = state.pageRoutes.findIndex(page => page.id === pageRouteId);
         if (index !== -1) {

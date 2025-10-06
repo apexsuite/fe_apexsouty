@@ -88,24 +88,24 @@ const ProductDetail: React.FC = () => {
 
 
   return (
-    <div className="p-6 min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="p-3 md:p-6 min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <Card className="mb-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+        <Card className="mb-4 md:mb-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex items-center gap-2 md:gap-4">
               <button
                 onClick={handleBack}
                 className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 <ArrowLeft size={20} className="text-gray-600 dark:text-gray-300" />
               </button>
-              <div className="flex items-center gap-3">
-                <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-900">
-                  <Edit size={24} className="text-blue-600 dark:text-blue-400" />
+              <div className="flex items-center gap-2 md:gap-3">
+                <div className="p-2 md:p-3 rounded-full bg-blue-100 dark:bg-blue-900">
+                  <Edit size={20} md:size={24} className="text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <Title level={2} className="mb-1 text-gray-900 dark:text-white">
+                  <Title level={2} className="mb-1 text-gray-900 dark:text-white" style={{ fontSize: '1.25rem', lineHeight: '1.75rem' }}>
                     {product.name}
                   </Title>
                   <div className="flex gap-2">
@@ -120,7 +120,7 @@ const ProductDetail: React.FC = () => {
               type="primary"
               icon={<Edit size={16} />}
               onClick={handleEdit}
-              className="bg-blue-600 hover:bg-blue-700 border-blue-600 hover:border-blue-700"
+              className="bg-blue-600 hover:bg-blue-700 border-blue-600 hover:border-blue-700 w-full md:w-auto"
             >
               {t('common.edit')}
             </Button>
@@ -128,8 +128,8 @@ const ProductDetail: React.FC = () => {
         </Card>
 
         {/* Product Information */}
-        <Card className="mb-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-          <Title level={3} className="mb-4 text-gray-900 dark:text-white">
+        <Card className="mb-4 md:mb-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <Title level={3} className="mb-4 text-gray-900 dark:text-white" style={{ fontSize: '1.125rem' }}>
             {t('product.basicInfo')}
           </Title>
           
@@ -208,13 +208,13 @@ const ProductDetail: React.FC = () => {
 
         {/* Marketing Features */}
         {product.marketingFeatures && product.marketingFeatures.length > 0 && (
-          <Card className="mb-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-            <Title level={3} className="mb-4 text-gray-900 dark:text-white">
+          <Card className="mb-4 md:mb-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+            <Title level={3} className="mb-4 text-gray-900 dark:text-white" style={{ fontSize: '1.125rem' }}>
               {t('product.marketingFeatures')}
             </Title>
             <div className="flex flex-wrap gap-2">
               {product.marketingFeatures.map((feature, index) => (
-                <AntTag key={index} color="blue" className="text-sm">
+                <AntTag key={index} color="blue" className="text-xs md:text-sm">
                   {feature}
                 </AntTag>
               ))}

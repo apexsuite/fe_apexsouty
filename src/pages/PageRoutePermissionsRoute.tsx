@@ -4,10 +4,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AppDispatch, RootState } from '@/lib/store';
 import { fetchPermissions, setCurrentPageNumber, setPageSize, clearError, setSearching, setFilteredPermissions, clearSearch } from '@/lib/pageRoutePermissionSlice';
-import { Eye, Edit, Plus, Search } from 'lucide-react';
-import { Table, Pagination, Button, Space, Tag, Card } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import { Plus, Search } from 'lucide-react';
+import { Pagination, Card } from 'antd';
 import PermissionGuard from '@/components/PermissionGuard';
+import PageRoutePermissionTable from '@/components/pageRoutePermissions/PageRoutePermissionTable';
 
 const PageRoutePermissionsRoute: React.FC = () => {
   const { t } = useTranslation();
@@ -76,125 +76,6 @@ const PageRoutePermissionsRoute: React.FC = () => {
   const handleCreatePermission = () => {
     navigate(`/page-route-permissions/${pageRouteId || 'all'}/permissions/create`);
   };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('tr-TR', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
-
-
-  // Table columns definition
-  const columns: ColumnsType<any> = [
-    {
-      title: 'Name',
-      key: 'name',
-      dataIndex: 'name',
-      render: (name: string) => (
-        <span style={{ 
-          color: theme === 'dark' ? '#ffffff' : '#111827',
-          fontWeight: '500'
-        }}>
-          {name || 'Unnamed Permission'}
-        </span>
-      ),
-    },
-    {
-      title: 'Description',
-      key: 'description',
-      dataIndex: 'description',
-      render: (description: string) => (
-        <span style={{ 
-          color: theme === 'dark' ? '#d1d5db' : '#4b5563',
-          fontSize: '14px'
-        }}>
-          {description || 'No description'}
-        </span>
-      ),
-    },
-    {
-      title: 'Status',
-      key: 'status',
-      dataIndex: 'isActive',
-      render: (isActive: boolean) => (
-        <Tag color={isActive ? 'green' : 'red'}>
-          {isActive ? 'Active' : 'Inactive'}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Created Date',
-      key: 'createdAt',
-      dataIndex: 'createdAt',
-      render: (dateString: string) => (
-        <span style={{ 
-          color: theme === 'dark' ? '#9ca3af' : '#6b7280',
-          fontSize: '14px'
-        }}>
-          {dateString ? formatDate(dateString) : 'No date'}
-        </span>
-      ),
-    },
-    {
-      title: 'ID',
-      key: 'id',
-      dataIndex: 'id',
-      render: (id: string) => (
-        <span style={{ 
-          color: theme === 'dark' ? '#9ca3af' : '#6b7280',
-          fontSize: '12px',
-          fontFamily: 'monospace'
-        }}>
-          {id ? id.substring(0, 8) + '...' : 'No ID'}
-        </span>
-      ),
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      render: (_, record) => (
-        <Space>
-          <PermissionGuard 
-            permission="get-page-route-permission" 
-            mode="hide"
-          >
-            <Button
-              type="primary"
-              icon={<Eye size={16} />}
-              onClick={() => record.id && handleViewPermission(record.id)}
-              size="small"
-              style={{
-                backgroundColor: '#3b82f6',
-                borderColor: '#3b82f6'
-              }}
-            >
-              View
-            </Button>
-          </PermissionGuard>
-          
-          <PermissionGuard 
-            permission="update-page-route-permission" 
-            mode="hide"
-          >
-            <Button
-              icon={<Edit size={16} />}
-              onClick={() => record.id && handleEditPermission(record.id)}
-              size="small"
-              style={{
-                color: theme === 'dark' ? '#ffffff' : '#111827',
-                borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
-                backgroundColor: theme === 'dark' ? '#374151' : '#ffffff'
-              }}
-            >
-              Edit
-            </Button>
-          </PermissionGuard>
-        </Space>
-      ),
-    },
-  ];
 
 
 
@@ -297,25 +178,19 @@ const PageRoutePermissionsRoute: React.FC = () => {
         )}
 
         {/* Permissions Table */}
-        <Card
-          style={{
-            backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
-            borderColor: theme === 'dark' ? '#374151' : '#e5e7eb'
-          }}
-        >
-          <Table
-            columns={columns}
-            dataSource={isSearching ? filteredPermissions.filter(permission => permission !== null) : permissions.filter(permission => permission !== null)}
+        <div style={{ 
+          backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
+          border: `1px solid ${theme === 'dark' ? '#374151' : '#e5e7eb'}`,
+          borderRadius: '8px',
+          overflow: 'hidden'
+        }}>
+          <PageRoutePermissionTable
+            permissions={isSearching ? filteredPermissions.filter(permission => permission !== null) : permissions.filter(permission => permission !== null)}
             loading={loading && !isSearching}
-            rowKey={(record) => record?.id || `permission-${Math.random()}`}
-            pagination={false}
-            style={{
-              backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
-              color: theme === 'dark' ? '#ffffff' : '#111827'
-            }}
-            className={theme === 'dark' ? 'dark-table' : ''}
+            onView={handleViewPermission}
+            onEdit={handleEditPermission}
           />
-        </Card>
+        </div>
 
         {/* Empty State */}
         {!loading && ((isSearching && filteredPermissions.length === 0) || (!isSearching && permissions.length === 0)) && (

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -22,7 +22,9 @@ import {
   StarOff,
   DollarSign,
   Calendar,
-  Activity
+  Activity,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import type { ColumnsType } from 'antd/es/table';
 import { RootState } from '@/lib/store';
@@ -69,6 +71,17 @@ const PriceTable: React.FC<PriceTableProps> = ({
   
   const [loadingStates, setLoadingStates] = useState<{ [key: string]: boolean }>({});
   const [createModalVisible, setCreateModalVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [openCard, setOpenCard] = useState<string | null>(null);
+
+  useEffect(() => {
+    function handleResize() {
+      setIsMobile(window.innerWidth < 768);
+    }
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
 
 
@@ -273,6 +286,169 @@ const PriceTable: React.FC<PriceTableProps> = ({
     },
   ];
 
+  // Mobile Card Component
+  const PriceCard: React.FC<{ price: Price }> = ({ price }) => {
+    const isExpanded = openCard === price.id;
+    const isDefault = defaultPriceId === price.id;
+    
+    return (
+      <Card
+        style={{ 
+          cursor: 'pointer',
+          backgroundColor: currentTheme === 'dark' ? '#1f2937' : '#ffffff',
+          borderColor: currentTheme === 'dark' ? '#374151' : '#e5e7eb',
+          borderRadius: '8px',
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+        }}
+        bodyStyle={{ padding: '12px' }}
+        onClick={() => setOpenCard(isExpanded ? null : price.id)}
+      >
+        <div className="flex justify-between items-start">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-2">
+              <DollarSign 
+                size={14} 
+                className={currentTheme === 'dark' ? 'text-blue-400' : 'text-blue-500'} 
+              />
+              <h3 
+                className="font-medium text-sm truncate flex-1"
+                style={{ color: currentTheme === 'dark' ? '#ffffff' : '#111827' }}
+              >
+                {formatCurrency(price.unitAmount, price.currency)}
+              </h3>
+              {isDefault && (
+                <Tag 
+                  color="gold" 
+                  icon={<Star size={10} />}
+                  style={{ fontSize: '10px' }}
+                >
+                  Default
+                </Tag>
+              )}
+            </div>
+            
+            <div className="flex items-center gap-2 mb-1">
+              <span 
+                className="text-xs"
+                style={{ color: currentTheme === 'dark' ? '#9ca3af' : '#6b7280' }}
+              >
+                Status:
+              </span>
+              <PermissionGuard 
+                permission="change-price-status" 
+                mode="disable"
+              >
+                <div onClick={(e) => e.stopPropagation()}>
+                  <Switch
+                    checked={price.isActive}
+                    loading={loadingStates[price.id]}
+                    onChange={(checked) => handleStatusChange(price.id, checked)}
+                    size="small"
+                  />
+                </div>
+              </PermissionGuard>
+              <Tag 
+                color={price.isActive ? 'success' : 'default'}
+                style={{ fontSize: '10px' }}
+              >
+                {price.isActive ? 'Active' : 'Inactive'}
+              </Tag>
+            </div>
+            
+            <div className="flex items-center gap-2 mb-1">
+              <Tag 
+                color="blue" 
+                style={{ fontSize: '10px', marginRight: 0 }}
+              >
+                {price.currency.toUpperCase()}
+              </Tag>
+              <div className="flex items-center gap-1">
+                <Calendar size={10} className={currentTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} />
+                <span 
+                  className="text-xs"
+                  style={{ color: currentTheme === 'dark' ? '#9ca3af' : '#6b7280' }}
+                >
+                  {formatInterval(price.interval)}
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <Button 
+            type="text" 
+            size="small" 
+            onClick={(e) => { 
+              e.stopPropagation(); 
+              setOpenCard(isExpanded ? null : price.id); 
+            }}
+            className="p-0 h-auto"
+            style={{ minWidth: 'auto' }}
+          >
+            {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          </Button>
+        </div>
+
+        {isExpanded && (
+          <div 
+            className="mt-3 pt-3 border-t"
+            style={{ borderColor: currentTheme === 'dark' ? '#374151' : '#e5e7eb' }}
+          >
+            <div className="flex flex-wrap gap-1">
+              <PermissionGuard 
+                permission="get-price" 
+                mode="hide"
+              >
+                <Button
+                  type="text"
+                  size="small"
+                  icon={<Eye size={12} />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleViewDetail(price.id, e);
+                  }}
+                  style={{ 
+                    color: currentTheme === 'dark' ? '#ffffff' : token.colorPrimary,
+                    fontSize: '11px',
+                    height: '24px',
+                    padding: '0 6px'
+                  }}
+                >
+                  View
+                </Button>
+              </PermissionGuard>
+              
+              {!isDefault && (
+                <PermissionGuard 
+                  permission="set-default-price" 
+                  mode="hide"
+                >
+                  <Button
+                    type="text"
+                    size="small"
+                    icon={<StarOff size={12} />}
+                    loading={loadingStates[price.id]}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSetDefault(price.id, e);
+                    }}
+                    style={{ 
+                      color: '#f59e0b',
+                      fontSize: '11px',
+                      height: '24px',
+                      padding: '0 6px'
+                    }}
+                  >
+                    Set Default
+                  </Button>
+                </PermissionGuard>
+              )}
+            </div>
+          </div>
+        )}
+      </Card>
+    );
+  };
+
   return (
     <div className="space-y-4">
       {/* Header with Create Button */}
@@ -307,33 +483,59 @@ const PriceTable: React.FC<PriceTableProps> = ({
         </div>
       </Card>
 
-      {/* Price Table */}
-      <Card className={`border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 ${currentTheme === 'dark' ? 'dark-table' : ''}`}>
-        <Table
-          columns={columns}
-          dataSource={prices}
-          rowKey="id"
-          loading={loading}
-          pagination={false}
-          className={currentTheme === 'dark' ? 'dark-table' : ''}
-          style={{
-            backgroundColor: currentTheme === 'dark' ? '#1f1f1f' : token.colorBgContainer,
-            borderRadius: token.borderRadiusLG,
-            boxShadow: token.boxShadow
-          }}
-          rowClassName={currentTheme === 'dark' ? "hover:bg-gray-800" : "hover:bg-gray-50"}
-          locale={{
-            emptyText: (
+      {/* Price Table or Cards */}
+      {isMobile ? (
+        <div className="space-y-2">
+          {prices.length === 0 && !loading ? (
+            <Card className="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
               <div className="text-center py-8">
                 <DollarSign size={48} className="mx-auto text-gray-400 dark:text-gray-600 mb-4" />
                 <p className="text-gray-500 dark:text-gray-400">
                   {t('price.noPrices')}
                 </p>
               </div>
-            )
-          }}
-        />
-      </Card>
+            </Card>
+          ) : (
+            <>
+              {prices.map((price) => (
+                <PriceCard key={price.id} price={price} />
+              ))}
+              {loading && (
+                <div className="flex justify-center py-6">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      ) : (
+        <Card className={`border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 ${currentTheme === 'dark' ? 'dark-table' : ''}`}>
+          <Table
+            columns={columns}
+            dataSource={prices}
+            rowKey="id"
+            loading={loading}
+            pagination={false}
+            className={currentTheme === 'dark' ? 'dark-table' : ''}
+            style={{
+              backgroundColor: currentTheme === 'dark' ? '#1f1f1f' : token.colorBgContainer,
+              borderRadius: token.borderRadiusLG,
+              boxShadow: token.boxShadow
+            }}
+            rowClassName={currentTheme === 'dark' ? "hover:bg-gray-800" : "hover:bg-gray-50"}
+            locale={{
+              emptyText: (
+                <div className="text-center py-8">
+                  <DollarSign size={48} className="mx-auto text-gray-400 dark:text-gray-600 mb-4" />
+                  <p className="text-gray-500 dark:text-gray-400">
+                    {t('price.noPrices')}
+                  </p>
+                </div>
+              )
+            }}
+          />
+        </Card>
+      )}
 
       {/* Modals */}
       <CreatePriceModal

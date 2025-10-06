@@ -225,16 +225,38 @@ const ProductTable: React.FC<ProductTableProps> = ({
       >
         <div className="flex justify-between items-start">
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
+            <div className="flex items-center gap-2 mb-2">
               <Package size={14} className={currentTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} />
               <h3 
-                className="font-medium text-sm truncate"
+                className="font-medium text-sm truncate flex-1"
                 style={{ color: currentTheme === 'dark' ? '#ffffff' : '#111827' }}
               >
                 {product.name}
               </h3>
+            </div>
+            
+            <div className="flex items-center gap-2 mb-1">
+              <span 
+                className="text-xs"
+                style={{ color: currentTheme === 'dark' ? '#9ca3af' : '#6b7280' }}
+              >
+                Status:
+              </span>
+              <PermissionGuard 
+                permission="change-product-status" 
+                mode="disable"
+              >
+                <div onClick={(e) => e.stopPropagation()}>
+                  <Switch
+                    checked={product.isActive}
+                    onChange={(checked) => handleStatusChange(product.id, checked)}
+                    size="small"
+                  />
+                </div>
+              </PermissionGuard>
               <Tag 
                 color={product.isActive ? 'success' : 'default'}
+                style={{ fontSize: '10px' }}
               >
                 {product.isActive ? 'Aktif' : 'Pasif'}
               </Tag>
@@ -296,27 +318,6 @@ const ProductTable: React.FC<ProductTableProps> = ({
             className="mt-3 pt-3 border-t"
             style={{ borderColor: currentTheme === 'dark' ? '#374151' : '#e5e7eb' }}
           >
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <span 
-                  className="text-xs font-medium"
-                  style={{ color: currentTheme === 'dark' ? '#ffffff' : '#111827' }}
-                >
-                  {t('product.mobile.status')}:
-                </span>
-                <PermissionGuard 
-                  permission="change-product-status" 
-                  mode="disable"
-                >
-                  <Switch
-                    checked={product.isActive}
-                    onChange={(checked) => handleStatusChange(product.id, checked)}
-                    size="small"
-                  />
-                </PermissionGuard>
-              </div>
-            </div>
-
             {product.unitLabel && (
               <div className="mb-3">
                 <span 

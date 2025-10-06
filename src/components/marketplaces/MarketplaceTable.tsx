@@ -180,15 +180,37 @@ const MarketplaceTable: React.FC<MarketplaceTableProps> = ({
       >
         <div className="flex justify-between items-start">
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
+            <div className="flex items-center gap-2 mb-2">
               <h3 
-                className="font-medium text-sm truncate"
+                className="font-medium text-sm truncate flex-1"
                 style={{ color: currentTheme === 'dark' ? '#ffffff' : '#111827' }}
               >
                 {marketplace.marketplace}
               </h3>
+            </div>
+            
+            <div className="flex items-center gap-2 mb-1">
+              <span 
+                className="text-xs"
+                style={{ color: currentTheme === 'dark' ? '#9ca3af' : '#6b7280' }}
+              >
+                Status:
+              </span>
+              <PermissionGuard 
+                permission="change-marketplace-status" 
+                mode="disable"
+              >
+                <div onClick={(e) => e.stopPropagation()}>
+                  <Switch
+                    checked={marketplace.isActive}
+                    onChange={(checked) => handleStatusChange(marketplace.id, checked)}
+                    size="small"
+                  />
+                </div>
+              </PermissionGuard>
               <Tag 
                 color={marketplace.isActive ? 'success' : 'default'}
+                style={{ fontSize: '10px' }}
               >
                 {marketplace.isActive ? 'Aktif' : 'Pasif'}
               </Tag>
@@ -245,27 +267,6 @@ const MarketplaceTable: React.FC<MarketplaceTableProps> = ({
             className="mt-3 pt-3 border-t"
             style={{ borderColor: currentTheme === 'dark' ? '#374151' : '#e5e7eb' }}
           >
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <span 
-                  className="text-xs font-medium"
-                  style={{ color: currentTheme === 'dark' ? '#ffffff' : '#111827' }}
-                >
-                  {t('marketplace.mobile.status')}:
-                </span>
-                <PermissionGuard 
-                  permission="change-marketplace-status" 
-                  mode="disable"
-                >
-                  <Switch
-                    checked={marketplace.isActive}
-                    onChange={(checked) => handleStatusChange(marketplace.id, checked)}
-                    size="small"
-                  />
-                </PermissionGuard>
-              </div>
-            </div>
-
             <div className="flex flex-wrap gap-1">
               <PermissionGuard 
                 permission="get-marketplace" 
