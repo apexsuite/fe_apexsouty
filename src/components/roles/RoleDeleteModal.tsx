@@ -2,6 +2,7 @@ import React from 'react';
 import { Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
+import PermissionGuard from '@/components/PermissionGuard';
 
 interface RoleDeleteModalProps {
   visible: boolean;
@@ -29,12 +30,31 @@ const RoleDeleteModal: React.FC<RoleDeleteModalProps> = ({
         </div>
       }
       open={visible}
-      onOk={onOk}
       onCancel={onCancel}
       confirmLoading={loading}
-      okText={t('roles.delete') || 'Delete'}
       cancelText={t('roles.cancel') || 'Cancel'}
-      okButtonProps={{ danger: true }}
+      footer={[
+        <button
+          key="cancel"
+          onClick={onCancel}
+          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+        >
+          {t('roles.cancel') || 'Cancel'}
+        </button>,
+        <PermissionGuard 
+          key="delete"
+          permission="delete-role" 
+          mode="hide"
+        >
+          <button
+            onClick={onOk}
+            disabled={loading}
+            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50"
+          >
+            {loading ? 'Deleting...' : (t('roles.delete') || 'Delete')}
+          </button>
+        </PermissionGuard>
+      ]}
       className="text-center dark:bg-gray-800"
       styles={{
         content: { backgroundColor: 'var(--ant-color-bg-container)' },

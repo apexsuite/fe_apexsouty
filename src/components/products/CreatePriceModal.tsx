@@ -9,6 +9,7 @@ import {
   Button,
   theme
 } from 'antd';
+import PermissionGuard from '@/components/PermissionGuard';
 import { useErrorHandler } from '@/lib/useErrorHandler';
 import { DollarSign, Calendar, Activity } from 'lucide-react';
 import { RootState } from '@/lib/store';
@@ -200,15 +201,20 @@ const CreatePriceModal: React.FC<CreatePriceModalProps> = ({
           >
             {t('common.cancel')}
           </Button>
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={loading}
-            size="large"
-            className="px-6 bg-blue-600 hover:bg-blue-700 border-blue-600 hover:border-blue-700"
+          <PermissionGuard 
+            permission="create-price" 
+            mode="hide"
           >
-            {t('price.createPrice')}
-          </Button>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              size="large"
+              className="px-6 bg-blue-600 hover:bg-blue-700 border-blue-600 hover:border-blue-700"
+            >
+              {t('price.createPrice')}
+            </Button>
+          </PermissionGuard>
         </div>
       </Form>
     </Modal>

@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal, Button, Typography } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import PermissionGuard from '@/components/PermissionGuard';
 
 const { Text } = Typography;
 
@@ -36,15 +37,20 @@ const MarketplaceDeleteModal: React.FC<MarketplaceDeleteModalProps> = ({
         <Button key="cancel" onClick={onCancel} disabled={loading}>
           {t('common.cancel')}
         </Button>,
-        <Button
-          key="delete"
-          type="primary"
-          danger
-          onClick={onConfirm}
-          loading={loading}
+        <PermissionGuard 
+          permission="delete-marketplace" 
+          mode="hide"
         >
-          {t('common.delete')}
-        </Button>,
+          <Button
+            key="delete"
+            type="primary"
+            danger
+            onClick={onConfirm}
+            loading={loading}
+          >
+            {t('common.delete')}
+          </Button>
+        </PermissionGuard>,
       ]}
       centered
     >

@@ -6,28 +6,11 @@ import { AppDispatch, RootState, store } from '@/lib/store';
 import { fetchPageRoutes, setCurrentPageNumber, setPageSize, clearError, changePageRouteStatus } from '@/lib/pageSlice';
 import { fetchMenu, fetchFavorites } from '@/lib/menuSlice';
 
-import { Eye, Edit, Plus, Search } from 'lucide-react';
-import * as LucideIcons from 'lucide-react';
-import { Table, Pagination, Button, Space, Tag, Card, Switch } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import { Plus, Search } from 'lucide-react';
+import { Pagination, Card } from 'antd';
 import { useErrorHandler } from '@/lib/useErrorHandler';
-
-// Function to get Lucide icon dynamically
-const getLucideIcon = (iconName: string) => {
-  if (!iconName) return LucideIcons.Circle;
-  
-  // Convert icon name to PascalCase (e.g., 'home' -> 'Home', 'file-text' -> 'FileText')
-  const pascalCaseName = iconName
-    .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join('');
-  
-  // Get the icon component from LucideIcons
-  const IconComponent = (LucideIcons as any)[pascalCaseName];
-  
-  // Return the icon component or fallback to Circle
-  return IconComponent || LucideIcons.Circle;
-};
+import PermissionGuard from '@/components/PermissionGuard';
+import PageRouteTable from '@/components/pagesRoute/PageRouteTable';
 
 const PagesRoute: React.FC = () => {
   const { t } = useTranslation();
@@ -132,124 +115,6 @@ const PagesRoute: React.FC = () => {
     }
   };
 
-
-
-  const columns: ColumnsType<any> = [
-    {
-      title: 'Name',
-      key: 'name',
-      dataIndex: 'name',
-      render: (name: string) => (
-        <span style={{ fontWeight: 500 }}>{name}</span>
-      ),
-    },
-    {
-      title: 'Component',
-      key: 'component',
-      dataIndex: 'component',
-      render: (component: string) => (
-        <span style={{ fontWeight: 500 }}>{component}</span>
-      ),
-    },
-    {
-      title: 'Path',
-      key: 'path',
-      dataIndex: 'path',
-      render: (path: string) => (
-        <Tag color="blue" style={{ fontFamily: 'monospace' }}>
-          {path}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Icon',
-      key: 'icon',
-      dataIndex: 'icon',
-      render: (icon: string) => {
-        const IconComponent = getLucideIcon(icon);
-        return (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <IconComponent size={20} style={{ color: '#1890ff' }} />
-          </div>
-        );
-      },
-    },
-    {
-      title: 'Status',
-      key: 'status',
-      dataIndex: 'isActive',
-      render: (isActive: boolean, record: any) => (
-        <div className="flex items-center gap-2">
-          <Switch
-            checked={isActive}
-            onChange={() => handleStatusChange(record.id, isActive)}
-            loading={statusChangeLoading}
-            className={`custom-switch ${theme === 'dark' ? 'dark-switch' : ''}`}
-          />
-          <Tag color={isActive ? 'success' : 'default'}>
-            {isActive ? 'Active' : 'Inactive'}
-          </Tag>
-        </div>
-      ),
-    },
-    {
-      title: 'Visible',
-      key: 'visible',
-      dataIndex: 'isVisible',
-      render: (isVisible: boolean) => (
-        <Tag color={isVisible ? 'green' : 'red'}>
-          {isVisible ? 'Visible' : 'Hidden'}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Permission Count',
-      key: 'permission_count',
-      dataIndex: 'permission_count',
-      render: (count: number) => (
-        <Tag color="purple">
-          {count || 0}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      render: (_, record: any) => (
-        <Space>
-          <Button 
-            type="primary" 
-            size="small" 
-            icon={<Eye size={14} />}
-            onClick={() => handleViewPage(record.id)}
-            style={{
-              backgroundColor: theme === 'dark' ? '#1890ff' : '#1890ff',
-              borderColor: theme === 'dark' ? '#1890ff' : '#1890ff',
-              color: '#ffffff'
-            }}
-          >
-            View
-          </Button>
-          <Button 
-            size="small" 
-            icon={<Edit size={14} />}
-            onClick={() => handleEditPage(record.id)}
-            style={{
-              backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
-              borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
-              color: theme === 'dark' ? '#ffffff' : '#374151',
-              display: 'inline-block',
-              visibility: 'visible',
-              opacity: 1
-            }}
-          >
-            Edit
-          </Button>
-        </Space>
-      ),
-    },
-  ];
-
   // Sadece ilk yükleme sırasında loading göster
   if (loading && pageRoutes.length === 0 && !searchTerm) {
     return (
@@ -292,13 +157,18 @@ const PagesRoute: React.FC = () => {
                 {t('pages.subtitle')}
               </p>
             </div>
-            <button
-              onClick={handleCreatePage}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+            <PermissionGuard 
+              permission="create-page-route" 
+              mode="hide"
             >
-              <Plus size={20} />
-              {t('pages.newPage')}
-            </button>
+              <button
+                onClick={handleCreatePage}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+              >
+                <Plus size={20} />
+                {t('pages.newPage')}
+              </button>
+            </PermissionGuard>
           </div>
 
       
@@ -353,54 +223,49 @@ const PagesRoute: React.FC = () => {
           </div>
         )}
 
-        {/* Ant Design Table */}
+        {/* Page Routes Table */}
         <div style={{ 
           backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
           border: `1px solid ${theme === 'dark' ? '#374151' : '#e5e7eb'}`,
           borderRadius: '8px',
           overflow: 'hidden'
         }}>
-          <Table
-            columns={columns}
-            dataSource={pageRoutes}
-            rowKey="id"
-            loading={loading}
-            pagination={false}
-            size="middle"
-            style={{
-              backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
-            }}
-            className={theme === 'dark' ? 'dark-table' : ''}
-            locale={{
-              emptyText: (
-                <div style={{ 
-                  padding: '40px 20px',
-                  textAlign: 'center',
-                  color: theme === 'dark' ? '#9ca3af' : '#6b7280'
-                }}>
-                  {searchTerm ? (
-                    <div>
-                      <p style={{ fontSize: '16px', marginBottom: '8px' }}>
-                        No pages found matching your search criteria
-                      </p>
-                      <p style={{ fontSize: '14px', opacity: 0.7 }}>
-                        Try adjusting your search terms or filters
-                      </p>
-                    </div>
-                  ) : (
-                    <div>
-                      <p style={{ fontSize: '16px', marginBottom: '8px' }}>
-                        No pages available
-                      </p>
-                      <p style={{ fontSize: '14px', opacity: 0.7 }}>
-                        Create your first page to get started
-                      </p>
-                    </div>
-                  )}
+          {pageRoutes.length === 0 && !loading ? (
+            <div style={{ 
+              padding: '40px 20px',
+              textAlign: 'center',
+              color: theme === 'dark' ? '#9ca3af' : '#6b7280'
+            }}>
+              {searchTerm ? (
+                <div>
+                  <p style={{ fontSize: '16px', marginBottom: '8px' }}>
+                    No pages found matching your search criteria
+                  </p>
+                  <p style={{ fontSize: '14px', opacity: 0.7 }}>
+                    Try adjusting your search terms or filters
+                  </p>
                 </div>
-              )
-            }}
-          />
+              ) : (
+                <div>
+                  <p style={{ fontSize: '16px', marginBottom: '8px' }}>
+                    No pages available
+                  </p>
+                  <p style={{ fontSize: '14px', opacity: 0.7 }}>
+                    Create your first page to get started
+                  </p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <PageRouteTable
+              pageRoutes={pageRoutes}
+              loading={loading}
+              statusChangeLoading={statusChangeLoading}
+              onView={handleViewPage}
+              onEdit={handleEditPage}
+              onStatusChange={handleStatusChange}
+            />
+          )}
         </div>
 
         <div style={{

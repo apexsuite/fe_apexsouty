@@ -36,6 +36,16 @@ import Marketplaces from '@/pages/Marketplaces';
 import MarketplaceDetail from '@/pages/MarketplaceDetail';
 import MarketplaceEdit from '@/pages/MarketplaceEdit';
 import MarketplaceCreate from '@/pages/MarketplaceCreate';
+import PermissionTest from '@/components/PermissionTest';
+import NewPermissionExamples from '@/examples/NewPermissionExamples';
+import { usePermissionFetcher } from '@/lib/usePermissionFetcher';
+
+// Permission wrapper component - Router içinde çalışır
+function PermissionWrapper() {
+  usePermissionFetcher();
+  // usePagePermissions(); // Infinite loop'u önlemek için geçici olarak kapatıldı
+  return null;
+}
 
 function AppContent() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -44,6 +54,7 @@ function AppContent() {
     <>
       <ToastProvider />
       <Router>
+        <PermissionWrapper />
         <RouteGuard>
           <Routes>
           <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />} />
@@ -328,6 +339,27 @@ function AppContent() {
              isAuthenticated ? (
                <ClientLayout>
                  <MarketplaceCreate />
+               </ClientLayout>
+             ) : (
+               <Navigate to="/login" />
+             )
+           } />
+           
+           {/* Permission Test Routes */}
+           <Route path="/permission-test" element={
+             isAuthenticated ? (
+               <ClientLayout>
+                 <PermissionTest />
+               </ClientLayout>
+             ) : (
+               <Navigate to="/login" />
+             )
+           } />
+           
+           <Route path="/permission-examples" element={
+             isAuthenticated ? (
+               <ClientLayout>
+                 <NewPermissionExamples />
                </ClientLayout>
              ) : (
                <Navigate to="/login" />

@@ -1,11 +1,10 @@
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import type { RootState } from '@/lib/store';
 import { Button, Card, Typography, Tag, Space, Modal } from 'antd';
 import { Eye, Edit, Trash2, Activity } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { formatDate, canRead, canUpdate, canDelete } from '@/lib/utils';
+import { formatDate } from '@/lib/utils';
+import PermissionGuard from '@/components/PermissionGuard';
 
 const { Text, Title } = Typography;
 
@@ -27,7 +26,6 @@ interface PermissionItemProps {
 
 export default function PermissionItem({ permission, onDelete }: PermissionItemProps) {
   const { t } = useTranslation();
-  const user = useSelector((state: RootState) => state.auth.user);
   const navigate = useNavigate();
   const [formattedDate, setFormattedDate] = useState<string>('');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -104,7 +102,10 @@ export default function PermissionItem({ permission, onDelete }: PermissionItemP
               {formattedDate}
             </Text>
             <Space size="small">
-              {canRead(user) && (
+              <PermissionGuard 
+                permission="get-permission" 
+                mode="hide"
+              >
                 <Button
                   type="text"
                   size="small"
@@ -112,8 +113,12 @@ export default function PermissionItem({ permission, onDelete }: PermissionItemP
                   onClick={handleViewClick}
                   title="Detayları Görüntüle"
                 />
-              )}
-              {canUpdate(user) && (
+              </PermissionGuard>
+              
+              <PermissionGuard 
+                permission="update-permission" 
+                mode="hide"
+              >
                 <Button
                   type="text"
                   size="small"
@@ -121,8 +126,12 @@ export default function PermissionItem({ permission, onDelete }: PermissionItemP
                   onClick={handleEditClick}
                   title="Düzenle"
                 />
-              )}
-              {canDelete(user) && (
+              </PermissionGuard>
+              
+              <PermissionGuard 
+                permission="delete-permission" 
+                mode="hide"
+              >
                 <Button
                   type="text"
                   size="small"
@@ -131,14 +140,17 @@ export default function PermissionItem({ permission, onDelete }: PermissionItemP
                   title="Sil"
                   danger
                 />
-              )}
+              </PermissionGuard>
             </Space>
           </Space>
         </div>
       </Card>
 
-      {/*sadece Delete izni varsa göster */}
-      {canDelete(user) && (
+      {/* Delete Modal */}
+      <PermissionGuard 
+        permission="delete-permission" 
+        mode="hide"
+      >
         <Modal
           title={t('permissions.deleteConfirmTitle')}
           open={showDeleteDialog}
@@ -150,7 +162,7 @@ export default function PermissionItem({ permission, onDelete }: PermissionItemP
         >
           <p>{t('permissions.deleteConfirmMessage')}</p>
         </Modal>
-      )}
+      </PermissionGuard>
     </>
   );
 } 
