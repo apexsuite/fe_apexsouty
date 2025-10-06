@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import PermissionButton from '@/components/PermissionButton';
 import PermissionGuard from '@/components/PermissionGuard';
 import { usePermissions, useResourcePermissions } from '@/lib/usePermissions';
@@ -9,8 +8,7 @@ import { usePermissions, useResourcePermissions } from '@/lib/usePermissions';
  * API Response: ["create-product", "get-product-list", "update-product", ...]
  */
 const NewPermissionExamples: React.FC = () => {
-  const { t } = useTranslation();
-  const { permissions, loading } = usePermissions();
+  const { permissions } = usePermissions();
   const productPermissions = useResourcePermissions('products');
 
   return (

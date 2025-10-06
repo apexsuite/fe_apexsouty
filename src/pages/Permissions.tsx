@@ -11,7 +11,7 @@ import PermissionGuard from '@/components/PermissionGuard';
 import PermissionList from '@/components/permissions/PermissionList';
 import PermissionFilters from '@/components/permissions/PermissionFilters';
 import CreatePermissionModal from '@/components/permissions/CreatePermissionModal';
-import { canRead, canCreate } from '@/lib/utils';
+import { canRead } from '@/lib/utils';
 
 interface Permission {
   id: string;

@@ -102,7 +102,7 @@ const ProductDetail: React.FC = () => {
               </button>
               <div className="flex items-center gap-2 md:gap-3">
                 <div className="p-2 md:p-3 rounded-full bg-blue-100 dark:bg-blue-900">
-                  <Edit size={20} md:size={24} className="text-blue-600 dark:text-blue-400" />
+                  <Edit size={20} className="text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
                   <Title level={2} className="mb-1 text-gray-900 dark:text-white" style={{ fontSize: '1.25rem', lineHeight: '1.75rem' }}>

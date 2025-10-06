@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import PermissionButton from '@/components/PermissionButton';
 import PermissionGuard from '@/components/PermissionGuard';
 import { usePermissions, useResourcePermissions } from '@/lib/usePermissions';
@@ -9,7 +8,6 @@ import { usePermissions, useResourcePermissions } from '@/lib/usePermissions';
  * Bu dosya permission-based UI rendering'in nasıl kullanılacağını gösterir
  */
 const PermissionExamples: React.FC = () => {
-  const { t } = useTranslation();
   const { permissions, loading } = usePermissions();
   const productPermissions = useResourcePermissions('products');
 

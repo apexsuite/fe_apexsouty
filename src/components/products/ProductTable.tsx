@@ -5,7 +5,6 @@ import { Table, Button, Space, Tag, Switch, Tooltip, theme, Card } from 'antd';
 import { Edit, Eye, Trash2, Calendar, Package, ChevronDown, ChevronUp } from 'lucide-react';
 import type { ColumnsType } from 'antd/es/table';
 import { RootState } from '@/lib/store';
-import PermissionButton from '@/components/PermissionButton';
 import PermissionGuard from '@/components/PermissionGuard';
 
 export interface Product {

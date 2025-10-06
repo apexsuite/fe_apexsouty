@@ -34,20 +34,31 @@ const PermissionTest: React.FC = () => {
         
         {permissions.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {permissions.map((permission, index) => (
-              <div key={index} className="bg-white p-4 rounded border">
-                <h3 className="font-medium">{permission.name}</h3>
-                <p className="text-sm text-gray-600">Path: {permission.path}</p>
-                {permission.description && (
-                  <p className="text-sm text-gray-500 mt-1">{permission.description}</p>
-                )}
-                {permission.action && (
-                  <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mt-2">
-                    {permission.action}
-                  </span>
-                )}
-              </div>
-            ))}
+            {permissions.map((permission, index) => {
+              // Type check - sadece object olan permission'ları göster
+              if (typeof permission === 'string') {
+                return (
+                  <div key={index} className="bg-white p-4 rounded border">
+                    <p className="text-sm text-gray-600">{permission}</p>
+                  </div>
+                );
+              }
+              
+              return (
+                <div key={index} className="bg-white p-4 rounded border">
+                  <h3 className="font-medium">{permission.name}</h3>
+                  <p className="text-sm text-gray-600">Path: {permission.path}</p>
+                  {permission.description && (
+                    <p className="text-sm text-gray-500 mt-1">{permission.description}</p>
+                  )}
+                  {permission.action && (
+                    <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mt-2">
+                      {permission.action}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

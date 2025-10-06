@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Table, Button, Space, Tag, Card, theme, Tooltip } from 'antd';
 import { Edit, Eye, ChevronDown, ChevronUp, Shield, Calendar } from 'lucide-react';
@@ -29,7 +28,6 @@ const PageRoutePermissionTable: React.FC<PageRoutePermissionTableProps> = ({
   onView,
   onEdit,
 }) => {
-  const { t } = useTranslation();
   const { token } = theme.useToken();
   const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
   const [isMobile, setIsMobile] = useState(false);
