@@ -50,7 +50,6 @@ export default function ResetPassword() {
       const result = await dispatch(resetPassword(resetData)).unwrap();
       if (result.success) {
         toast.success('Password reset successfully!');
-        // Başarılı işlem sonrası login sayfasına yönlendir
         setTimeout(() => {
           navigate('/');
         }, 2000);

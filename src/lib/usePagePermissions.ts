@@ -11,12 +11,18 @@ import { fetchMyPermissions } from './permissionSlice';
 export const usePagePermissions = () => {
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const loading = useSelector((state: RootState) => state.userPermissions.loading);
   const lastFetched = useSelector((state: RootState) => state.userPermissions.lastFetched);
   const lastRouteRef = useRef<string>('');
   const isInitializedRef = useRef<boolean>(false);
 
   useEffect(() => {
+    // Eğer kullanıcı authenticate değilse, hiçbir şey yapma
+    if (!isAuthenticated) {
+      return;
+    }
+
     // Public routes'da permission fetch yapma
     const publicRoutes = [
       '/login',
@@ -58,7 +64,7 @@ export const usePagePermissions = () => {
       lastRouteRef.current = currentRoute;
       isInitializedRef.current = true;
     }
-  }, [location.pathname, dispatch, loading, lastFetched]);
+  }, [location.pathname, dispatch, loading, lastFetched, isAuthenticated]);
 
   return {
     loading,

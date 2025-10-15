@@ -68,6 +68,7 @@ interface PermissionState {
   loading: boolean;
   error: any;
   totalPages: number;
+  totalCount: number;
   currentPageNumber: number;
   pageSize: number;
   createLoading: boolean;
@@ -86,6 +87,7 @@ const initialState: PermissionState = {
   loading: false,
   error: null,
   totalPages: 0,
+  totalCount: 0,
   currentPageNumber: 1,
   pageSize: 10,
   createLoading: false,
@@ -105,7 +107,8 @@ export const fetchPermissions = createAsyncThunk(
     pageSize?: number; 
     name?: string; 
     description?: string; 
-    label?: string; 
+    label?: string;
+    isActive?: boolean;
   } = {}, { rejectWithValue }) => {
     try {
       const queryParams = new URLSearchParams();
@@ -114,6 +117,7 @@ export const fetchPermissions = createAsyncThunk(
       if (params.name) queryParams.append('name', params.name);
       if (params.description) queryParams.append('description', params.description);
       if (params.label) queryParams.append('label', params.label);
+      if (params.isActive !== undefined) queryParams.append('isActive', params.isActive.toString());
 
       const response = await apiRequest(`/permissions?${queryParams.toString()}`);
       return response;
@@ -306,6 +310,7 @@ const permissionSlice = createSlice({
         }
         
         state.totalPages = action.payload.data?.pageCount || 0;
+        state.totalCount = action.payload.data?.totalCount || 0;
         state.currentPageNumber = action.payload.data?.page || 1;
       })
       .addCase(fetchPermissions.rejected, (state, action) => {

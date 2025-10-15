@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/lib/store';
+import ScrollToTop from '@/components/ScrollToTop';
 import Login from '@/pages/Login';
 import Dashboard from '@/pages/Dashboard';
 import Permissions from '@/pages/Permissions';
@@ -36,6 +37,7 @@ import Marketplaces from '@/pages/Marketplaces';
 import MarketplaceDetail from '@/pages/MarketplaceDetail';
 import MarketplaceEdit from '@/pages/MarketplaceEdit';
 import MarketplaceCreate from '@/pages/MarketplaceCreate';
+import Consents from '@/pages/Consents';
 import PermissionTest from '@/components/PermissionTest';
 import NewPermissionExamples from '@/examples/NewPermissionExamples';
 import { usePermissionFetcher } from '@/lib/usePermissionFetcher';
@@ -54,6 +56,7 @@ function AppContent() {
     <>
       <ToastProvider />
       <Router>
+        <ScrollToTop />
         <PermissionWrapper />
         <RouteGuard>
           <Routes>
@@ -339,6 +342,17 @@ function AppContent() {
              isAuthenticated ? (
                <ClientLayout>
                  <MarketplaceCreate />
+               </ClientLayout>
+             ) : (
+               <Navigate to="/login" />
+             )
+           } />
+           
+           {/* Consents Routes */}
+           <Route path="/consents" element={
+             isAuthenticated ? (
+               <ClientLayout>
+                 <Consents />
                </ClientLayout>
              ) : (
                <Navigate to="/login" />

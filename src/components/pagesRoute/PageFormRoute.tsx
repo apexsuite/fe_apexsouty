@@ -24,8 +24,7 @@ const PageFormRoute: React.FC = () => {
     path: '',
     isActive: true,
     isVisible: true,
-    isUnderConstruction: false,
-    parentID: '',
+    isUnderConstruction: false
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -52,8 +51,7 @@ const PageFormRoute: React.FC = () => {
         path: currentPageRoute.path || '',
         isActive: currentPageRoute.is_active || true,
         isVisible: currentPageRoute.is_visible || true,
-        isUnderConstruction: currentPageRoute.IsUnderConstruction || false,
-        parentID: currentPageRoute.parentID || '',
+        isUnderConstruction: currentPageRoute.IsUnderConstruction || false
       });
     }
   }, [currentPageRoute, isEditing]);
@@ -97,9 +95,6 @@ const PageFormRoute: React.FC = () => {
       // Prepare payload - set parentID to empty string if it's empty
       const payload = { 
         ...formData
-      };
-      if (!payload.parentID || payload.parentID.trim() === '') {
-        payload.parentID = '';
       }
 
       if (isEditing && currentPageRoute) {
@@ -138,7 +133,7 @@ const PageFormRoute: React.FC = () => {
 
   return (
     <div className={`p-6 min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      <div className="max-w-4xl mx-auto">
+      <div className="w-full mx-auto md:px-8">
         {/* Header */}
         <div className="mb-6">
           <button

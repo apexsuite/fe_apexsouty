@@ -10,6 +10,7 @@ import roleReducer from './roleSlice';
 import productReducer from './productSlice';
 import billingReducer from './billingSlice';
 import marketplaceReducer from './marketplaceSlice';
+import consentReducer from './consentSlice';
 import routeGuardReducer from './routeGuardSlice';
 
 export const store = configureStore({
@@ -25,6 +26,7 @@ export const store = configureStore({
     product: productReducer,
     billing: billingReducer,
     marketplace: marketplaceReducer,
+    consent: consentReducer,
     routeGuard: routeGuardReducer,
   },
 });

@@ -2,6 +2,7 @@ import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { authService, RegisterData, LoginData } from '../services/authService';
 import { toast } from 'react-toastify';
 import i18n from './i18n';
+import { clearPermissions } from './permissionSlice';
 
 interface User {
   id: string;
@@ -105,7 +106,7 @@ export const loginUser = createAsyncThunk(
 
 export const logoutUser = createAsyncThunk(
   'auth/logout',
-  async () => {
+  async (_, { dispatch }) => {
     try {
       await authService.logout();
     } catch (error: any) {
@@ -115,6 +116,8 @@ export const logoutUser = createAsyncThunk(
       localStorage.removeItem('isAuth');
       localStorage.removeItem('user');
     }
+    // Permission'ları da temizle
+    dispatch(clearPermissions());
     return { success: true, message: 'Logged out successfully' };
   }
 );
@@ -283,6 +286,13 @@ const authSlice = createSlice({
       })
       .addCase(logoutUser.rejected, (state) => {
         state.loading = false;
+        // Logout başarısız olsa bile güvenlik için authentication'ı temizle
+        state.isAuthenticated = false;
+        state.user = null;
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('isAuth');
+          localStorage.removeItem('user');
+        }
       });
 
     // Forgot Password

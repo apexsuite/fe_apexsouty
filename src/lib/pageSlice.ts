@@ -32,7 +32,6 @@ export interface PageRoute {
   is_active: boolean;
   is_visible: boolean;
   IsUnderConstruction: boolean;
-  parentID?: string;
   createdAt: string;
   updatedAt?: string;
   favourite?: PageRouteFavourite;
@@ -88,13 +87,15 @@ const initialState: PageState = {
 // GET /api/page-routes - Get page route list
 export const fetchPageRoutes = createAsyncThunk(
   'page/fetchPageRoutes',
-  async (params: { page?: number; limit?: number; name?: string; category?: string } = {}, { rejectWithValue }) => {
+  async (params: { page?: number; limit?: number; name?: string; path?: string; component?: string; isActive?: boolean } = {}, { rejectWithValue }) => {
     try {
       const queryParams = new URLSearchParams();
       if (params.page) queryParams.append('page', params.page.toString());
       if (params.limit) queryParams.append('limit', params.limit.toString());
       if (params.name) queryParams.append('name', params.name);
-      if (params.category) queryParams.append('category', params.category);
+      if (params.path) queryParams.append('path', params.path);
+      if (params.component) queryParams.append('component', params.component);
+      if (params.isActive !== undefined) queryParams.append('isActive', params.isActive.toString());
 
       // Geçici olarak tam URL ile test edelim
       const response = await apiRequest(`/page-routes?${queryParams.toString()}`);
@@ -143,7 +144,6 @@ export const createPageRoute = createAsyncThunk(
     isActive: boolean;
     isVisible: boolean;
     isUnderConstruction: boolean;
-    parentID?: string;
   }, { rejectWithValue }) => {
     try {
       const response = await apiRequest('/page-routes', {
@@ -171,7 +171,6 @@ export const updatePageRoute = createAsyncThunk(
       isActive: boolean;
       isVisible: boolean;
       isUnderConstruction: boolean;
-      parentID?: string;
     }> 
   }, { rejectWithValue }) => {
     try {

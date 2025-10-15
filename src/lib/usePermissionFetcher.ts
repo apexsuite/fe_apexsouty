@@ -11,13 +11,19 @@ import { fetchMyPermissions } from './permissionSlice';
 export const usePermissionFetcher = () => {
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const permissions = useSelector((state: RootState) => state.userPermissions.permissions);
   const loading = useSelector((state: RootState) => state.userPermissions.loading);
   const lastFetched = useSelector((state: RootState) => state.userPermissions.lastFetched);
   const hasInitialized = useRef(false);
 
-  // Initial fetch
+  // Initial fetch - sadece authenticate olduğunda
   useEffect(() => {
+    // Eğer kullanıcı authenticate değilse, hiçbir şey yapma
+    if (!isAuthenticated) {
+      return;
+    }
+
     const shouldFetch = !loading && permissions.length === 0;
     const isStale = lastFetched && Date.now() - lastFetched > 5 * 60 * 1000; // 5 minutes
     const hasNeverFetched = !lastFetched;
@@ -27,10 +33,15 @@ export const usePermissionFetcher = () => {
       hasInitialized.current = true;
       dispatch(fetchMyPermissions());
     }
-  }, [dispatch, loading, permissions.length, lastFetched]);
+  }, [dispatch, loading, permissions.length, lastFetched, isAuthenticated]);
 
   // Route change fetch - sadece gerekli durumlarda güncelle
   useEffect(() => {
+    // Eğer kullanıcı authenticate değilse, hiçbir şey yapma
+    if (!isAuthenticated) {
+      return;
+    }
+
     // Public routes'da permission fetch yapma
     const publicRoutes = [
       '/login',
@@ -54,7 +65,7 @@ export const usePermissionFetcher = () => {
       console.log('🔄 Refreshing permissions (5min interval)...', location.pathname);
       dispatch(fetchMyPermissions());
     }
-  }, [location.pathname, dispatch, loading, lastFetched]);
+  }, [location.pathname, dispatch, loading, lastFetched, isAuthenticated]);
 
   return {
     permissions,

@@ -60,7 +60,7 @@ const RoleDetail: React.FC = () => {
   if (error || !currentRole) {
     return (
       <div className="p-6 min-h-screen bg-gray-50 dark:bg-gray-900">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-2xl mx-auto">
           <Card className="border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800">
             <div className="text-center text-red-600 dark:text-red-400">
               <p className="mb-4">{error || t('roles.roleNotFound') || 'Role not found'}</p>
@@ -76,7 +76,7 @@ const RoleDetail: React.FC = () => {
 
   return (
     <div className="p-2 md:p-6 min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-4xl mx-auto">
+      <div className="w-full mx-auto">
         {/* Header */}
         <Card className="mb-2 md:mb-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800" bodyStyle={{ padding: '12px 16px' }}>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
@@ -190,7 +190,7 @@ const RoleDetail: React.FC = () => {
         {/* Description */}
         <Card className="mb-2 md:mb-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800" bodyStyle={{ padding: '10px 12px' }}>
           <Title level={3} className="mb-1.5 text-gray-900 dark:text-white" style={{ fontSize: '0.875rem', marginBottom: '6px' }}>
-            {t('roles.description') || 'Description'}
+            {t('roles.description')}
           </Title>
           <Paragraph className="text-gray-600 dark:text-gray-300 mb-0 line-clamp-3 md:line-clamp-none" style={{ fontSize: '12px', lineHeight: '1.4', marginBottom: 0 }}>
             {currentRole.description || t('roles.noDescription') || 'No description provided.'}

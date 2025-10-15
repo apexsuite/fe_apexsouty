@@ -196,11 +196,39 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
   }
 
   return (
-    <div className="p-6 min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-4xl mx-auto">
+    <div 
+      style={{
+        padding: '1.5rem',
+        minHeight: '100vh',
+        backgroundColor: theme === 'dark' ? '#111827' : '#f9fafb',
+        color: theme === 'dark' ? '#ffffff' : '#111827'
+      }}
+    >
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-     
-
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <h1 
+                style={{ 
+                  fontSize: '1.875rem',
+                  fontWeight: 'bold',
+                  color: theme === 'dark' ? '#ffffff' : '#111827'
+                }}
+              >
+                {t('billing.title') || 'Billing'}
+              </h1>
+              <p 
+                style={{ 
+                  marginTop: '0.5rem',
+                  color: theme === 'dark' ? '#d1d5db' : '#4b5563'
+                }}
+              >
+                {t('billing.description') || 'Manage your billing information and address'}
+              </p>
+            </div>
+          </div>
+        </div>
 
         {/* Form */}
         <Card className="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">

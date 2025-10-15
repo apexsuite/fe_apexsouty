@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Table, Button, Space, Tag, Card, Switch, theme, Tooltip } from 'antd';
-import { Edit, Eye, ChevronDown, ChevronUp, FolderOpen } from 'lucide-react';
+import { Edit, Eye, Trash2, ChevronDown, ChevronUp, FolderOpen } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import type { ColumnsType } from 'antd/es/table';
 import { RootState } from '@/lib/store';
 import { PageRoute } from '@/lib/pageSlice';
@@ -28,6 +29,7 @@ interface PageRouteTableProps {
   onView: (pageId: string) => void;
   onEdit: (pageId: string) => void;
   onStatusChange: (pageRouteId: string, currentStatus: boolean) => void;
+  onDelete: (pageId: string) => void;
 }
 
 const PageRouteTable: React.FC<PageRouteTableProps> = ({
@@ -37,11 +39,16 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
   onView,
   onEdit,
   onStatusChange,
+  onDelete,
 }) => {
+  const { t } = useTranslation();
   const { token } = theme.useToken();
   const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
   const [isMobile, setIsMobile] = useState(false);
   const [openCard, setOpenCard] = useState<string | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedPageRoute, setSelectedPageRoute] = useState<PageRoute | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     function handleResize() {
@@ -52,9 +59,34 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const handleDeleteClick = (pageRoute: PageRoute) => {
+    setSelectedPageRoute(pageRoute);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!selectedPageRoute) return;
+    
+    setIsDeleting(true);
+    try {
+      await onDelete(selectedPageRoute.id);
+      setShowDeleteModal(false);
+      setSelectedPageRoute(null);
+    } catch (error) {
+      console.error('Delete error:', error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setShowDeleteModal(false);
+    setSelectedPageRoute(null);
+  };
+
   const columns: ColumnsType<PageRoute> = [
     {
-      title: 'Name',
+      title: t('pages.table.name'),
       key: 'name',
       dataIndex: 'name',
       render: (name: string) => (
@@ -67,7 +99,7 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
       ),
     },
     {
-      title: 'Component',
+      title: t('pages.table.component'),
       key: 'component',
       dataIndex: 'component',
       render: (component: string) => (
@@ -80,7 +112,7 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
       ),
     },
     {
-      title: 'Path',
+      title: t('pages.table.path'),
       key: 'path',
       dataIndex: 'path',
       render: (path: string) => (
@@ -90,7 +122,7 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
       ),
     },
     {
-      title: 'Icon',
+      title: t('pages.table.icon'),
       key: 'icon',
       dataIndex: 'icon',
       render: (icon: string) => {
@@ -103,7 +135,7 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
       },
     },
     {
-      title: 'Status',
+      title: t('pages.table.status'),
       key: 'status',
       dataIndex: 'is_active',
       render: (isActive: boolean, record: PageRoute) => (
@@ -120,23 +152,23 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
             />
           </PermissionGuard>
           <Tag color={isActive ? 'success' : 'default'}>
-            {isActive ? 'Active' : 'Inactive'}
+            {isActive ? t('common.active') : t('common.inactive')}
           </Tag>
         </div>
       ),
     },
     {
-      title: 'Visible',
+      title: t('pages.table.visible'),
       key: 'visible',
       dataIndex: 'is_visible',
       render: (isVisible: boolean) => (
         <Tag color={isVisible ? 'green' : 'red'}>
-          {isVisible ? 'Visible' : 'Hidden'}
+          {isVisible ? t('common.visible') : t('common.hidden')}
         </Tag>
       ),
     },
     {
-      title: 'Permissions',
+      title: t('pages.table.permissions'),
       key: 'permissionCount',
       dataIndex: 'permissionCount',
       render: (count: number) => (
@@ -146,7 +178,7 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
       ),
     },
     {
-      title: 'Actions',
+      title: t('common.actions'),
       key: 'actions',
       render: (_, record: PageRoute) => (
         <Space size="small">
@@ -176,6 +208,22 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
                 icon={<Edit size={16} />}
                 onClick={() => onEdit(record.id)}
                 style={{ color: currentTheme === 'dark' ? '#ffffff' : token.colorSuccess }}
+              />
+            </Tooltip>
+          </PermissionGuard>
+
+          <PermissionGuard 
+            permission="delete-page-route" 
+            mode="hide"
+          >
+            <Tooltip title="Delete">
+              <Button
+                type="text"
+                size="small"
+                danger
+                icon={<Trash2 size={16} />}
+                onClick={() => handleDeleteClick(record)}
+                style={{ color: currentTheme === 'dark' ? '#ef4444' : '#dc2626' }}
               />
             </Tooltip>
           </PermissionGuard>
@@ -344,6 +392,30 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
                   Edit
                 </Button>
               </PermissionGuard>
+
+              <PermissionGuard 
+                permission="delete-page-route" 
+                mode="hide"
+              >
+                <Button
+                  type="text"
+                  size="small"
+                  danger
+                  icon={<Trash2 size={12} />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteClick(pageRoute);
+                  }}
+                  style={{ 
+                    color: currentTheme === 'dark' ? '#ef4444' : '#dc2626',
+                    fontSize: '11px',
+                    height: '24px',
+                    padding: '0 6px'
+                  }}
+                >
+                  Delete
+                </Button>
+              </PermissionGuard>
             </div>
           </div>
         )}
@@ -353,33 +425,109 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
 
   if (isMobile) {
     return (
-      <div className="space-y-2 px-1">
-        {pageRoutes.map((pageRoute) => (
-          <PageRouteCard key={pageRoute.id} pageRoute={pageRoute} />
-        ))}
-        {loading && (
-          <div className="flex justify-center py-6">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+      <>
+        <div className="space-y-2 px-1">
+          {pageRoutes.map((pageRoute) => (
+            <PageRouteCard key={pageRoute.id} pageRoute={pageRoute} />
+          ))}
+          {loading && (
+            <div className="flex justify-center py-6">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+            </div>
+          )}
+        </div>
+
+        {/* Delete Modal */}
+        {showDeleteModal && selectedPageRoute && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className={`rounded-lg p-6 max-w-md w-full mx-4 ${
+              currentTheme === 'dark' ? 'bg-gray-800 border border-gray-700' : 'bg-white'
+            }`}>
+              <h3 className={`text-lg font-semibold mb-4 ${currentTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                {t('pages.deletePage')}
+              </h3>
+              <p className={`mb-6 ${currentTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                {t('pages.deleteConfirmMessage', { title: selectedPageRoute.name })}
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={handleDeleteCancel}
+                  className={`flex-1 px-4 py-2 border rounded-lg transition-colors disabled:opacity-50 ${
+                    currentTheme === 'dark' 
+                      ? 'border-gray-600 hover:bg-gray-700 text-gray-300' 
+                      : 'border-gray-300 hover:bg-gray-50 text-gray-700'
+                  }`}
+                  disabled={isDeleting}
+                >
+                  {t('pages.cancel')}
+                </button>
+                <button
+                  onClick={handleDeleteConfirm}
+                  className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg disabled:opacity-50"
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? t('pages.saving') : t('pages.delete')}
+                </button>
+              </div>
+            </div>  
           </div>
         )}
-      </div>
+      </>
     );
   }
 
   return (
-    <Table
-      columns={columns}
-      dataSource={pageRoutes}
-      rowKey="id"
-      loading={loading}
-      pagination={false}
-      style={{
-        backgroundColor: currentTheme === 'dark' ? '#1f1f1f' : token.colorBgContainer,
-        borderRadius: token.borderRadiusLG,
-        boxShadow: token.boxShadow
-      }}
-      rowClassName={currentTheme === 'dark' ? "hover:bg-gray-800" : "hover:bg-gray-50"}
-    />
+    <>
+      <Table
+        columns={columns}
+        dataSource={pageRoutes}
+        rowKey="id"
+        loading={loading}
+        pagination={false}
+        style={{
+          backgroundColor: currentTheme === 'dark' ? '#1f1f1f' : token.colorBgContainer,
+          borderRadius: token.borderRadiusLG,
+          boxShadow: token.boxShadow
+        }}
+        rowClassName={currentTheme === 'dark' ? "hover:bg-gray-800" : "hover:bg-gray-50"}
+      />
+
+      {/* Delete Modal */}
+      {showDeleteModal && selectedPageRoute && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className={`rounded-lg p-6 max-w-md w-full mx-4 ${
+            currentTheme === 'dark' ? 'bg-gray-800 border border-gray-700' : 'bg-white'
+          }`}>
+            <h3 className={`text-lg font-semibold mb-4 ${currentTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              {t('pages.deletePage')}
+            </h3>
+            <p className={`mb-6 ${currentTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+              {t('pages.deleteConfirmMessage', { title: selectedPageRoute.name })}
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={handleDeleteCancel}
+                className={`flex-1 px-4 py-2 border rounded-lg transition-colors disabled:opacity-50 ${
+                  currentTheme === 'dark' 
+                    ? 'border-gray-600 hover:bg-gray-700 text-gray-300' 
+                    : 'border-gray-300 hover:bg-gray-50 text-gray-700'
+                }`}
+                disabled={isDeleting}
+              >
+                {t('pages.cancel')}
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg disabled:opacity-50"
+                disabled={isDeleting}
+              >
+                {isDeleting ? t('pages.saving') : t('pages.delete')}
+              </button>
+            </div>
+          </div>  
+        </div>
+      )}
+    </>
   );
 };
 

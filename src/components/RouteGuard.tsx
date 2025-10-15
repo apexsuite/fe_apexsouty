@@ -33,6 +33,7 @@ const RouteGuard: React.FC<RouteGuardProps> = ({ children }) => {
 
   // Always allowed routes (core application routes that don't need API permission check)
   const alwaysAllowedRoutes = [
+    '/', // Root path - will redirect to dashboard
     '/dashboard', // Always accessible for authenticated users
     '/permissions', // Always accessible for authenticated users
     '/permissions-management', // Always accessible for authenticated users

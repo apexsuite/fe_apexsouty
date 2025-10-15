@@ -164,7 +164,7 @@ const PageRoutePermissionFormRoute: React.FC = () => {
 
   return (
     <div className={`p-6 min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      <div className="max-w-4xl mx-auto">
+      <div className="w-full px-8 mx-auto">
         {/* Header */}
         <div className="mb-6">
           <button

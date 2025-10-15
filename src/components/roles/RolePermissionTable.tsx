@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { AppDispatch, RootState } from '@/lib/store';
 import { fetchPermissions } from '@/lib/pageRoutePermissionSlice';
-import { setRolePermissionsBulk } from '@/lib/roleSlice';
-import { Trash2, Search, Check, Plus, Save, Shield, ChevronDown, ChevronUp } from 'lucide-react';
-import { Button, Tag, Modal, Input, Table, Space, Card } from 'antd';
+import { createRolePermissions, deleteRolePermission } from '@/lib/roleSlice';
+import { Trash2, Search, Check, Plus, Shield, ChevronDown, ChevronUp } from 'lucide-react';
+import { Button, Tag, Modal, Input, Table, Space, Card, Pagination } from 'antd';
 import { useErrorHandler } from '@/lib/useErrorHandler';
 import type { ColumnsType } from 'antd/es/table';
 
@@ -28,9 +28,12 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
   const [permissionSearchTerm, setPermissionSearchTerm] = useState('');
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
   const [localPermissions, setLocalPermissions] = useState<any[]>([]);
-  const [isSaving, setIsSaving] = useState(false);
+  const [isAssigning, setIsAssigning] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [openCard, setOpenCard] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
+  const pageSize = 10;
 
   useEffect(() => {
     function handleResize() {
@@ -44,7 +47,35 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
   // Initialize local permissions when rolePermissions change
   useEffect(() => {
     setLocalPermissions(rolePermissions);
+    setCurrentPage(1); // Reset to first page when permissions change
   }, [rolePermissions]);
+
+  // Filter permissions based on search term
+  const filteredPermissions = useMemo(() => {
+    if (!searchTerm) return localPermissions;
+    
+    const lowerSearchTerm = searchTerm.toLowerCase();
+    return localPermissions.filter((rolePermission) => {
+      const permission = rolePermission.permission;
+      return (
+        permission?.name?.toLowerCase().includes(lowerSearchTerm) ||
+        permission?.description?.toLowerCase().includes(lowerSearchTerm) ||
+        permission?.label?.toLowerCase().includes(lowerSearchTerm)
+      );
+    });
+  }, [localPermissions, searchTerm]);
+
+  // Get paginated permissions
+  const paginatedPermissions = useMemo(() => {
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    return filteredPermissions.slice(startIndex, endIndex);
+  }, [filteredPermissions, currentPage, pageSize]);
+
+  // Reset to first page when search term changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   const loadAllPermissions = async () => {
     try {
@@ -56,43 +87,84 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
     }
   };
 
-  const handleAssignPermissions = () => {
-    const newPermissions = selectedPermissions.map(permissionId => {
-      const permission = allPermissions.find(p => p.id === permissionId);
-      if (permission) {
-        return {
-          id: `temp-${Date.now()}-${Math.random()}`, // Temporary ID for new assignments
-          permissionId: permission.id,
-          rolePermissionID: roleId,
-          isActive: true,
-          permission: permission,
-        };
-      }
-      return null;
-    }).filter(Boolean);
+  const handleAssignPermissions = async () => {
+    if (selectedPermissions.length === 0) {
+      setShowPermissionModal(false);
+      return;
+    }
 
-    const updatedPermissions = [...localPermissions, ...newPermissions];
-    setLocalPermissions(updatedPermissions);
-    
-    setShowPermissionModal(false);
-    setSelectedPermissions([]);
+    setIsAssigning(true);
+    try {
+      // API'ye istek at
+      await dispatch(createRolePermissions({
+        roleId,
+        permissionIdList: selectedPermissions
+      })).unwrap();
+
+      // Başarılı olursa local state'i güncelle
+      const newPermissions = selectedPermissions.map(permissionId => {
+        const permission = allPermissions.find(p => p.id === permissionId);
+        if (permission) {
+          return {
+            id: `temp-${Date.now()}-${Math.random()}`, // Temporary ID for new assignments
+            permissionId: permission.id,
+            rolePermissionID: roleId,
+            isActive: true,
+            permission: permission,
+          };
+        }
+        return null;
+      }).filter(Boolean);
+
+      const updatedPermissions = [...localPermissions, ...newPermissions];
+      setLocalPermissions(updatedPermissions);
+      
+      showSuccess('permissionAssignedSuccessfully');
+      setShowPermissionModal(false);
+      setSelectedPermissions([]);
+    } catch (error: any) {
+      handleError(error);
+    } finally {
+      setIsAssigning(false);
+    }
   };
 
-  const handleUnassignPermission = (permissionId: string) => {
+  const handleUnassignPermission = async (permissionId: string) => {
     console.log('=== UNASSIGN DEBUG ===');
     console.log('Unassigning permission ID:', permissionId);
     console.log('Current localPermissions:', localPermissions);
     
-    // Remove permission from local permissions array
-    // Try multiple possible field names for permission ID
-    const updatedPermissions = localPermissions.filter(p => 
-      p.permissionId !== permissionId && 
-      p.permission?.id !== permissionId && 
-      p.id !== permissionId
-    );
-    console.log('Updated permissions after unassign:', updatedPermissions);
-    
-    setLocalPermissions(updatedPermissions);
+    try {
+      // API'ye istek at - rolePermissionId'yi bul
+      const rolePermission = localPermissions.find(p => 
+        p.permissionId === permissionId || 
+        p.permission?.id === permissionId || 
+        p.id === permissionId
+      );
+      
+      if (rolePermission) {
+        const rolePermissionId = rolePermission.id || rolePermission.rolePermissionID;
+        
+        if (rolePermissionId) {
+          await dispatch(deleteRolePermission({
+            roleId,
+            rolePermissionId: rolePermissionId
+          })).unwrap();
+          
+          // Başarılı olursa local state'den kaldır
+          const updatedPermissions = localPermissions.filter(p => 
+            p.permissionId !== permissionId && 
+            p.permission?.id !== permissionId && 
+            p.id !== permissionId
+          );
+          
+          setLocalPermissions(updatedPermissions);
+          showSuccess('permissionUnassignedSuccessfully');
+        }
+      }
+    } catch (error: any) {
+      handleError(error);
+    }
   };
 
   const handlePermissionSelection = (permissionId: string, checked: boolean) => {
@@ -103,57 +175,6 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
     }
   };
 
-  const handleSavePermissions = async () => {
-    setIsSaving(true);
-    try {
-      const permissionsToSend = localPermissions.map(permission => {
-        // Check if this is an existing permission (not a newly assigned one)
-        const isNewlyAssigned = permission.id && permission.id.startsWith('temp-');
-        
-        if (isNewlyAssigned) {
-          // New permission - only send permissionId
-          return {
-            permissionId: permission.permissionId
-          };
-        } else {
-          // Existing permission - send both permissionId and rolePermissionId
-          return {
-            permissionId: permission.permissionId,
-            rolePermissionId: permission.rolePermissionID || permission.id
-          };
-        }
-      });
-
-      // Debug: Log permissions being sent
-      console.log('=== API REQUEST DEBUG ===');
-      console.log('Role ID:', roleId);
-      console.log('Local permissions:', localPermissions);
-      console.log('Permissions to send:', permissionsToSend);
-      console.log('Full request body:', { permissions: permissionsToSend });
-      
-      // Debug each permission type
-      permissionsToSend.forEach((perm, index) => {
-        const localPerm = localPermissions[index];
-        console.log(`Permission ${index}:`, {
-          local: localPerm,
-          sent: perm,
-          isNewlyAssigned: localPerm.id && localPerm.id.startsWith('temp-')
-        });
-      });
-
-      await dispatch(setRolePermissionsBulk({
-        roleId,
-        permissions: permissionsToSend
-      })).unwrap();
-
-      showSuccess('permissionUpdatedSuccessfully');
-
-    } catch (error: any) {
-      handleError(error);
-    } finally {
-      setIsSaving(false);
-    }
-  };
 
   const currentRolePermissionIds = rolePermissions.map(rp => {
     return rp.permissionId || rp.permission?.id || rp.id;
@@ -343,21 +364,26 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
           </h3>
           <Tag color="blue" style={{ fontSize: '10px', padding: '0 6px', lineHeight: '18px' }}>{localPermissions.length}</Tag>
         </div>
+        {/* Filter Input */}
+        <div className="w-full sm:w-72">
+          <Input
+            placeholder={t('permissions.searchPermissions') || 'Search by name, description or label...'}
+            prefix={<Search size={16} className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} />}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            allowClear
+            size="small"
+            className={`${theme === 'dark' ? 'dark-input' : ''}`}
+            style={{
+              backgroundColor: theme === 'dark' ? '#374151' : '#ffffff',
+              borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
+              color: theme === 'dark' ? '#ffffff' : '#111827'
+            }}
+          />
+        </div>
         <div className="flex gap-2">
           <Button
             type="primary"
-            icon={<Save size={14} />}
-            onClick={handleSavePermissions}
-            loading={isSaving}
-            size="small"
-            disabled={isSaving}
-            className="flex-1 md:flex-initial"
-            style={{ fontSize: '12px', height: '28px', padding: '0 10px' }}
-          >
-            {isSaving ? (t('pages.saving') || 'Saving...') : (t('pages.save') || 'Save')}
-          </Button>
-          <Button
-            type="default"
             icon={<Plus size={14} />}
             onClick={() => {
               setShowPermissionModal(true);
@@ -365,55 +391,93 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
               setPermissionSearchTerm(''); // Clear search term
               loadAllPermissions();
             }}
+            loading={isAssigning}
+            disabled={isAssigning}
             size="small"
             className="flex-1 md:flex-initial"
             style={{ fontSize: '12px', height: '28px', padding: '0 10px' }}
           >
-            {t('pages.managePermissions')}
+            {isAssigning ? (t('pages.assigning') || 'Assigning...') : (t('pages.managePermissions') || 'Manage Permissions')}
           </Button>
         </div>
       </div>
 
+    
+
       {/* Permissions Table or Cards */}
       {isMobile ? (
-        <div>
-          {localPermissions.length === 0 ? (
-            <div className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} p-8 text-center`}>
-              <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
-                {t('pages.noPermissionsAssigned')}
-              </p>
-              <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                {t('pages.createFirstPermission')}
-              </p>
+        <>
+          <div>
+            {paginatedPermissions.length === 0 ? (
+              <div className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} p-8 text-center`}>
+                <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
+                  {searchTerm ? (t('permissions.noResultsFound') || 'No results found') : t('pages.noPermissionsAssigned')}
+                </p>
+                <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                  {searchTerm ? (t('permissions.tryDifferentSearch') || 'Try a different search term') : t('pages.createFirstPermission')}
+                </p>
+              </div>
+            ) : (
+              paginatedPermissions.map((permission) => (
+                <PermissionCard key={permission.permissionId || permission.id} permission={permission} />
+              ))
+            )}
+          </div>
+
+          {/* Mobile Pagination */}
+          {filteredPermissions.length > 0 && (
+            <div className="flex justify-center mt-3">
+              <Pagination
+                current={currentPage}
+                total={filteredPermissions.length}
+                pageSize={pageSize}
+                onChange={(page) => setCurrentPage(page)}
+                showSizeChanger={false}
+                simple
+                className={theme === 'dark' ? 'dark-pagination' : ''}
+              />
             </div>
-          ) : (
-            localPermissions.map((permission) => (
-              <PermissionCard key={permission.permissionId || permission.id} permission={permission} />
-            ))
           )}
-        </div>
+        </>
       ) : (
-        <div className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} ${theme === 'dark' ? 'dark-modal' : ''}`}>
-          <Table
-            columns={columns}
-            dataSource={localPermissions}
-            rowKey="permissionId"
-            pagination={false}
-            size="small"
-            className={`${theme === 'dark' ? 'dark-table' : ''}`}
-            style={{
-              backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
-            }}
-            locale={{
-              emptyText: (
-                <div className={`text-center py-8 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                  <p>{t('pages.noPermissionsAssigned')}</p>
-                  <p className="text-sm">{t('pages.createFirstPermission')}</p>
-                </div>
-              )
-            }}
-          />
-        </div>
+        <>
+          <div className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} ${theme === 'dark' ? 'dark-modal' : ''}`}>
+            <Table
+              columns={columns}
+              dataSource={paginatedPermissions}
+              rowKey="permissionId"
+              pagination={false}
+              size="small"
+              className={`${theme === 'dark' ? 'dark-table' : ''}`}
+              style={{
+                backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
+              }}
+              locale={{
+                emptyText: (
+                  <div className={`text-center py-8 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                    <p>{searchTerm ? (t('permissions.noResultsFound') || 'No results found') : t('pages.noPermissionsAssigned')}</p>
+                    <p className="text-sm">{searchTerm ? (t('permissions.tryDifferentSearch') || 'Try a different search term') : t('pages.createFirstPermission')}</p>
+                  </div>
+                )
+              }}
+            />
+          </div>
+
+          {/* Desktop Pagination */}
+          {filteredPermissions.length > 0 && (
+            <div className="flex justify-center mt-4">
+              <Pagination
+                current={currentPage}
+                total={filteredPermissions.length}
+                pageSize={pageSize}
+                onChange={(page) => setCurrentPage(page)}
+                showSizeChanger={false}
+                showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
+                className={theme === 'dark' ? 'dark-pagination' : ''}
+              />
+            </div>
+          )}
+        </>
       )}
 
       {/* Permission Selection Modal */}
@@ -421,6 +485,7 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
         title={t('pages.selectPermissionsToAssign')}
         open={showPermissionModal}
         onOk={handleAssignPermissions}
+        confirmLoading={isAssigning}
         onCancel={() => {
           setShowPermissionModal(false);
           setSelectedPermissions([]);

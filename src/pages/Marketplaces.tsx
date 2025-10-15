@@ -11,8 +11,8 @@ import {
   setCurrentPageNumber,
   setPageSize
 } from '@/lib/marketplaceSlice';
-import { Plus, Search } from 'lucide-react';
-import { Card, Typography, theme, Pagination } from 'antd';
+import { Plus, Search, Filter, X } from 'lucide-react';
+import { Card, Typography, theme, Pagination, Select, Button } from 'antd';
 import { useErrorHandler } from '@/lib/useErrorHandler';
 import PermissionGuard from '@/components/PermissionGuard';
 
@@ -29,9 +29,15 @@ const Marketplaces: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { } = theme.useToken();
   const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
-  const { marketplaces, loading, error, currentPageNumber, pageSize, totalPages, totalCount } = useSelector((state: RootState) => state.marketplace);
+  const { marketplaces, loading, currentPageNumber, pageSize, totalPages, totalCount } = useSelector((state: RootState) => state.marketplace);
   const { handleError, showSuccess } = useErrorHandler();
   const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState({
+    marketplace: '',
+    marketplaceURL: '',
+    isActive: undefined as boolean | undefined
+  });
+  const [showFilters, setShowFilters] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [marketplaceToDelete, setMarketplaceToDelete] = useState<{ id: string; name: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -42,8 +48,20 @@ const Marketplaces: React.FC = () => {
       pageSize: pageSize || 10,
     };
 
+    // Search term'i ekle
     if (searchTerm && searchTerm.trim() !== '') {
       params.marketplace = searchTerm.trim();
+    }
+
+    // Filtreleri ekle
+    if (filters.marketplace && filters.marketplace.trim() !== '') {
+      params.marketplace = filters.marketplace.trim();
+    }
+    if (filters.marketplaceURL && filters.marketplaceURL.trim() !== '') {
+      params.marketplaceURL = filters.marketplaceURL.trim();
+    }
+    if (filters.isActive !== undefined) {
+      params.isActive = filters.isActive;
     }
 
     dispatch(fetchMarketplaces(params));
@@ -52,14 +70,26 @@ const Marketplaces: React.FC = () => {
   useEffect(() => {
     dispatch(clearError());
     loadMarketplaces();
-  }, [currentPageNumber, pageSize]);
+  }, [currentPageNumber, pageSize, searchTerm, filters.marketplace, filters.marketplaceURL, filters.isActive]);
 
+  // Arama kelimesi değiştiğinde sayfa numarasını sıfırla
   useEffect(() => {
     if (searchTerm !== '') {
       dispatch(setCurrentPageNumber(1));
     }
-    loadMarketplaces();
   }, [searchTerm]);
+
+  // Filtreler değiştiğinde sayfa numarasını sıfırla
+  useEffect(() => {
+    const hasActiveFilters = 
+      (filters.marketplace && filters.marketplace !== '') ||
+      (filters.marketplaceURL && filters.marketplaceURL !== '') ||
+      (filters.isActive !== undefined);
+    
+    if (hasActiveFilters) {
+      dispatch(setCurrentPageNumber(1));
+    }
+  }, [filters.marketplace, filters.marketplaceURL, filters.isActive]);
 
   const handlePageChange = (page: number, newPageSize?: number) => {
     if (newPageSize && newPageSize !== pageSize) {
@@ -119,6 +149,22 @@ const Marketplaces: React.FC = () => {
     dispatch(setCurrentPageNumber(1));
   };
 
+  const handleFilterChange = (key: string, value: any) => {
+    setFilters(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      marketplace: '',
+      marketplaceURL: '',
+      isActive: undefined
+    });
+    dispatch(setCurrentPageNumber(1));
+  };
+
 
   return (
     <div 
@@ -175,44 +221,137 @@ const Marketplaces: React.FC = () => {
             marginBottom: '1.5rem'
           }}
         >
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search marketplaces..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    currentTheme === 'dark' 
-                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
-                      : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                  }`}
-                  style={{
-                    backgroundColor: currentTheme === 'dark' ? '#374151' : '#ffffff',
-                    borderColor: currentTheme === 'dark' ? '#4b5563' : '#d1d5db',
-                    color: currentTheme === 'dark' ? '#ffffff' : '#111827'
-                  }}
-                />
-                <Search 
-                  className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${currentTheme === 'dark' ? 'text-gray-400' : 'text-gray-400'}`} 
-                  size={20} 
-                />
+          <div className="flex flex-col gap-4">
+            {/* Search Bar */}
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder={t('marketplace.searchPlaceholder')}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      currentTheme === 'dark' 
+                        ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                    }`}
+                    style={{
+                      backgroundColor: currentTheme === 'dark' ? '#374151' : '#ffffff',
+                      borderColor: currentTheme === 'dark' ? '#4b5563' : '#d1d5db',
+                      color: currentTheme === 'dark' ? '#ffffff' : '#111827'
+                    }}
+                  />
+                  <Search 
+                    className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${currentTheme === 'dark' ? 'text-gray-400' : 'text-gray-400'}`} 
+                    size={20} 
+                  />
+                </div>
               </div>
+              
+              <Button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center gap-2 ${
+                  Object.values(filters).some(value => value !== '' && value !== undefined) 
+                    ? 'bg-blue-600 text-white' 
+                    : currentTheme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-700'
+                }`}
+                style={{
+                  backgroundColor: Object.values(filters).some(value => value !== '' && value !== undefined) 
+                    ? '#2563eb' 
+                    : currentTheme === 'dark' ? '#374151' : '#f3f4f6',
+                  borderColor: currentTheme === 'dark' ? '#4b5563' : '#d1d5db',
+                  color: Object.values(filters).some(value => value !== '' && value !== undefined) 
+                    ? '#ffffff' 
+                    : currentTheme === 'dark' ? '#d1d5db' : '#374151'
+                }}
+              >
+                <Filter size={16} />
+                {t('marketplace.filters') || 'Filters'}
+                {Object.values(filters).some(value => value !== '' && value !== undefined) && (
+                  <span className="ml-1 px-1.5 py-0.5 text-xs bg-white text-blue-600 rounded-full">
+                    {Object.values(filters).filter(value => value !== '' && value !== undefined).length}
+                  </span>
+                )}
+              </Button>
             </div>
+
+            {/* Advanced Filters */}
+            {showFilters && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border-t border-gray-200 dark:border-gray-700">
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${currentTheme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                    {t('marketplace.title')}
+                  </label>
+                  <input
+                    type="text"
+                    placeholder={t('marketplace.enterMarketplace')}
+                    value={filters.marketplace}
+                    onChange={(e) => handleFilterChange('marketplace', e.target.value)}
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      currentTheme === 'dark' 
+                        ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                    }`}
+                  />
+                </div>
+
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${currentTheme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                    {t('marketplace.marketplaceURL')}
+                  </label>
+                  <input
+                    type="text"
+                    placeholder={t('marketplace.enterMarketplaceURL')}
+                    value={filters.marketplaceURL}
+                    onChange={(e) => handleFilterChange('marketplaceURL', e.target.value)}
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      currentTheme === 'dark' 
+                        ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                    }`}
+                  />
+                </div>
+
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${currentTheme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                    {t('common.status') }
+                  </label>
+                  <Select
+                    placeholder={t('marketplace.selectStatus') }
+                    value={filters.isActive}
+                    onChange={(value) => handleFilterChange('isActive', value)}
+                    className="w-full"
+                    suffixIcon={null}
+                    showSearch={false}
+                    options={[
+                      { label: t('common.all') || 'All', value: undefined },
+                      { label: t('common.active') || 'Active', value: true },
+                      { label: t('common.inactive') || 'Inactive', value: false }
+                    ]}
+                  />
+                </div>
+
+                <div className="md:col-span-3 flex justify-end gap-2">
+                  <Button
+                    onClick={clearFilters}
+                    className="flex items-center gap-2"
+                    style={{
+                      backgroundColor: currentTheme === 'dark' ? '#374151' : '#f3f4f6',
+                      borderColor: currentTheme === 'dark' ? '#4b5563' : '#d1d5db',
+                      color: currentTheme === 'dark' ? '#d1d5db' : '#374151'
+                    }}
+                  >
+                    <X size={16} />
+                    {t('common.clearFilters') || 'Clear Filters'}
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </Card>
 
-        {/* Error Message */}
-        {error && (
-          <div className={`mb-6 rounded-lg p-4 transition-colors duration-200 ${
-            currentTheme === 'dark' 
-              ? 'bg-red-900/20 border border-red-800' 
-              : 'bg-red-50 border border-red-200'
-          }`}>
-            <p className={`transition-colors duration-200 ${currentTheme === 'dark' ? 'text-red-400' : 'text-red-800'}`}>{error}</p>
-          </div>
-        )}
+
 
         {/* Marketplaces Table or Empty State */}
         {marketplaces.length === 0 && !loading ? (
