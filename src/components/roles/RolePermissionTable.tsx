@@ -12,11 +12,13 @@ import type { ColumnsType } from 'antd/es/table';
 interface RolePermissionTableProps {
   roleId: string;
   rolePermissions: any[];
+  onRefresh?: () => void; // Parent component'ten refresh fonksiyonu
 }
 
 const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
   roleId,
   rolePermissions,
+  onRefresh,
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
@@ -101,23 +103,10 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
         permissionIdList: selectedPermissions
       })).unwrap();
 
-      // Başarılı olursa local state'i güncelle
-      const newPermissions = selectedPermissions.map(permissionId => {
-        const permission = allPermissions.find(p => p.id === permissionId);
-        if (permission) {
-          return {
-            id: `temp-${Date.now()}-${Math.random()}`, // Temporary ID for new assignments
-            permissionId: permission.id,
-            rolePermissionID: roleId,
-            isActive: true,
-            permission: permission,
-          };
-        }
-        return null;
-      }).filter(Boolean);
-
-      const updatedPermissions = [...localPermissions, ...newPermissions];
-      setLocalPermissions(updatedPermissions);
+      // Başarılı olursa parent component'ten role permissions'ı yeniden yükle
+      if (onRefresh) {
+        onRefresh();
+      }
       
       showSuccess('permissionAssignedSuccessfully');
       setShowPermissionModal(false);
@@ -143,7 +132,8 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
       );
       
       if (rolePermission) {
-        const rolePermissionId = rolePermission.id || rolePermission.rolePermissionID;
+        // Gerçek rolePermissionId'yi kullan (API'den gelen)
+        const rolePermissionId = rolePermission.rolePermissionID || rolePermission.id;
         
         if (rolePermissionId) {
           await dispatch(deleteRolePermission({
@@ -151,14 +141,11 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
             rolePermissionId: rolePermissionId
           })).unwrap();
           
-          // Başarılı olursa local state'den kaldır
-          const updatedPermissions = localPermissions.filter(p => 
-            p.permissionId !== permissionId && 
-            p.permission?.id !== permissionId && 
-            p.id !== permissionId
-          );
+          // Başarılı olursa parent component'ten refresh yap
+          if (onRefresh) {
+            onRefresh();
+          }
           
-          setLocalPermissions(updatedPermissions);
           showSuccess('permissionUnassignedSuccessfully');
         }
       }

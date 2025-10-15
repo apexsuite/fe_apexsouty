@@ -43,6 +43,12 @@ const RoleDetail: React.FC = () => {
     navigate('/roles');
   };
 
+  const handleRefreshRole = () => {
+    if (id) {
+      dispatch(fetchRoleById(id));
+    }
+  };
+
 
   if (loading) {
     return (
@@ -202,6 +208,7 @@ const RoleDetail: React.FC = () => {
           <RolePermissionTable
             roleId={id!}
             rolePermissions={rolePermissions}
+            onRefresh={handleRefreshRole}
           />
         </Card>
       </div>
