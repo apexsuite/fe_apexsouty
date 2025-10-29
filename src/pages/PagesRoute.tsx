@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { AppDispatch, RootState, store } from '@/lib/store';
+import { AppDispatch, RootState } from '@/lib/store';
 import { fetchPageRoutes, setCurrentPageNumber, setPageSize, clearError, changePageRouteStatus, deletePageRoute } from '@/lib/pageSlice';
 import { fetchMenu, fetchFavorites } from '@/lib/menuSlice';
 
@@ -28,14 +28,6 @@ const PagesRoute: React.FC = () => {
   
   useEffect(() => {
   }, [theme]);
-  
-  useEffect(() => {
-    const unsubscribe = store.subscribe(() => {
-      const currentTheme = store.getState().theme.theme;
-    });
-    
-    return () => unsubscribe();
-  }, []);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
