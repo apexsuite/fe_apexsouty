@@ -7,7 +7,6 @@ export const usePermissions = () => {
   const permissions = useSelector((state: RootState) => state.userPermissions.permissions);
   const loading = useSelector((state: RootState) => state.userPermissions.loading);
 
-  // Permission checking functions - updated for string array format
   const hasPermission = (permissionName: string): boolean => {
     if (Array.isArray(permissions) && permissions.length > 0) {
       if (typeof permissions[0] === 'string') {
@@ -22,7 +21,6 @@ export const usePermissions = () => {
   const hasPermissionForPath = (path: string): boolean => {
     if (Array.isArray(permissions) && permissions.length > 0) {
       if (typeof permissions[0] === 'string') {
-        // Map path to permission name for string array
         const pathMap: Record<string, string> = {
           '/products': 'get-product-list',
           '/products/create': 'create-product',
@@ -87,7 +85,6 @@ export const usePermissions = () => {
     return [];
   };
 
-  // Refresh permissions manually
   const refreshPermissions = () => {
     dispatch(fetchMyPermissions());
   };
@@ -104,13 +101,11 @@ export const usePermissions = () => {
   };
 };
 
-// Specialized hooks for common permission patterns
 export const useResourcePermissions = (resource: string) => {
   const { hasPermission, getResourcePermissions } = usePermissions();
   
   const resourcePermissions = getResourcePermissions(resource);
   
-  // Map resource to permission patterns
   const resourcePermissionMap: Record<string, { create: string; read: string; update: string; delete: string }> = {
     'products': {
       create: 'create-product',
@@ -160,7 +155,6 @@ export const useResourcePermissions = (resource: string) => {
   };
 };
 
-// Hook for button-level permissions
 export const useButtonPermissions = () => {
   const { hasPermission, hasPermissionForPath } = usePermissions();
 

@@ -75,6 +75,7 @@ interface RoleState {
   loading: boolean;
   error: any;
   totalPages: number;
+  totalCount: number;
   currentPageNumber: number;
   pageSize: number;
 }
@@ -85,6 +86,7 @@ const initialState: RoleState = {
   loading: false,
   error: null,
   totalPages: 1,
+  totalCount: 0,
   currentPageNumber: 1,
   pageSize: 10,
 };
@@ -98,6 +100,8 @@ export const fetchRoles = createAsyncThunk(
     name?: string;
     description?: string;
     roleValue?: number;
+    isDefault?: boolean;
+    isActive?: boolean;
   } = {}, { rejectWithValue }) => {
     try {
       const queryParams = new URLSearchParams();
@@ -106,6 +110,8 @@ export const fetchRoles = createAsyncThunk(
       if (params.name) queryParams.append('name', params.name);
       if (params.description) queryParams.append('description', params.description);
       if (params.roleValue) queryParams.append('roleValue', params.roleValue.toString());
+      if (params.isDefault !== undefined) queryParams.append('isDefault', params.isDefault.toString());
+      if (params.isActive !== undefined) queryParams.append('isActive', params.isActive.toString());
 
       const response = await apiRequest(`/roles?${queryParams.toString()}`);
       
@@ -271,6 +277,37 @@ export const setRolePermissionsBulk = createAsyncThunk(
   }
 );
 
+// Create role permissions (new API)
+export const createRolePermissions = createAsyncThunk(
+  'role/createRolePermissions',
+  async ({ roleId, permissionIdList }: { roleId: string; permissionIdList: string[] }, { rejectWithValue }) => {
+    try {
+      const response = await apiRequest(`/roles/${roleId}/permissions`, {
+        method: 'POST',
+        body: JSON.stringify({ permissionIdList }),
+      });
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+// Delete role permission (new API)
+export const deleteRolePermission = createAsyncThunk(
+  'role/deleteRolePermission',
+  async ({ roleId, rolePermissionId }: { roleId: string; rolePermissionId: string }, { rejectWithValue }) => {
+    try {
+      const response = await apiRequest(`/roles/${roleId}/permissions/${rolePermissionId}`, {
+        method: 'DELETE',
+      });
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 const roleSlice = createSlice({
   name: 'role',
   initialState,
@@ -304,14 +341,17 @@ const roleSlice = createSlice({
           // Format: {data: {items: [...], page: 1, pageSize: 10, pageCount: 1, totalCount: 3}, error: null}
           state.roles = action.payload.data.items;
           state.totalPages = action.payload.data.pageCount || 1;
+          state.totalCount = action.payload.data.totalCount || 0;
         } else if (action.payload && action.payload.items) {
           // Format: {items: [...], page: 1, pageSize: 10, pageCount: 1, totalCount: 3}
           state.roles = action.payload.items;
           state.totalPages = action.payload.pageCount || 1;
+          state.totalCount = action.payload.totalCount || 0;
         } else {
           console.warn('⚠️ Unexpected API response format:', action.payload);
           state.roles = [];
           state.totalPages = 1;
+          state.totalCount = 0;
         }
       })
       .addCase(fetchRoles.rejected, (state, action) => {

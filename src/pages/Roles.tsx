@@ -11,45 +11,59 @@ import {
   setCurrentPageNumber,
   setPageSize
 } from '@/lib/roleSlice';
-import { Plus, Search } from 'lucide-react';
-import { Card, Typography, Pagination } from 'antd';
+import { Plus, Search, Filter, X } from 'lucide-react';
+import { Card, Pagination, Select, Button } from 'antd';
 import { useErrorHandler } from '@/lib/useErrorHandler';
 import PermissionGuard from '@/components/PermissionGuard';
 
-// Import components
 import RoleTable from '@/components/roles/RoleTable';
 import RoleEmptyState from '@/components/roles/RoleEmptyState';
 import RoleDeleteModal from '@/components/roles/RoleDeleteModal';
 
-const { Title, Paragraph } = Typography;
 
 const Roles: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { roles, loading, error, totalPages, currentPageNumber, pageSize } = useSelector(
+  const { roles, loading, totalPages, totalCount, currentPageNumber, pageSize } = useSelector(
     (state: RootState) => state.role
   );
+  const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
   const { handleError, showSuccess } = useErrorHandler();
     
   const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState({
+    name: '',
+    isDefault: undefined as boolean | undefined,
+    isActive: undefined as boolean | undefined
+  });
+  const [showFilters, setShowFilters] = useState(false);
   const [selectedRoleValue] = useState<string>('all');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [roleToDelete, setRoleToDelete] = useState<{ id: string; name: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    
     dispatch(clearError());
     loadRoles();
-  }, [currentPageNumber, pageSize]);
+  }, [currentPageNumber, pageSize, searchTerm, filters.name, filters.isDefault, filters.isActive]);
 
   useEffect(() => {
     if (searchTerm !== '' || selectedRoleValue !== 'all') {
       dispatch(setCurrentPageNumber(1));
     }
-    loadRoles();
   }, [searchTerm, selectedRoleValue]);
+
+  useEffect(() => {
+    const hasActiveFilters = 
+      (filters.name && filters.name !== '') ||
+      (filters.isDefault !== undefined) ||
+      (filters.isActive !== undefined);
+    
+    if (hasActiveFilters) {
+      dispatch(setCurrentPageNumber(1));
+    }
+  }, [filters.name, filters.isDefault, filters.isActive]);
 
   const loadRoles = () => {
     const params: any = {
@@ -57,9 +71,18 @@ const Roles: React.FC = () => {
       pageSize: pageSize,
     };
 
-    // Sadece değer varsa ekle
     if (searchTerm && searchTerm.trim() !== '') {
       params.name = searchTerm.trim();
+    }
+
+    if (filters.name && filters.name.trim() !== '') {
+      params.name = filters.name.trim();
+    }
+    if (filters.isDefault !== undefined) {
+      params.isDefault = filters.isDefault;
+    }
+    if (filters.isActive !== undefined) {
+      params.isActive = filters.isActive;
     }
 
     if (selectedRoleValue && selectedRoleValue !== 'all') {
@@ -127,28 +150,52 @@ const Roles: React.FC = () => {
     dispatch(setCurrentPageNumber(1));
   };
 
-  // Sadece ilk yükleme sırasında loading göster
-  if (loading && roles.length === 0 && !searchTerm && selectedRoleValue === 'all') {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
+  const handleFilterChange = (key: string, value: any) => {
+    setFilters(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      name: '',
+      isDefault: undefined,
+      isActive: undefined
+    });
+    dispatch(setCurrentPageNumber(1));
+  };
 
   return (
-    <div className="p-6 min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div 
+      style={{
+        padding: '1.5rem',
+        minHeight: '100vh',
+        backgroundColor: currentTheme === 'dark' ? '#111827' : '#f9fafb',
+        color: currentTheme === 'dark' ? '#ffffff' : '#111827'
+      }}
+    >
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <Card className="mb-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-          <div className="flex justify-between items-center">
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-4">
             <div>
-              <Title level={2} className="mb-2 text-gray-900 dark:text-white">
+              <h1 
+                style={{ 
+                  fontSize: '1.875rem',
+                  fontWeight: 'bold',
+                  color: currentTheme === 'dark' ? '#ffffff' : '#111827'
+                }}
+              >
                 {t('roles.roles') || 'Roles'}
-              </Title>
-              <Paragraph className="text-gray-600 dark:text-gray-400 mb-0">
+              </h1>
+              <p 
+                style={{ 
+                  marginTop: '0.5rem',
+                  color: currentTheme === 'dark' ? '#d1d5db' : '#4b5563'
+                }}
+              >
                 {t('roles.manageRoles') || 'Manage user roles and permissions'}
-              </Paragraph>
+              </p>
             </div>
             <PermissionGuard 
               permission="create-role" 
@@ -156,74 +203,183 @@ const Roles: React.FC = () => {
             >
               <button
                 onClick={handleCreateRole}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors border-blue-600 hover:border-blue-700"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
               >
-                <Plus size={16} />
+                <Plus size={20} />
                 {t('roles.createRole') || 'Create Role'}
               </button>
             </PermissionGuard>
           </div>
-        </Card>
+        </div>
 
-        {/* Filters */}
         <Card
           style={{
-            backgroundColor: 'var(--ant-color-bg-container)',
-            borderColor: 'var(--ant-color-border)',
+            backgroundColor: currentTheme === 'dark' ? '#1f2937' : '#ffffff',
+            borderColor: currentTheme === 'dark' ? '#374151' : '#e5e7eb',
             marginBottom: '1.5rem'
           }}
         >
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search roles..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-                />
-                <Search 
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" 
-                  size={20} 
-                />
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder={t('roles.searchPlaceholder')}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      currentTheme === 'dark' 
+                        ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                    }`}
+                    style={{
+                      backgroundColor: currentTheme === 'dark' ? '#374151' : '#ffffff',
+                      borderColor: currentTheme === 'dark' ? '#4b5563' : '#d1d5db',
+                      color: currentTheme === 'dark' ? '#ffffff' : '#111827'
+                    }}
+                  />
+                  <Search 
+                    className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${currentTheme === 'dark' ? 'text-gray-400' : 'text-gray-400'}`} 
+                    size={20} 
+                  />
+                </div>
               </div>
-            </div>
 
+              <Button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center gap-2 ${
+                  Object.values(filters).some(value => value !== '' && value !== undefined) 
+                    ? 'bg-blue-600 text-white' 
+                    : currentTheme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-700'
+                }`}
+                style={{
+                  backgroundColor: Object.values(filters).some(value => value !== '' && value !== undefined) 
+                    ? '#2563eb' 
+                    : currentTheme === 'dark' ? '#374151' : '#f3f4f6',
+                  borderColor: currentTheme === 'dark' ? '#4b5563' : '#d1d5db',
+                  color: Object.values(filters).some(value => value !== '' && value !== undefined) 
+                    ? '#ffffff' 
+                    : currentTheme === 'dark' ? '#d1d5db' : '#374151'
+                }}
+              >
+                <Filter size={16} />
+                {t('roles.filters') || 'Filters'}
+                {Object.values(filters).some(value => value !== '' && value !== undefined) && (
+                  <span className="ml-1 px-1.5 py-0.5 text-xs bg-white text-blue-600 rounded-full">
+                    {Object.values(filters).filter(value => value !== '' && value !== undefined).length}
+                  </span>
+                )}
+              </Button>
+            </div>
+                    
+            {showFilters && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border-t border-gray-200 dark:border-gray-700">
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${currentTheme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                    {t('roles.name') || 'Name'}
+                  </label>
+                  <input
+                    type="text"
+                    placeholder={t('roles.enterName') || 'Enter name'}
+                    value={filters.name}
+                    onChange={(e) => handleFilterChange('name', e.target.value)}
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      currentTheme === 'dark' 
+                        ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                    }`}
+                  />
+                </div>
+
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${currentTheme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                    {t('roles.isDefault') || 'Is Default'}
+                  </label>
+                  <Select
+                    placeholder={t('roles.selectIsDefault') || 'Select default'}
+                    value={filters.isDefault}
+                    onChange={(value) => handleFilterChange('isDefault', value)}
+                    className="w-full"
+                    suffixIcon={null}
+                    showSearch={false}
+                    options={[
+                      { label: t('common.all') || 'All', value: undefined },
+                      { label: t('common.yes') || 'Yes', value: true },
+                      { label: t('common.no') || 'No', value: false }
+                    ]}
+                  />
+                </div>
+
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${currentTheme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                    {t('common.status') || 'Status'}
+                  </label>
+                  <Select
+                    placeholder={t('roles.selectStatus') || 'Select status'}
+                    value={filters.isActive}
+                    onChange={(value) => handleFilterChange('isActive', value)}
+                    className="w-full"
+                    suffixIcon={null}
+                    showSearch={false}
+                    options={[
+                      { label: t('common.all') || 'All', value: undefined },
+                      { label: t('common.active') || 'Active', value: true },
+                      { label: t('common.inactive') || 'Inactive', value: false }
+                    ]}
+                  />
+                </div>
+
+                <div className="md:col-span-3 flex justify-end gap-2">
+                  <Button
+                    onClick={clearFilters}
+                    className="flex items-center gap-2"
+                    style={{
+                      backgroundColor: currentTheme === 'dark' ? '#374151' : '#f3f4f6',
+                      borderColor: currentTheme === 'dark' ? '#4b5563' : '#d1d5db',
+                      color: currentTheme === 'dark' ? '#d1d5db' : '#374151'
+                    }}
+                  >
+                    <X size={16} />
+                    {t('common.clearFilters') || 'Clear Filters'}
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </Card>
-        {/* Error Message */}
-        {error && (
-          <Card className="mb-6 border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800">
-            <div className="text-center text-red-600 dark:text-red-400">
-              {error}
-            </div>
-          </Card>
-        )}
+
 
         {/* Roles Table or Empty State */}
-        {roles.length === 0 && !loading ? (
-          <RoleEmptyState onCreateRole={handleCreateRole} />
-        ) : (
-          <RoleTable
-            roles={roles}
-            loading={loading}
-            onView={handleViewRole}
-            onEdit={handleEditRole}
-            onDelete={handleDeleteRole}
-            onStatusChange={handleStatusChange}
-            searchTerm={searchTerm}
-            selectedRoleValue={selectedRoleValue}
-          />
-        )}
+        <div style={{ 
+          backgroundColor: currentTheme === 'dark' ? '#1f2937' : '#ffffff',
+          border: `1px solid ${currentTheme === 'dark' ? '#374151' : '#e5e7eb'}`,
+          borderRadius: '8px',
+          overflow: 'hidden'
+        }}>
+          {roles.length === 0 && !loading ? (
+            <RoleEmptyState onCreateRole={handleCreateRole} />
+          ) : (
+            <RoleTable
+              roles={roles}
+              loading={loading}
+              onView={handleViewRole}
+              onEdit={handleEditRole}
+              onDelete={handleDeleteRole}
+              onStatusChange={handleStatusChange}
+              searchTerm={searchTerm}
+              selectedRoleValue={selectedRoleValue}
+            />
+          )}
+        </div>
         
         <div style={{
           marginTop: '16px',
           display: 'flex',
           justifyContent: 'right',
           padding: '16px',
-          backgroundColor: 'var(--ant-color-bg-container)',
-          border: '1px solid var(--ant-color-border)',
+          backgroundColor: currentTheme === 'dark' ? '#1f2937' : '#ffffff',
+          border: `1px solid ${currentTheme === 'dark' ? '#374151' : '#e5e7eb'}`,
           borderRadius: '8px'
         }}>
             <Pagination
@@ -232,17 +388,13 @@ const Roles: React.FC = () => {
               pageSize={pageSize}
               showSizeChanger
               showQuickJumper
-              showTotal={(_, range) => (
+              showTotal={(total, range) => (
                 <span style={{ 
-                  color: 'var(--ant-color-text)',
+                  color: currentTheme === 'dark' ? '#d1d5db' : '#374151',
                   fontSize: '14px',
                   fontWeight: '500'
                 }}>
-                  {searchTerm || selectedRoleValue !== 'all' ? (
-                    `${roles?.length || 0} items found`
-                  ) : (
-                    `${range[0]}-${range[1]} of ${totalPages * pageSize} items`
-                  )}
+                  {`${range[0]}-${range[1]} of ${totalCount || total} items`}
                 </span>
               )}
               onChange={(page, size) => {

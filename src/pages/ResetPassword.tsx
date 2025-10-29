@@ -20,8 +20,7 @@ export default function ResetPassword() {
   useEffect(() => {
     if (i18n.language !== lang) i18n.changeLanguage(lang);
   }, [lang, i18n]);
-
-  // Redux'tan gelen hataları dinle
+                  
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -50,7 +49,6 @@ export default function ResetPassword() {
       const result = await dispatch(resetPassword(resetData)).unwrap();
       if (result.success) {
         toast.success('Password reset successfully!');
-        // Başarılı işlem sonrası login sayfasına yönlendir
         setTimeout(() => {
           navigate('/');
         }, 2000);

@@ -2,6 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Dark mode için Ant Design Select stilleri */
+.dark .ant-select-selector {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #ffffff !important;
+}
+
+.dark .ant-select-selection-placeholder {
+  color: #9ca3af !important;
+}
+
+.dark .ant-select-selection-item {
+  color: #ffffff !important;
+}
+
+/* Light mode için Ant Design Select stilleri */
+.light .ant-select-selector {
+  background-color: #ffffff !important;
+  border-color: #d1d5db !important;
+  color: #111827 !important;
+}
+
+.light .ant-select-selection-placeholder {
+  color: #6b7280 !important;
+}
+
+.light .ant-select-selection-item {
+  color: #111827 !important;
+}
+
+/* Select dropdown okunu gizle - input gibi görünüm için */
+.ant-select-arrow {
+  display: none !important;
+}
+
+.ant-select-selector {
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  min-height: 40px !important;
+  box-shadow: none !important;
+}
+
+.ant-select-focused .ant-select-selector {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
+}
+
+.ant-select:hover .ant-select-selector {
+  border-color: #3b82f6 !important;
+}
+
 /* Dark mode için Ant Design Modal stilleri */
 .dark .ant-modal-content {
   background-color: #1f2937 !important;

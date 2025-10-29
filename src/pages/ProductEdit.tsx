@@ -46,7 +46,6 @@ const ProductEdit: React.FC = () => {
 
   useEffect(() => {
     if (product && !fetchLoading) {
-      // Form'u product verisi ile doldur
       form.setFieldsValue({
         name: product.name,
         description: product.description,
@@ -75,7 +74,6 @@ const ProductEdit: React.FC = () => {
 
     setLoading(true);
     try {
-      // API'ye gönderilecek veriyi hazırla
       const productData = {
         name: values.name,
         description: values.description || '',

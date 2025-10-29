@@ -47,7 +47,6 @@ export default function PermissionsPage() {
     assignedTo: ''
   });
 
-  // Permission kontrolü
   useEffect(() => {
     if (!canRead(user)) {
       navigate('/dashboard');
@@ -55,13 +54,11 @@ export default function PermissionsPage() {
     }
   }, [user, navigate]);
 
-  // Mock data - gerçek uygulamada API'den gelecek
   useEffect(() => {
     if (!canRead(user)) return;
 
     setLoading(true);
     
-    // Simulate API call delay
     setTimeout(() => {
       const mockPermissions: Permission[] = [
         {
@@ -168,7 +165,6 @@ export default function PermissionsPage() {
     setPermissions(prev => prev.filter(p => p.id !== id));
   };
 
-  // Eğer Read izni yoksa loading göster
   if (!canRead(user)) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -177,7 +173,6 @@ export default function PermissionsPage() {
     );
   }
 
-  // Sadece ilk yükleme sırasında loading göster
   if (loading && permissions.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -197,7 +192,6 @@ export default function PermissionsPage() {
 
   return (
     <div style={{ padding: 24, minHeight: '100vh', background: '#f5f5f5' }}>
-      {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
           <h1 style={{ fontSize: 28, fontWeight: 700 }}>{t('permissions.title')}</h1>
@@ -213,10 +207,8 @@ export default function PermissionsPage() {
         </PermissionGuard>
       </div>
 
-      {/* Stats Cards */}
       <PermissionStats stats={stats} />
 
-      {/* Search and Filters */}
       <PermissionFilters
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -225,7 +217,6 @@ export default function PermissionsPage() {
         typeFilter={typeFilter}
         setTypeFilter={setTypeFilter}
       />
-      {/* Permissions List */}
       <PermissionList
         permissions={filteredPermissions}
         onDelete={handleDeletePermission}
@@ -233,8 +224,7 @@ export default function PermissionsPage() {
         statusFilter={statusFilter}
         typeFilter={typeFilter}
       />
-
-      {/* Create Permission Modal */}
+        
       <PermissionGuard 
         permission="create-permission" 
         mode="hide"

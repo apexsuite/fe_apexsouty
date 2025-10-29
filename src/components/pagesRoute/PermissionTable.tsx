@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { RootState, AppDispatch } from '@/lib/store';
 import { changePermissionStatus, deletePermission } from '@/lib/pageRoutePermissionSlice';
-import { Trash2, Plus, Edit } from 'lucide-react';
-import { Button, Tag, Table, Space, Switch } from 'antd';
+import { Trash2, Plus, Edit, Search } from 'lucide-react';
+import { Button, Tag, Table, Space, Switch, Input, Pagination } from 'antd';
 import { useErrorHandler } from '@/lib/useErrorHandler';
 import CreatePermissionModal from './CreatePermissionModal';
 import DeletePermissionModal from './DeletePermissionModal';
@@ -35,11 +35,39 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
   const [localPermissions, setLocalPermissions] = useState<any[]>([]);
   const [loadingStates, setLoadingStates] = useState<{ [key: string]: boolean }>({});
   const [selectedPermission, setSelectedPermission] = useState<any>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
   // Initialize local permissions when pageRoutePermissions change
   useEffect(() => {
     setLocalPermissions(pageRoutePermissions);
+    setCurrentPage(1); // Reset to first page when permissions change
   }, [pageRoutePermissions]);
+
+  // Filter permissions based on search term
+  const filteredPermissions = useMemo(() => {
+    if (!searchTerm) return localPermissions;
+    
+    const lowerSearchTerm = searchTerm.toLowerCase();
+    return localPermissions.filter((permission) => 
+      permission.name?.toLowerCase().includes(lowerSearchTerm) ||
+      permission.description?.toLowerCase().includes(lowerSearchTerm) ||
+      permission.label?.toLowerCase().includes(lowerSearchTerm)
+    );
+  }, [localPermissions, searchTerm]);
+
+  // Get paginated permissions
+  const paginatedPermissions = useMemo(() => {
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    return filteredPermissions.slice(startIndex, endIndex);
+  }, [filteredPermissions, currentPage, pageSize]);
+
+  // Reset to first page when search term changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   const handleEdit = (permission: any) => {
     setSelectedPermission(permission);
@@ -186,12 +214,28 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div className="flex items-center gap-2">
           <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
             {t('pages.permissions')}
           </h3>
           <Tag color="blue">{localPermissions.length}</Tag>
+        </div>
+        {/* Filter Input */}
+        <div className="w-full sm:w-72">
+          <Input
+            placeholder={t('permissions.searchPermissions')}
+            prefix={<Search size={16} className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} />}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            allowClear
+            className={`${theme === 'dark' ? 'dark-input' : ''}`}
+            style={{
+              backgroundColor: theme === 'dark' ? '#374151' : '#ffffff',
+              borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
+              color: theme === 'dark' ? '#ffffff' : '#111827'
+            }}
+          />
         </div>
         <Button
           type="primary"
@@ -203,11 +247,13 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
         </Button>
       </div>
 
-      {/* Permissions Table */}
-      <div className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} ${theme === 'dark' ? 'dark-modal' : ''}`}>
+
+
+      {/* Desktop Table View - Hidden on Mobile */}
+      <div className={`hidden md:block ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} ${theme === 'dark' ? 'dark-modal' : ''}`}>
         <Table
           columns={columns}
-          dataSource={localPermissions}
+          dataSource={paginatedPermissions}
           rowKey="id"
           pagination={false}
           size="small"
@@ -218,13 +264,122 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
           locale={{
             emptyText: (
               <div className={`text-center py-8 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                <p>{t('pages.noPermissionsAssigned')}</p>
-                <p className="text-sm">{t('pages.createFirstPermission')}</p>
+                <p>{searchTerm ? t('permissions.noResultsFound') || 'No results found' : t('pages.noPermissionsAssigned')}</p>
+                <p className="text-sm">{searchTerm ? t('permissions.tryDifferentSearch') || 'Try a different search term' : t('pages.createFirstPermission')}</p>
               </div>
             )
           }}
         />
       </div>
+
+      {/* Desktop Pagination */}
+      {filteredPermissions.length > 0 && (
+        <div className="hidden md:flex justify-center">
+          <Pagination
+            current={currentPage}
+            total={filteredPermissions.length}
+            pageSize={pageSize}
+            onChange={(page) => setCurrentPage(page)}
+            showSizeChanger={false}
+            showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
+            className={theme === 'dark' ? 'dark-pagination' : ''}
+          />
+        </div>
+      )}
+
+      {/* Mobile Card View - Hidden on Desktop */}
+      <div className="block md:hidden space-y-3">
+        {paginatedPermissions.length === 0 ? (
+          <div className={`text-center py-8 rounded-lg border ${theme === 'dark' ? 'bg-gray-800 border-gray-700 text-gray-400' : 'bg-white border-gray-200 text-gray-500'}`}>
+            <p>{searchTerm ? t('permissions.noResultsFound') || 'No results found' : t('pages.noPermissionsAssigned')}</p>
+            <p className="text-sm">{searchTerm ? t('permissions.tryDifferentSearch') || 'Try a different search term' : t('pages.createFirstPermission')}</p>
+          </div>
+        ) : (
+          paginatedPermissions.map((permission) => (
+            <div
+              key={permission.id}
+              className={`rounded-lg border p-4 ${
+                theme === 'dark' 
+                  ? 'bg-gray-800 border-gray-700' 
+                  : 'bg-white border-gray-200'
+              }`}
+            >
+              {/* Card Header */}
+              <div className="flex justify-between items-start mb-3">
+                <div className="flex-1">
+                  <h4 className={`font-medium text-base mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    {permission.name}
+                  </h4>
+                  {permission.label && (
+                    <Tag color="blue" className="mb-2">{permission.label}</Tag>
+                  )}
+                </div>
+                <div className="flex items-center gap-1">
+                  <Switch
+                    checked={permission.isActive}
+                    loading={loadingStates[permission.id]}
+                    onChange={(checked) => handleStatusChange(permission.id, checked)}
+                    className={theme === 'dark' ? 'dark-switch' : ''}
+                    size="small"
+                  />
+                </div>
+              </div>
+
+              {/* Description */}
+              {permission.description && (
+                <p className={`text-sm mb-3 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                  {permission.description}
+                </p>
+              )}
+
+              {/* Status Badge */}
+              <div className="mb-3">
+                <Tag color={permission.isActive ? 'green' : 'red'} className="text-xs">
+                  {permission.isActive ? 'Active' : 'Inactive'}
+                </Tag>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-2 pt-3 border-t border-gray-200 dark:border-gray-700">
+                <Button
+                  type="text"
+                  icon={<Edit size={16} />}
+                  onClick={() => handleEdit(permission)}
+                  size="small"
+                  className="flex-1 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
+                >
+                  {t('common.edit') || 'Edit'}
+                </Button>
+                <Button
+                  type="text"
+                  danger
+                  icon={<Trash2 size={16} />}
+                  onClick={() => handleDelete(permission)}
+                  size="small"
+                  className="flex-1"
+                >
+                  {t('common.delete') || 'Delete'}
+                </Button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Mobile Pagination */}
+      {filteredPermissions.length > 0 && (
+        <div className="flex md:hidden justify-center">
+          <Pagination
+            current={currentPage}
+            total={filteredPermissions.length}
+            pageSize={pageSize}
+            onChange={(page) => setCurrentPage(page)}
+            showSizeChanger={false}
+            simple
+            className={theme === 'dark' ? 'dark-pagination' : ''}
+          />
+        </div>
+      )}
 
       {/* Create Permission Modal */}
       <CreatePermissionModal

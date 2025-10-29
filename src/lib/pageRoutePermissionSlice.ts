@@ -50,7 +50,6 @@ export interface Permission {
   rolePermission: RolePermission[];
 }
 
-// API Response wrapper
 export interface ApiResponse<T> {
   data: T;
   message?: string;
@@ -59,25 +58,24 @@ export interface ApiResponse<T> {
   currentPage?: number;
 }
 
-// Permission state interface
 interface PermissionState {
   permissions: Permission[];
-  filteredPermissions: Permission[]; // Client-side filtered permissions
+  filteredPermissions: Permission[];
   currentPermission: Permission | null;
-  myPermissions: string[]; // For /api/permissions/my-permissions
+  myPermissions: string[];
   loading: boolean;
   error: any;
   totalPages: number;
+  totalCount: number;
   currentPageNumber: number;
   pageSize: number;
   createLoading: boolean;
   updateLoading: boolean;
   deleteLoading: boolean;
   statusChangeLoading: boolean;
-  isSearching: boolean; // Arama yapılıp yapılmadığını takip et
+  isSearching: boolean;
 }
 
-// Initial state
 const initialState: PermissionState = {
   permissions: [],
   filteredPermissions: [],
@@ -86,6 +84,7 @@ const initialState: PermissionState = {
   loading: false,
   error: null,
   totalPages: 0,
+  totalCount: 0,
   currentPageNumber: 1,
   pageSize: 10,
   createLoading: false,
@@ -95,9 +94,6 @@ const initialState: PermissionState = {
   isSearching: false,
 };
 
-// Async thunks
-
-// GET /api/permissions - Get permission list
 export const fetchPermissions = createAsyncThunk(
   'permission/fetchPermissions',
   async (params: { 
@@ -105,7 +101,8 @@ export const fetchPermissions = createAsyncThunk(
     pageSize?: number; 
     name?: string; 
     description?: string; 
-    label?: string; 
+    label?: string;
+    isActive?: boolean;
   } = {}, { rejectWithValue }) => {
     try {
       const queryParams = new URLSearchParams();
@@ -114,6 +111,7 @@ export const fetchPermissions = createAsyncThunk(
       if (params.name) queryParams.append('name', params.name);
       if (params.description) queryParams.append('description', params.description);
       if (params.label) queryParams.append('label', params.label);
+      if (params.isActive !== undefined) queryParams.append('isActive', params.isActive.toString());
 
       const response = await apiRequest(`/permissions?${queryParams.toString()}`);
       return response;
@@ -123,7 +121,6 @@ export const fetchPermissions = createAsyncThunk(
   }
 );
 
-// GET /permissions/my-permissions - Get my permission list
 export const fetchMyPermissions = createAsyncThunk(
   'permission/fetchMyPermissions',
   async (params: { name?: string; path?: string } = {}, { rejectWithValue }) => {
@@ -140,7 +137,6 @@ export const fetchMyPermissions = createAsyncThunk(
   }
 );
 
-// GET /permissions/{permission_id} - Get permission by ID
 export const fetchPermissionById = createAsyncThunk(
   'permission/fetchPermissionById',
   async (permissionId: string, { rejectWithValue }) => {
@@ -153,7 +149,6 @@ export const fetchPermissionById = createAsyncThunk(
   }
 );
 
-// POST /api/page-routes/{page_route_id}/permissions - Create permission
 export const createPermission = createAsyncThunk(
   'permission/createPermission',
   async ({ pageRouteId, permissionData }: {
@@ -177,7 +172,6 @@ export const createPermission = createAsyncThunk(
   }
 );
 
-// PUT /api/page-routes/{page_route_id}/permissions/{permission_id} - Update permission
 export const updatePermission = createAsyncThunk(
   'permission/updatePermission',
   async ({ pageRouteId, permissionId, permissionData }: {
@@ -202,7 +196,6 @@ export const updatePermission = createAsyncThunk(
   }
 );
 
-// DELETE /api/page-routes/{page_route_id}/permissions/{permission_id} - Delete permission
 export const deletePermission = createAsyncThunk(
   'permission/deletePermission',
   async ({ pageRouteId, permissionId }: {
@@ -220,7 +213,6 @@ export const deletePermission = createAsyncThunk(
   }
 );
 
-// DELETE /api/permissions/{permission_id} - Delete permission directly
 export const deletePermissionDirect = createAsyncThunk(
   'permission/deletePermissionDirect',
   async (permissionId: string, { rejectWithValue }) => {
@@ -235,7 +227,6 @@ export const deletePermissionDirect = createAsyncThunk(
   }
 );
 
-// PATCH /api/page-routes/{page_route_id}/permissions/{permission_id}/change-status - Change permission status
 export const changePermissionStatus = createAsyncThunk(
   'permission/changePermissionStatus',
   async ({ pageRouteId, permissionId, status }: { 
@@ -255,7 +246,6 @@ export const changePermissionStatus = createAsyncThunk(
   }
 );
 
-// Slice
 const permissionSlice = createSlice({
   name: 'permission',
   initialState,
@@ -284,7 +274,6 @@ const permissionSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // fetchPermissions
     builder
       .addCase(fetchPermissions.pending, (state) => {
         state.loading = true;
@@ -292,20 +281,17 @@ const permissionSlice = createSlice({
       })
       .addCase(fetchPermissions.fulfilled, (state, action) => {
         state.loading = false;
-        // Filter out null values from the permissions array
         const validPermissions = (action.payload.data?.items || []).filter((permission: any) => permission !== null);
         
-        // Eğer arama yapılıyorsa ve sonuç boşsa, mevcut permissions'ı koru
         if (state.isSearching && validPermissions.length === 0) {
-          // Arama yapılıyor ve sonuç boş - mevcut permissions'ı koru
           state.filteredPermissions = [];
         } else {
-          // Normal yükleme veya arama sonucu var
           state.permissions = validPermissions;
           state.filteredPermissions = validPermissions;
         }
         
         state.totalPages = action.payload.data?.pageCount || 0;
+        state.totalCount = action.payload.data?.totalCount || 0;
         state.currentPageNumber = action.payload.data?.page || 1;
       })
       .addCase(fetchPermissions.rejected, (state, action) => {
@@ -313,7 +299,6 @@ const permissionSlice = createSlice({
         state.error = action.payload;
       });
 
-    // fetchMyPermissions
     builder
       .addCase(fetchMyPermissions.pending, (state) => {
         state.loading = true;
@@ -328,7 +313,6 @@ const permissionSlice = createSlice({
         state.error = action.payload;
       });
 
-    // fetchPermissionById
     builder
       .addCase(fetchPermissionById.pending, (state) => {
         state.loading = true;
@@ -343,7 +327,6 @@ const permissionSlice = createSlice({
         state.error = action.payload;
       });
 
-    // createPermission
     builder
       .addCase(createPermission.pending, (state) => {
         state.createLoading = true;
@@ -358,7 +341,6 @@ const permissionSlice = createSlice({
         state.error = action.payload;
       });
 
-    // updatePermission
     builder
       .addCase(updatePermission.pending, (state) => {
         state.updateLoading = true;

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Table, Button, Space, Tag, Card, theme, Tooltip } from 'antd';
-import { Edit, Eye, ChevronDown, ChevronUp, Shield, Calendar } from 'lucide-react';
+import { Edit, Eye, Trash2, ChevronDown, ChevronUp, Shield, Calendar } from 'lucide-react';
 import type { ColumnsType } from 'antd/es/table';
 import { RootState } from '@/lib/store';
 import PermissionGuard from '@/components/PermissionGuard';
+import DeleteModal from './DeleteModal';
 
 interface Permission {
   id: string;
@@ -20,6 +21,7 @@ interface PageRoutePermissionTableProps {
   loading: boolean;
   onView: (permissionId: string) => void;
   onEdit: (permissionId: string) => void;
+  onDelete: (permissionId: string) => void;
 }
 
 const PageRoutePermissionTable: React.FC<PageRoutePermissionTableProps> = ({
@@ -27,11 +29,15 @@ const PageRoutePermissionTable: React.FC<PageRoutePermissionTableProps> = ({
   loading,
   onView,
   onEdit,
+  onDelete,
 }) => {
   const { token } = theme.useToken();
   const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
   const [isMobile, setIsMobile] = useState(false);
   const [openCard, setOpenCard] = useState<string | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedPermission, setSelectedPermission] = useState<Permission | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     function handleResize() {
@@ -48,6 +54,31 @@ const PageRoutePermissionTable: React.FC<PageRoutePermissionTableProps> = ({
       month: 'short',
       day: 'numeric',
     });
+  };
+
+  const handleDeleteClick = (permission: Permission) => {
+    setSelectedPermission(permission);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!selectedPermission) return;
+    
+    setIsDeleting(true);
+    try {
+      await onDelete(selectedPermission.id);
+      setShowDeleteModal(false);
+      setSelectedPermission(null);
+    } catch (error) {
+      console.error('Delete error:', error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setShowDeleteModal(false);
+    setSelectedPermission(null);
   };
 
   const columns: ColumnsType<Permission> = [
@@ -141,6 +172,22 @@ const PageRoutePermissionTable: React.FC<PageRoutePermissionTableProps> = ({
                 icon={<Edit size={16} />}
                 onClick={() => onEdit(record.id)}
                 style={{ color: currentTheme === 'dark' ? '#ffffff' : token.colorSuccess }}
+              />
+            </Tooltip>
+          </PermissionGuard>
+
+          <PermissionGuard 
+            permission="delete-page-route-permission" 
+            mode="hide"
+          >
+            <Tooltip title="Delete">
+              <Button
+                type="text"
+                size="small"
+                danger
+                icon={<Trash2 size={16} />}
+                onClick={() => handleDeleteClick(record)}
+                style={{ color: currentTheme === 'dark' ? '#ef4444' : '#dc2626' }}
               />
             </Tooltip>
           </PermissionGuard>
@@ -285,6 +332,30 @@ const PageRoutePermissionTable: React.FC<PageRoutePermissionTableProps> = ({
                   Edit
                 </Button>
               </PermissionGuard>
+
+              <PermissionGuard 
+                permission="delete-page-route-permission" 
+                mode="hide"
+              >
+                <Button
+                  type="text"
+                  size="small"
+                  danger
+                  icon={<Trash2 size={12} />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteClick(permission);
+                  }}
+                  style={{ 
+                    color: currentTheme === 'dark' ? '#ef4444' : '#dc2626',
+                    fontSize: '11px',
+                    height: '24px',
+                    padding: '0 6px'
+                  }}
+                >
+                  Delete
+                </Button>
+              </PermissionGuard>
             </div>
           </div>
         )}
@@ -294,33 +365,55 @@ const PageRoutePermissionTable: React.FC<PageRoutePermissionTableProps> = ({
 
   if (isMobile) {
     return (
-      <div className="space-y-2 px-1">
-        {permissions.filter(p => p !== null).map((permission) => (
-          <PermissionCard key={permission.id} permission={permission} />
-        ))}
-        {loading && (
-          <div className="flex justify-center py-6">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-          </div>
-        )}
-      </div>
+      <>
+        <div className="space-y-2 px-1">
+          {permissions.filter(p => p !== null).map((permission) => (
+            <PermissionCard key={permission.id} permission={permission} />
+          ))}
+          {loading && (
+            <div className="flex justify-center py-6">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+            </div>
+          )}
+        </div>
+        
+        <DeleteModal
+          isVisible={showDeleteModal}
+          permissionName={selectedPermission?.name || ''}
+          isDeleting={isDeleting}
+          onDelete={handleDeleteConfirm}
+          onCancel={handleDeleteCancel}
+          theme={currentTheme}
+        />
+      </>
     );
   }
 
   return (
-    <Table
-      columns={columns}
-      dataSource={permissions.filter(p => p !== null)}
-      rowKey="id"
-      loading={loading}
-      pagination={false}
-      style={{
-        backgroundColor: currentTheme === 'dark' ? '#1f1f1f' : token.colorBgContainer,
-        borderRadius: token.borderRadiusLG,
-        boxShadow: token.boxShadow
-      }}
-      rowClassName={currentTheme === 'dark' ? "hover:bg-gray-800" : "hover:bg-gray-50"}
-    />
+    <>
+      <Table
+        columns={columns}
+        dataSource={permissions.filter(p => p !== null)}
+        rowKey="id"
+        loading={loading}
+        pagination={false}
+        style={{
+          backgroundColor: currentTheme === 'dark' ? '#1f1f1f' : token.colorBgContainer,
+          borderRadius: token.borderRadiusLG,
+          boxShadow: token.boxShadow
+        }}
+        rowClassName={currentTheme === 'dark' ? "hover:bg-gray-800" : "hover:bg-gray-50"}
+      />
+      
+      <DeleteModal
+        isVisible={showDeleteModal}
+        permissionName={selectedPermission?.name || ''}
+        isDeleting={isDeleting}
+        onDelete={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        theme={currentTheme}
+      />
+    </>
   );
 };
 

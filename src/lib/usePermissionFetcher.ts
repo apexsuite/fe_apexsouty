@@ -4,34 +4,36 @@ import { useLocation } from 'react-router-dom';
 import { AppDispatch, RootState } from './store';
 import { fetchMyPermissions } from './permissionSlice';
 
-/**
- * Global permission fetcher hook
- * Bu hook her sayfa değişiminde permission'ları günceller
- */
+
 export const usePermissionFetcher = () => {
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const permissions = useSelector((state: RootState) => state.userPermissions.permissions);
   const loading = useSelector((state: RootState) => state.userPermissions.loading);
   const lastFetched = useSelector((state: RootState) => state.userPermissions.lastFetched);
   const hasInitialized = useRef(false);
 
-  // Initial fetch
   useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+
     const shouldFetch = !loading && permissions.length === 0;
-    const isStale = lastFetched && Date.now() - lastFetched > 5 * 60 * 1000; // 5 minutes
+    const isStale = lastFetched && Date.now() - lastFetched > 5 * 60 * 1000;
     const hasNeverFetched = !lastFetched;
 
     if (shouldFetch || isStale || hasNeverFetched) {
-      console.log('🚀 Initializing permissions...', { shouldFetch, isStale, hasNeverFetched });
       hasInitialized.current = true;
       dispatch(fetchMyPermissions());
     }
-  }, [dispatch, loading, permissions.length, lastFetched]);
+  }, [dispatch, loading, permissions.length, lastFetched, isAuthenticated]);
 
-  // Route change fetch - sadece gerekli durumlarda güncelle
   useEffect(() => {
-    // Public routes'da permission fetch yapma
+    if (!isAuthenticated) {
+      return;
+    }
+
     const publicRoutes = [
       '/login',
       '/register', 
@@ -47,14 +49,12 @@ export const usePermissionFetcher = () => {
       return;
     }
 
-    // Sadece belirli aralıklarla güncelle (5 dakika)
     const shouldRefresh = lastFetched && Date.now() - lastFetched > 5 * 60 * 1000;
     
     if (shouldRefresh && !loading) {
-      console.log('🔄 Refreshing permissions (5min interval)...', location.pathname);
       dispatch(fetchMyPermissions());
     }
-  }, [location.pathname, dispatch, loading, lastFetched]);
+  }, [location.pathname, dispatch, loading, lastFetched, isAuthenticated]);
 
   return {
     permissions,

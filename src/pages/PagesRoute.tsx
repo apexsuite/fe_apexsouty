@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { AppDispatch, RootState, store } from '@/lib/store';
-import { fetchPageRoutes, setCurrentPageNumber, setPageSize, clearError, changePageRouteStatus } from '@/lib/pageSlice';
+import { AppDispatch, RootState } from '@/lib/store';
+import { fetchPageRoutes, setCurrentPageNumber, setPageSize, clearError, changePageRouteStatus, deletePageRoute } from '@/lib/pageSlice';
 import { fetchMenu, fetchFavorites } from '@/lib/menuSlice';
 
-import { Plus, Search } from 'lucide-react';
-import { Pagination, Card } from 'antd';
+import { Plus, Search, Filter, X } from 'lucide-react';
+import { Pagination, Card, Select, Button } from 'antd';
 import { useErrorHandler } from '@/lib/useErrorHandler';
 import PermissionGuard from '@/components/PermissionGuard';
 import PageRouteTable from '@/components/pagesRoute/PageRouteTable';
@@ -16,7 +16,7 @@ const PagesRoute: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { pageRoutes, loading, error, totalPages, currentPageNumber, pageSize, statusChangeLoading } = useSelector(
+  const { pageRoutes, loading, totalPages, currentPageNumber, pageSize, statusChangeLoading } = useSelector(
     (state: RootState) => state.page
   );
   
@@ -24,43 +24,67 @@ const PagesRoute: React.FC = () => {
   const theme = useSelector((state: RootState) => state.theme.theme);
   const { handleError, showSuccess } = useErrorHandler();
   
-  // Tema değişikliğini zorlamak için key kullan
   const themeKey = theme === 'light' ? 'light' : 'dark';
   
-  // Tema değişikliğini dinle
   useEffect(() => {
   }, [theme]);
-  
-  // Redux store'u kontrol et
-  useEffect(() => {
-    const unsubscribe = store.subscribe(() => {
-      const currentTheme = store.getState().theme.theme;
-      console.log('Store theme changed to:', currentTheme);
-    });
-    
-    return () => unsubscribe();
-  }, []);
 
   const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState({
+    name: '',
+    path: '',
+    component: '',
+    isActive: undefined as boolean | undefined
+  });
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     dispatch(clearError());
     loadPages();
-  }, [currentPageNumber, pageSize, searchTerm]);
+  }, [currentPageNumber, pageSize, searchTerm, filters.name, filters.path, filters.component, filters.isActive]);
 
-  // Arama kelimesi değiştiğinde sayfa numarasını sıfırla
   useEffect(() => {
     if (searchTerm !== '') {
       dispatch(setCurrentPageNumber(1));
     }
   }, [searchTerm]);
 
+  useEffect(() => {
+    const hasActiveFilters = 
+      (filters.name && filters.name !== '') ||
+      (filters.path && filters.path !== '') ||
+      (filters.component && filters.component !== '') ||
+      (filters.isActive !== undefined);
+    
+    if (hasActiveFilters) {
+      dispatch(setCurrentPageNumber(1));
+    }
+  }, [filters.name, filters.path, filters.component, filters.isActive]);
+
   const loadPages = () => {
-    dispatch(fetchPageRoutes({
+    const params: any = {
       page: currentPageNumber,
       limit: pageSize,
-      name: searchTerm,
-    }));
+    };
+
+    if (searchTerm && searchTerm.trim() !== '') {
+      params.name = searchTerm.trim();
+    }
+
+    if (filters.name && filters.name.trim() !== '') {
+      params.name = filters.name.trim();
+    }
+    if (filters.path && filters.path.trim() !== '') {
+      params.path = filters.path.trim();
+    }
+    if (filters.component && filters.component.trim() !== '') {
+      params.component = filters.component.trim();
+    }
+    if (filters.isActive !== undefined) {
+      params.isActive = filters.isActive;
+    }
+
+    dispatch(fetchPageRoutes(params));
   };
 
   const handlePageChange = (page: number) => {
@@ -69,6 +93,23 @@ const PagesRoute: React.FC = () => {
 
   const handlePageSizeChange = (size: number) => {
     dispatch(setPageSize(size));
+    dispatch(setCurrentPageNumber(1));
+  };
+
+  const handleFilterChange = (key: string, value: any) => {
+    setFilters(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      name: '',
+      path: '',
+      component: '',
+      isActive: undefined
+    });
     dispatch(setCurrentPageNumber(1));
   };
 
@@ -84,6 +125,17 @@ const PagesRoute: React.FC = () => {
     navigate('/page-routes/create');
   };
 
+  const handleDeletePage = async (pageId: string) => {
+    try {
+      await dispatch(deletePageRoute(pageId)).unwrap();
+      showSuccess('pageDeletedSuccessfully');
+      loadPages();
+    } catch (error: any) {
+      handleError(error);
+      throw error;
+    }
+  };
+
   const handleStatusChange = async (pageRouteId: string, currentStatus: boolean) => {
     try {
       await dispatch(changePageRouteStatus({ 
@@ -92,37 +144,42 @@ const PagesRoute: React.FC = () => {
       })).unwrap();
       showSuccess('pageStatusChangedSuccessfully');
       
-      // Status değişikliği sonrası verileri yeniden yükle
-      dispatch(fetchPageRoutes({
+      const params: any = {
         page: currentPageNumber,
         limit: pageSize,
-        name: searchTerm,
-      }));
+      };
 
-      // Sidebar menü ve search bar için lazy load - sayfayı yenilemeden güncelle
+      if (searchTerm && searchTerm.trim() !== '') {
+        params.name = searchTerm.trim();
+      }
+
+      if (filters.name && filters.name.trim() !== '') {
+        params.name = filters.name.trim();
+      }
+      if (filters.path && filters.path.trim() !== '') {
+        params.path = filters.path.trim();
+      }
+      if (filters.component && filters.component.trim() !== '') {
+        params.component = filters.component.trim();
+      }
+      if (filters.isActive !== undefined) {
+        params.isActive = filters.isActive;
+      }
+
+      dispatch(fetchPageRoutes(params));
+
       try {
         await Promise.all([
           dispatch(fetchMenu() as any),
           dispatch(fetchFavorites() as any)
         ]);
-        console.log('Menu and favorites updated successfully after status change');
       } catch (menuError) {
         console.warn('Failed to update menu/favorites after status change:', menuError);
-        // Menu güncelleme hatası sayfa işlemini durdurmasın, sadece log'la
       }
     } catch (error: any) {
       handleError(error);
     }
   };
-
-  // Sadece ilk yükleme sırasında loading göster
-  if (loading && pageRoutes.length === 0 && !searchTerm) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
 
   return (
     <div 
@@ -182,12 +239,14 @@ const PagesRoute: React.FC = () => {
             marginBottom: '1.5rem'
           }}
         >
+          <div className="flex flex-col gap-4">
+            {/* Search Bar */}
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Search pages..."
+                  placeholder={t('pages.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
@@ -208,22 +267,126 @@ const PagesRoute: React.FC = () => {
               </div>
             </div>
             
+              <Button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center gap-2 ${
+                  Object.values(filters).some(value => value !== '' && value !== undefined) 
+                    ? 'bg-blue-600 text-white' 
+                    : theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-700'
+                }`}
+                style={{
+                  backgroundColor: Object.values(filters).some(value => value !== '' && value !== undefined) 
+                    ? '#2563eb' 
+                    : theme === 'dark' ? '#374151' : '#f3f4f6',
+                  borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
+                  color: Object.values(filters).some(value => value !== '' && value !== undefined) 
+                    ? '#ffffff' 
+                    : theme === 'dark' ? '#d1d5db' : '#374151'
+                }}
+              >
+                <Filter size={16} />
+                {t('pages.searchFilter')}
+                {Object.values(filters).some(value => value !== '' && value !== undefined) && (
+                  <span className="ml-1 px-1.5 py-0.5 text-xs bg-white text-blue-600 rounded-full">
+                    {Object.values(filters).filter(value => value !== '' && value !== undefined).length}
+                  </span>
+                )}
+              </Button>
+            </div>
 
+            {/* Advanced Filters */}
+            {showFilters && (
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 border-t border-gray-200 dark:border-gray-700">
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                    {t('pages.name')}
+                  </label>
+                  <input
+                    type="text"
+                    placeholder={t('pages.enterName')}
+                    value={filters.name}
+                    onChange={(e) => handleFilterChange('name', e.target.value)}
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      theme === 'dark' 
+                        ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                    }`}
+                  />
+                </div>
+
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                    {t('pages.path')}
+                  </label>
+                  <input
+                    type="text"
+                    placeholder={t('pages.enterPath')}
+                    value={filters.path}
+                    onChange={(e) => handleFilterChange('path', e.target.value)}
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      theme === 'dark' 
+                        ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                    }`}
+                  />
+                </div>
+
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                    {t('pages.component')}
+                  </label>
+                  <input
+                    type="text"
+                    placeholder={t('pages.enterComponent')}
+                    value={filters.component}
+                    onChange={(e) => handleFilterChange('component', e.target.value)}
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      theme === 'dark' 
+                        ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                    }`}
+                  />
+                </div>
+
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                    {t('pages.table.status')}
+                  </label>
+                  <Select
+                    placeholder={t('pages.selectStatus')}
+                    value={filters.isActive}
+                    onChange={(value) => handleFilterChange('isActive', value)}
+                    className="w-full"
+                    suffixIcon={null}
+                    showSearch={false}
+                    options={[
+                      { label: t('common.all'), value: undefined },
+                      { label: t('common.active'), value: true },
+                      { label: t('common.inactive'), value: false }
+                    ]}
+                  />
+                </div>
+
+                <div className="md:col-span-4 flex justify-end gap-2">
+                  <Button
+                    onClick={clearFilters}
+                    className="flex items-center gap-2"
+                    style={{
+                      backgroundColor: theme === 'dark' ? '#374151' : '#f3f4f6',
+                      borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
+                      color: theme === 'dark' ? '#d1d5db' : '#374151'
+                    }}
+                  >
+                    <X size={16} />
+                    {t('common.clearFilters')}
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </Card>
 
-        {/* Error Message */}
-        {error && (
-          <div className={`mb-6 rounded-lg p-4 transition-colors duration-200 ${
-            theme === 'dark' 
-              ? 'bg-red-900/20 border border-red-800' 
-              : 'bg-red-50 border border-red-200'
-          }`}>
-            <p className={`transition-colors duration-200 ${theme === 'dark' ? 'text-red-400' : 'text-red-800'}`}>{error}</p>
-          </div>
-        )}
 
-        {/* Page Routes Table */}
         <div style={{ 
           backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
           border: `1px solid ${theme === 'dark' ? '#374151' : '#e5e7eb'}`,
@@ -239,19 +402,19 @@ const PagesRoute: React.FC = () => {
               {searchTerm ? (
                 <div>
                   <p style={{ fontSize: '16px', marginBottom: '8px' }}>
-                    No pages found matching your search criteria
+                    {t('pages.noResults')}
                   </p>
                   <p style={{ fontSize: '14px', opacity: 0.7 }}>
-                    Try adjusting your search terms or filters
+                    {t('pages.noResultsSubtext')}
                   </p>
                 </div>
               ) : (
                 <div>
                   <p style={{ fontSize: '16px', marginBottom: '8px' }}>
-                    No pages available
+                    {t('pages.noPages')}
                   </p>
                   <p style={{ fontSize: '14px', opacity: 0.7 }}>
-                    Create your first page to get started
+                    {t('pages.createFirstPage')}
                   </p>
                 </div>
               )}
@@ -264,6 +427,7 @@ const PagesRoute: React.FC = () => {
               onView={handleViewPage}
               onEdit={handleEditPage}
               onStatusChange={handleStatusChange}
+              onDelete={handleDeletePage}
             />
           )}
         </div>

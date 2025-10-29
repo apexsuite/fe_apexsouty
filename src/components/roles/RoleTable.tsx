@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Tag, Space, Avatar, Tooltip, Card, theme } from 'antd';
-import { Eye, Edit, Delete, Shield, Calendar, ChevronDown, ChevronUp } from 'lucide-react';
+import { Eye, Edit, Delete, Shield, Calendar, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Role } from '@/lib/roleSlice';
@@ -162,7 +162,7 @@ const RoleTable: React.FC<RoleTableProps> = ({
             <Tooltip title={t('roles.delete') || 'Delete'}>
               <Button
                 type="text"
-                icon={<Delete size={16} />}
+                icon={<Trash2 size={16} />}
                 onClick={() => onDelete(role.id, role.name)}
                 className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
               />

@@ -34,11 +34,10 @@ const ProductCreate: React.FC = () => {
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
-      // API'ye gönderilecek veriyi hazırla
       const productData = {
         name: values.name,
         description: values.description || '',
-        isActive: values.isActive !== false, // default true
+        isActive: values.isActive !== false,
         isDefault: values.isDefault || false,
         isStripe: values.isStripe || false,
         marketingFeatures: values.marketingFeatures || [],
@@ -106,7 +105,6 @@ const ProductCreate: React.FC = () => {
           }}
         >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Sol Kolon */}
             <div className="space-y-6">
               <Form.Item
                 name="name"
@@ -166,8 +164,7 @@ const ProductCreate: React.FC = () => {
                 />
               </Form.Item>
             </div>
-
-            {/* Sağ Kolon */}
+                        
             <div className="space-y-6">
               <Form.Item
                 name="statementDescriptor"

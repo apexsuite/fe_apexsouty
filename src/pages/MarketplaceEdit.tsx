@@ -54,11 +54,8 @@ const MarketplaceEdit: React.FC = () => {
   };
 
   const handleBack = () => {
-    if (id) {
-      navigate(`/marketplaces/${id}`);
-    } else {
+
       navigate('/marketplaces');
-    }
   };
 
   if (loading) {
@@ -111,7 +108,7 @@ const MarketplaceEdit: React.FC = () => {
         color: currentTheme === 'dark' ? '#ffffff' : '#111827'
       }}
     >
-      <div className="max-w-4xl mx-auto">
+      <div className="w-full mx-auto">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-4 mb-4">

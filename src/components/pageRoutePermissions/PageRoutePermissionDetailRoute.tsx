@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { AppDispatch, RootState } from '@/lib/store';
-import { fetchPermissionById, deletePermissionDirect, clearCurrentPermission, clearError } from '@/lib/pageRoutePermissionSlice';
-import { ArrowLeft, Edit, Trash2, Calendar, Shield, CheckCircle, XCircle } from 'lucide-react';
-import { useErrorHandler } from '@/lib/useErrorHandler';
+import { fetchPermissionById, clearCurrentPermission, clearError } from '@/lib/pageRoutePermissionSlice';
+import { ArrowLeft, Edit, Calendar, Shield, CheckCircle, XCircle } from 'lucide-react';
 
-// Import components
 import PermissionInfo from './PermissionInfo';
 import PageRouteInfo from './PageRouteInfo';
 import RolePermissions from './RolePermissions';
-import DeleteModal from './DeleteModal';
 
 const PageRoutePermissionDetailRoute: React.FC = () => {
   const { t } = useTranslation();
@@ -20,10 +17,6 @@ const PageRoutePermissionDetailRoute: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { currentPermission, loading, error } = useSelector((state: RootState) => state.permission);
   const theme = useSelector((state: RootState) => state.theme.theme);
-  const { handleError, showSuccess } = useErrorHandler();
-  
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (permissionId) {
@@ -42,27 +35,6 @@ const PageRoutePermissionDetailRoute: React.FC = () => {
     }
   };
 
-  const handleDelete = async () => {
-    if (!currentPermission) return;
-
-    setIsDeleting(true);
-    try {
-      await dispatch(deletePermissionDirect(currentPermission.id)).unwrap();
-      showSuccess('permissionDeletedSuccessfully');
-      navigate(`/page-route-permissions/${pageRouteId || 'all'}/permissions`);
-    } catch (error: any) {
-      console.log('=== DELETE PERMISSION ERROR DEBUG ===');
-      console.log('Error object:', error);
-      console.log('Error type:', typeof error);
-      console.log('Error keys:', Object.keys(error || {}));
-      console.log('====================================');
-      handleError(error);
-    } finally {
-      setIsDeleting(false);
-      setShowDeleteModal(false);
-    }
-  };
-
   const handleBack = () => {
     navigate(`/page-route-permissions/${pageRouteId || 'all'}/permissions`);
   };
@@ -78,7 +50,7 @@ const PageRoutePermissionDetailRoute: React.FC = () => {
   if (error) {
     return (
       <div className={`p-6 min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto md:px-8">
           <div className={`rounded-lg p-6 text-center ${
             theme === 'dark' ? 'bg-red-900/20 border-red-700 text-red-400' : 'bg-red-50 border-red-200 text-red-800'
           }`}>
@@ -101,7 +73,7 @@ const PageRoutePermissionDetailRoute: React.FC = () => {
   if (!currentPermission) {
     return (
       <div className={`p-6 min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto md:px-8">
           <div className={`rounded-lg p-6 text-center ${
             theme === 'dark' ? 'bg-yellow-900/20 border-yellow-700 text-yellow-400' : 'bg-yellow-50 border-yellow-200 text-yellow-800'
           }`}>
@@ -123,8 +95,7 @@ const PageRoutePermissionDetailRoute: React.FC = () => {
 
   return (
     <div className={`p-6 min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
+      <div className="w-full mx-auto md:px-8">
         <div className="mb-6">
           <button
             onClick={handleBack}
@@ -136,19 +107,19 @@ const PageRoutePermissionDetailRoute: React.FC = () => {
             {t('pages.pageRoutePermissions.backToPermissions')}
           </button>
 
-          <div className="flex justify-between items-start">
+          <div className="flex flex-col md:flex-row justify-between items-start gap-4">
             <div className="flex-1">
               <h1 className={`text-3xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 {currentPermission.name}
               </h1>
-              <div className={`flex items-center gap-4 text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+              <div className={`flex flex-wrap items-center gap-3 md:gap-4 text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                 <div className="flex items-center gap-1">
                   <Calendar size={16} />
-                  {currentPermission.createdAt}
+                  <span className="hidden sm:inline">{currentPermission.createdAt}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Shield size={16} />
-                  {t('pages.pageRoutePermissions.basicInfo')}
+                  <span className="hidden sm:inline">{t('pages.pageRoutePermissions.basicInfo')}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   {currentPermission.isActive ? (
@@ -161,52 +132,29 @@ const PageRoutePermissionDetailRoute: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 w-full md:w-auto">
               <button
                 onClick={handleEdit}
-                className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
+                className={`flex-1 md:flex-none px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors ${
                   theme === 'dark' 
                     ? 'bg-blue-600 hover:bg-blue-700 text-white' 
                     : 'bg-blue-600 hover:bg-blue-700 text-white'
                 }`}
               >
                 <Edit size={16} />
-                {t('pages.pageRoutePermissions.edit')}
-              </button>
-              <button
-                onClick={() => setShowDeleteModal(true)}
-                className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
-                  theme === 'dark' 
-                    ? 'bg-red-600 hover:bg-red-700 text-white' 
-                    : 'bg-red-600 hover:bg-red-700 text-white'
-                }`}
-              >
-                <Trash2 size={16} />
-                {t('pages.pageRoutePermissions.delete')}   
+                <span className="hidden sm:inline">{t('pages.pageRoutePermissions.edit')}</span>
+                <span className="sm:hidden">{t('common.edit') || 'Edit'}</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Permission Information */}
         <PermissionInfo permission={currentPermission} theme={theme} />
 
-        {/* Page Route Information */}
         <PageRouteInfo permission={currentPermission} theme={theme} />
 
-        {/* Role Permissions */}
         <RolePermissions permission={currentPermission} theme={theme} />
       </div>
-
-      {/* Delete Modal */}
-      <DeleteModal
-        isVisible={showDeleteModal}
-        permissionName={currentPermission.name}
-        isDeleting={isDeleting}
-        onDelete={handleDelete}
-        onCancel={() => setShowDeleteModal(false)}
-        theme={theme}
-      />
     </div>
   );
 };

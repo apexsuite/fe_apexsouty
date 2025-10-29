@@ -45,7 +45,6 @@ const EditPermissionModal: React.FC<EditPermissionModalProps> = ({
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
-  // Initialize form when permission changes
   useEffect(() => {
     if (permission && visible) {
       form.setFieldsValue({
@@ -65,18 +64,13 @@ const EditPermissionModal: React.FC<EditPermissionModalProps> = ({
         permissionId: permission.id,
         permissionData: {
           ...values,
-          pageRouteId: pageRouteId, // API body'de de pageRouteId bekliyor olabilir
+          pageRouteId: pageRouteId,
         }
       };
-      
-      console.log('Edit Permission Payload:', payload);
-      console.log('Permission object:', permission);
-      console.log('PageRouteId:', pageRouteId);
       
       await dispatch(updatePermission(payload)).unwrap();
       showSuccess('permissionUpdatedSuccessfully');
       form.resetFields();
-      // Success toast gösterildikten sonra sayfa yönlendirmesi yap
       setTimeout(() => {
         onSuccess();
       }, 1000);

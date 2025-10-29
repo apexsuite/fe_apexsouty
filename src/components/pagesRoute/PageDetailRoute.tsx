@@ -3,10 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { AppDispatch, RootState } from '@/lib/store';
-import { fetchPageRouteById, deletePageRoute, clearCurrentPageRoute, clearError } from '@/lib/pageSlice';
-import { ArrowLeft, Edit, Trash2, Calendar, Tag } from 'lucide-react';
+import { fetchPageRouteById, clearCurrentPageRoute, clearError } from '@/lib/pageSlice';
+import { ArrowLeft, Edit, Calendar, Tag } from 'lucide-react';
 import PermissionTable from './PermissionTable';
-import { useErrorHandler } from '@/lib/useErrorHandler';
 
 const PageDetailRoute: React.FC = () => {
   const { t } = useTranslation();
@@ -15,10 +14,7 @@ const PageDetailRoute: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { currentPageRoute, loading, error } = useSelector((state: RootState) => state.page);
   const theme = useSelector((state: RootState) => state.theme.theme);
-  const { handleError } = useErrorHandler();
   
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [pagePermissions, setPagePermissions] = useState<any[]>([]);
 
   useEffect(() => {
@@ -41,21 +37,6 @@ const PageDetailRoute: React.FC = () => {
   const handleEdit = () => {
     if (currentPageRoute) {
       navigate(`/page-routes/${currentPageRoute.id}/edit`);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!currentPageRoute) return;
-
-    setIsDeleting(true);
-    try {
-      await dispatch(deletePageRoute(currentPageRoute.id)).unwrap();
-      navigate('/page-routes');
-    } catch (error: any) {
-      handleError(error);
-    } finally {
-      setIsDeleting(false);
-      setShowDeleteModal(false);
     }
   };
 
@@ -98,7 +79,7 @@ const PageDetailRoute: React.FC = () => {
   if (error) {
     return (
       <div className={`p-6 min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto md:px-8">
           <div className={`rounded-lg p-6 text-center ${
             theme === 'dark' 
               ? 'bg-red-900/20 border border-red-800 text-red-400' 
@@ -123,7 +104,7 @@ const PageDetailRoute: React.FC = () => {
   if (!currentPageRoute) {
     return (
       <div className={`p-6 min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
-        <div className="max-w-4xl mx-auto">
+        <div className="w-full mx-auto md:px-8">
           <div className={`rounded-lg p-6 text-center ${
             theme === 'dark' 
               ? 'bg-yellow-900/20 border border-yellow-800 text-yellow-400' 
@@ -149,7 +130,7 @@ const PageDetailRoute: React.FC = () => {
 
   return (
     <div className={`p-6 min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      <div className="max-w-4xl mx-auto">
+      <div className="w-full mx-auto md:px-8">
         {/* Header */}
         <div className="mb-6">
           <button
@@ -188,13 +169,6 @@ const PageDetailRoute: React.FC = () => {
               >
                 <Edit size={16} />
                 {t('pages.edit')}
-              </button>
-              <button
-                onClick={() => setShowDeleteModal(true)}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
-              >
-                <Trash2 size={16} />
-                {t('pages.delete')}   
               </button>
             </div>
           </div>
@@ -322,41 +296,6 @@ const PageDetailRoute: React.FC = () => {
 
       </div>
 
-      {/* Delete Modal */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className={`rounded-lg p-6 max-w-md w-full mx-4 ${
-            theme === 'dark' ? 'bg-gray-800 border border-gray-700' : 'bg-white'
-          }`}>
-            <h3 className={`text-lg font-semibold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-              {t('pages.deletePage')}
-            </h3>
-            <p className={`mb-6 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
-              {t('pages.deleteConfirmMessage', { title: currentPageRoute.name })}
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                className={`flex-1 px-4 py-2 border rounded-lg transition-colors disabled:opacity-50 ${
-                  theme === 'dark' 
-                    ? 'border-gray-600 hover:bg-gray-700 text-gray-300' 
-                    : 'border-gray-300 hover:bg-gray-50 text-gray-700'
-                }`}
-                disabled={isDeleting}
-              >
-                {t('pages.cancel')}
-              </button>
-              <button
-                onClick={handleDelete}
-                className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg disabled:opacity-50"
-                disabled={isDeleting}
-              >
-                {isDeleting ? t('pages.saving') : t('pages.delete')}
-              </button>
-            </div>
-          </div>  
-        </div>
-      )}
     </div>
   );
 };

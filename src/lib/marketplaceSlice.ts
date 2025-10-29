@@ -1,17 +1,15 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { apiRequest } from '@/services/api';
 
-// Marketplace interface - API'ye uygun format
 export interface Marketplace {
   id: string;
-  marketplace: string; // API'de "name" yerine "marketplace" kullanılıyor
-  marketplaceURL: string; // API'de "website" yerine "marketplaceURL" kullanılıyor
+  marketplace: string;
+  marketplaceURL: string;
   isActive: boolean;
   createdAt: string;
   updatedAt?: string;
 }
 
-// State interface
 interface MarketplaceState {
   marketplaces: Marketplace[];
   marketplace: Marketplace | null;
@@ -23,7 +21,6 @@ interface MarketplaceState {
   totalCount: number;
 }
 
-// Initial state
 const initialState: MarketplaceState = {
   marketplaces: [],
   marketplace: null,
@@ -35,7 +32,6 @@ const initialState: MarketplaceState = {
   totalCount: 0,
 };
 
-// Async thunks
 export const fetchMarketplaces = createAsyncThunk(
   'marketplace/fetchMarketplaces',
   async (params: {
@@ -116,7 +112,6 @@ export const changeMarketplaceStatus = createAsyncThunk(
   }
 );
 
-// Slice
 const marketplaceSlice = createSlice({
   name: 'marketplace',
   initialState,
@@ -135,31 +130,23 @@ const marketplaceSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // fetchMarketplaces
     builder
       .addCase(fetchMarketplaces.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchMarketplaces.fulfilled, (state, action) => {
-        console.log('fetchMarketplaces.fulfilled - Action payload:', action.payload);
-        state.loading = false;
+            state.loading = false;
         state.marketplaces = action.payload.data?.items || [];
         state.totalPages = action.payload.data?.pageCount || 1;
         state.totalCount = action.payload.data?.totalCount || 0;
         state.error = null;
-        console.log('State updated:', { 
-          marketplaces: state.marketplaces, 
-          totalPages: state.totalPages, 
-          totalCount: state.totalCount 
-        });
       })
       .addCase(fetchMarketplaces.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to fetch marketplaces';
       });
 
-    // fetchMarketplace
     builder
       .addCase(fetchMarketplace.pending, (state) => {
         state.loading = true;
@@ -175,7 +162,6 @@ const marketplaceSlice = createSlice({
         state.error = action.error.message || 'Failed to fetch marketplace';
       });
 
-    // createMarketplace
     builder
       .addCase(createMarketplace.pending, (state) => {
         state.loading = true;
@@ -190,7 +176,6 @@ const marketplaceSlice = createSlice({
         state.error = action.error.message || 'Failed to create marketplace';
       });
 
-    // updateMarketplace
     builder
       .addCase(updateMarketplace.pending, (state) => {
         state.loading = true;
@@ -198,12 +183,10 @@ const marketplaceSlice = createSlice({
       })
       .addCase(updateMarketplace.fulfilled, (state, action) => {
         state.loading = false;
-        // Update the marketplace in the list if it exists
         const index = state.marketplaces.findIndex(m => m.id === action.payload.data?.id);
         if (index !== -1) {
           state.marketplaces[index] = action.payload.data;
         }
-        // Update the current marketplace if it's the same one
         if (state.marketplace && state.marketplace.id === action.payload.data?.id) {
           state.marketplace = action.payload.data;
         }
@@ -214,7 +197,6 @@ const marketplaceSlice = createSlice({
         state.error = action.error.message || 'Failed to update marketplace';
       });
 
-    // deleteMarketplace
     builder
       .addCase(deleteMarketplace.pending, (state) => {
         state.loading = true;
@@ -222,9 +204,7 @@ const marketplaceSlice = createSlice({
       })
       .addCase(deleteMarketplace.fulfilled, (state, action) => {
         state.loading = false;
-        // Remove the deleted marketplace from the list
         state.marketplaces = state.marketplaces.filter(m => m.id !== action.payload);
-        // Clear the current marketplace if it was the deleted one
         if (state.marketplace && state.marketplace.id === action.payload) {
           state.marketplace = null;
         }
@@ -235,7 +215,6 @@ const marketplaceSlice = createSlice({
         state.error = action.error.message || 'Failed to delete marketplace';
       });
 
-    // changeMarketplaceStatus
     builder
       .addCase(changeMarketplaceStatus.pending, (state) => {
         state.loading = true;
@@ -243,12 +222,10 @@ const marketplaceSlice = createSlice({
       })
       .addCase(changeMarketplaceStatus.fulfilled, (state, action) => {
         state.loading = false;
-        // Update the marketplace status in the list
         const index = state.marketplaces.findIndex(m => m.id === action.payload.data?.id);
         if (index !== -1) {
           state.marketplaces[index].isActive = action.payload.data.isActive;
         }
-        // Update the current marketplace if it's the same one
         if (state.marketplace && state.marketplace.id === action.payload.data?.id) {
           state.marketplace.isActive = action.payload.data.isActive;
         }
@@ -261,8 +238,6 @@ const marketplaceSlice = createSlice({
   },
 });
 
-// Export actions
 export const { clearError, setCurrentPageNumber, setPageSize, clearMarketplace } = marketplaceSlice.actions;
 
-// Export reducer
 export default marketplaceSlice.reducer;

@@ -33,12 +33,14 @@ export const fetchProducts = createAsyncThunk(
     page?: number;
     pageSize?: number;
     name?: string;
+    unitLabel?: string;
     isActive?: boolean;
   }) => {
     const queryParams = new URLSearchParams();
     if (params.page) queryParams.append('page', params.page.toString());
     if (params.pageSize) queryParams.append('pageSize', params.pageSize.toString());
     if (params.name) queryParams.append('name', params.name);
+    if (params.unitLabel) queryParams.append('unitLabel', params.unitLabel);
     if (params.isActive !== undefined) queryParams.append('isActive', params.isActive.toString());
     
     const response = await apiRequest(`/products?${queryParams.toString()}`);
@@ -197,17 +199,11 @@ const productSlice = createSlice({
         state.error = null;
       })
              .addCase(fetchProducts.fulfilled, (state, action) => {
-         console.log('fetchProducts.fulfilled - Action payload:', action.payload);
          state.loading = false;
          state.products = action.payload.data?.items || [];
          state.totalPages = action.payload.data?.pageCount || 1;
          state.totalCount = action.payload.data?.totalCount || 0;
          state.error = null;
-         console.log('State updated:', { 
-           products: state.products, 
-           totalPages: state.totalPages, 
-           totalCount: state.totalCount 
-         });
        })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;

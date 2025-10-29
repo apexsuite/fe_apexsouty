@@ -42,7 +42,7 @@ const RoleCreate: React.FC = () => {
 
   return (
     <div className="p-6 min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-4xl mx-auto">
+      <div className="w-full mx-auto">
         {/* Header */}
         <Card className="mb-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
           <div className="flex items-center gap-4">

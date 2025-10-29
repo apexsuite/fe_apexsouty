@@ -14,11 +14,9 @@ function Spinner() {
   );
 }
 
-// Tema uygulama fonksiyonu
 function applyTheme(theme: string) {
   const root = window.document.documentElement;
   
-  // Önce tüm tema sınıflarını temizle
   root.classList.remove('dark', 'light');
   
   if (theme === 'dark') {
@@ -35,18 +33,15 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   const theme = store.getState().theme.theme;
 
   useEffect(() => {
-    // Dil ayarlarını yükle
     const storedLang = typeof window === "undefined" ? "en" : localStorage.getItem("lang") || "en";
     if (storedLang) {
       dispatchRef.current(setLanguage(storedLang));
       i18n.changeLanguage(storedLang);
     }
     
-    // Tema ayarlarını yükle ve uygula
     const storedTheme = localStorage.getItem('theme') as 'light' | 'dark' || 'light';
     dispatchRef.current(setTheme(storedTheme));
     
-    // Tema uygula
     applyTheme(storedTheme);
     
     setReady(true);
@@ -59,7 +54,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       const newTheme = store.getState().theme.theme;
       const newLang = store.getState().lang.language;
       
-      // Tema değişikliği kontrolü
       if (newTheme !== theme) {
         setIsThemeChanging(true);
         setTimeout(() => {
@@ -68,7 +62,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         }, 100);
       }
       
-      // Dil değişikliği kontrolü
       if (newLang && newLang !== i18n.language) {
         i18n.changeLanguage(newLang);
       }
