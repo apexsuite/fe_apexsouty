@@ -1,49 +1,58 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '@/lib/store';
 import { requestAmazonConsentCallback } from '@/lib/consentSlice';
 import { useErrorHandler } from '@/lib/useErrorHandler';
 import ScrollToTop from '@/components/ScrollToTop';
-import Login from '@/pages/Login';
-import Dashboard from '@/pages/Dashboard';
-import Permissions from '@/pages/Permissions';
-import PermissionsManagement from '@/pages/PermissionsManagement';
-import AllServices from '@/pages/AllServices';
-import AllResources from '@/pages/AllResources';
-import Register from '@/pages/Register';
-import ForgotPassword from '@/pages/ForgotPassword';
-import VerifyEmail from '@/pages/VerifyEmail';
-import ResetPassword from '@/pages/ResetPassword';
-import AccessDenied from '@/pages/AccessDenied';
 import Providers from '@/components/Providers';
 import ToastProvider from '@/components/ToastProvider';
 import ClientLayout from '@/components/ClientLayout';
 import RouteGuard from '@/components/RouteGuard';
-import PagesRoute from '@/pages/PagesRoute';
-import PageDetailRoute from '@/components/pagesRoute/PageDetailRoute';
-import PageFormRoute from '@/components/pagesRoute/PageFormRoute';
-import PageRoutePermissionsRoute from '@/pages/PageRoutePermissionsRoute';
-import PageRoutePermissionDetailRoute from '@/components/pageRoutePermissions/PageRoutePermissionDetailRoute';
-import PageRoutePermissionFormRoute from '@/components/pageRoutePermissions/PageRoutePermissionFormRoute';
-import Roles from '@/pages/Roles';
-import RoleCreate from '@/pages/RoleCreate';
-import RoleEdit from '@/pages/RoleEdit';
-import RoleDetail from '@/pages/RoleDetail';
-import Products from '@/pages/Products';
-import ProductCreate from '@/pages/ProductCreate';
-import ProductEdit from '@/pages/ProductEdit';
-import ProductDetail from '@/pages/ProductDetail';
-import PriceDetail from '@/pages/PriceDetail';
-import BillingForm from '@/components/billing/BillingForm';
-import Marketplaces from '@/pages/Marketplaces';
-import MarketplaceDetail from '@/pages/MarketplaceDetail';
-import MarketplaceEdit from '@/pages/MarketplaceEdit';
-import MarketplaceCreate from '@/pages/MarketplaceCreate';
-import Consents from '@/pages/Consents';
-import PermissionTest from '@/components/PermissionTest';
-import NewPermissionExamples from '@/examples/NewPermissionExamples';
 import { usePermissionFetcher } from '@/lib/usePermissionFetcher';
+
+// Lazy loading for pages
+const Login = lazy(() => import('@/pages/Login'));
+const Dashboard = lazy(() => import('@/pages/Dashboard'));
+const Permissions = lazy(() => import('@/pages/Permissions'));
+const PermissionsManagement = lazy(() => import('@/pages/PermissionsManagement'));
+const AllServices = lazy(() => import('@/pages/AllServices'));
+const AllResources = lazy(() => import('@/pages/AllResources'));
+const Register = lazy(() => import('@/pages/Register'));
+const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'));
+const VerifyEmail = lazy(() => import('@/pages/VerifyEmail'));
+const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
+const AccessDenied = lazy(() => import('@/pages/AccessDenied'));
+const PagesRoute = lazy(() => import('@/pages/PagesRoute'));
+const PageDetailRoute = lazy(() => import('@/components/pagesRoute/PageDetailRoute'));
+const PageFormRoute = lazy(() => import('@/components/pagesRoute/PageFormRoute'));
+const PageRoutePermissionsRoute = lazy(() => import('@/pages/PageRoutePermissionsRoute'));
+const PageRoutePermissionDetailRoute = lazy(() => import('@/components/pageRoutePermissions/PageRoutePermissionDetailRoute'));
+const PageRoutePermissionFormRoute = lazy(() => import('@/components/pageRoutePermissions/PageRoutePermissionFormRoute'));
+const Roles = lazy(() => import('@/pages/Roles'));
+const RoleCreate = lazy(() => import('@/pages/RoleCreate'));
+const RoleEdit = lazy(() => import('@/pages/RoleEdit'));
+const RoleDetail = lazy(() => import('@/pages/RoleDetail'));
+const Products = lazy(() => import('@/pages/Products'));
+const ProductCreate = lazy(() => import('@/pages/ProductCreate'));
+const ProductEdit = lazy(() => import('@/pages/ProductEdit'));
+const ProductDetail = lazy(() => import('@/pages/ProductDetail'));
+const PriceDetail = lazy(() => import('@/pages/PriceDetail'));
+const BillingForm = lazy(() => import('@/components/billing/BillingForm'));
+const Marketplaces = lazy(() => import('@/pages/Marketplaces'));
+const MarketplaceDetail = lazy(() => import('@/pages/MarketplaceDetail'));
+const MarketplaceEdit = lazy(() => import('@/pages/MarketplaceEdit'));
+const MarketplaceCreate = lazy(() => import('@/pages/MarketplaceCreate'));
+const Consents = lazy(() => import('@/pages/Consents'));
+const PermissionTest = lazy(() => import('@/components/PermissionTest'));
+const NewPermissionExamples = lazy(() => import('@/examples/NewPermissionExamples'));
+
+// Loading component
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  </div>
+);
 
 function PermissionWrapper() {
   usePermissionFetcher();
@@ -137,7 +146,8 @@ function AppContent() {
         <QueryParamHandler />
         <PermissionWrapper />
         <RouteGuard>
-          <Routes>
+          <Suspense fallback={<LoadingSpinner />}>
+            <Routes>
           <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />} />
           <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />} />
           <Route path="/register" element={<Register />} />
@@ -457,7 +467,8 @@ function AppContent() {
                <Navigate to="/login" />
              )
            } />
-          </Routes>
+            </Routes>
+          </Suspense>
         </RouteGuard>
       </Router>
     </>

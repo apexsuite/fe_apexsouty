@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/lib/store';
 import { fetchPrivateRoutes, forceRefresh } from '@/lib/routeGuardSlice';
+import { checkAuth } from '@/lib/authSlice';
+import { fetchMyPermissions } from '@/lib/permissionSlice';
 import AccessDenied from '@/pages/AccessDenied';
 
 interface RouteGuardProps {
@@ -56,6 +58,27 @@ const RouteGuard: React.FC<RouteGuardProps> = ({ children }) => {
 
     initializePrivateRoutes();
   }, [isAuthenticated, dispatch, privateRoutes.length, loading, error]);
+
+  // Her sayfa geçişinde auth check ve permissions fetch
+  useEffect(() => {
+    if (!isAuthenticated || isPublicRoute) {
+      return;
+    }
+
+    // Her sayfa geçişinde auth check ve permissions fetch yap
+    const fetchAuthAndPermissions = async () => {
+      try {
+        await Promise.all([
+          dispatch(checkAuth()),
+          dispatch(fetchMyPermissions())
+        ]);
+      } catch (error) {
+        // Hatalar sessizce yutulur, mevcut akış devam eder
+      }
+    };
+
+    fetchAuthAndPermissions();
+  }, [location.pathname, isAuthenticated, isPublicRoute, dispatch]);
 
   useEffect(() => {
     const checkRouteAccess = () => {
