@@ -118,8 +118,6 @@ const PageFormRoute: React.FC = () => {
   };
 
   const handlePreview = () => {
-    // Preview functionality can be implemented here
-    console.log('Preview:', formData);
   };
 
 

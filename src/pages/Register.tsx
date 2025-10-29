@@ -19,18 +19,14 @@ export default function RegisterPage() {
 
   useEffect(() => {
     if (i18n.language !== lang) i18n.changeLanguage(lang);
-    // Dil değiştiğinde form'daki language alanını da güncelle
-    // setForm(prev => ({ ...prev, language: lang })); // This line was removed as per the edit hint
   }, [lang]);
 
-  // Eğer kullanıcı zaten giriş yapmışsa dashboard'a yönlendir
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/dashboard');
     }
   }, [isAuthenticated, navigate]);
 
-  // Redux'tan gelen hataları dinle
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -49,7 +45,6 @@ export default function RegisterPage() {
 
 
   const handleSubmit = async (values: any) => {
-    // Form değerlerini state'e güncelle
     // setForm(values); // This line was removed as per the edit hint
     
     if (!values.firstname || !values.lastname || !values.email || !values.password) {
@@ -69,8 +64,6 @@ export default function RegisterPage() {
       if (result.success) {
         toast.success('Successfully registered!');
         setSuccess(t("register.success"));
-        // setForm({ firstname: "", lastname: "", email: "", password: "" }); // This line was removed as per the edit hint
-        // Başarılı kayıt sonrası login sayfasına yönlendir
         setTimeout(() => {
           navigate('/');
         }, 2000);
@@ -97,7 +90,6 @@ export default function RegisterPage() {
             <Form.Item label={t("register.email")} name="email" rules={[{ required: true, message: t("register.fillAllFields") }]}> 
               <Input placeholder={t("register.email")} />
             </Form.Item>
-            {/* Dil seçimi kaldırıldı */}
             <Form.Item label={t("register.password")} name="password" rules={[{ required: true, message: t("register.fillAllFields") }]}> 
               <Input.Password placeholder={t("register.password")} />
             </Form.Item>

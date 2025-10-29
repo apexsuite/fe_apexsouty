@@ -20,8 +20,7 @@ export default function ResetPassword() {
   useEffect(() => {
     if (i18n.language !== lang) i18n.changeLanguage(lang);
   }, [lang, i18n]);
-
-  // Redux'tan gelen hataları dinle
+                  
   useEffect(() => {
     if (error) {
       toast.error(error);

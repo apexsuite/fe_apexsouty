@@ -22,7 +22,6 @@ interface AuthState {
   error: any;
 }
 
-// localStorage'dan kullanıcı bilgilerini al
 const getUserFromStorage = (): User | null => {
   if (typeof window !== 'undefined') {
     const userData = localStorage.getItem('user');
@@ -31,7 +30,6 @@ const getUserFromStorage = (): User | null => {
   return null;
 };
 
-// localStorage'dan authentication durumunu al
 const getAuthStatusFromStorage = (): boolean => {
   if (typeof window !== 'undefined') {
     const isAuth = localStorage.getItem('isAuth');
@@ -47,7 +45,6 @@ const initialState: AuthState = {
   error: null,
 };
 
-// Async thunks
 export const registerUser = createAsyncThunk(
   'auth/register',
   async (data: RegisterData) => {
@@ -55,9 +52,7 @@ export const registerUser = createAsyncThunk(
       const response = await authService.register(data);
       return response;
     } catch (error: any) {
-      // API'den gelen hata yapısını kontrol et
       if (error.data && error.data.error) {
-        // Validation hatalarını birleştir
         let errorMessage = error.data.error.message;
         if (error.data.error.validations && error.data.error.validations.length > 0) {
           const validationMessages = error.data.error.validations.map((v: any) => v.message).join(', ');
@@ -76,12 +71,10 @@ export const loginUser = createAsyncThunk(
     try {
       const response = await authService.login(data);
       
-      // Sadece başarılı response'ları kabul et
       if (!response) {
         throw new Error('No response received');
       }
       
-      // Farklı success formatlarını kontrol et
       const isSuccess = !response.error;
       if (!isSuccess) {
         throw new Error(response.message || response.error || 'Login failed');
@@ -89,9 +82,7 @@ export const loginUser = createAsyncThunk(
       
       return response;
     } catch (error: any) {
-      // API'den gelen hata yapısını kontrol et
       if (error.data && error.data.error) {
-        // Validation hatalarını birleştir
         let errorMessage = error.data.error.message;
         if (error.data.error.validations && error.data.error.validations.length > 0) {
           const validationMessages = error.data.error.validations.map((v: any) => v.message).join(', ');
@@ -110,13 +101,11 @@ export const logoutUser = createAsyncThunk(
     try {
       await authService.logout();
     } catch (error: any) {
-      // API hatası olsa bile localden çıkış yapmaya devam et
     }
     if (typeof window !== 'undefined') {
       localStorage.removeItem('isAuth');
       localStorage.removeItem('user');
     }
-    // Permission'ları da temizle
     dispatch(clearPermissions());
     return { success: true, message: 'Logged out successfully' };
   }
@@ -129,9 +118,7 @@ export const forgotPassword = createAsyncThunk(
       const response = await authService.forgotPassword(data);
       return response;
     } catch (error: any) {
-      // API'den gelen hata yapısını kontrol et
       if (error.data && error.data.error) {
-        // Validation hatalarını birleştir
         let errorMessage = error.data.error.message;
         if (error.data.error.validations && error.data.error.validations.length > 0) {
           const validationMessages = error.data.error.validations.map((v: any) => v.message).join(', ');
@@ -151,9 +138,7 @@ export const resetPassword = createAsyncThunk(
       const response = await authService.resetPassword(data);
       return response;
     } catch (error: any) {
-      // API'den gelen hata yapısını kontrol et
       if (error.data && error.data.error) {
-        // Validation hatalarını birleştir
         let errorMessage = error.data.error.message;
         if (error.data.error.validations && error.data.error.validations.length > 0) {
           const validationMessages = error.data.error.validations.map((v: any) => v.message).join(', ');
@@ -192,7 +177,6 @@ const authSlice = createSlice({
       if (state.user) {
         state.user = { ...state.user, ...action.payload };
         
-        // localStorage'ı güncelle
         if (typeof window !== 'undefined') {
           localStorage.setItem('user', JSON.stringify(state.user));
         }
@@ -200,7 +184,7 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Register
+          // Register
     builder
       .addCase(registerUser.pending, (state) => {
         state.loading = true;
@@ -212,7 +196,6 @@ const authSlice = createSlice({
           state.isAuthenticated = true;
           state.user = action.payload.user;
           
-          // localStorage'a kaydet
           if (typeof window !== 'undefined') {
             localStorage.setItem('isAuth', 'true');
             localStorage.setItem('user', JSON.stringify(action.payload.user));
@@ -234,18 +217,15 @@ const authSlice = createSlice({
         state.loading = false;
         
         
-        // Sadece başarılı response'larda authentication yap
         const isSuccess = action.payload && !action.payload.error;
         
         
         if (isSuccess) {
           state.isAuthenticated = true;
           
-          // localStorage'a isAuth ve user kaydet
           if (typeof window !== 'undefined') {
             localStorage.setItem('isAuth', 'true');
             
-            // User bilgilerini kaydet (eğer varsa)
             if ('data' in action.payload && action.payload.data && action.payload.data.user) {
               localStorage.setItem('user', JSON.stringify(action.payload.data.user));
               state.user = action.payload.data.user;
@@ -255,14 +235,13 @@ const authSlice = createSlice({
             }
           }
         } else {
-          // Başarısız response'da authentication yapma
           state.isAuthenticated = false;
           state.error = action.payload?.message || action.payload?.error || 'Login failed';
         }
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.isAuthenticated = false; // Rejected durumunda authentication false
+        state.isAuthenticated = false;
         state.error = action.error.message || 'Login failed';
       });
 
@@ -276,17 +255,14 @@ const authSlice = createSlice({
         state.user = null;
         state.loading = false;
         
-        // localStorage'dan temizle
         if (typeof window !== 'undefined') {
           localStorage.removeItem('isAuth');
           localStorage.removeItem('user');
         }
-        // i18n ile notification
         toast.success(i18n.t('notification.logoutSuccess', 'Başarıyla çıkış yapıldı!'));
       })
       .addCase(logoutUser.rejected, (state) => {
         state.loading = false;
-        // Logout başarısız olsa bile güvenlik için authentication'ı temizle
         state.isAuthenticated = false;
         state.user = null;
         if (typeof window !== 'undefined') {
@@ -331,7 +307,6 @@ const authSlice = createSlice({
       })
       .addCase(checkAuth.fulfilled, (state, action) => {
         state.loading = false;
-        // Check endpoint'inden gelen response'u işle
         const responseData = ('data' in action.payload && action.payload.data) ? action.payload.data : action.payload;
         if (responseData && (responseData as any).email) {
           state.isAuthenticated = true;
@@ -347,7 +322,6 @@ const authSlice = createSlice({
           };
           state.user = userData;
           
-          // localStorage'a isAuth ve user bilgilerini kaydet
           if (typeof window !== 'undefined') {
             localStorage.setItem('isAuth', 'true');
             localStorage.setItem('user', JSON.stringify(userData));
@@ -358,7 +332,6 @@ const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = false;
         state.user = null;
-        // localStorage'dan temizle
         if (typeof window !== 'undefined') {
           localStorage.removeItem('isAuth');
           localStorage.removeItem('user');

@@ -15,8 +15,7 @@ import { Plus, Search, Filter, X } from 'lucide-react';
 import { Card, Typography, theme, Pagination, Select, Button } from 'antd';
 import { useErrorHandler } from '@/lib/useErrorHandler';
 import PermissionGuard from '@/components/PermissionGuard';
-
-// Import components
+  
 import ProductTable from '@/components/products/ProductTable';
 import ProductDeleteModal from '@/components/products/ProductDeleteModal';
 import ProductEmptyState from '@/components/products/ProductEmptyState';
@@ -50,12 +49,10 @@ const Products: React.FC = () => {
       pageSize: pageSize || 10,
     };
 
-    // Search term'i ekle
-    if (searchTerm && searchTerm.trim() !== '') {
+      if (searchTerm && searchTerm.trim() !== '') {
       params.name = searchTerm.trim();
     }
 
-    // Filtreleri ekle
     if (filters.name && filters.name.trim() !== '') {
       params.name = filters.name.trim();
     }
@@ -74,14 +71,12 @@ const Products: React.FC = () => {
     loadProducts();
   }, [currentPageNumber, pageSize, searchTerm, filters.name, filters.unitLabel, filters.isActive]);
 
-  // Arama kelimesi değiştiğinde sayfa numarasını sıfırla
   useEffect(() => {
     if (searchTerm !== '') {
       dispatch(setCurrentPageNumber(1));
     }
   }, [searchTerm]);
 
-  // Filtreler değiştiğinde sayfa numarasını sıfırla
   useEffect(() => {
     const hasActiveFilters = 
       (filters.name && filters.name !== '') ||
@@ -181,7 +176,6 @@ const Products: React.FC = () => {
       }}
     >
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <div>
@@ -218,7 +212,6 @@ const Products: React.FC = () => {
           </div>
         </div>
 
-        {/* Search and Filters */}
         <Card
           style={{
             backgroundColor: currentTheme === 'dark' ? '#1f2937' : '#ffffff',
@@ -227,7 +220,6 @@ const Products: React.FC = () => {
           }}
         >
           <div className="flex flex-col gap-4">
-            {/* Search Bar */}
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
                 <div className="relative">
@@ -281,7 +273,6 @@ const Products: React.FC = () => {
               </Button>
             </div>
 
-            {/* Advanced Filters */}
             {showFilters && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border-t border-gray-200 dark:border-gray-700">
                 <div>
@@ -357,7 +348,6 @@ const Products: React.FC = () => {
         </Card>
 
 
-        {/* Products Table or Empty State */}
         {products.length === 0 && !loading ? (
           <div style={{ 
             backgroundColor: currentTheme === 'dark' ? '#1f2937' : '#ffffff',

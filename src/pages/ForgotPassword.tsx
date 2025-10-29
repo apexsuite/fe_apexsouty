@@ -15,7 +15,6 @@ export default function ForgotPassword() {
     const lang = useSelector((state: RootState) => state.lang.language);
     const { loading, error } = useSelector((state: RootState) => state.auth);
     
-    // Redux'tan gelen hataları dinle
     useEffect(() => {
       if (i18n.language !== lang) i18n.changeLanguage(lang);
     }, [lang, i18n]);
@@ -36,7 +35,6 @@ export default function ForgotPassword() {
         
         if (result.success) {
           toast.success('Password reset email sent successfully!');
-          // Başarılı işlem sonrası login sayfasına yönlendir
           setTimeout(() => {
             window.location.href = '/';
           }, 2000);

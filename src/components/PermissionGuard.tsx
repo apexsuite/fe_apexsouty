@@ -19,13 +19,10 @@ const PermissionGuard: React.FC<PermissionGuardProps> = ({
   const { canShowButton } = useButtonPermissions();
 
   const hasPermission = canShowButton(permission, permissionPath);
-
-  // If no permission and mode is hide, render fallback or nothing
   if (!hasPermission && mode === 'hide') {
     return <>{fallback}</>;
   }
 
-  // If no permission and mode is disable, render children as disabled
   if (!hasPermission && mode === 'disable') {
     return (
       <div className="opacity-50 pointer-events-none">
@@ -34,7 +31,6 @@ const PermissionGuard: React.FC<PermissionGuardProps> = ({
     );
   }
 
-  // If has permission, render children normally
   return <>{children}</>;
 };
 

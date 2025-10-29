@@ -43,7 +43,6 @@ export default function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen?: bo
     if (onMobileClose) onMobileClose();
   };
 
-  // Favori sırası değişince API'ye güncelleme at
   const handleFavoriteReorder = (result: DropResult) => {
     if (!result.destination) return;
     

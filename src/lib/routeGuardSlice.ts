@@ -13,7 +13,6 @@ const initialState: RouteGuardState = {
   error: null,
 };
 
-// Fetch private routes from API
 export const fetchPrivateRoutes = createAsyncThunk(
   'routeGuard/fetchPrivateRoutes',
   async (_, { rejectWithValue }) => {
@@ -23,13 +22,11 @@ export const fetchPrivateRoutes = createAsyncThunk(
         withCredentials: true,
       });
       
-      // API'den gelen response'u kontrol et ve path'leri çıkar
       const routes = response?.data || response || [];
       const paths = Array.isArray(routes) 
         ? routes.map((route: any) => route.path || route.route || route).filter(Boolean)
         : [];
       
-      console.log('📋 Private routes from API:', paths);
       return paths;
     } catch (error: any) {
       return rejectWithValue(error?.data?.message || 'Failed to fetch private routes');
@@ -47,8 +44,7 @@ const routeGuardSlice = createSlice({
     clearPrivateRoutes: (state) => {
       state.privateRoutes = [];
     },
-    forceRefresh: (state) => {
-      // This will trigger a re-fetch of private routes
+    forceRefresh: (state) => {    
       state.privateRoutes = [];
     },
   },

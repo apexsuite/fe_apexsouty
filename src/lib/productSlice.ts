@@ -199,17 +199,11 @@ const productSlice = createSlice({
         state.error = null;
       })
              .addCase(fetchProducts.fulfilled, (state, action) => {
-         console.log('fetchProducts.fulfilled - Action payload:', action.payload);
          state.loading = false;
          state.products = action.payload.data?.items || [];
          state.totalPages = action.payload.data?.pageCount || 1;
          state.totalCount = action.payload.data?.totalCount || 0;
          state.error = null;
-         console.log('State updated:', { 
-           products: state.products, 
-           totalPages: state.totalPages, 
-           totalCount: state.totalCount 
-         });
        })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;

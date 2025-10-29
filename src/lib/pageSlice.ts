@@ -82,9 +82,6 @@ const initialState: PageState = {
   restoreLoading: false,
 };
 
-// Async thunks
-
-// GET /api/page-routes - Get page route list
 export const fetchPageRoutes = createAsyncThunk(
   'page/fetchPageRoutes',
   async (params: { page?: number; limit?: number; name?: string; path?: string; component?: string; isActive?: boolean } = {}, { rejectWithValue }) => {
@@ -97,7 +94,6 @@ export const fetchPageRoutes = createAsyncThunk(
       if (params.component) queryParams.append('component', params.component);
       if (params.isActive !== undefined) queryParams.append('isActive', params.isActive.toString());
 
-      // Geçici olarak tam URL ile test edelim
       const response = await apiRequest(`/page-routes?${queryParams.toString()}`);
       return response;
     } catch (error: any) {
@@ -106,7 +102,6 @@ export const fetchPageRoutes = createAsyncThunk(
   }
 );
 
-// GET /api/page-routes/private-routes - Get private page route list
 export const fetchPrivatePageRoutes = createAsyncThunk(
   'page/fetchPrivatePageRoutes',
   async (_, { rejectWithValue }) => {
@@ -119,7 +114,6 @@ export const fetchPrivatePageRoutes = createAsyncThunk(
   }
 );
 
-// GET /api/page-routes/{page_route_id} - Get page route
 export const fetchPageRouteById = createAsyncThunk(
   'page/fetchPageRouteById',
   async (pageRouteId: string, { rejectWithValue }) => {
@@ -132,7 +126,6 @@ export const fetchPageRouteById = createAsyncThunk(
   }
 );
 
-// POST /api/page-routes - Create page route
 export const createPageRoute = createAsyncThunk(
   'page/createPageRoute',
   async (pageRouteData: {
@@ -157,7 +150,6 @@ export const createPageRoute = createAsyncThunk(
   }
 );
 
-// PUT /page-routes/{page_route_id} - Update page route
 export const updatePageRoute = createAsyncThunk(
   'page/updatePageRoute',
   async ({ pageRouteId, pageRouteData }: { 
@@ -185,7 +177,6 @@ export const updatePageRoute = createAsyncThunk(
   }
 );
 
-// DELETE /page-routes/{page_route_id} - Delete page route
 export const deletePageRoute = createAsyncThunk(
   'page/deletePageRoute',
   async (pageRouteId: string, { rejectWithValue }) => {
@@ -200,7 +191,6 @@ export const deletePageRoute = createAsyncThunk(
   }
 );
 
-// PATCH /page-routes/{page_route_id}/change-status - Change page route status
 export const changePageRouteStatus = createAsyncThunk(
   'page/changePageRouteStatus',
   async ({ pageRouteId, status }: { pageRouteId: string; status: boolean }, { rejectWithValue }) => {
@@ -216,7 +206,6 @@ export const changePageRouteStatus = createAsyncThunk(
   }
 );
 
-// PATCH /page-routes/{page_route_id}/restore - Restore page route
 export const restorePageRoute = createAsyncThunk(
   'page/restorePageRoute',
   async (pageRouteId: string, { rejectWithValue }) => {

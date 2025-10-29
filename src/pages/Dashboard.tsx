@@ -4,8 +4,10 @@ import { useTranslation } from "react-i18next";
 import FavoriteServicesBar from "@/components/FavoriteServicesBar";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@/lib/store";
+import { validateAmazonConsent } from "@/lib/consentSlice";
+import { useErrorHandler } from "@/lib/useErrorHandler";
 
 interface Resource {
   name: string;
@@ -21,10 +23,11 @@ export default function Dashboard() {
   const [isMobile, setIsMobile] = useState(false);
   const [openCard, setOpenCard] = useState<string | null>(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const { handleError, showSuccess } = useErrorHandler();
 
   useEffect(() => {
-    // Authentication kontrolü
     if (!isAuthenticated) {
       navigate("/");
       return;
@@ -42,6 +45,40 @@ export default function Dashboard() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Senaryo 2: Amazon callback validate - Dashboard'a geldiğinde kontrol et
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    
+    try {
+      const raw = localStorage.getItem('pendingAmazonValidateParams');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && (parsed.state || parsed.selling_partner_id || parsed.spapi_oauth_code)) {
+          dispatch<any>(validateAmazonConsent({
+            state: parsed.state || '',
+            selling_partner_id: parsed.selling_partner_id || '',
+            spapi_oauth_code: parsed.spapi_oauth_code || '',
+          }))
+          .unwrap()
+          .then(() => {
+            // Başarılı olursa sessizce devam et
+            showSuccess('consentValidationSuccess');
+          })
+          .catch((err: any) => {
+            // Hata varsa uyarı mesajı göster
+            handleError(err);
+          })
+          .finally(() => {
+            localStorage.removeItem('pendingAmazonValidateParams');
+          });
+        }
+      }
+    } catch (e) {
+      console.error('Error parsing pendingAmazonValidateParams:', e);
+      localStorage.removeItem('pendingAmazonValidateParams');
+    }
+  }, [isAuthenticated, dispatch, handleError, showSuccess]);
 
   if (!isAuthenticated) {
     return (

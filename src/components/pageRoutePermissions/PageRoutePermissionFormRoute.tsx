@@ -37,10 +37,9 @@ const PageRoutePermissionFormRoute: React.FC = () => {
       dispatch(fetchPermissionById(permissionId));
     }
 
-    // Load page routes for dropdown
     dispatch(fetchPageRoutes({
       page: 1,
-      limit: 100, // Get all page routes
+      limit: 100, 
       name: '',
     }));
 
@@ -59,7 +58,6 @@ const PageRoutePermissionFormRoute: React.FC = () => {
         pageRouteId: currentPermission.pageRouteId || pageRouteId || '',
       });
     } else if (!isEditing && pageRouteId) {
-      // If creating new permission and pageRouteId is provided in URL, set it
       setFormData(prev => ({
         ...prev,
         pageRouteId: pageRouteId,
@@ -67,23 +65,15 @@ const PageRoutePermissionFormRoute: React.FC = () => {
     }
   }, [currentPermission, isEditing, pageRouteId]);
 
-  // Debug: Log the current state
   useEffect(() => {
-    console.log('=== PAGE ROUTES DEBUG ===');
-    console.log('pageRoutes:', pageRoutes);
-    console.log('pageRoutes length:', pageRoutes?.length);
-    console.log('isDisabled:', !pageRoutes || pageRoutes.length === 0);
-    console.log('========================');
+    
   }, [isEditing, currentPermission, formData.pageRouteId, pageRoutes]);
 
-  // Ensure pageRouteId is set when both currentPermission and pageRoutes are available
   useEffect(() => {
     if (isEditing && currentPermission && pageRoutes && pageRoutes.length > 0) {
-      // Check if the current pageRouteId is valid
       const isValidPageRoute = pageRoutes.some((route: any) => route.id === currentPermission.pageRouteId);
       
       if (isValidPageRoute) {
-        console.log('Setting pageRouteId from currentPermission:', currentPermission.pageRouteId);
         setFormData(prev => ({
           ...prev,
           pageRouteId: currentPermission.pageRouteId,
@@ -95,12 +85,6 @@ const PageRoutePermissionFormRoute: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     
-    console.log('=== HANDLE INPUT CHANGE DEBUG ===');
-    console.log('name:', name);
-    console.log('value:', value);
-    console.log('type:', type);
-    console.log('Current formData.pageRouteId:', formData.pageRouteId);
-    console.log('================================');
     
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
@@ -114,7 +98,6 @@ const PageRoutePermissionFormRoute: React.FC = () => {
           ...prev,
           [name]: value,
         };
-        console.log('New formData:', newData);
         return newData;
       });
     }
@@ -133,16 +116,13 @@ const PageRoutePermissionFormRoute: React.FC = () => {
         })).unwrap();
         showSuccess('permissionUpdatedSuccessfully');
       } else {
-        // Create permission için pageRouteId parametresi gerekli
         await dispatch(createPermission({ 
           pageRouteId: formData.pageRouteId,
           permissionData: formData 
         })).unwrap();
         showSuccess('permissionCreatedSuccessfully');
-        // Create işleminden sonra ana sayfaya dön
         navigate('/page-route-permissions');
       }
-      // Edit işleminde sayfada kal
     } catch (error) {
       handleError(error);
     } finally {
@@ -165,7 +145,6 @@ const PageRoutePermissionFormRoute: React.FC = () => {
   return (
     <div className={`p-6 min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className="w-full px-8 mx-auto">
-        {/* Header */}
         <div className="mb-6">
           <button
             onClick={handleBack}
@@ -190,9 +169,7 @@ const PageRoutePermissionFormRoute: React.FC = () => {
         </div>
 
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Basic Information */}
           <div className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-sm p-6 border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
             <h2 className={`text-lg font-semibold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               {t('pages.pageRoutePermissions.basicInfo')}
@@ -300,7 +277,6 @@ const PageRoutePermissionFormRoute: React.FC = () => {
             </div>
           </div>
 
-          {/* Form Actions */}
           <div className="flex justify-end gap-3">
             <button
               type="button"

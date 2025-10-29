@@ -119,12 +119,7 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
   };
 
   const handleUnassignPermission = async (permissionId: string) => {
-    console.log('=== UNASSIGN DEBUG ===');
-    console.log('Unassigning permission ID:', permissionId);
-    console.log('Current localPermissions:', localPermissions);
-    
     try {
-      // API'ye istek at - rolePermissionId'yi bul
       const rolePermission = localPermissions.find(p => 
         p.permissionId === permissionId || 
         p.permission?.id === permissionId || 
@@ -132,7 +127,6 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
       );
       
       if (rolePermission) {
-        // Gerçek rolePermissionId'yi kullan (API'den gelen)
         const rolePermissionId = rolePermission.rolePermissionID || rolePermission.id;
         
         if (rolePermissionId) {
@@ -141,7 +135,6 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
             rolePermissionId: rolePermissionId
           })).unwrap();
           
-          // Başarılı olursa parent component'ten refresh yap
           if (onRefresh) {
             onRefresh();
           }
@@ -222,12 +215,6 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
             danger
             icon={<Trash2 size={16} />}
             onClick={() => {
-              console.log('=== RECORD DEBUG ===');
-              console.log('record:', record);
-              console.log('record.permissionId:', record.permissiınId);
-              console.log('record.permission?.id:', record.permission?.id);
-              console.log('record.id:', record.id);
-              console.log('==================');
               handleUnassignPermission(record.permissionId || record.permission?.id || record.id);
             }}
             size="small"
@@ -239,7 +226,6 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
     },
   ];
 
-  // Mobile Card Component
   const PermissionCard: React.FC<{ permission: any }> = ({ permission }) => {
     const isExpanded = openCard === permission.permissionId;
     
@@ -343,7 +329,6 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
 
   return (
     <div className="space-y-2 md:space-y-4">
-      {/* Header */}
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2">
         <div className="flex items-center gap-2">
           <h3 className={`text-sm md:text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
@@ -351,7 +336,6 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
           </h3>
           <Tag color="blue" style={{ fontSize: '10px', padding: '0 6px', lineHeight: '18px' }}>{localPermissions.length}</Tag>
         </div>
-        {/* Filter Input */}
         <div className="w-full sm:w-72">
           <Input
             placeholder={t('permissions.searchPermissions') || 'Search by name, description or label...'}
@@ -374,8 +358,8 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
             icon={<Plus size={14} />}
             onClick={() => {
               setShowPermissionModal(true);
-              setSelectedPermissions([]); // Clear previous selections
-              setPermissionSearchTerm(''); // Clear search term
+              setSelectedPermissions([]);
+              setPermissionSearchTerm('');
               loadAllPermissions();
             }}
             loading={isAssigning}
@@ -391,7 +375,6 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
 
     
 
-      {/* Permissions Table or Cards */}
       {isMobile ? (
         <>
           <div>
@@ -411,7 +394,6 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
             )}
           </div>
 
-          {/* Mobile Pagination */}
           {filteredPermissions.length > 0 && (
             <div className="flex justify-center mt-3">
               <Pagination
@@ -450,7 +432,6 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
             />
           </div>
 
-          {/* Desktop Pagination */}
           {filteredPermissions.length > 0 && (
             <div className="flex justify-center mt-4">
               <Pagination
@@ -467,7 +448,6 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
         </>
       )}
 
-      {/* Permission Selection Modal */}
       <Modal
         title={t('pages.selectPermissionsToAssign')}
         open={showPermissionModal}
@@ -499,7 +479,6 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
         }}
       >
         <div className="space-y-4">
-          {/* Search */}
           <div className="relative">
             <Input
               placeholder={t('pages.searchPermissions')}
@@ -515,7 +494,6 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
             />
           </div>
 
-          {/* Available Permissions Table */}
           <div className={`max-h-96 overflow-y-auto ${theme === 'dark' ? 'dark-modal' : ''}`}>
             {availablePermissions.length > 0 ? (
               <Table
@@ -589,7 +567,6 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
             )}
           </div>
 
-          {/* Selected Count */}
           {selectedPermissions.length > 0 && (
             <div className={`p-3 rounded-lg ${theme === 'dark' ? 'bg-blue-900/20' : 'bg-blue-50'} border border-blue-200`}>
               <p className={`text-sm ${theme === 'dark' ? 'text-blue-300' : 'text-blue-700'}`}>

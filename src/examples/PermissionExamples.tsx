@@ -3,10 +3,6 @@ import PermissionButton from '@/components/PermissionButton';
 import PermissionGuard from '@/components/PermissionGuard';
 import { usePermissions, useResourcePermissions } from '@/lib/usePermissions';
 
-/**
- * Permission sistemi kullanım örnekleri
- * Bu dosya permission-based UI rendering'in nasıl kullanılacağını gösterir
- */
 const PermissionExamples: React.FC = () => {
   const { permissions, loading } = usePermissions();
   const productPermissions = useResourcePermissions('products');
@@ -15,14 +11,12 @@ const PermissionExamples: React.FC = () => {
     <div className="p-6 space-y-8">
       <h1 className="text-2xl font-bold mb-6">Permission System Examples</h1>
 
-      {/* 1. Basic Permission Button */}
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">1. Basic Permission Button</h2>
         <div className="flex gap-4">
           <PermissionButton
             permission="product.create"
             variant="primary"
-            onClick={() => console.log('Create product')}
           >
             Create Product
           </PermissionButton>
@@ -30,14 +24,12 @@ const PermissionExamples: React.FC = () => {
           <PermissionButton
             permission="product.delete"
             variant="danger"
-            onClick={() => console.log('Delete product')}
           >
             Delete Product
           </PermissionButton>
         </div>
       </section>
-
-      {/* 2. Permission with Path */}
+          
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">2. Permission with Path</h2>
         <div className="flex gap-4">
@@ -45,7 +37,6 @@ const PermissionExamples: React.FC = () => {
             permission="user.manage"
             permissionPath="/users"
             variant="success"
-            onClick={() => console.log('Manage users')}
           >
             Manage Users
           </PermissionButton>
@@ -54,18 +45,15 @@ const PermissionExamples: React.FC = () => {
             permission="report.generate"
             permissionPath="/reports"
             variant="warning"
-            onClick={() => console.log('Generate report')}
           >
             Generate Report
           </PermissionButton>
         </div>
       </section>
 
-      {/* 3. Permission Guard */}
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">3. Permission Guard (Hide/Disable)</h2>
         
-        {/* Hide mode */}
         <div className="space-y-2">
           <h3 className="font-medium">Hide Mode (default)</h3>
           <PermissionGuard permission="admin.access" mode="hide">
@@ -75,7 +63,6 @@ const PermissionExamples: React.FC = () => {
           </PermissionGuard>
         </div>
 
-        {/* Disable mode */}
         <div className="space-y-2">
           <h3 className="font-medium">Disable Mode</h3>
           <PermissionGuard permission="premium.feature" mode="disable">
@@ -86,7 +73,6 @@ const PermissionExamples: React.FC = () => {
         </div>
       </section>
 
-      {/* 4. Resource-based Permissions */}
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">4. Resource-based Permissions</h2>
         <div className="grid grid-cols-2 gap-4">
@@ -146,7 +132,6 @@ const PermissionExamples: React.FC = () => {
         </div>
       </section>
 
-      {/* 5. Loading State */}
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">5. Loading State</h2>
         <PermissionButton
@@ -158,7 +143,6 @@ const PermissionExamples: React.FC = () => {
         </PermissionButton>
       </section>
 
-      {/* 6. Fallback Content */}
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">6. Fallback Content</h2>
         <PermissionButton
@@ -174,7 +158,6 @@ const PermissionExamples: React.FC = () => {
         </PermissionButton>
       </section>
 
-      {/* 7. Current Permissions Debug */}
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">7. Current Permissions (Debug)</h2>
         <div className="bg-gray-100 p-4 rounded-lg">

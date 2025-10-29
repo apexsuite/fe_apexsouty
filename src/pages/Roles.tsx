@@ -16,12 +16,10 @@ import { Card, Pagination, Select, Button } from 'antd';
 import { useErrorHandler } from '@/lib/useErrorHandler';
 import PermissionGuard from '@/components/PermissionGuard';
 
-// Import components
 import RoleTable from '@/components/roles/RoleTable';
 import RoleEmptyState from '@/components/roles/RoleEmptyState';
 import RoleDeleteModal from '@/components/roles/RoleDeleteModal';
 
-// const { Title, Paragraph } = Typography; // Removed unused imports
 
 const Roles: React.FC = () => {
   const { t } = useTranslation();
@@ -50,14 +48,12 @@ const Roles: React.FC = () => {
     loadRoles();
   }, [currentPageNumber, pageSize, searchTerm, filters.name, filters.isDefault, filters.isActive]);
 
-  // Arama kelimesi değiştiğinde sayfa numarasını sıfırla
   useEffect(() => {
     if (searchTerm !== '' || selectedRoleValue !== 'all') {
       dispatch(setCurrentPageNumber(1));
     }
   }, [searchTerm, selectedRoleValue]);
 
-  // Filtreler değiştiğinde sayfa numarasını sıfırla
   useEffect(() => {
     const hasActiveFilters = 
       (filters.name && filters.name !== '') ||
@@ -75,12 +71,10 @@ const Roles: React.FC = () => {
       pageSize: pageSize,
     };
 
-    // Search term'i ekle
     if (searchTerm && searchTerm.trim() !== '') {
       params.name = searchTerm.trim();
     }
 
-    // Filtreleri ekle
     if (filters.name && filters.name.trim() !== '') {
       params.name = filters.name.trim();
     }
@@ -182,7 +176,6 @@ const Roles: React.FC = () => {
       }}
     >
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <div>
@@ -219,7 +212,6 @@ const Roles: React.FC = () => {
           </div>
         </div>
 
-        {/* Search and Filters */}
         <Card
           style={{
             backgroundColor: currentTheme === 'dark' ? '#1f2937' : '#ffffff',
@@ -228,7 +220,6 @@ const Roles: React.FC = () => {
           }}
         >
           <div className="flex flex-col gap-4">
-            {/* Search Bar */}
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
                 <div className="relative">
@@ -281,8 +272,7 @@ const Roles: React.FC = () => {
                 )}
               </Button>
             </div>
-
-            {/* Advanced Filters */}
+                    
             {showFilters && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border-t border-gray-200 dark:border-gray-700">
                 <div>

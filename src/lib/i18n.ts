@@ -2,12 +2,10 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 const getInitialLang = () => {
-  // Server-side rendering sırasında default değer döndür
   if (typeof window === 'undefined') {
     return 'en';
   }
   
-  // Client-side'da localStorage'dan al
   try {
     return localStorage.getItem('lang') || 'en';
   } catch {
@@ -279,9 +277,6 @@ const resources = {
         searchPlaceholder: 'Search roles...',
         allRoleValues: 'All Role Values',
         search: 'Search',
-        enterName: 'Enter name',
-        selectStatus: 'Select status',
-        filters: 'Filters',
         roleValue1: 'Role Value 1',
         roleValue2: 'Role Value 2',
         roleValue3: 'Role Value 3',
@@ -338,7 +333,6 @@ const resources = {
         allCategories: 'All Categories',
         blog: 'Blog',
         help: 'Help',
-        searchFilter:"Filter",
         about: 'About',
         contact: 'Contact',
         view: 'View',
@@ -536,7 +530,6 @@ const resources = {
       },
       product: {
         title: 'Products',
-        filters: 'Filters',
         enterUnitLabel: 'Enter unit label',
         selectStatus: 'Select status',
         create: 'Create Product',
@@ -609,7 +602,6 @@ const resources = {
       },
       consents: {
         title: 'Consents',
-        filters: 'Filters',
         enterMarketplace: 'Enter marketplace',
         enterMarketplaceURL: 'Enter marketplace URL',
         selectStatus: 'Select status',
@@ -664,7 +656,7 @@ const resources = {
       },
       marketplace: {
         title: 'Marketplaces',
-        filters: 'Filtre',
+        
         enterMarketplace: 'Enter marketplace',
         enterMarketplaceURL: 'Enter marketplace URL',
         selectStatus: 'Select status',
@@ -777,6 +769,7 @@ const resources = {
         updatedAt: 'Updated At',
         quickActions: 'Quick Actions',
         clearFilters: 'Clear Filters',
+        loading: 'Loading...',
       },
       pagination: {
         showing: 'Showing {{start}} to {{end}} of {{total}} items',
@@ -1053,7 +1046,7 @@ const resources = {
         enterName: 'Rol adı girin',
         selectStatus: 'Durum seçin',
         selectIsDefault: 'Varsayılan seçin',
-        filters: 'Filtreler',
+        
         searchPlaceholder: 'Rol ara...',  
         deleteConfirmMessage: 'Rolü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
         noDescription: 'Açıklama sağlanmamış.',
@@ -1127,12 +1120,12 @@ const resources = {
         newPage: 'Yeni Sayfa',
         permissions: 'İzin',
         searchPages: 'Sayfa ara...',
-        filters: 'Filtreler',
+        
         categories: 'Kategoriler',
         allCategories: 'Tüm Kategoriler',
         blog: 'Blog',
         help: 'Yardım',
-        searchFilter:"Filtre",
+        
         about: 'Hakkımızda',
         contact: 'İletişim',
         view: 'Görüntüle',
@@ -1403,7 +1396,7 @@ const resources = {
       },
       consents: {
         title: 'Onaylar',
-        filters: 'Filtreler',
+        
         enterMarketplace: 'Marketplace girin',
         enterMarketplaceURL: 'Marketplace URL girin',
         selectStatus: 'Durum seçin',
@@ -1570,6 +1563,7 @@ const resources = {
         updatedAt: 'Güncellenme Tarihi',
         quickActions: 'Hızlı İşlemler',
         clearFilters: 'Filtreleri Temizle',
+        loading: 'Yükleniyor...',
       },
       pagination: {
         showing: '{{start}} - {{end}} arası {{total}} öğe gösteriliyor',

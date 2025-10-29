@@ -5,8 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { AppDispatch, RootState } from '@/lib/store';
 import { 
   fetchConsents, 
-  changeConsentStatus, 
-  clearError,
+  requestConsentCallback, 
   setCurrentPageNumber,
   setPageSize
 } from '@/lib/consentSlice';
@@ -28,7 +27,7 @@ const Consents: React.FC = () => {
   const { } = theme.useToken();
   const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
   const { consents, loading, currentPageNumber, pageSize, totalPages, totalCount } = useSelector((state: RootState) => state.consent);
-  const { handleError, showSuccess } = useErrorHandler();
+  const { handleError } = useErrorHandler();
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     marketplace: '',
@@ -78,27 +77,27 @@ const Consents: React.FC = () => {
     dispatch(setCurrentPageNumber(page));
   };
 
-  const handlePageSizeChange = (current: number, size: number) => {
+  const handlePageSizeChange = (_current: number, size: number) => {
     dispatch(setPageSize(size));
     dispatch(setCurrentPageNumber(1));
   };
 
 
-  const handleStatusChange = async (consentId: string, status: boolean) => {
-    try {
-      await dispatch(changeConsentStatus({ consentId, status })).unwrap();
-      showSuccess('consentStatusChangedSuccessfully');
-      loadConsents();
-    } catch (error: any) {
-      handleError(error);
-    }
-  };
 
   const handleAuthorizeConsent = async (consentId: string) => {
     try {
-      await dispatch(changeConsentStatus({ consentId, status: true })).unwrap();
-      showSuccess('consentAuthorizedSuccessfully');
-      loadConsents();
+      const response = await dispatch(requestConsentCallback(consentId)).unwrap();
+      
+      // Response'dan URL'i al ve yönlendir
+      const redirectUrl = response?.url || response?.data?.url || response?.redirectUrl || response?.data?.redirectUrl || response;
+      
+      if (redirectUrl && typeof redirectUrl === 'string') {
+        // URL'e yönlendir
+        window.location.href = redirectUrl;
+      } else {
+        // URL bulunamadıysa hata göster
+        handleError({ message: 'Authorization URL not found in response' });
+      }
     } catch (error: any) {
       handleError(error);
     }
@@ -274,7 +273,6 @@ const Consents: React.FC = () => {
             <ConsentTable
               consents={consents}
               loading={loading}
-              onStatusChange={handleStatusChange}
               onAuthorize={handleAuthorizeConsent}
             />
             

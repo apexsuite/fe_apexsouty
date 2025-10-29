@@ -49,7 +49,6 @@ export default function SearchBar({ onSearch, placeholder = "Ara...", minimal = 
 
   const dispatchRedux = useDispatch<AppDispatch>();
   const handleFavorite = (pageRouteID: string, isCurrentlyFavorite: boolean) => {
-    // Eğer zaten favori ise istek atma
     if (isCurrentlyFavorite) {
       return;
     }

@@ -35,14 +35,12 @@ const PageRoutePermissionsRoute: React.FC = () => {
     loadPermissions();
   }, [pageRouteId, currentPageNumber, pageSize, searchTerm, filters.name, filters.label, filters.isActive]);
 
-  // Arama veya filtreler değiştiğinde sayfa numarasını sıfırla
   useEffect(() => {
     if (searchTerm !== '') {
       dispatch(setCurrentPageNumber(1));
     }
   }, [searchTerm]);
-
-  // Filtreler değiştiğinde sayfa numarasını sıfırla
+        
   useEffect(() => {
     const hasActiveFilters = 
       (filters.name && filters.name !== '') ||
@@ -60,12 +58,10 @@ const PageRoutePermissionsRoute: React.FC = () => {
       pageSize: pageSize,
     };
 
-    // Search term'i name parametresi olarak ekle
     if (searchTerm && searchTerm.trim() !== '') {
       params.name = searchTerm.trim();
     }
 
-    // Filtreleri API'ye ekle
     if (filters.name && filters.name.trim() !== '') {
       params.name = filters.name.trim();
     }
@@ -104,10 +100,10 @@ const PageRoutePermissionsRoute: React.FC = () => {
     try {
       await dispatch(deletePermissionDirect(permissionId)).unwrap();
       showSuccess('permissionDeletedSuccessfully');
-      loadPermissions(); // Refresh the list
+      loadPermissions();
     } catch (error: any) {
       handleError(error);
-      throw error; // Re-throw to let the table component handle loading state
+      throw error;
     }
   };
 
@@ -310,7 +306,6 @@ const PageRoutePermissionsRoute: React.FC = () => {
         </div>
 
 
-        {/* Permissions Table */}
         <div style={{ 
           backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
           border: `1px solid ${theme === 'dark' ? '#374151' : '#e5e7eb'}`,
@@ -326,7 +321,6 @@ const PageRoutePermissionsRoute: React.FC = () => {
           />
         </div>
 
-        {/* Empty State */}
         {!loading && permissions.length === 0 && (
           <div className="text-center py-12">
             <div className={`mx-auto w-24 h-24 rounded-full flex items-center justify-center mb-4 transition-colors duration-200 ${

@@ -6,16 +6,17 @@ import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "@/lib/store";
 import { loginUser, clearError, checkAuth } from "@/lib/authSlice";
+import { requestAmazonConsentCallback } from "@/lib/consentSlice";
 import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
+import { useErrorHandler } from "@/lib/useErrorHandler";
 
 export default function Login() {
   const { t, i18n } = useTranslation();
   const lang = useSelector((state: RootState) => state.lang.language);
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     if (typeof window !== 'undefined') {
-      // Sadece token ve user varsa authenticated
       const token = localStorage.getItem('token');
       const user = localStorage.getItem('user');
       return !!(token && user);
@@ -25,6 +26,7 @@ export default function Login() {
   const { loading, error } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const { handleError } = useErrorHandler();
 
   useEffect(() => {
     if (i18n.language !== lang) i18n.changeLanguage(lang);
@@ -35,7 +37,6 @@ export default function Login() {
 
 
 
-  // Redux'tan gelen hataları dinle
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -52,11 +53,9 @@ export default function Login() {
         password: values.password
       };
       
-      // Login işlemini yap
       const loginResult = await dispatch(loginUser(loginData)).unwrap();
       
       
-      // Sadece başarılı login sonrası işlem yap
       const isSuccess = loginResult && !loginResult.error;
       
       
@@ -64,18 +63,71 @@ export default function Login() {
         toast.success(t('notification.success'));
         
         try {
-          // Kullanıcı bilgilerini al
           await dispatch(checkAuth()).unwrap();
-          navigate("/dashboard");
           setIsAuthenticated(true);
+          
+          const pendingCallbackParams = localStorage.getItem('pendingAmazonCallbackParams');
+          if (pendingCallbackParams) {
+            try {
+              const params = JSON.parse(pendingCallbackParams);
+              if (params.amazonCallbackUri && params.amazonState && params.sellingPartnerId) {
+                const response = await dispatch(requestAmazonConsentCallback({
+                  amazonCallbackUri: params.amazonCallbackUri,
+                  amazonState: params.amazonState,
+                  sellingPartnerId: params.sellingPartnerId,
+                })).unwrap();
+                
+                const redirectUrl = response?.url || response?.data?.url || response?.redirectUrl || response?.data?.redirectUrl || response;
+                if (redirectUrl && typeof redirectUrl === 'string') {
+                  localStorage.removeItem('pendingAmazonCallbackParams');
+                  window.location.href = redirectUrl;
+                  return;
+                } else {
+                  handleError({ message: 'Authorization URL not found in response' });
+                  localStorage.removeItem('pendingAmazonCallbackParams');
+                }
+              }
+            } catch (parseError) {
+              console.error('Error parsing pendingAmazonCallbackParams:', parseError);
+              localStorage.removeItem('pendingAmazonCallbackParams');
+            }
+          }
+          
+          navigate("/dashboard");
         } catch (checkError) {
           console.error('CheckAuth failed after login:', checkError);
-          // CheckAuth başarısız olsa bile login başarılıysa dashboard'a git
+          
+          const pendingCallbackParams = localStorage.getItem('pendingAmazonCallbackParams');
+          if (pendingCallbackParams) {
+            try {
+              const params = JSON.parse(pendingCallbackParams);
+              if (params.amazonCallbackUri && params.amazonState && params.sellingPartnerId) {
+                const response = await dispatch(requestAmazonConsentCallback({
+                  amazonCallbackUri: params.amazonCallbackUri,
+                  amazonState: params.amazonState,
+                  sellingPartnerId: params.sellingPartnerId,
+                })).unwrap();
+                
+                const redirectUrl = response?.url || response?.data?.url || response?.redirectUrl || response?.data?.redirectUrl || response;
+                if (redirectUrl && typeof redirectUrl === 'string') {
+                  localStorage.removeItem('pendingAmazonCallbackParams');
+                  window.location.href = redirectUrl;
+                  return;
+                } else {
+                  handleError({ message: 'Authorization URL not found in response' });
+                  localStorage.removeItem('pendingAmazonCallbackParams');
+                }
+              }
+            } catch (parseError) {
+              console.error('Error parsing pendingAmazonCallbackParams:', parseError);
+              localStorage.removeItem('pendingAmazonCallbackParams');
+            }
+          }
+          
           navigate("/dashboard");
           setIsAuthenticated(true);
         }
       } else {
-        // Login başarısız
         toast.error(loginResult?.message || loginResult?.error || "Login failed");
       }
     } catch (error: any) {

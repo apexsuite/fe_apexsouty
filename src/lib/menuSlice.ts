@@ -63,7 +63,6 @@ export const addFavorite = createAsyncThunk(
         body: JSON.stringify({ pageRouteID }),
         withCredentials: true,
       });
-      // Favori ekledikten sonra favori listesini ve menü listesini güncelle
       await dispatch(fetchFavorites() as any);
       await dispatch(fetchMenu() as any);
       return pageRouteID;
@@ -103,7 +102,6 @@ export const deleteFavorite = createAsyncThunk(
         method: 'DELETE',
         withCredentials: true,
       });
-      // Favori silindikten sonra favori listesini ve menü listesini güncelle
       await dispatch(fetchFavorites() as any);
       await dispatch(fetchMenu() as any);
       return favouriteId;
@@ -113,7 +111,6 @@ export const deleteFavorite = createAsyncThunk(
   }
 );
 
-// Favori sırasını güncelleyen thunk - sadece kaydırılan menünün yeni pozisyonunu günceller
 export const updateFavoriteOrder = createAsyncThunk(
   'menu/updateFavoriteOrder',
   async (payload: { 
@@ -122,7 +119,6 @@ export const updateFavoriteOrder = createAsyncThunk(
     newOrder: number 
   }, { rejectWithValue }) => {
     try {
-      // Sadece kaydırılan menünün yeni pozisyonunu güncelle
       await apiRequest(`/navigations/favourites/${payload.favouriteId}`, {
         method: 'PUT',
         body: JSON.stringify({ 

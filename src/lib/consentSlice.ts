@@ -69,7 +69,68 @@ export const fetchConsents = createAsyncThunk(
   }
 );
 
-// Change consent status
+// Request consent callback - For consent table authorize button
+export const requestConsentCallback = createAsyncThunk(
+  'consent/requestConsentCallback',
+  async (marketplaceId: string, { rejectWithValue }) => {
+    try {
+      const response = await apiRequest('/amazon/consents/callback', {
+        method: 'POST',
+        body: JSON.stringify({ marketplaceId }),
+      });
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+// Amazon consent callback - Senaryo 1: Ürün yetkilendirme başlatma
+export const requestAmazonConsentCallback = createAsyncThunk(
+  'consent/requestAmazonConsentCallback',
+  async (
+    params: { amazonCallbackUri: string; amazonState: string; sellingPartnerId: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await apiRequest('/amazon/consents/callback', {
+        method: 'POST',
+        body: JSON.stringify({
+          amazonCallbackUri: params.amazonCallbackUri,
+          amazonState: params.amazonState,
+          sellingPartnerId: params.sellingPartnerId,
+        }),
+      });
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+// Amazon consent validate - Senaryo 2: Amazon callback validate
+export const validateAmazonConsent = createAsyncThunk(
+  'consent/validateAmazonConsent',
+  async (
+    params: { state: string; selling_partner_id: string; spapi_oauth_code: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await apiRequest('/amazon/consents/validate', {
+        method: 'POST',
+        body: JSON.stringify({
+          state: params.state,
+          sellingPartnetId: params.selling_partner_id,
+          spapiOauthCode: params.spapi_oauth_code,
+        }),
+      });
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 export const changeConsentStatus = createAsyncThunk(
   'consent/changeConsentStatus',
   async ({ consentId, status }: ChangeConsentStatusRequest, { rejectWithValue }) => {

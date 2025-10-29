@@ -4,10 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { AppDispatch, RootState } from './store';
 import { fetchMyPermissions } from './permissionSlice';
 
-/**
- * Page-specific permission fetcher hook
- * Her sayfa için permission'ları günceller
- */
+
 export const usePagePermissions = () => {
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
@@ -18,12 +15,10 @@ export const usePagePermissions = () => {
   const isInitializedRef = useRef<boolean>(false);
 
   useEffect(() => {
-    // Eğer kullanıcı authenticate değilse, hiçbir şey yapma
     if (!isAuthenticated) {
       return;
     }
 
-    // Public routes'da permission fetch yapma
     const publicRoutes = [
       '/login',
       '/register', 
@@ -39,18 +34,15 @@ export const usePagePermissions = () => {
       return;
     }
 
-    // Route değişti mi kontrol et
     const currentRoute = location.pathname;
     const hasRouteChanged = lastRouteRef.current !== currentRoute;
     
-    // İlk yükleme değilse ve route değiştiyse
     if (isInitializedRef.current && hasRouteChanged && !loading) {
-      // Son fetch'ten en az 10 saniye geçmiş mi kontrol et
       const timeSinceLastFetch = lastFetched ? Date.now() - lastFetched : Infinity;
       const shouldFetch = timeSinceLastFetch > 10 * 1000; // 10 seconds
       
       if (shouldFetch) {
-        console.log('🔄 Fetching permissions for new route...', {
+        console.log({
           from: lastRouteRef.current,
           to: currentRoute,
           timeSinceLastFetch: Math.round(timeSinceLastFetch / 1000) + 's'
@@ -59,8 +51,7 @@ export const usePagePermissions = () => {
         lastRouteRef.current = currentRoute;
         dispatch(fetchMyPermissions());
       }
-    } else if (!isInitializedRef.current) {
-      // İlk yükleme
+    } else if (!isInitializedRef.current) { 
       lastRouteRef.current = currentRoute;
       isInitializedRef.current = true;
     }

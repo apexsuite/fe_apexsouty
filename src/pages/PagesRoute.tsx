@@ -24,18 +24,14 @@ const PagesRoute: React.FC = () => {
   const theme = useSelector((state: RootState) => state.theme.theme);
   const { handleError, showSuccess } = useErrorHandler();
   
-  // Tema değişikliğini zorlamak için key kullan
   const themeKey = theme === 'light' ? 'light' : 'dark';
   
-  // Tema değişikliğini dinle
   useEffect(() => {
   }, [theme]);
   
-  // Redux store'u kontrol et
   useEffect(() => {
     const unsubscribe = store.subscribe(() => {
       const currentTheme = store.getState().theme.theme;
-      console.log('Store theme changed to:', currentTheme);
     });
     
     return () => unsubscribe();
@@ -55,14 +51,12 @@ const PagesRoute: React.FC = () => {
     loadPages();
   }, [currentPageNumber, pageSize, searchTerm, filters.name, filters.path, filters.component, filters.isActive]);
 
-  // Arama kelimesi değiştiğinde sayfa numarasını sıfırla
   useEffect(() => {
     if (searchTerm !== '') {
       dispatch(setCurrentPageNumber(1));
     }
   }, [searchTerm]);
 
-  // Filtreler değiştiğinde sayfa numarasını sıfırla
   useEffect(() => {
     const hasActiveFilters = 
       (filters.name && filters.name !== '') ||
@@ -81,12 +75,10 @@ const PagesRoute: React.FC = () => {
       limit: pageSize,
     };
 
-    // Search term'i ekle
     if (searchTerm && searchTerm.trim() !== '') {
       params.name = searchTerm.trim();
     }
 
-    // Filtreleri ekle
     if (filters.name && filters.name.trim() !== '') {
       params.name = filters.name.trim();
     }
@@ -145,10 +137,10 @@ const PagesRoute: React.FC = () => {
     try {
       await dispatch(deletePageRoute(pageId)).unwrap();
       showSuccess('pageDeletedSuccessfully');
-      loadPages(); // Refresh the list
+      loadPages();
     } catch (error: any) {
       handleError(error);
-      throw error; // Re-throw to let the table component handle loading state
+      throw error;
     }
   };
 
@@ -160,18 +152,15 @@ const PagesRoute: React.FC = () => {
       })).unwrap();
       showSuccess('pageStatusChangedSuccessfully');
       
-      // Status değişikliği sonrası verileri yeniden yükle - mevcut filtreleri koru
       const params: any = {
         page: currentPageNumber,
         limit: pageSize,
       };
 
-      // Search term'i ekle
       if (searchTerm && searchTerm.trim() !== '') {
         params.name = searchTerm.trim();
       }
 
-      // Filtreleri ekle
       if (filters.name && filters.name.trim() !== '') {
         params.name = filters.name.trim();
       }
@@ -187,16 +176,13 @@ const PagesRoute: React.FC = () => {
 
       dispatch(fetchPageRoutes(params));
 
-      // Sidebar menü ve search bar için lazy load - sayfayı yenilemeden güncelle
       try {
         await Promise.all([
           dispatch(fetchMenu() as any),
           dispatch(fetchFavorites() as any)
         ]);
-        console.log('Menu and favorites updated successfully after status change');
       } catch (menuError) {
         console.warn('Failed to update menu/favorites after status change:', menuError);
-        // Menu güncelleme hatası sayfa işlemini durdurmasın, sadece log'la
       }
     } catch (error: any) {
       handleError(error);
@@ -409,7 +395,6 @@ const PagesRoute: React.FC = () => {
         </Card>
 
 
-        {/* Page Routes Table */}
         <div style={{ 
           backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
           border: `1px solid ${theme === 'dark' ? '#374151' : '#e5e7eb'}`,

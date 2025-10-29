@@ -27,15 +27,12 @@ const PermissionButton: React.FC<PermissionButtonProps> = ({
 }) => {
   const { canShowButton } = useButtonPermissions();
 
-  // Check if user has permission to show this button
   const hasPermission = canShowButton(permission, permissionPath);
 
-  // If no permission, render fallback or nothing
   if (!hasPermission) {
     return <>{fallback}</>;
   }
 
-  // Base button classes
   const baseClasses = `
     inline-flex items-center justify-center
     font-medium rounded-lg transition-colors
@@ -43,14 +40,12 @@ const PermissionButton: React.FC<PermissionButtonProps> = ({
     disabled:opacity-50 disabled:cursor-not-allowed
   `;
 
-  // Size classes
   const sizeClasses = {
     sm: 'px-3 py-1.5 text-sm',
     md: 'px-4 py-2 text-sm',
     lg: 'px-6 py-3 text-base',
   };
 
-  // Variant classes
   const variantClasses = {
     primary: `
       bg-blue-600 text-white hover:bg-blue-700 

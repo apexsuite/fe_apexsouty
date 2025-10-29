@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
-import { Check, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import { Button, Tag, Table, Space, Card, Pagination, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import PermissionGuard from '@/components/PermissionGuard';
@@ -19,54 +19,30 @@ interface Consent {
 interface ConsentTableProps {
   consents: Consent[];
   loading: boolean;
-  onStatusChange: (consentId: string, status: boolean) => void;
   onAuthorize: (consentId: string) => void;
 }
 
 const ConsentTable: React.FC<ConsentTableProps> = ({
   consents,
   loading,
-  onStatusChange,
   onAuthorize,
 }) => {
   const { t } = useTranslation();
   const theme = useSelector((state: RootState) => state.theme.theme);
-  const [isMobile, setIsMobile] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
   const pageSize = 10;
 
-  useEffect(() => {
-    function handleResize() {
-      setIsMobile(window.innerWidth < 768);
-    }
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const filteredConsents = useMemo(() => consents, [consents]);
 
-  // Filter consents based on search term
-  const filteredConsents = useMemo(() => {
-    if (!searchTerm) return consents;
-    
-    const lowerSearchTerm = searchTerm.toLowerCase();
-    return consents.filter((consent) => 
-      consent.marketplace?.toLowerCase().includes(lowerSearchTerm) ||
-      consent.marketplaceURL?.toLowerCase().includes(lowerSearchTerm)
-    );
-  }, [consents, searchTerm]);
-
-  // Get paginated consents
   const paginatedConsents = useMemo(() => {
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = startIndex + pageSize;
     return filteredConsents.slice(startIndex, endIndex);
   }, [filteredConsents, currentPage, pageSize]);
 
-  // Reset to first page when search term changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm]);
+  }, [consents]);
 
   const columns: ColumnsType<Consent> = [
     {
@@ -115,29 +91,17 @@ const ConsentTable: React.FC<ConsentTableProps> = ({
       key: 'actions',
       render: (_, record) => (
         <Space>
-          {record.isActive ? (
-            <Tooltip title={t('consents.authorized')}>
+          <PermissionGuard permission="get-consent-link" mode="hide">
+            <Tooltip title={t('consents.authorize')}>
               <Button
-                type="text"
+                type="primary"
                 size="small"
-                icon={<Check size={16} />}
-                className="text-green-600 hover:text-green-700"
-                disabled
-              />
+                onClick={() => onAuthorize(record.id)}
+              >
+                {t('consents.authorize')}
+              </Button>
             </Tooltip>
-          ) : (
-            <PermissionGuard permission="authorize-consent" mode="hide">
-              <Tooltip title={t('consents.authorize')}>
-                <Button
-                  type="text"
-                  size="small"
-                  icon={<Check size={16} />}
-                  onClick={() => onAuthorize(record.id)}
-                  className="text-blue-600 hover:text-blue-700"
-                />
-              </Tooltip>
-            </PermissionGuard>
-          )}
+          </PermissionGuard>
         </Space>
       ),
     },
@@ -192,29 +156,16 @@ const ConsentTable: React.FC<ConsentTableProps> = ({
 
           {/* Actions */}
           <div className="flex gap-2 pt-2 border-t" style={{ borderColor: theme === 'dark' ? '#374151' : '#e5e7eb' }}>
-            {consent.isActive ? (
+            <PermissionGuard permission="authorize-consent" mode="hide">
               <Button
-                type="text"
+                type="primary"
                 size="small"
-                icon={<Check size={14} />}
-                className="text-green-600 hover:text-green-700 flex-1"
-                disabled
+                onClick={() => onAuthorize(consent.id)}
+                className="flex-1"
               >
-                {t('consents.authorized')}
+                {t('consents.authorize')}
               </Button>
-            ) : (
-              <PermissionGuard permission="authorize-consent" mode="hide">
-                <Button
-                  type="text"
-                  size="small"
-                  icon={<Check size={14} />}
-                  onClick={() => onAuthorize(consent.id)}
-                  className="text-blue-600 hover:text-blue-700 flex-1"
-                >
-                  {t('consents.authorize')}
-                </Button>
-              </PermissionGuard>
-            )}
+            </PermissionGuard>
           </div>
         </div>
       </Card>

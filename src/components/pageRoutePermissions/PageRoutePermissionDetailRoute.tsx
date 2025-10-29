@@ -6,7 +6,6 @@ import { AppDispatch, RootState } from '@/lib/store';
 import { fetchPermissionById, clearCurrentPermission, clearError } from '@/lib/pageRoutePermissionSlice';
 import { ArrowLeft, Edit, Calendar, Shield, CheckCircle, XCircle } from 'lucide-react';
 
-// Import components
 import PermissionInfo from './PermissionInfo';
 import PageRouteInfo from './PageRouteInfo';
 import RolePermissions from './RolePermissions';
@@ -97,7 +96,6 @@ const PageRoutePermissionDetailRoute: React.FC = () => {
   return (
     <div className={`p-6 min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className="w-full mx-auto md:px-8">
-        {/* Header */}
         <div className="mb-6">
           <button
             onClick={handleBack}
@@ -151,13 +149,10 @@ const PageRoutePermissionDetailRoute: React.FC = () => {
           </div>
         </div>
 
-        {/* Permission Information */}
         <PermissionInfo permission={currentPermission} theme={theme} />
 
-        {/* Page Route Information */}
         <PageRouteInfo permission={currentPermission} theme={theme} />
 
-        {/* Role Permissions */}
         <RolePermissions permission={currentPermission} theme={theme} />
       </div>
     </div>

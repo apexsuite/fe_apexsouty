@@ -40,18 +40,12 @@ const PriceDetail: React.FC = () => {
       setLoading(true);
       const response = await dispatch(getPriceDetail({ productId: productId!, priceId: priceId! })).unwrap();
       
-      // API'den gelen veri yapısı: response.data direkt price objesi
       const priceData = response.data;
-      console.log('API Response:', response);
-      console.log('Price Data:', priceData);
       
       if (priceData && priceData.id) {
-        console.log('Setting price data:', priceData);
         setPrice(priceData);
       } else {
-        console.error('No valid price data received:', priceData);
         message.error('No price data received');
-        // navigate(`/products/${productId}`); // Geçici olarak yorum satırı
       }
     } catch (error: any) {
       console.error('Error loading price detail:', error);
@@ -102,12 +96,11 @@ const PriceDetail: React.FC = () => {
     );
   }
 
-  const isDefaultPrice = false; // API'de defaultPriceId bilgisi yok, şimdilik false
+  const isDefaultPrice = false;
 
   return (
     <div className="p-6 min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="w-full mx-auto">
-        {/* Header */}
         <Card className="mb-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -141,7 +134,6 @@ const PriceDetail: React.FC = () => {
           </div>
         </Card>
 
-        {/* Price Basic Information */}
         <Card className="mb-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
           <Title level={3} className="mb-4 text-gray-900 dark:text-white flex items-center gap-2">
             <Info size={18} className="text-blue-500" /> {t('price.basicInfo')}
@@ -252,7 +244,6 @@ const PriceDetail: React.FC = () => {
           </Descriptions>
         </Card>
 
-        {/* Product Information (Nested) */}
         {price.product && (
           <Card className="mb-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
             <Title level={3} className="mb-4 text-gray-900 dark:text-white flex items-center gap-2">
@@ -357,7 +348,6 @@ const PriceDetail: React.FC = () => {
               </Descriptions.Item>
             </Descriptions>
 
-            {/* Marketing Features - sadece varsa göster */}
             {price.product.marketingFeatures && price.product.marketingFeatures.length > 0 && (
               <div className="mt-4">
                 <Title level={5} className="mb-2 text-gray-900 dark:text-white">

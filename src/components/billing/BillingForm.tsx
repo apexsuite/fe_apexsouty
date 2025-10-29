@@ -12,8 +12,7 @@ import { useErrorHandler } from '@/lib/useErrorHandler';
 
 const { Title } = Typography;
 
-// Stripe public key - .env dosyasındaki VITE_STRIPE_PKEY kullanılıyor
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PKEY || 'pk_test_your_stripe_publishable_key_here');
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PKEY);
 
 interface BillingFormProps {
   onBack?: () => void;
@@ -50,7 +49,6 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
     dispatch(fetchBilling());
   }, [dispatch]);
 
-  // Force re-mount Stripe Elements when theme changes
   useEffect(() => {
     setStripeKey(prev => prev + 1);
   }, [theme]);
@@ -71,7 +69,6 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
         extra: billing.extra || {},
       });
       
-      // Convert extra object to key-value pairs
       if (billing.extra && Object.keys(billing.extra).length > 0) {
         const extraArray = Object.entries(billing.extra).map(([key, value]) => ({
           key,
@@ -125,7 +122,7 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
           ...prev,
           name: nameData || prev.name,
           line1: addressData?.line1 || prev.line1,
-          line2: addressData?.line2 || '', // Boş string olarak set et
+          line2: addressData?.line2 || '', 
           city: addressData?.city || prev.city,
           state: addressData?.state || prev.state,
           postalCode: addressData?.postal_code || prev.postalCode,
@@ -135,16 +132,12 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
         return newFormData;
       });
     } else {
-      console.log('AddressElement data not available yet');
     }
   };
 
   const onFinish = async () => {
     setSubmitting(true);
     try {
-      // Client-side validation kaldırıldı - server-side validation kullanılacak
-
-      // Convert extra fields to object
       const extraObject = extraFields.reduce((acc, field) => {
         if (field.key.trim() && field.value.trim()) {
           acc[field.key.trim()] = field.value.trim();
@@ -165,7 +158,6 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
         extra: extraObject,
       };
 
-      // line2 boşsa billingData'dan çıkar
       if (!formData.line2.trim()) {
         delete billingData.line2;
       }
@@ -205,7 +197,6 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
       }}
     >
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <div>
@@ -230,10 +221,8 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
           </div>
         </div>
 
-        {/* Form */}
         <Card className="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
           <div className="space-y-6">
-            {/* Stripe Address Element */}
             <div>
               <Title level={4} className={`mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 {t('billing.address') || 'Address Information'}
@@ -292,7 +281,6 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
               </Elements>
             </div>
 
-            {/* Extra Fields */}
             <div className="mt-4">
               <label className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                 {t('billing.footer') || 'Footer'} <span className="text-xs text-gray-500">({t('billing.footnote') || 'Dipnot'})</span>
@@ -370,7 +358,6 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
               </div>
             </div>
 
-            {/* Status */}
             <div>
               <div className="flex items-center gap-2">
                 <Switch
@@ -384,7 +371,6 @@ const BillingForm: React.FC<BillingFormProps> = ({ onBack }) => {
               </div>
             </div>
 
-            {/* Actions */}
             <div className="flex gap-3 justify-end">
               {onBack && (
                 <Button

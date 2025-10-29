@@ -16,7 +16,6 @@ import { Card, Typography, theme, Pagination, Select, Button } from 'antd';
 import { useErrorHandler } from '@/lib/useErrorHandler';
 import PermissionGuard from '@/components/PermissionGuard';
 
-// Import components
 import MarketplaceTable from '@/components/marketplaces/MarketplaceTable';
 import MarketplaceDeleteModal from '@/components/marketplaces/MarketplaceDeleteModal';
 import MarketplaceEmptyState from '@/components/marketplaces/MarketplaceEmptyState';
@@ -48,12 +47,10 @@ const Marketplaces: React.FC = () => {
       pageSize: pageSize || 10,
     };
 
-    // Search term'i ekle
     if (searchTerm && searchTerm.trim() !== '') {
       params.marketplace = searchTerm.trim();
     }
 
-    // Filtreleri ekle
     if (filters.marketplace && filters.marketplace.trim() !== '') {
       params.marketplace = filters.marketplace.trim();
     }
@@ -72,14 +69,12 @@ const Marketplaces: React.FC = () => {
     loadMarketplaces();
   }, [currentPageNumber, pageSize, searchTerm, filters.marketplace, filters.marketplaceURL, filters.isActive]);
 
-  // Arama kelimesi değiştiğinde sayfa numarasını sıfırla
   useEffect(() => {
     if (searchTerm !== '') {
       dispatch(setCurrentPageNumber(1));
     }
   }, [searchTerm]);
 
-  // Filtreler değiştiğinde sayfa numarasını sıfırla
   useEffect(() => {
     const hasActiveFilters = 
       (filters.marketplace && filters.marketplace !== '') ||
@@ -352,8 +347,7 @@ const Marketplaces: React.FC = () => {
         </Card>
 
 
-
-        {/* Marketplaces Table or Empty State */}
+                  
         {marketplaces.length === 0 && !loading ? (
           <div style={{ 
             backgroundColor: currentTheme === 'dark' ? '#1f2937' : '#ffffff',

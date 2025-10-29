@@ -8,18 +8,8 @@ interface PageRouteInfoProps {
 }
 
 const PageRouteInfo: React.FC<PageRouteInfoProps> = ({ permission, theme }) => {
-  console.log(permission, "123123123");
   const { t } = useTranslation();
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('tr-TR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
 
   if (!permission.pageRoute) return null;
 
@@ -72,11 +62,11 @@ const PageRouteInfo: React.FC<PageRouteInfoProps> = ({ permission, theme }) => {
           </label>
           <p className={`${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
             <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-              permission.pageRoute.isActive 
+              permission.pageRoute.is_active 
                 ? theme === 'dark' ? 'bg-green-900/20 text-green-400' : 'bg-green-100 text-green-800'
                 : theme === 'dark' ? 'bg-red-900/20 text-red-400' : 'bg-red-100 text-red-800'
             }`}>
-              {permission.pageRoute.isActive ? t('common.active') : t('common.inactive')}
+              {permission.pageRoute.is_active ? t('common.active') : t('common.inactive')}
             </span>
           </p>
         </div>
@@ -87,11 +77,11 @@ const PageRouteInfo: React.FC<PageRouteInfoProps> = ({ permission, theme }) => {
           </label>
           <p className={`${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
             <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-              permission.pageRoute.isVisible 
+              permission.pageRoute.is_visible 
                 ? theme === 'dark' ? 'bg-blue-900/20 text-blue-400' : 'bg-blue-100 text-blue-800'
                 : theme === 'dark' ? 'bg-gray-900/20 text-gray-400' : 'bg-gray-100 text-gray-800'
             }`}>
-              {permission.pageRoute.isVisible ? t('common.visible') : t('common.hidden')}
+              {permission.pageRoute.is_visible ? t('common.visible') : t('common.hidden')}
             </span>
           </p>
         </div>
