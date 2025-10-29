@@ -74,7 +74,7 @@ export const requestConsentCallback = createAsyncThunk(
   'consent/requestConsentCallback',
   async (marketplaceId: string, { rejectWithValue }) => {
     try {
-      const response = await apiRequest('/amazon/consents/callback', {
+      const response = await apiRequest('/amazon/consents/get-consent-link', {
         method: 'POST',
         body: JSON.stringify({ marketplaceId }),
       });

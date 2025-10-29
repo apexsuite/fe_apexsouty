@@ -13,8 +13,6 @@ import { Plus, Search, Filter, X } from 'lucide-react';
 import { Card, Typography, theme, Pagination, Select, Button } from 'antd';
 import { useErrorHandler } from '@/lib/useErrorHandler';
 import PermissionGuard from '@/components/PermissionGuard';
-
-// Import components
 import ConsentTable from '@/components/consents/ConsentTable';
 import ConsentEmptyState from '@/components/consents/ConsentEmptyState';
 
@@ -42,12 +40,10 @@ const Consents: React.FC = () => {
       pageSize: pageSize || 10,
     };
 
-    // Add search term
     if (searchTerm) {
       params.marketplace = searchTerm;
     }
 
-    // Add filters
     if (filters.marketplace) {
       params.marketplace = filters.marketplace;
     }
@@ -88,14 +84,11 @@ const Consents: React.FC = () => {
     try {
       const response = await dispatch(requestConsentCallback(consentId)).unwrap();
       
-      // Response'dan URL'i al ve yönlendir
-      const redirectUrl = response?.url || response?.data?.url || response?.redirectUrl || response?.data?.redirectUrl || response;
+      const redirectUrl = response?.data || response?.url || response?.data?.url || response?.redirectUrl || response?.data?.redirectUrl;
       
       if (redirectUrl && typeof redirectUrl === 'string') {
-        // URL'e yönlendir
         window.location.href = redirectUrl;
       } else {
-        // URL bulunamadıysa hata göster
         handleError({ message: 'Authorization URL not found in response' });
       }
     } catch (error: any) {
@@ -135,7 +128,6 @@ const Consents: React.FC = () => {
   return (
     <div className={`p-6 min-h-screen ${currentTheme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className="w-full mx-auto md:px-8">
-        {/* Header */}
         <div className="mb-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
@@ -159,10 +151,8 @@ const Consents: React.FC = () => {
           </div>
         </div>
 
-        {/* Search and Filters */}
         <Card className={`mb-6 ${currentTheme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
           <div className="space-y-4">
-            {/* Search Bar */}
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
                 <div className="relative">
@@ -197,7 +187,6 @@ const Consents: React.FC = () => {
               </Button>
             </div>
 
-            {/* Filters */}
             {showFilters && (
               <div className={`p-4 rounded-lg border ${currentTheme === 'dark' ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'}`}>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -265,7 +254,6 @@ const Consents: React.FC = () => {
           </div>
         </Card>
 
-        {/* Content */}
         {consents.length === 0 ? (
           <ConsentEmptyState />
         ) : (

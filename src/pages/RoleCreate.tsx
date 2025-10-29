@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { AppDispatch } from '@/lib/store';
 import { createRole } from '@/lib/roleSlice';
+import { fetchMyPermissions } from '@/lib/permissionSlice';
 import { ArrowLeft, Save } from 'lucide-react';
 import { Form, Input, Button, Card, Typography, Switch } from 'antd';
 import { useErrorHandler } from '@/lib/useErrorHandler';
@@ -27,6 +28,8 @@ const RoleCreate: React.FC = () => {
         roleValue: Number(values.roleValue)
       };
       await dispatch(createRole(roleData)).unwrap();
+      // Rol oluşturulduktan sonra permissions'ı yenile
+      await dispatch(fetchMyPermissions());
       showSuccess('roleCreatedSuccessfully');
       navigate('/roles');
     } catch (error: any) {
