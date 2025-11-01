@@ -120,7 +120,7 @@ export const validateAmazonConsent = createAsyncThunk(
         method: 'POST',
         body: JSON.stringify({
           state: params.state,
-          sellingPartnetId: params.selling_partner_id,
+          sellingPartnerId: params.selling_partner_id,
           spapiOauthCode: params.spapi_oauth_code,
         }),
       });
@@ -168,7 +168,7 @@ const consentSlice = createSlice({
       })
       .addCase(fetchConsents.fulfilled, (state, action) => {
         state.loading = false;
-        
+
         if (action.payload && action.payload.data && Array.isArray(action.payload.data)) {
           state.consents = action.payload.data;
           state.totalPages = 1;
