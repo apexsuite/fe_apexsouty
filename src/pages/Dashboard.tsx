@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@/lib/store";
 import { validateAmazonConsent } from "@/lib/consentSlice";
 import { useErrorHandler } from "@/lib/useErrorHandler";
+import CustomDataTable from "@/components/CustomDataTable";
 
 interface Resource {
   name: string;
@@ -49,7 +50,7 @@ export default function Dashboard() {
   // Senaryo 2: Amazon callback validate - Dashboard'a geldiğinde kontrol et
   useEffect(() => {
     if (!isAuthenticated) return;
-    
+
     try {
       const raw = localStorage.getItem('pendingAmazonValidateParams');
       if (raw) {
@@ -60,18 +61,18 @@ export default function Dashboard() {
             selling_partner_id: parsed.selling_partner_id || '',
             spapi_oauth_code: parsed.spapi_oauth_code || '',
           }))
-          .unwrap()
-          .then(() => {
-            // Başarılı olursa sessizce devam et
-            showSuccess('consentValidationSuccess');
-          })
-          .catch((err: any) => {
-            // Hata varsa uyarı mesajı göster
-            handleError(err);
-          })
-          .finally(() => {
-            localStorage.removeItem('pendingAmazonValidateParams');
-          });
+            .unwrap()
+            .then(() => {
+              // Başarılı olursa sessizce devam et
+              showSuccess('consentValidationSuccess');
+            })
+            .catch((err: any) => {
+              // Hata varsa uyarı mesajı göster
+              handleError(err);
+            })
+            .finally(() => {
+              localStorage.removeItem('pendingAmazonValidateParams');
+            });
         }
       }
     } catch (e) {
@@ -98,9 +99,33 @@ export default function Dashboard() {
     ? resources
     : resources.filter(r => r.favorite === 1);
 
+  const data = [
+    { name: "John Doe", type: "User", lastViewed: "2021-01-01" },
+    { name: "Jane Doe", type: "User", lastViewed: "2021-01-01" },
+    { name: "John Doe", type: "User", lastViewed: "2021-01-01" },
+    { name: "Jane Doe", type: "User", lastViewed: "2021-01-01" },
+
+    { name: "John Doe", type: "User", lastViewed: "2021-01-01" },
+    { name: "Jane Doe", type: "User", lastViewed: "2021-01-01" },
+  ]
+
+  const fakeColumns = [
+    {
+      header: "Name",
+      accessorKey: "name",
+    },
+    {
+      header: "Type",
+      accessorKey: "type",
+    },
+    {
+      header: "Last Viewed",
+      accessorKey: "lastViewed",
+    }
+  ]
   return (
     <div className="min-h-screen w-full px-6 md:px-12 py-12 bg-background">
-      <div style={{ marginBottom: 32 }}>
+      {/* <div style={{ marginBottom: 32 }}>
         <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 32 }}>{t("sidebar.dashboard")}</h1>
         <Row gutter={[24, 24]}>
           <Col xs={24} md={12} lg={6}>
@@ -156,7 +181,8 @@ export default function Dashboard() {
             </Card>
           </Col>
         </Row>
-      </div>
+      </div> */}
+      <CustomDataTable columns={fakeColumns} data={data} />
       <FavoriteServicesBar />
       <div style={{ marginTop: 48 }}>
         <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 16 }}>{t("table.resources")}</h2>
