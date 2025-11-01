@@ -21,6 +21,7 @@ import {
   Draggable,
   DropResult,
 } from '@hello-pangea/dnd';
+import { clearPageHistory } from '@/utils/hooks/usePageHistory';
 
 export default function Sidebar({
   mobileOpen,
@@ -56,6 +57,7 @@ export default function Sidebar({
 
   const handleLogout = () => {
     dispatch(logoutUser());
+    clearPageHistory();
     if (onMobileClose) onMobileClose();
   };
 
@@ -145,7 +147,7 @@ export default function Sidebar({
                                       </span>
                                     </div>
                                     <button
-                                      className="ml-auto rounded-full p-1 transition hover:bg-yellow-100 dark:hover:bg-yellow-800 cursor-pointer"
+                                      className="ml-auto cursor-pointer rounded-full p-1 transition hover:bg-yellow-100 dark:hover:bg-yellow-800"
                                       title="Favoriden çıkar"
                                       onClick={() =>
                                         dispatch(
