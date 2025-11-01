@@ -43,10 +43,6 @@ const Consents = lazy(() => import('@/pages/Consents'));
 const PermissionTest = lazy(() => import('@/components/PermissionTest'));
 const NewPermissionExamples = lazy(() => import('@/examples/NewPermissionExamples'));
 
-/**
- * Public route'lar için wrapper component
- * Login olmuş kullanıcıyı dashboard'a yönlendirir
- */
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
@@ -57,10 +53,6 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return <>{children}</>;
 };
 
-/**
- * Korumalı route'lar için layout wrapper
- * RouteGuard ve ClientLayout'u bir kez render eder
- */
 const ProtectedLayout: React.FC = () => {
     const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
@@ -77,9 +69,6 @@ const ProtectedLayout: React.FC = () => {
     );
 };
 
-/**
- * Public Routes - Giriş yapmamış kullanıcılar için
- */
 export const publicRoutes: RouteObject[] = [
     {
         path: "/",
@@ -115,10 +104,6 @@ export const publicRoutes: RouteObject[] = [
     },
 ];
 
-/**
- * Protected Routes - Giriş yapmış kullanıcılar için
- * ClientLayout ve RouteGuard içinde render edilir
- */
 export const protectedRoutes: RouteObject[] = [
     {
         path: "/",
@@ -269,10 +254,6 @@ export const protectedRoutes: RouteObject[] = [
     },
 ];
 
-/**
- * Ana route yapılandırması
- * React Router DOM v7 best practices'e göre düzenlenmiştir
- */
 export const routes: RouteObject[] = [
     {
         path: "*",
