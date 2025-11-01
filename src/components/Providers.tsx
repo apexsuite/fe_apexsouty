@@ -5,6 +5,18 @@ import { useEffect, useState, useRef } from "react";
 import { setLanguage } from "@/lib/langSlice";
 import { setTheme } from "@/lib/themeSlice";
 import i18n from "@/lib/i18n";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+// QueryClient instance'ını oluştur
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 dakika
+    },
+  },
+});
 
 function Spinner() {
   return (
@@ -16,9 +28,9 @@ function Spinner() {
 
 function applyTheme(theme: string) {
   const root = window.document.documentElement;
-  
+
   root.classList.remove('dark', 'light');
-  
+
   if (theme === 'dark') {
     root.classList.add('dark');
   } else {
@@ -38,22 +50,22 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       dispatchRef.current(setLanguage(storedLang));
       i18n.changeLanguage(storedLang);
     }
-    
+
     const storedTheme = localStorage.getItem('theme') as 'light' | 'dark' || 'light';
     dispatchRef.current(setTheme(storedTheme));
-    
+
     applyTheme(storedTheme);
-    
+
     setReady(true);
   }, []);
 
   useEffect(() => {
     if (!ready) return;
-    
+
     const unsubscribe = store.subscribe(() => {
       const newTheme = store.getState().theme.theme;
       const newLang = store.getState().lang.language;
-      
+
       if (newTheme !== theme) {
         setIsThemeChanging(true);
         setTimeout(() => {
@@ -61,7 +73,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           setIsThemeChanging(false);
         }, 100);
       }
-      
+
       if (newLang && newLang !== i18n.language) {
         i18n.changeLanguage(newLang);
       }
@@ -71,12 +83,14 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   }, [ready, theme]);
 
   return (
-    <Provider store={store}>
-      {ready ? (
-        isThemeChanging ? <Spinner /> : children
-      ) : (
-        <Spinner />
-      )}
-    </Provider>
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        {ready ? (
+          isThemeChanging ? <Spinner /> : children
+        ) : (
+          <Spinner />
+        )}
+      </Provider>
+    </QueryClientProvider>
   );
 } 

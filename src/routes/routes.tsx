@@ -42,6 +42,7 @@ const MarketplaceCreate = lazy(() => import('@/pages/MarketplaceCreate'));
 const Consents = lazy(() => import('@/pages/Consents'));
 const PermissionTest = lazy(() => import('@/components/PermissionTest'));
 const NewPermissionExamples = lazy(() => import('@/examples/NewPermissionExamples'));
+const Subscription = lazy(() => import('@/pages/Subscription'));
 
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -254,6 +255,10 @@ export const protectedRoutes: RouteObject[] = [
                 path: "permission-examples",
                 element: <NewPermissionExamples />,
             },
+            {
+                path: "subscription",
+                element: <Subscription />,
+            }
         ],
     },
 ];
