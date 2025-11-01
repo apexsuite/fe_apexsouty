@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import { useState, useEffect } from "react";
 
 interface ClientLayoutProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 export default function ClientLayout({ children }: ClientLayoutProps) {

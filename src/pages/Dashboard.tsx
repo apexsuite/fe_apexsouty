@@ -125,7 +125,7 @@ export default function Dashboard() {
   ]
   return (
     <div className="min-h-screen w-full px-6 md:px-12 py-12 bg-background">
-      {/* <div style={{ marginBottom: 32 }}>
+      <div style={{ marginBottom: 32 }}>
         <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 32 }}>{t("sidebar.dashboard")}</h1>
         <Row gutter={[24, 24]}>
           <Col xs={24} md={12} lg={6}>
@@ -181,8 +181,7 @@ export default function Dashboard() {
             </Card>
           </Col>
         </Row>
-      </div> */}
-      <CustomDataTable columns={fakeColumns} data={data} />
+      </div>
       <FavoriteServicesBar />
       <div style={{ marginTop: 48 }}>
         <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 16 }}>{t("table.resources")}</h2>
