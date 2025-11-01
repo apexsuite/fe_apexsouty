@@ -36,7 +36,7 @@ const PageRoutePermissionDetailRoute: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate(`/page-route-permissions/${pageRouteId || 'all'}/permissions`);
+    navigate(`/page-route-permissions`);
   };
 
   if (loading) {
@@ -51,16 +51,14 @@ const PageRoutePermissionDetailRoute: React.FC = () => {
     return (
       <div className={`p-6 min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
         <div className="max-w-4xl mx-auto md:px-8">
-          <div className={`rounded-lg p-6 text-center ${
-            theme === 'dark' ? 'bg-red-900/20 border-red-700 text-red-400' : 'bg-red-50 border-red-200 text-red-800'
-          }`}>
+          <div className={`rounded-lg p-6 text-center ${theme === 'dark' ? 'bg-red-900/20 border-red-700 text-red-400' : 'bg-red-50 border-red-200 text-red-800'
+            }`}>
             <h2 className="text-xl font-semibold mb-2">{t('notification.error')}</h2>
             <p className="mb-4">{error}</p>
             <button
               onClick={handleBack}
-              className={`px-4 py-2 rounded-lg ${
-                theme === 'dark' ? 'bg-red-600 hover:bg-red-700' : 'bg-red-600 hover:bg-red-700'
-              } text-white`}
+              className={`px-4 py-2 rounded-lg ${theme === 'dark' ? 'bg-red-600 hover:bg-red-700' : 'bg-red-600 hover:bg-red-700'
+                } text-white`}
             >
               {t('pages.pageRoutePermissions.backToPermissions')}
             </button>
@@ -74,16 +72,14 @@ const PageRoutePermissionDetailRoute: React.FC = () => {
     return (
       <div className={`p-6 min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
         <div className="max-w-4xl mx-auto md:px-8">
-          <div className={`rounded-lg p-6 text-center ${
-            theme === 'dark' ? 'bg-yellow-900/20 border-yellow-700 text-yellow-400' : 'bg-yellow-50 border-yellow-200 text-yellow-800'
-          }`}>
+          <div className={`rounded-lg p-6 text-center ${theme === 'dark' ? 'bg-yellow-900/20 border-yellow-700 text-yellow-400' : 'bg-yellow-50 border-yellow-200 text-yellow-800'
+            }`}>
             <h2 className="text-xl font-semibold mb-2">{t('pages.pageRoutePermissions.permissionNotFound')}</h2>
             <p className="mb-4">{t('pages.pageRoutePermissions.permissionNotFoundMessage')}</p>
             <button
               onClick={handleBack}
-              className={`px-4 py-2 rounded-lg ${
-                theme === 'dark' ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-yellow-600 hover:bg-yellow-700'
-              } text-white`}
+              className={`px-4 py-2 rounded-lg ${theme === 'dark' ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-yellow-600 hover:bg-yellow-700'
+                } text-white`}
             >
               {t('pages.pageRoutePermissions.backToPermissions')}
             </button>
@@ -99,9 +95,8 @@ const PageRoutePermissionDetailRoute: React.FC = () => {
         <div className="mb-6">
           <button
             onClick={handleBack}
-            className={`flex items-center gap-2 mb-4 transition-colors ${
-              theme === 'dark' ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'
-            }`}
+            className={`flex items-center gap-2 mb-4 transition-colors ${theme === 'dark' ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+              }`}
           >
             <ArrowLeft size={20} />
             {t('pages.pageRoutePermissions.backToPermissions')}
@@ -135,11 +130,10 @@ const PageRoutePermissionDetailRoute: React.FC = () => {
             <div className="flex items-center gap-2 w-full md:w-auto">
               <button
                 onClick={handleEdit}
-                className={`flex-1 md:flex-none px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors ${
-                  theme === 'dark' 
-                    ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                className={`flex-1 md:flex-none px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors ${theme === 'dark'
+                    ? 'bg-blue-600 hover:bg-blue-700 text-white'
                     : 'bg-blue-600 hover:bg-blue-700 text-white'
-                }`}
+                  }`}
               >
                 <Edit size={16} />
                 <span className="hidden sm:inline">{t('pages.pageRoutePermissions.edit')}</span>

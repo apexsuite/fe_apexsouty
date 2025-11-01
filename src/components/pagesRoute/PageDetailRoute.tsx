@@ -14,7 +14,7 @@ const PageDetailRoute: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { currentPageRoute, loading, error } = useSelector((state: RootState) => state.page);
   const theme = useSelector((state: RootState) => state.theme.theme);
-  
+
   const [pagePermissions, setPagePermissions] = useState<any[]>([]);
 
   useEffect(() => {
@@ -80,11 +80,10 @@ const PageDetailRoute: React.FC = () => {
     return (
       <div className={`p-6 min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
         <div className="max-w-4xl mx-auto md:px-8">
-          <div className={`rounded-lg p-6 text-center ${
-            theme === 'dark' 
-              ? 'bg-red-900/20 border border-red-800 text-red-400' 
-              : 'bg-red-50 border border-red-200 text-red-800'
-          }`}>
+          <div className={`rounded-lg p-6 text-center ${theme === 'dark'
+            ? 'bg-red-900/20 border border-red-800 text-red-400'
+            : 'bg-red-50 border border-red-200 text-red-800'
+            }`}>
             <h2 className={`text-xl font-semibold mb-2 ${theme === 'dark' ? 'text-red-400' : 'text-red-800'}`}>
               {t('notification.error')}
             </h2>
@@ -105,11 +104,10 @@ const PageDetailRoute: React.FC = () => {
     return (
       <div className={`p-6 min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
         <div className="w-full mx-auto md:px-8">
-          <div className={`rounded-lg p-6 text-center ${
-            theme === 'dark' 
-              ? 'bg-yellow-900/20 border border-yellow-800 text-yellow-400' 
-              : 'bg-yellow-50 border border-yellow-200 text-yellow-800'
-          }`}>
+          <div className={`rounded-lg p-6 text-center ${theme === 'dark'
+            ? 'bg-yellow-900/20 border border-yellow-800 text-yellow-400'
+            : 'bg-yellow-50 border border-yellow-200 text-yellow-800'
+            }`}>
             <h2 className={`text-xl font-semibold mb-2 ${theme === 'dark' ? 'text-yellow-400' : 'text-yellow-800'}`}>
               {t('pages.pageNotFound')}
             </h2>
@@ -135,9 +133,8 @@ const PageDetailRoute: React.FC = () => {
         <div className="mb-6">
           <button
             onClick={handleBack}
-            className={`flex items-center gap-2 mb-4 transition-colors ${
-              theme === 'dark' ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'
-            }`}
+            className={`flex items-center gap-2 mb-4 transition-colors ${theme === 'dark' ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+              }`}
           >
             <ArrowLeft size={20} />
             {t('pages.backToPages')}
@@ -177,9 +174,8 @@ const PageDetailRoute: React.FC = () => {
         {/* Icon */}
         {currentPageRoute.icon && (
           <div className="mb-6">
-            <div className={`w-full h-24 rounded-lg shadow-sm flex items-center justify-center ${
-              theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'
-            }`}>
+            <div className={`w-full h-24 rounded-lg shadow-sm flex items-center justify-center ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'
+              }`}>
               <div className={`text-3xl ${theme === 'dark' ? 'text-gray-600' : 'text-gray-500'}`}>
                 {currentPageRoute.icon}
               </div>
@@ -188,27 +184,25 @@ const PageDetailRoute: React.FC = () => {
         )}
 
         {/* Meta Information */}
-        <div className={`rounded-lg shadow-sm p-6 mb-6 ${
-          theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-        }`}>
+        <div className={`rounded-lg shadow-sm p-6 mb-6 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+          }`}>
           <h2 className={`text-lg font-semibold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
             {t('pages.pageDetails')}
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                 {t('pages.path')}
               </label>
-              <p className={`px-3 py-2 rounded-lg font-mono text-sm ${
-                theme === 'dark' 
-                  ? 'bg-gray-700 text-white' 
-                  : 'bg-gray-50 text-gray-900'
-              }`}>
+              <p className={`px-3 py-2 rounded-lg font-mono text-sm ${theme === 'dark'
+                ? 'bg-gray-700 text-white'
+                : 'bg-gray-50 text-gray-900'
+                }`}>
                 {currentPageRoute.path}
               </p>
             </div>
-            
+
             <div>
               <label className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                 {t('pages.component')}
@@ -223,11 +217,10 @@ const PageDetailRoute: React.FC = () => {
                 <label className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                   {t('pages.description')}
                 </label>
-                <p className={`px-3 py-2 rounded-lg ${
-                  theme === 'dark' 
-                    ? 'bg-gray-700 text-white' 
-                    : 'bg-gray-50 text-gray-900'
-                }`}>
+                <p className={`px-3 py-2 rounded-lg ${theme === 'dark'
+                  ? 'bg-gray-700 text-white'
+                  : 'bg-gray-50 text-gray-900'
+                  }`}>
                   {currentPageRoute.description}
                 </p>
               </div>
@@ -239,11 +232,10 @@ const PageDetailRoute: React.FC = () => {
                 {t('pages.visibility')}
               </label>
               <p className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>
-                <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                  currentPageRoute.is_visible 
-                    ? 'bg-blue-100 text-blue-800' 
-                    : 'bg-gray-800 text-gray-200'
-                }`}>
+                <span className={`px-2 py-1 text-xs font-medium rounded-full ${currentPageRoute.is_visible
+                  ? 'bg-blue-100 text-blue-800'
+                  : 'bg-gray-800 text-gray-200'
+                  }`}>
                   {currentPageRoute.is_visible ? t('pages.visible') : t('pages.hidden')}
                 </span>
               </p>
@@ -269,11 +261,10 @@ const PageDetailRoute: React.FC = () => {
                 {t('pages.constructionStatus')}
               </label>
               <div className="flex flex-wrap gap-2">
-                <span className={`px-3 py-1 text-sm rounded-full flex items-center gap-1 ${
-                  theme === 'dark' 
-                    ? 'bg-yellow-900/20 text-yellow-400 border border-yellow-800' 
-                    : 'bg-yellow-100 text-yellow-800'
-                }`}>
+                <span className={`px-3 py-1 text-sm rounded-full flex items-center gap-1 ${theme === 'dark'
+                  ? 'bg-yellow-900/20 text-yellow-400 border border-yellow-800'
+                  : 'bg-yellow-100 text-yellow-800'
+                  }`}>
                   <Tag size={14} />
                   {t('pages.underConstruction')}
                 </span>
@@ -283,9 +274,8 @@ const PageDetailRoute: React.FC = () => {
         </div>
 
         {/* Permissions Management */}
-        <div className={`rounded-lg shadow-sm p-6 mb-6 ${
-          theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-        }`}>
+        <div className={`rounded-lg shadow-sm p-6 mb-6 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+          }`}>
           <PermissionTable
             pageRouteId={id!}
             pageRoutePermissions={pagePermissions}

@@ -157,12 +157,13 @@ export const protectedRoutes: RouteObject[] = [
                         index: true,
                         element: <PageRoutePermissionsRoute />,
                     },
+
                     {
-                        path: ":id",
+                        path: ":pageRouteId/permissions/:permissionId",
                         element: <PageRoutePermissionDetailRoute />,
                     },
                     {
-                        path: ":id/edit",
+                        path: ":pageRouteId/permissions/:permissionId/edit",
                         element: <PageRoutePermissionFormRoute />,
                     },
                 ],
@@ -200,15 +201,15 @@ export const protectedRoutes: RouteObject[] = [
                         element: <ProductCreate />,
                     },
                     {
-                        path: ":id",
+                        path: ":productId",
                         element: <ProductDetail />,
                     },
                     {
-                        path: ":id/edit",
+                        path: ":productId/edit",
                         element: <ProductEdit />,
                     },
                     {
-                        path: ":id/prices/:priceId",
+                        path: ":productId/prices/:priceId",
                         element: <PriceDetail />,
                     },
                 ],

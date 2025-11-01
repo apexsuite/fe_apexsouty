@@ -129,7 +129,7 @@ const RoleDetail: React.FC = () => {
           <Title level={3} className="mb-2 text-gray-900 dark:text-white" style={{ fontSize: '0.875rem', marginBottom: '8px' }}>
             {t('roles.roleInformation') || 'Role Information'}
           </Title>
-          
+
           <Descriptions
             column={{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
             className="dark:text-gray-300"
@@ -149,7 +149,7 @@ const RoleDetail: React.FC = () => {
                 {currentRole.roleValue}
               </span>
             </Descriptions.Item>
-            
+
             <Descriptions.Item
               label={
                 <span className="flex items-center gap-1.5" style={{ fontSize: '12px' }}>
@@ -162,20 +162,7 @@ const RoleDetail: React.FC = () => {
                 {currentRole.permissionCount || 0}
               </span>
             </Descriptions.Item>
-            
-            <Descriptions.Item
-              label={
-                <span className="flex items-center gap-1.5" style={{ fontSize: '12px' }}>
-                  <Calendar size={14} className="text-gray-500" />
-                  {t('roles.createdAt') || 'Created At'}
-                </span>
-              }
-            >
-              <span className="text-gray-600 dark:text-gray-300" style={{ fontSize: '12px' }}>
-                {new Date(currentRole.createdAt).toLocaleDateString()}
-              </span>
-            </Descriptions.Item>
-            
+
             {currentRole.updatedAt && (
               <Descriptions.Item
                 label={
