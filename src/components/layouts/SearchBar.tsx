@@ -36,81 +36,94 @@ const SearchBar = () => {
 
   const dispatchRedux = useDispatch<AppDispatch>();
 
-  const optimisticReducer = (
-    currentItems: MenuItem[],
-    { pageRouteID, isFavorite }: { pageRouteID: string; isFavorite: boolean }
-  ): MenuItem[] => {
-    return currentItems.map(item => {
-      const itemId = item.pageRouteID || item.id;
-      if (itemId === pageRouteID) {
-        return {
-          ...item,
-          isFavourite: !isFavorite,
-        };
-      }
-      return item;
-    });
-  };
-
   const [optimisticMenuItems, addOptimistic] = useOptimistic(
     menuItems,
-    optimisticReducer
+    (
+      currentItems: MenuItem[],
+      { pageRouteID, isFavorite }: { pageRouteID: string; isFavorite: boolean }
+    ) => {
+      return currentItems.map(item => {
+        if ((item.pageRouteID || item.id) === pageRouteID) {
+          return {
+            ...item,
+            isFavourite: !isFavorite,
+          };
+        }
+        return item;
+      });
+    }
   );
 
-  const findFavoriteItem = (
-    favorites: MenuItem[],
-    pageRouteID: string
-  ): MenuItem | undefined => {
-    return favorites.find(fav => (fav.pageRouteID || fav.id) === pageRouteID);
-  };
-
-  const findMenuItem = (pageRouteID: string): MenuItem | undefined => {
-    return menuItems.find(
-      item => (item.pageRouteID || item.id) === pageRouteID
-    );
-  };
-
-  const removeFavorite = async (pageRouteID: string): Promise<void> => {
-    const currentMenuItem = findMenuItem(pageRouteID);
-    if (!currentMenuItem) {
-      throw new Error(`Menu item not found: ${pageRouteID}`);
-    }
-
-    const favoritesResult = await dispatchRedux(fetchFavorites()).unwrap();
-    const favoriteItem = findFavoriteItem(favoritesResult, pageRouteID);
-
-    if (!favoriteItem?.favouriteId) {
-      throw new Error(`Favorite ID not found for pageRouteID: ${pageRouteID}`);
-    }
-
-    await dispatchRedux(deleteFavorite(favoriteItem.favouriteId)).unwrap();
-  };
-
-  const addFavoriteToMenu = async (pageRouteID: string): Promise<void> => {
-    await dispatchRedux(addFavorite(pageRouteID)).unwrap();
-  };
-
-  const refreshMenu = async (): Promise<void> => {
-    const updatedMenu = await dispatchRedux(fetchMenu()).unwrap();
-    setMenuItems(updatedMenu as MenuItem[]);
-  };
-
-  const handleFavorite = async (
-    isFavorite: boolean,
-    pageRouteID: string
-  ): Promise<void> => {
+  const handleFavorite = async (isFavorite: boolean, pageRouteID: string) => {
     startTransition(async () => {
       addOptimistic({ pageRouteID, isFavorite });
+
       try {
         if (isFavorite) {
-          await removeFavorite(pageRouteID);
+          const currentMenuItem = menuItems.find(
+            item => (item.pageRouteID || item.id) === pageRouteID
+          );
+
+          if (!currentMenuItem) {
+            console.error('Menu item bulunamadı:', pageRouteID);
+            throw new Error('Menu item not found');
+          }
+
+          const favoritesResult =
+            await dispatchRedux(fetchFavorites()).unwrap();
+
+          // Önce path ile eşleştir, sonra label ile
+          const favoriteItem = favoritesResult.find((fav: MenuItem) => {
+            // path exact match
+            if (
+              fav.path &&
+              currentMenuItem.path &&
+              fav.path === currentMenuItem.path
+            ) {
+              return true;
+            }
+            // label/name match
+            if (
+              fav.name &&
+              currentMenuItem.label &&
+              fav.name === currentMenuItem.label
+            ) {
+              return true;
+            }
+            // pageRouteID match (eğer favorites'ta varsa)
+            if (
+              (fav as any).pageRouteID &&
+              (fav as any).pageRouteID === pageRouteID
+            ) {
+              return true;
+            }
+            return false;
+          });
+
+          if (favoriteItem?.favouriteId) {
+            await dispatchRedux(
+              deleteFavorite(favoriteItem.favouriteId)
+            ).unwrap();
+          } else {
+            console.error('favouriteId bulunamadı:', {
+              pageRouteID,
+              currentMenuItem,
+              favoritesResult,
+              favoriteItem,
+            });
+            throw new Error('Favorite ID not found');
+          }
         } else {
-          await addFavoriteToMenu(pageRouteID);
+          await dispatchRedux(addFavorite(pageRouteID)).unwrap();
         }
-        await refreshMenu();
+        // Menüleri yeniden yükle
+        const updatedMenu = await dispatchRedux(fetchMenu()).unwrap();
+        setMenuItems(updatedMenu as MenuItem[]);
       } catch (error) {
         console.error('Favorite toggle error:', error);
-        await refreshMenu();
+        // Hata durumunda menüleri yeniden yükle (optimistic update'i geri al)
+        const updatedMenu = await dispatchRedux(fetchMenu()).unwrap();
+        setMenuItems(updatedMenu as MenuItem[]);
       }
     });
   };
@@ -130,11 +143,10 @@ const SearchBar = () => {
   };
 
   useEffect(() => {
-    dispatchRedux(fetchMenu())
-      .unwrap()
-      .then(res => {
-        setMenuItems(res as MenuItem[]);
-      });
+    dispatchRedux(fetchMenu()).then(res => {
+      setMenuItems(res.payload as MenuItem[]);
+      console.log(res.payload);
+    });
   }, [dispatchRedux]);
 
   useEffect(() => {
@@ -156,14 +168,14 @@ const SearchBar = () => {
       <Button variant="outline" onClick={() => setOpen(true)}>
         <span className="flex grow items-center">
           <LucideIcons.SearchIcon
-            className="text-muted-foreground/80 md:-ms-1 md:me-3"
+            className="text-muted-foreground/80 -ms-1 me-3"
             aria-hidden="true"
           />
-          <span className="text-muted-foreground/70">
+          <span className="text-muted-foreground/70 font-normal">
             {t('searchBar.search')}
           </span>
         </span>
-        <Kbd className="hidden md:block">⌘K</Kbd>
+        <Kbd>⌘K</Kbd>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder={t('searchBar.search')} />
@@ -214,7 +226,7 @@ const SearchBar = () => {
                   className="flex items-center gap-3 py-3"
                 >
                   {Icon && (
-                    <div className="rounded bg-linear-to-b from-yellow-200 to-yellow-400 p-2 text-yellow-800 dark:from-yellow-800 dark:to-yellow-600 dark:text-yellow-100">
+                    <div className="rounded bg-linear-to-b from-yellow-200 to-yellow-400 p-2 text-yellow-800 dark:from-yellow-200 dark:to-yellow-600">
                       <Icon />
                     </div>
                   )}
@@ -239,7 +251,7 @@ const SearchBar = () => {
                   >
                     <LucideIcons.Star
                       fill={isFavorite ? `#facc15` : 'transparent'}
-                      stroke="#facc15"
+                      stroke={`#facc15`}
                       className="transition-all"
                     />
                   </Button>
