@@ -157,7 +157,10 @@ export const protectedRoutes: RouteObject[] = [
                         index: true,
                         element: <PageRoutePermissionsRoute />,
                     },
-
+                    {
+                        path: ":pageRouteId/permissions/create",
+                        element: <PageRoutePermissionFormRoute />,
+                    },
                     {
                         path: ":pageRouteId/permissions/:permissionId",
                         element: <PageRoutePermissionDetailRoute />,
