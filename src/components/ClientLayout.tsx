@@ -2,6 +2,7 @@ import { useLocation } from "react-router-dom";
 import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
 import { useState, useEffect } from "react";
+import { usePageHistory } from "@/utils/hooks/usePageHistory";
 
 interface ClientLayoutProps {
   children?: React.ReactNode;
@@ -13,6 +14,8 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   const isAuthPage = pathname === "/login" || pathname === "/register" || pathname === "/forgot-password";
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  usePageHistory();
 
   useEffect(() => {
     function handleResize() {
