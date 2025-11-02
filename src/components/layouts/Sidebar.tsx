@@ -25,7 +25,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-  useSidebar,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -59,129 +58,57 @@ const getIconComponent = (
     | undefined;
 };
 
-const findPageRouteId = (
-  movedItem: MenuItem,
-  menuItems: MenuItem[]
-): string | undefined => {
-  if (movedItem.pageRouteID) {
-    return movedItem.pageRouteID;
-  }
-
-  const match = menuItems.find(
-    item =>
-      item.favouriteId === movedItem.favouriteId || item.id === movedItem.id
-  );
-
-  return match?.pageRouteID;
-};
-
-const createReorderedFavorites = (
-  favorites: MenuItem[],
-  sourceIndex: number,
-  destinationIndex: number
-): MenuItem[] => {
-  if (
-    sourceIndex < 0 ||
-    sourceIndex >= favorites.length ||
-    destinationIndex < 0 ||
-    destinationIndex >= favorites.length
-  ) {
-    return favorites;
-  }
-
-  const reordered = Array.from(favorites);
-  const [removed] = reordered.splice(sourceIndex, 1);
-
-  if (!removed) {
-    return favorites;
-  }
-
-  reordered.splice(destinationIndex, 0, removed);
-
-  return reordered.map((fav, idx) => ({
-    ...fav,
-    order: idx,
-  }));
-};
-
 export function AppSidebar({ ...props }: AppSidebarProps) {
   const dispatch = useDispatch<AppDispatch>();
   const favoritesMenu = useSelector(selectFavorites);
   const menuItems = useSelector((state: RootState) => state.menu.items);
-  const { setOpenMobile } = useSidebar();
-  const navigate = useNavigate();
-  const [isDragging, setIsDragging] = React.useState(false);
 
   useEffect(() => {
     dispatch(fetchMenu());
     dispatch(fetchFavorites());
   }, [dispatch]);
 
-  const handleNavigate = useCallback(
-    (href: string) => {
-      if (isDragging) return;
-      navigate(href);
-      setOpenMobile(false);
-    },
-    [isDragging, navigate, setOpenMobile]
-  );
+  const navigate = useNavigate();
 
-  const handleLogout = useCallback(() => {
+  const handleNavigate = (href: string) => {
+    navigate(href);
+  };
+
+  const handleLogout = () => {
     dispatch(logoutUser());
     clearPageHistory();
-    setOpenMobile(false);
-  }, [dispatch, setOpenMobile]);
+  };
 
-  const handleFavoriteReorder = useCallback(
-    (result: DropResult) => {
-      setIsDragging(false);
-      if (!result.destination) return;
+  const handleFavoriteReorder = (result: DropResult) => {
+    if (!result.destination) return;
 
-      const reorderedWithOrder = createReorderedFavorites(
-        favoritesMenu,
-        result.source.index,
-        result.destination.index
+    const reordered = Array.from(favoritesMenu);
+    const [removed] = reordered.splice(result.source.index, 1);
+    reordered.splice(result.destination.index, 0, removed);
+
+    const reorderedWithOrder = reordered.map((fav: any, idx: number) => ({
+      ...fav,
+      order: idx,
+    }));
+    const movedItem = reorderedWithOrder[result.destination.index];
+    let pageRouteID = movedItem.pageRouteID;
+    if (!pageRouteID) {
+      const match = menuItems.find(
+        (item: any) =>
+          item.favouriteId === movedItem.favouriteId || item.id === movedItem.id
       );
+      pageRouteID = match?.pageRouteID;
+    }
 
-      const movedItem = reorderedWithOrder[result.destination.index];
-      if (!movedItem) return;
-
-      const pageRouteID = findPageRouteId(movedItem, menuItems);
-      if (!movedItem.favouriteId || !pageRouteID) return;
-
-      dispatch(reorderFavoritesLocally(reorderedWithOrder));
-      dispatch(
-        updateFavoriteOrder({
-          favouriteId: movedItem.favouriteId,
-          pageRouteID,
-          newOrder: result.destination.index,
-        })
-      );
-    },
-    [dispatch, favoritesMenu, menuItems]
-  );
-
-  const handleDragStart = useCallback(() => {
-    setIsDragging(true);
-  }, []);
-
-  const handleDeleteFavorite = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>, favouriteId: string) => {
-      e.preventDefault();
-      e.stopPropagation();
-      dispatch(deleteFavorite(favouriteId));
-    },
-    [dispatch]
-  );
-
-  const handleLinkClick = useCallback(
-    (e: React.MouseEvent<HTMLAnchorElement>) => {
-      if (isDragging) {
-        e.preventDefault();
-      }
-    },
-    [isDragging]
-  );
+    dispatch(reorderFavoritesLocally(reorderedWithOrder));
+    dispatch(
+      updateFavoriteOrder({
+        favouriteId: movedItem.favouriteId,
+        pageRouteID,
+        newOrder: result.destination.index,
+      })
+    );
+  };
 
   return (
     <Sidebar {...props}>
@@ -201,10 +128,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
               <span>{t('sidebar.favorites')}</span>
             </SidebarGroupLabel>
             <SidebarGroupContent>
-              <DragDropContext
-                onDragEnd={handleFavoriteReorder}
-                onDragStart={handleDragStart}
-              >
+              <DragDropContext onDragEnd={handleFavoriteReorder}>
                 <Droppable droppableId="favorites">
                   {provided => (
                     <SidebarMenu
@@ -240,10 +164,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
                                   tooltip={item.name}
                                   className="flex h-10 items-center gap-2 p-4 group-hover:cursor-grab active:cursor-grabbing"
                                 >
-                                  <Link
-                                    to={item.path ?? '#'}
-                                    onClick={handleLinkClick}
-                                  >
+                                  <Link to={item.path ?? '#'}>
                                     {Icon && (
                                       <div className={colorClasses}>
                                         <Icon size={16} />
@@ -254,8 +175,10 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
                                 </SidebarMenuButton>
                                 {item.favouriteId && (
                                   <SidebarMenuAction
-                                    onClick={e =>
-                                      handleDeleteFavorite(e, item.favouriteId!)
+                                    onClick={() =>
+                                      dispatch(
+                                        deleteFavorite(item.favouriteId!)
+                                      )
                                     }
                                     showOnHover
                                   >
