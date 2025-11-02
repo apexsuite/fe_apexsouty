@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '@/lib/store';
@@ -40,6 +40,7 @@ import {
 import { logoutUser } from '@/lib/authSlice';
 import { clearPageHistory } from '@/utils/hooks/usePageHistory';
 import { COLORS } from '@/utils/constants/colors';
+import CustomButton from '../CustomButton';
 
 type LucideIconComponent = React.ComponentType<{ size?: number }>;
 
@@ -62,13 +63,12 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
   const dispatch = useDispatch<AppDispatch>();
   const favoritesMenu = useSelector(selectFavorites);
   const menuItems = useSelector((state: RootState) => state.menu.items);
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(fetchMenu());
     dispatch(fetchFavorites());
   }, [dispatch]);
-
-  const navigate = useNavigate();
 
   const handleNavigate = (href: string) => {
     navigate(href);
@@ -123,9 +123,10 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
       <SidebarContent>
         {favoritesMenu.length > 0 && (
           <SidebarGroup>
-            <SidebarGroupLabel>
-              <LucideIcons.Star />
-              <span>{t('sidebar.favorites')}</span>
+            <SidebarGroupLabel className="flex items-center gap-2">
+              <span className="font-medium uppercase">
+                {t('sidebar.favorites')}
+              </span>
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <DragDropContext onDragEnd={handleFavoriteReorder}>
@@ -155,14 +156,13 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
                                 {...provided.dragHandleProps}
                                 className={cn(
                                   snapshot.isDragging &&
-                                    'flex items-center gap-3 bg-yellow-50 dark:bg-yellow-900/20',
-                                  'group cursor-grab active:cursor-grabbing'
+                                    'group flex cursor-grab items-center gap-3 bg-yellow-50 active:cursor-grabbing dark:bg-yellow-900/20'
                                 )}
                               >
                                 <SidebarMenuButton
                                   asChild
                                   tooltip={item.name}
-                                  className="flex h-10 items-center gap-2 p-4 group-hover:cursor-grab active:cursor-grabbing"
+                                  size="lg"
                                 >
                                   <Link to={item.path ?? '#'}>
                                     {Icon && (
@@ -174,18 +174,22 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
                                   </Link>
                                 </SidebarMenuButton>
                                 {item.favouriteId && (
-                                  <SidebarMenuAction
-                                    onClick={() =>
-                                      dispatch(
-                                        deleteFavorite(item.favouriteId!)
-                                      )
-                                    }
-                                    showOnHover
-                                  >
-                                    <LucideIcons.Star
-                                      size={16}
-                                      fill="#facc15"
-                                      stroke="#facc15"
+                                  <SidebarMenuAction asChild>
+                                    <CustomButton
+                                      variant="ghost"
+                                      size="icon"
+                                      className="size-6"
+                                      icon={
+                                        <LucideIcons.Star
+                                          fill="#facc15"
+                                          stroke="#facc15"
+                                        />
+                                      }
+                                      onClick={() =>
+                                        dispatch(
+                                          deleteFavorite(item.favouriteId!)
+                                        )
+                                      }
                                     />
                                   </SidebarMenuAction>
                                 )}
