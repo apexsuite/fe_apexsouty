@@ -112,13 +112,28 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50 [&_svg]:size-4 [&_svg]:shrink-0;
+    @apply border-border outline-ring/50;
   }
+
+  & svg:not([class*='recharts-']):not([class*='size-']) {
+    @apply size-4! shrink-0;
+  }
+
+  html {
+    @apply scroll-smooth antialiased;
+  }
+
   body {
+    font-family: var(--font-geist-sans);
     @apply bg-background text-foreground;
   }
 
-  [role='button'] {
-    @apply cursor-pointer;
+  p {
+    @apply text-pretty;
+  }
+
+  [role='button'],
+  button {
+    cursor: pointer;
   }
 }

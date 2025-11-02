@@ -1,11 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Tag, Space, Avatar, Tooltip, Card, theme } from 'antd';
-import { Eye, Edit, Delete, Shield, Calendar, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
+import {
+  Eye,
+  Edit,
+  Delete,
+  Shield,
+  Calendar,
+  ChevronDown,
+  ChevronUp,
+  Trash2,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { Role } from '@/lib/roleSlice';
-import { RootState } from '@/lib/store';
 import PermissionGuard from '@/components/PermissionGuard';
+import { useTheme } from '@/providers/theme';
 
 interface RoleTableProps {
   roles: Role[];
@@ -30,7 +38,7 @@ const RoleTable: React.FC<RoleTableProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
+  const { theme: currentTheme } = useTheme();
   const [isMobile, setIsMobile] = useState(false);
   const [openCard, setOpenCard] = useState<string | null>(null);
 
@@ -39,21 +47,20 @@ const RoleTable: React.FC<RoleTableProps> = ({
       setIsMobile(window.innerWidth < 768);
     }
     handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const getStatusTag = (role: Role) => (
-    <PermissionGuard 
-      permission="change-role-status" 
-      mode="disable"
-    >
+    <PermissionGuard permission="change-role-status" mode="disable">
       <Tag
         color={role.isActive ? 'green' : 'red'}
         className="cursor-pointer hover:opacity-80"
         onClick={() => onStatusChange(role.id, role.isActive)}
       >
-        {role.isActive ? t('roles.active') || 'Active' : t('roles.inactive') || 'Inactive'}
+        {role.isActive
+          ? t('roles.active') || 'Active'
+          : t('roles.inactive') || 'Inactive'}
       </Tag>
     </PermissionGuard>
   );
@@ -73,15 +80,12 @@ const RoleTable: React.FC<RoleTableProps> = ({
       key: 'name',
       render: (role: Role) => (
         <div className="flex items-center">
-          <Avatar
-            icon={<Shield size={16} />}
-            className="bg-blue-500 mr-3"
-          />
+          <Avatar icon={<Shield size={16} />} className="mr-3 bg-blue-500" />
           <div>
             <div className="font-medium text-gray-900 dark:text-white">
               {role.name}
             </div>
-            <div className="flex gap-1 mt-1">
+            <div className="mt-1 flex gap-1">
               {getDefaultTag(role.isDefault)}
             </div>
           </div>
@@ -127,10 +131,7 @@ const RoleTable: React.FC<RoleTableProps> = ({
       key: 'actions',
       render: (role: Role) => (
         <Space size="small">
-          <PermissionGuard 
-            permission="get-role" 
-            mode="hide"
-          >
+          <PermissionGuard permission="get-role" mode="hide">
             <Tooltip title={t('roles.view') || 'View'}>
               <Button
                 type="text"
@@ -140,11 +141,8 @@ const RoleTable: React.FC<RoleTableProps> = ({
               />
             </Tooltip>
           </PermissionGuard>
-          
-          <PermissionGuard 
-            permission="update-role" 
-            mode="hide"
-          >
+
+          <PermissionGuard permission="update-role" mode="hide">
             <Tooltip title={t('roles.edit') || 'Edit'}>
               <Button
                 type="text"
@@ -154,11 +152,8 @@ const RoleTable: React.FC<RoleTableProps> = ({
               />
             </Tooltip>
           </PermissionGuard>
-          
-          <PermissionGuard 
-            permission="delete-role" 
-            mode="hide"
-          >
+
+          <PermissionGuard permission="delete-role" mode="hide">
             <Tooltip title={t('roles.delete') || 'Delete'}>
               <Button
                 type="text"
@@ -176,26 +171,34 @@ const RoleTable: React.FC<RoleTableProps> = ({
   // Mobile Card Component
   const RoleCard: React.FC<{ role: Role }> = ({ role }) => {
     const isExpanded = openCard === role.id;
-    
+
     return (
       <Card
-        style={{ 
+        style={{
           cursor: 'pointer',
           backgroundColor: currentTheme === 'dark' ? '#1f2937' : '#ffffff',
           borderColor: currentTheme === 'dark' ? '#374151' : '#e5e7eb',
           borderRadius: '8px',
-          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+          boxShadow:
+            '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
         }}
         bodyStyle={{ padding: '12px' }}
         onClick={() => setOpenCard(isExpanded ? null : role.id)}
       >
-        <div className="flex justify-between items-start">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <Shield size={14} className={currentTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} />
-              <h3 
-                className="font-medium text-sm truncate"
-                style={{ color: currentTheme === 'dark' ? '#ffffff' : '#111827' }}
+        <div className="flex items-start justify-between">
+          <div className="min-w-0 flex-1">
+            <div className="mb-1 flex items-center gap-2">
+              <Shield
+                size={14}
+                className={
+                  currentTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                }
+              />
+              <h3
+                className="truncate text-sm font-medium"
+                style={{
+                  color: currentTheme === 'dark' ? '#ffffff' : '#111827',
+                }}
               >
                 {role.name}
               </h3>
@@ -204,69 +207,86 @@ const RoleTable: React.FC<RoleTableProps> = ({
                 {getDefaultTag(role.isDefault)}
               </div>
             </div>
-            
+
             {role.description && (
               <div className="mb-1">
-                <span 
-                  className="text-xs line-clamp-2"
-                  style={{ color: currentTheme === 'dark' ? '#d1d5db' : '#6b7280' }}
+                <span
+                  className="line-clamp-2 text-xs"
+                  style={{
+                    color: currentTheme === 'dark' ? '#d1d5db' : '#6b7280',
+                  }}
                 >
                   {role.description}
                 </span>
               </div>
             )}
-            
-            <div className="flex items-center gap-3 mb-1">
+
+            <div className="mb-1 flex items-center gap-3">
               <div className="flex items-center gap-1">
-                <span 
+                <span
                   className="text-xs font-medium"
-                  style={{ color: currentTheme === 'dark' ? '#ffffff' : '#111827' }}
+                  style={{
+                    color: currentTheme === 'dark' ? '#ffffff' : '#111827',
+                  }}
                 >
                   {t('roles.mobile.roleValue')}:
                 </span>
-                <span 
+                <span
                   className="text-xs"
-                  style={{ color: currentTheme === 'dark' ? '#d1d5db' : '#6b7280' }}
+                  style={{
+                    color: currentTheme === 'dark' ? '#d1d5db' : '#6b7280',
+                  }}
                 >
                   {role.roleValue}
                 </span>
               </div>
-              
+
               <div className="flex items-center gap-1">
-                <span 
+                <span
                   className="text-xs font-medium"
-                  style={{ color: currentTheme === 'dark' ? '#ffffff' : '#111827' }}
+                  style={{
+                    color: currentTheme === 'dark' ? '#ffffff' : '#111827',
+                  }}
                 >
                   {t('roles.permissions')}:
                 </span>
-                <span 
+                <span
                   className="text-xs"
-                  style={{ color: currentTheme === 'dark' ? '#d1d5db' : '#6b7280' }}
+                  style={{
+                    color: currentTheme === 'dark' ? '#d1d5db' : '#6b7280',
+                  }}
                 >
                   {role.permissionCount || 0}
                 </span>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-1">
-              <Calendar size={12} className={currentTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} />
-              <span 
+              <Calendar
+                size={12}
+                className={
+                  currentTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                }
+              />
+              <span
                 className="text-xs"
-                style={{ color: currentTheme === 'dark' ? '#d1d5db' : '#6b7280' }}
+                style={{
+                  color: currentTheme === 'dark' ? '#d1d5db' : '#6b7280',
+                }}
               >
                 {new Date(role.createdAt).toLocaleDateString('tr-TR')}
               </span>
             </div>
           </div>
-          
-          <Button 
-            type="text" 
-            size="small" 
-            onClick={(e) => { 
-              e.stopPropagation(); 
-              setOpenCard(isExpanded ? null : role.id); 
+
+          <Button
+            type="text"
+            size="small"
+            onClick={e => {
+              e.stopPropagation();
+              setOpenCard(isExpanded ? null : role.id);
             }}
-            className="p-0 h-auto"
+            className="h-auto p-0"
             style={{ minWidth: 'auto' }}
           >
             {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
@@ -274,54 +294,56 @@ const RoleTable: React.FC<RoleTableProps> = ({
         </div>
 
         {isExpanded && (
-          <div 
-            className="mt-3 pt-3 border-t"
-            style={{ borderColor: currentTheme === 'dark' ? '#374151' : '#e5e7eb' }}
+          <div
+            className="mt-3 border-t pt-3"
+            style={{
+              borderColor: currentTheme === 'dark' ? '#374151' : '#e5e7eb',
+            }}
           >
             <div className="flex flex-wrap gap-1">
-              <PermissionGuard 
-                permission="get-role" 
-                mode="hide"
-              >
+              <PermissionGuard permission="get-role" mode="hide">
                 <Tooltip title={t('roles.view')}>
                   <Button
                     type="text"
                     size="small"
                     icon={<Eye size={12} />}
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       onView(role.id);
                     }}
-                    style={{ 
-                      color: currentTheme === 'dark' ? '#ffffff' : token.colorPrimary,
+                    style={{
+                      color:
+                        currentTheme === 'dark'
+                          ? '#ffffff'
+                          : token.colorPrimary,
                       fontSize: '11px',
                       height: '24px',
-                      padding: '0 6px'
+                      padding: '0 6px',
                     }}
                   >
                     {t('roles.mobile.view')}
                   </Button>
                 </Tooltip>
               </PermissionGuard>
-              
-              <PermissionGuard 
-                permission="update-role" 
-                mode="hide"
-              >
+
+              <PermissionGuard permission="update-role" mode="hide">
                 <Tooltip title={t('roles.edit')}>
                   <Button
                     type="text"
                     size="small"
                     icon={<Edit size={12} />}
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       onEdit(role.id);
                     }}
-                    style={{ 
-                      color: currentTheme === 'dark' ? '#ffffff' : token.colorSuccess,
+                    style={{
+                      color:
+                        currentTheme === 'dark'
+                          ? '#ffffff'
+                          : token.colorSuccess,
                       fontSize: '11px',
                       height: '24px',
-                      padding: '0 6px'
+                      padding: '0 6px',
                     }}
                   >
                     {t('roles.mobile.edit')}
@@ -329,24 +351,22 @@ const RoleTable: React.FC<RoleTableProps> = ({
                 </Tooltip>
               </PermissionGuard>
 
-              <PermissionGuard 
-                permission="delete-role" 
-                mode="hide"
-              >
+              <PermissionGuard permission="delete-role" mode="hide">
                 <Tooltip title={t('roles.delete')}>
                   <Button
                     type="text"
                     size="small"
                     icon={<Delete size={12} />}
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       onDelete(role.id, role.name);
                     }}
-                    style={{ 
-                      color: currentTheme === 'dark' ? '#ffffff' : token.colorError,
+                    style={{
+                      color:
+                        currentTheme === 'dark' ? '#ffffff' : token.colorError,
                       fontSize: '11px',
                       height: '24px',
-                      padding: '0 6px'
+                      padding: '0 6px',
                     }}
                     danger
                   >
@@ -364,12 +384,12 @@ const RoleTable: React.FC<RoleTableProps> = ({
   if (isMobile) {
     return (
       <div className="space-y-2 px-1">
-        {roles.map((role) => (
+        {roles.map(role => (
           <RoleCard key={role.id} role={role} />
         ))}
         {loading && (
           <div className="flex justify-center py-6">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+            <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-blue-600"></div>
           </div>
         )}
       </div>
@@ -377,7 +397,7 @@ const RoleTable: React.FC<RoleTableProps> = ({
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
       <Table
         columns={columns}
         dataSource={roles}
@@ -386,27 +406,29 @@ const RoleTable: React.FC<RoleTableProps> = ({
         pagination={false}
         className="dark:bg-gray-800"
         rowClassName={(_record, index) =>
-          index % 2 === 0 
-            ? 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700' 
+          index % 2 === 0
+            ? 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
             : 'bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'
         }
         components={{
           header: {
             cell: (props: any) => (
-              <th 
-                {...props} 
-                className="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600 px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+              <th
+                {...props}
+                className="border-gray-200 bg-gray-50 px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-700 uppercase dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300"
               />
             ),
           },
         }}
         locale={{
           emptyText: (
-            <div style={{ 
-              padding: '40px 20px',
-              textAlign: 'center',
-              color: '#6b7280'
-            }}>
+            <div
+              style={{
+                padding: '40px 20px',
+                textAlign: 'center',
+                color: '#6b7280',
+              }}
+            >
               {searchTerm || selectedRoleValue !== 'all' ? (
                 <div>
                   <p style={{ fontSize: '16px', marginBottom: '8px' }}>
@@ -427,11 +449,11 @@ const RoleTable: React.FC<RoleTableProps> = ({
                 </div>
               )}
             </div>
-          )
+          ),
         }}
       />
     </div>
   );
 };
 
-export default RoleTable; 
+export default RoleTable;

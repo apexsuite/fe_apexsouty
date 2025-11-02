@@ -4,6 +4,8 @@ import type { RootState } from '@/lib/store';
 import { setLanguage } from '@/lib/langSlice';
 import i18n from '@/lib/i18n';
 import SearchBar from '@/components/layouts/SearchBar';
+import { ThemeSwitcher } from '@/components/switcher/theme-switcher';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 
 export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
   const lang = useSelector((state: RootState) => state.lang.language);
@@ -13,6 +15,7 @@ export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
       <nav
         className={`border-border bg-background sticky top-0 z-40 flex w-full items-center justify-between border-b px-4 py-6 shadow-sm md:px-12`}
       >
+        <SidebarTrigger className="-ml-1" />
         <div className="flex items-center gap-2">
           <button
             className="group rounded p-2 hover:bg-green-100 lg:hidden dark:hover:bg-green-900"
@@ -76,6 +79,7 @@ export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
           >
             TR
           </button>
+          <ThemeSwitcher />
         </div>
       </nav>
     </>

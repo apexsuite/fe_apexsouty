@@ -1,8 +1,8 @@
 import { useLocation } from 'react-router-dom';
-import Sidebar from '@/components/Sidebar';
 import Navbar from '@/components/Navbar';
-import { useState } from 'react';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { usePageHistory } from '@/utils/hooks/usePageHistory';
+import { AppSidebar } from '@/components/layouts/Sidebar';
 
 interface ClientLayoutProps {
   children?: React.ReactNode;
@@ -15,7 +15,6 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     pathname === '/login' ||
     pathname === '/register' ||
     pathname === '/forgot-password';
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   usePageHistory();
 
@@ -24,17 +23,12 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   }
 
   return (
-    <div className="bg-background flex min-h-screen">
-      {/* Sidebar - desktop & mobile */}
-      <Sidebar
-        mobileOpen={mobileSidebarOpen}
-        onMobileClose={() => setMobileSidebarOpen(false)}
-      />
-      {/* Main content */}
-      <div className="ml-0 flex min-h-screen flex-1 flex-col lg:ml-64">
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
         <Navbar />
-        <main className="flex-1">{children}</main>
-      </div>
-    </div>
+        {children}
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

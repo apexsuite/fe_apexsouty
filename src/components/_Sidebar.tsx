@@ -1,6 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { Star } from 'lucide-react';
+import { LogOutIcon, Star } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '@/lib/store';
 import { useEffect } from 'react';
@@ -22,6 +21,8 @@ import {
   DropResult,
 } from '@hello-pangea/dnd';
 import { clearPageHistory } from '@/utils/hooks/usePageHistory';
+import CustomButton from '@/components/CustomButton';
+import { t } from 'i18next';
 
 export default function Sidebar({
   mobileOpen,
@@ -30,8 +31,6 @@ export default function Sidebar({
   mobileOpen?: boolean;
   onMobileClose?: () => void;
 }) {
-  const { t, i18n } = useTranslation();
-  const lang = useSelector((state: RootState) => state.lang.language);
   const dispatch = useDispatch<AppDispatch>();
   const favoritesMenu = useSelector(selectFavorites);
   const menuItems = useSelector((state: RootState) => state.menu.items);
@@ -42,12 +41,6 @@ export default function Sidebar({
   }, [dispatch]);
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (i18n.language !== lang) i18n.changeLanguage(lang);
-  }, [lang, i18n]);
-
-  if (i18n.language !== lang) return null;
 
   const handleNavigate = (href: string) => {
     navigate(href);
@@ -103,7 +96,7 @@ export default function Sidebar({
         <ul className="space-y-2">
           {favoritesMenu.length > 0 && (
             <>
-              <div className="mt-2 mb-1 flex items-center gap-1 text-xs font-bold text-gray-800 dark:text-gray-400">
+              <div className="mt-2 mb-1 flex items-center gap-1 text-xs font-bold">
                 <Star size={14} className="text-yellow-400" />{' '}
                 {t('sidebar.favorites')}
               </div>
@@ -175,32 +168,15 @@ export default function Sidebar({
           )}
         </ul>
       </nav>
-      <div className="mt-auto">
-        <button
-          className="mb-3 flex w-full items-center justify-center gap-2 rounded-lg bg-red-100 py-2 font-semibold text-red-700 transition-colors hover:bg-red-200 dark:bg-red-900 dark:text-red-200 dark:hover:bg-red-800"
-          onClick={handleLogout}
-        >
-          <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
-            <path
-              d="M16 17l5-5m0 0l-5-5m5 5H9"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          {t('sidebar.logout')}
-        </button>
-        <div className="text-muted-foreground text-center text-xs">
-          © 2024 ApexScouty
-        </div>
+      <CustomButton
+        variant="outline"
+        onClick={handleLogout}
+        label={t('sidebar.logout')}
+        icon={<LogOutIcon />}
+        className="w-full"
+      />
+      <div className="text-muted-foreground text-center text-xs">
+        © 2024 ApexScouty
       </div>
     </div>
   );

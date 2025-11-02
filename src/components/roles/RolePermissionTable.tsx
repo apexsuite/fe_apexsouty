@@ -4,10 +4,28 @@ import { useTranslation } from 'react-i18next';
 import { AppDispatch, RootState } from '@/lib/store';
 import { fetchPermissions } from '@/lib/pageRoutePermissionSlice';
 import { createRolePermissions, deleteRolePermission } from '@/lib/roleSlice';
-import { Trash2, Search, Check, Plus, Shield, ChevronDown, ChevronUp } from 'lucide-react';
-import { Button, Tag, Modal, Input, Table, Space, Card, Pagination } from 'antd';
+import {
+  Trash2,
+  Search,
+  Check,
+  Plus,
+  Shield,
+  ChevronDown,
+  ChevronUp,
+} from 'lucide-react';
+import {
+  Button,
+  Tag,
+  Modal,
+  Input,
+  Table,
+  Space,
+  Card,
+  Pagination,
+} from 'antd';
 import { useErrorHandler } from '@/lib/useErrorHandler';
 import type { ColumnsType } from 'antd/es/table';
+import { useTheme } from '@/providers/theme';
 
 interface RolePermissionTableProps {
   roleId: string;
@@ -22,7 +40,7 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
-  const theme = useSelector((state: RootState) => state.theme.theme);
+  const { theme } = useTheme();
   const { handleError, showSuccess } = useErrorHandler();
 
   const [showPermissionModal, setShowPermissionModal] = useState(false);
@@ -42,8 +60,8 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
       setIsMobile(window.innerWidth < 768);
     }
     handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Initialize local permissions when rolePermissions change
@@ -55,9 +73,9 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
   // Filter permissions based on search term
   const filteredPermissions = useMemo(() => {
     if (!searchTerm) return localPermissions;
-    
+
     const lowerSearchTerm = searchTerm.toLowerCase();
-    return localPermissions.filter((rolePermission) => {
+    return localPermissions.filter(rolePermission => {
       const permission = rolePermission.permission;
       return (
         permission?.name?.toLowerCase().includes(lowerSearchTerm) ||
@@ -98,16 +116,18 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
     setIsAssigning(true);
     try {
       // API'ye istek at
-      await dispatch(createRolePermissions({
-        roleId,
-        permissionIdList: selectedPermissions
-      })).unwrap();
+      await dispatch(
+        createRolePermissions({
+          roleId,
+          permissionIdList: selectedPermissions,
+        })
+      ).unwrap();
 
       // Başarılı olursa parent component'ten role permissions'ı yeniden yükle
       if (onRefresh) {
         onRefresh();
       }
-      
+
       showSuccess('permissionAssignedSuccessfully');
       setShowPermissionModal(false);
       setSelectedPermissions([]);
@@ -120,25 +140,29 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
 
   const handleUnassignPermission = async (permissionId: string) => {
     try {
-      const rolePermission = localPermissions.find(p => 
-        p.permissionId === permissionId || 
-        p.permission?.id === permissionId || 
-        p.id === permissionId
+      const rolePermission = localPermissions.find(
+        p =>
+          p.permissionId === permissionId ||
+          p.permission?.id === permissionId ||
+          p.id === permissionId
       );
-      
+
       if (rolePermission) {
-        const rolePermissionId = rolePermission.rolePermissionID || rolePermission.id;
-        
+        const rolePermissionId =
+          rolePermission.rolePermissionID || rolePermission.id;
+
         if (rolePermissionId) {
-          await dispatch(deleteRolePermission({
-            roleId,
-            rolePermissionId: rolePermissionId
-          })).unwrap();
-          
+          await dispatch(
+            deleteRolePermission({
+              roleId,
+              rolePermissionId: rolePermissionId,
+            })
+          ).unwrap();
+
           if (onRefresh) {
             onRefresh();
           }
-          
+
           showSuccess('permissionUnassignedSuccessfully');
         }
       }
@@ -147,7 +171,10 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
     }
   };
 
-  const handlePermissionSelection = (permissionId: string, checked: boolean) => {
+  const handlePermissionSelection = (
+    permissionId: string,
+    checked: boolean
+  ) => {
     if (checked) {
       setSelectedPermissions(prev => [...prev, permissionId]);
     } else {
@@ -155,13 +182,16 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
     }
   };
 
-
-  const currentRolePermissionIds = rolePermissions.map(rp => {
-    return rp.permissionId || rp.permission?.id || rp.id;
-  }).filter(Boolean);
+  const currentRolePermissionIds = rolePermissions
+    .map(rp => {
+      return rp.permissionId || rp.permission?.id || rp.id;
+    })
+    .filter(Boolean);
   const availablePermissions = allPermissions.filter(permission => {
     const isNotAssigned = !currentRolePermissionIds.includes(permission.id);
-    const matchesSearch = permission.name.toLowerCase().includes(permissionSearchTerm.toLowerCase());
+    const matchesSearch = permission.name
+      .toLowerCase()
+      .includes(permissionSearchTerm.toLowerCase());
 
     return isNotAssigned && matchesSearch;
   });
@@ -172,7 +202,9 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
       dataIndex: ['permission', 'name'],
       key: 'name',
       render: (text: string) => (
-        <span className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+        <span
+          className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
+        >
           {text}
         </span>
       ),
@@ -182,7 +214,9 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
       dataIndex: ['permission', 'description'],
       key: 'description',
       render: (text: string) => (
-        <span className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+        <span
+          className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}
+        >
           {text || 'No description'}
         </span>
       ),
@@ -191,9 +225,7 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
       title: 'Label',
       dataIndex: ['permission', 'label'],
       key: 'label',
-      render: (text: string) => text ? (
-        <Tag color="blue">{text}</Tag>
-      ) : null,
+      render: (text: string) => (text ? <Tag color="blue">{text}</Tag> : null),
     },
     {
       title: 'Status',
@@ -215,7 +247,9 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
             danger
             icon={<Trash2 size={16} />}
             onClick={() => {
-              handleUnassignPermission(record.permissionId || record.permission?.id || record.id);
+              handleUnassignPermission(
+                record.permissionId || record.permission?.id || record.id
+              );
             }}
             size="small"
           >
@@ -228,78 +262,102 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
 
   const PermissionCard: React.FC<{ permission: any }> = ({ permission }) => {
     const isExpanded = openCard === permission.permissionId;
-    
+
     return (
       <Card
-        style={{ 
+        style={{
           cursor: 'pointer',
           backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
           borderColor: theme === 'dark' ? '#374151' : '#e5e7eb',
           borderRadius: '6px',
           boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-          marginBottom: '6px'
+          marginBottom: '6px',
         }}
         bodyStyle={{ padding: '8px 10px' }}
         onClick={() => setOpenCard(isExpanded ? null : permission.permissionId)}
       >
-        <div className="flex justify-between items-start">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5 mb-1">
-              <Shield 
-                size={12} 
-                className={theme === 'dark' ? 'text-blue-400' : 'text-blue-500'} 
+        <div className="flex items-start justify-between">
+          <div className="min-w-0 flex-1">
+            <div className="mb-1 flex items-center gap-1.5">
+              <Shield
+                size={12}
+                className={theme === 'dark' ? 'text-blue-400' : 'text-blue-500'}
               />
-              <h3 
-                className="font-medium truncate flex-1"
-                style={{ color: theme === 'dark' ? '#ffffff' : '#111827', fontSize: '13px' }}
+              <h3
+                className="flex-1 truncate font-medium"
+                style={{
+                  color: theme === 'dark' ? '#ffffff' : '#111827',
+                  fontSize: '13px',
+                }}
               >
                 {permission.permission?.name}
               </h3>
-              <Tag 
+              <Tag
                 color={permission.isActive ? 'green' : 'red'}
-                style={{ fontSize: '10px', padding: '0 4px', lineHeight: '18px' }}
+                style={{
+                  fontSize: '10px',
+                  padding: '0 4px',
+                  lineHeight: '18px',
+                }}
               >
                 {permission.isActive ? 'Active' : 'Inactive'}
               </Tag>
             </div>
-            
+
             {permission.permission?.description && (
               <div className="mb-1">
-                <span 
+                <span
                   className="line-clamp-1"
-                  style={{ color: theme === 'dark' ? '#d1d5db' : '#6b7280', fontSize: '11px' }}
+                  style={{
+                    color: theme === 'dark' ? '#d1d5db' : '#6b7280',
+                    fontSize: '11px',
+                  }}
                 >
                   {permission.permission.description}
                 </span>
               </div>
             )}
-            
+
             {permission.permission?.label && (
               <div>
-                <Tag color="blue" style={{ fontSize: '9px', padding: '0 4px', lineHeight: '16px' }}>
+                <Tag
+                  color="blue"
+                  style={{
+                    fontSize: '9px',
+                    padding: '0 4px',
+                    lineHeight: '16px',
+                  }}
+                >
                   {permission.permission.label}
                 </Tag>
               </div>
             )}
           </div>
-          
-          <Button 
-            type="text" 
-            size="small" 
-            onClick={(e) => { 
-              e.stopPropagation(); 
-              setOpenCard(isExpanded ? null : permission.permissionId); 
+
+          <Button
+            type="text"
+            size="small"
+            onClick={e => {
+              e.stopPropagation();
+              setOpenCard(isExpanded ? null : permission.permissionId);
             }}
-            className="p-0 h-auto"
-            style={{ minWidth: 'auto', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            className="h-auto p-0"
+            style={{
+              minWidth: 'auto',
+              width: '20px',
+              height: '20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
           >
             {isExpanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
           </Button>
         </div>
 
         {isExpanded && (
-          <div 
-            className="mt-2 pt-2 border-t"
+          <div
+            className="mt-2 border-t pt-2"
             style={{ borderColor: theme === 'dark' ? '#374151' : '#e5e7eb' }}
           >
             <div className="flex flex-wrap gap-1">
@@ -308,14 +366,18 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
                 danger
                 size="small"
                 icon={<Trash2 size={10} />}
-                onClick={(e) => {
+                onClick={e => {
                   e.stopPropagation();
-                  handleUnassignPermission(permission.permissionId || permission.permission?.id || permission.id);
+                  handleUnassignPermission(
+                    permission.permissionId ||
+                      permission.permission?.id ||
+                      permission.id
+                  );
                 }}
-                style={{ 
+                style={{
                   fontSize: '10px',
                   height: '22px',
-                  padding: '0 6px'
+                  padding: '0 6px',
                 }}
               >
                 Unassign
@@ -329,26 +391,41 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
 
   return (
     <div className="space-y-2 md:space-y-4">
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2">
+      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-2">
-          <h3 className={`text-sm md:text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+          <h3
+            className={`text-sm font-semibold md:text-lg ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
+          >
             {t('pages.permissions')}
           </h3>
-          <Tag color="blue" style={{ fontSize: '10px', padding: '0 6px', lineHeight: '18px' }}>{localPermissions.length}</Tag>
+          <Tag
+            color="blue"
+            style={{ fontSize: '10px', padding: '0 6px', lineHeight: '18px' }}
+          >
+            {localPermissions.length}
+          </Tag>
         </div>
         <div className="w-full sm:w-72">
           <Input
-            placeholder={t('permissions.searchPermissions') || 'Search by name, description or label...'}
-            prefix={<Search size={16} className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} />}
+            placeholder={
+              t('permissions.searchPermissions') ||
+              'Search by name, description or label...'
+            }
+            prefix={
+              <Search
+                size={16}
+                className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}
+              />
+            }
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={e => setSearchTerm(e.target.value)}
             allowClear
             size="small"
             className={`${theme === 'dark' ? 'dark-input' : ''}`}
             style={{
               backgroundColor: theme === 'dark' ? '#374151' : '#ffffff',
               borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
-              color: theme === 'dark' ? '#ffffff' : '#111827'
+              color: theme === 'dark' ? '#ffffff' : '#111827',
             }}
           />
         </div>
@@ -368,39 +445,55 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
             className="flex-1 md:flex-initial"
             style={{ fontSize: '12px', height: '28px', padding: '0 10px' }}
           >
-            {isAssigning ? (t('pages.assigning') || 'Assigning...') : (t('pages.managePermissions') || 'Manage Permissions')}
+            {isAssigning
+              ? t('pages.assigning') || 'Assigning...'
+              : t('pages.managePermissions') || 'Manage Permissions'}
           </Button>
         </div>
       </div>
-
-    
 
       {isMobile ? (
         <>
           <div>
             {paginatedPermissions.length === 0 ? (
-              <div className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} p-8 text-center`}>
-                <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
-                  {searchTerm ? (t('permissions.noResultsFound') || 'No results found') : t('pages.noPermissionsAssigned')}
+              <div
+                className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} p-8 text-center`}
+              >
+                <p
+                  className={
+                    theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                  }
+                >
+                  {searchTerm
+                    ? t('permissions.noResultsFound') || 'No results found'
+                    : t('pages.noPermissionsAssigned')}
                 </p>
-                <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                  {searchTerm ? (t('permissions.tryDifferentSearch') || 'Try a different search term') : t('pages.createFirstPermission')}
+                <p
+                  className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}
+                >
+                  {searchTerm
+                    ? t('permissions.tryDifferentSearch') ||
+                      'Try a different search term'
+                    : t('pages.createFirstPermission')}
                 </p>
               </div>
             ) : (
-              paginatedPermissions.map((permission) => (
-                <PermissionCard key={permission.permissionId || permission.id} permission={permission} />
+              paginatedPermissions.map(permission => (
+                <PermissionCard
+                  key={permission.permissionId || permission.id}
+                  permission={permission}
+                />
               ))
             )}
           </div>
 
           {filteredPermissions.length > 0 && (
-            <div className="flex justify-center mt-3">
+            <div className="mt-3 flex justify-center">
               <Pagination
                 current={currentPage}
                 total={filteredPermissions.length}
                 pageSize={pageSize}
-                onChange={(page) => setCurrentPage(page)}
+                onChange={page => setCurrentPage(page)}
                 showSizeChanger={false}
                 simple
                 className={theme === 'dark' ? 'dark-pagination' : ''}
@@ -410,7 +503,9 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
         </>
       ) : (
         <>
-          <div className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} ${theme === 'dark' ? 'dark-modal' : ''}`}>
+          <div
+            className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} ${theme === 'dark' ? 'dark-modal' : ''}`}
+          >
             <Table
               columns={columns}
               dataSource={paginatedPermissions}
@@ -423,24 +518,37 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
               }}
               locale={{
                 emptyText: (
-                  <div className={`text-center py-8 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                    <p>{searchTerm ? (t('permissions.noResultsFound') || 'No results found') : t('pages.noPermissionsAssigned')}</p>
-                    <p className="text-sm">{searchTerm ? (t('permissions.tryDifferentSearch') || 'Try a different search term') : t('pages.createFirstPermission')}</p>
+                  <div
+                    className={`py-8 text-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}
+                  >
+                    <p>
+                      {searchTerm
+                        ? t('permissions.noResultsFound') || 'No results found'
+                        : t('pages.noPermissionsAssigned')}
+                    </p>
+                    <p className="text-sm">
+                      {searchTerm
+                        ? t('permissions.tryDifferentSearch') ||
+                          'Try a different search term'
+                        : t('pages.createFirstPermission')}
+                    </p>
                   </div>
-                )
+                ),
               }}
             />
           </div>
 
           {filteredPermissions.length > 0 && (
-            <div className="flex justify-center mt-4">
+            <div className="mt-4 flex justify-center">
               <Pagination
                 current={currentPage}
                 total={filteredPermissions.length}
                 pageSize={pageSize}
-                onChange={(page) => setCurrentPage(page)}
+                onChange={page => setCurrentPage(page)}
                 showSizeChanger={false}
-                showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
+                showTotal={(total, range) =>
+                  `${range[0]}-${range[1]} of ${total} items`
+                }
                 className={theme === 'dark' ? 'dark-pagination' : ''}
               />
             </div>
@@ -469,13 +577,15 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
           },
           header: {
             backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
-            borderBottom: theme === 'dark' ? '1px solid #4b5563' : '1px solid #f0f0f0',
+            borderBottom:
+              theme === 'dark' ? '1px solid #4b5563' : '1px solid #f0f0f0',
             color: theme === 'dark' ? '#f3f4f6' : '#000000',
           },
           footer: {
             backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
-            borderTop: theme === 'dark' ? '1px solid #4b5563' : '1px solid #f0f0f0',
-          }
+            borderTop:
+              theme === 'dark' ? '1px solid #4b5563' : '1px solid #f0f0f0',
+          },
         }}
       >
         <div className="space-y-4">
@@ -483,8 +593,15 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
             <Input
               placeholder={t('pages.searchPermissions')}
               value={permissionSearchTerm}
-              onChange={(e) => setPermissionSearchTerm(e.target.value)}
-              prefix={<Search size={16} className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} />}
+              onChange={e => setPermissionSearchTerm(e.target.value)}
+              prefix={
+                <Search
+                  size={16}
+                  className={
+                    theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                  }
+                />
+              }
               className={theme === 'dark' ? 'dark-input' : ''}
               style={{
                 backgroundColor: theme === 'dark' ? '#374151' : '#ffffff',
@@ -494,7 +611,9 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
             />
           </div>
 
-          <div className={`max-h-96 overflow-y-auto ${theme === 'dark' ? 'dark-modal' : ''}`}>
+          <div
+            className={`max-h-96 overflow-y-auto ${theme === 'dark' ? 'dark-modal' : ''}`}
+          >
             {availablePermissions.length > 0 ? (
               <Table
                 columns={[
@@ -506,7 +625,9 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
                       <input
                         type="checkbox"
                         checked={selectedPermissions.includes(record.id)}
-                        onChange={(e) => handlePermissionSelection(record.id, e.target.checked)}
+                        onChange={e =>
+                          handlePermissionSelection(record.id, e.target.checked)
+                        }
                         className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       />
                     ),
@@ -516,7 +637,9 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
                     dataIndex: 'name',
                     key: 'name',
                     render: (text: string) => (
-                      <span className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                      <span
+                        className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
+                      >
                         {text}
                       </span>
                     ),
@@ -526,7 +649,9 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
                     dataIndex: 'description',
                     key: 'description',
                     render: (text: string) => (
-                      <span className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                      <span
+                        className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}
+                      >
                         {text || 'No description'}
                       </span>
                     ),
@@ -552,15 +677,21 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
                 }}
                 locale={{
                   emptyText: (
-                    <div className={`text-center py-8 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                    <div
+                      className={`py-8 text-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}
+                    >
                       <p>{t('pages.noAvailablePermissions')}</p>
-                      <p className="text-sm">{t('pages.allPermissionsAssigned')}</p>
+                      <p className="text-sm">
+                        {t('pages.allPermissionsAssigned')}
+                      </p>
                     </div>
-                  )
+                  ),
                 }}
               />
             ) : (
-              <div className={`text-center py-8 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+              <div
+                className={`py-8 text-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}
+              >
                 <p>{t('pages.noAvailablePermissions')}</p>
                 <p className="text-sm">{t('pages.allPermissionsAssigned')}</p>
               </div>
@@ -568,9 +699,13 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
           </div>
 
           {selectedPermissions.length > 0 && (
-            <div className={`p-3 rounded-lg ${theme === 'dark' ? 'bg-blue-900/20' : 'bg-blue-50'} border border-blue-200`}>
-              <p className={`text-sm ${theme === 'dark' ? 'text-blue-300' : 'text-blue-700'}`}>
-                <Check size={16} className="inline mr-1" />
+            <div
+              className={`rounded-lg p-3 ${theme === 'dark' ? 'bg-blue-900/20' : 'bg-blue-50'} border border-blue-200`}
+            >
+              <p
+                className={`text-sm ${theme === 'dark' ? 'text-blue-300' : 'text-blue-700'}`}
+              >
+                <Check size={16} className="mr-1 inline" />
                 {selectedPermissions.length} {t('pages.permissionsSelected')}
               </p>
             </div>

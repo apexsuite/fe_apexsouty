@@ -5,6 +5,8 @@ import { useEffect, useState, useRef } from 'react';
 import { setLanguage } from '@/lib/langSlice';
 import i18n from '@/lib/i18n';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ThemeProvider } from '@/providers/theme';
+import { THEME_STORAGE_KEY } from '@/utils/constants/config';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -57,7 +59,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Provider store={store}>{ready ? children : <Spinner />}</Provider>
+      <Provider store={store}>
+        <ThemeProvider defaultTheme="system" storageKey={THEME_STORAGE_KEY}>
+          {ready ? children : <Spinner />}
+        </ThemeProvider>
+      </Provider>
     </QueryClientProvider>
   );
 }

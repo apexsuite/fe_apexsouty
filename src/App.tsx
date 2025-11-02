@@ -2,21 +2,13 @@ import Providers from '@/components/Providers';
 import ToastProvider from '@/components/ToastProvider';
 import AppRoutes from '@/routes';
 
-function AppContent() {
-  return (
-    <>
-      <ToastProvider />
-      <AppRoutes />
-    </>
-  );
-}
-
 function App() {
   return (
     <Providers>
-      <AppContent />
+      <ToastProvider />
+      <AppRoutes />
     </Providers>
   );
 }
 
-export default App; 
+export default App;

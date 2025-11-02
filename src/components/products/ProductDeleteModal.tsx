@@ -1,10 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { Modal, Typography, Button, theme } from 'antd';
 import { AlertTriangle } from 'lucide-react';
-import { RootState } from '@/lib/store';
 import PermissionGuard from '@/components/PermissionGuard';
+import { useTheme } from '@/providers/theme';
 
 const { Text, Paragraph } = Typography;
 
@@ -25,7 +24,7 @@ const ProductDeleteModal: React.FC<ProductDeleteModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
+  const { theme: currentTheme } = useTheme();
 
   if (!product) return null;
 
@@ -34,75 +33,89 @@ const ProductDeleteModal: React.FC<ProductDeleteModalProps> = ({
       title={
         <div className="flex items-center gap-2">
           <AlertTriangle className="text-red-500" size={20} />
-          <span style={{ color: currentTheme === 'dark' ? '#ffffff' : token.colorText }}>{t('product.deleteModal.title')}</span>
+          <span
+            style={{
+              color: currentTheme === 'dark' ? '#ffffff' : token.colorText,
+            }}
+          >
+            {t('product.deleteModal.title')}
+          </span>
         </div>
       }
       open={visible}
       onCancel={onCancel}
       footer={[
-        <Button 
-          key="cancel" 
+        <Button
+          key="cancel"
           onClick={onCancel}
           style={{
-            backgroundColor: currentTheme === 'dark' ? '#262626' : token.colorBgContainer,
+            backgroundColor:
+              currentTheme === 'dark' ? '#262626' : token.colorBgContainer,
             borderColor: token.colorBorder,
-            color: token.colorText
+            color: token.colorText,
           }}
         >
           {t('common.cancel')}
         </Button>,
-        <PermissionGuard 
-          permission="delete-product" 
-          mode="hide"
-        >
-          <Button 
-            key="delete" 
-            danger 
+        <PermissionGuard permission="delete-product" mode="hide">
+          <Button
+            key="delete"
+            danger
             onClick={onConfirm}
             loading={loading}
             style={{
               backgroundColor: currentTheme === 'dark' ? '#ff4d4f' : undefined,
               borderColor: currentTheme === 'dark' ? '#ff4d4f' : undefined,
-              color: currentTheme === 'dark' ? '#ffffff' : undefined
+              color: currentTheme === 'dark' ? '#ffffff' : undefined,
             }}
           >
             {t('common.delete')}
           </Button>
-        </PermissionGuard>
+        </PermissionGuard>,
       ]}
       centered
       styles={{
         content: {
-          backgroundColor: currentTheme === 'dark' ? '#1f1f1f' : token.colorBgElevated,
-          borderColor: token.colorBorder
+          backgroundColor:
+            currentTheme === 'dark' ? '#1f1f1f' : token.colorBgElevated,
+          borderColor: token.colorBorder,
         },
         header: {
-          backgroundColor: currentTheme === 'dark' ? '#1f1f1f' : token.colorBgElevated,
-          borderColor: token.colorBorder
+          backgroundColor:
+            currentTheme === 'dark' ? '#1f1f1f' : token.colorBgElevated,
+          borderColor: token.colorBorder,
         },
         body: {
-          backgroundColor: currentTheme === 'dark' ? '#1f1f1f' : token.colorBgElevated
+          backgroundColor:
+            currentTheme === 'dark' ? '#1f1f1f' : token.colorBgElevated,
         },
         footer: {
-          backgroundColor: currentTheme === 'dark' ? '#1f1f1f' : token.colorBgElevated,
-          borderColor: token.colorBorder
-        }
+          backgroundColor:
+            currentTheme === 'dark' ? '#1f1f1f' : token.colorBgElevated,
+          borderColor: token.colorBorder,
+        },
       }}
     >
       <div className="py-4">
         <Paragraph style={{ color: token.colorText }} className="mb-4">
           {t('product.deleteModal.description')}
         </Paragraph>
-        <div style={{ 
-          backgroundColor: currentTheme === 'dark' ? '#262626' : token.colorBgLayout, 
-          padding: '16px', 
-          borderRadius: '8px' 
-        }}>
+        <div
+          style={{
+            backgroundColor:
+              currentTheme === 'dark' ? '#262626' : token.colorBgLayout,
+            padding: '16px',
+            borderRadius: '8px',
+          }}
+        >
           <Text strong style={{ color: token.colorText }}>
             {product.name}
           </Text>
         </div>
-        <Paragraph style={{ color: token.colorTextSecondary }} className="mt-4 text-sm">
+        <Paragraph
+          style={{ color: token.colorTextSecondary }}
+          className="mt-4 text-sm"
+        >
           {t('product.deleteModal.warning')}
         </Paragraph>
       </div>
@@ -110,4 +123,4 @@ const ProductDeleteModal: React.FC<ProductDeleteModalProps> = ({
   );
 };
 
-export default ProductDeleteModal; 
+export default ProductDeleteModal;
