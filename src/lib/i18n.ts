@@ -5,7 +5,7 @@ const getInitialLang = () => {
   if (typeof window === 'undefined') {
     return 'en';
   }
-  
+
   try {
     return localStorage.getItem('lang') || 'en';
   } catch {
@@ -16,11 +16,55 @@ const getInitialLang = () => {
 const resources = {
   en: {
     translation: {
+      routes: {
+        dashboard: 'Dashboard',
+        permissions: 'Permissions',
+        permissionManagement: 'Permission Management',
+        allServices: 'All Services',
+        allResources: 'All Resources',
+        pageRoutes: {
+          title: 'Page Routes',
+          detail: 'Page Route Detail',
+          create: 'Create Page Route',
+          edit: 'Edit Page Route',
+        },
+        pageRoutePermissions: {
+          title: 'Page Route Permissions',
+          detail: 'Page Route Permission Detail',
+          create: 'Create Page Route Permission',
+          edit: 'Edit Page Route Permission',
+        },
+        roles: {
+          title: 'Roles',
+          detail: 'Role Detail',
+          create: 'Create Role',
+          edit: 'Edit Role',
+        },
+        products: {
+          title: 'Products',
+          detail: 'Product Detail',
+          create: 'Create Product',
+          edit: 'Edit Product',
+          priceDetail: 'Price Detail',
+        },
+        billings: {
+          title: 'Billings',
+        },
+        marketplaces: {
+          title: 'Marketplaces',
+          create: 'Create Marketplace',
+          detail: 'Marketplace Detail',
+          edit: 'Edit Marketplace',
+        },
+        consents: {
+          title: 'Consents',
+        },
+      },
       notification: {
         success: 'Successfully logged in!',
         error: 'Error',
         warning: 'Warning',
-        info: 'Info', 
+        info: 'Info',
         noFavorites: 'No favorites found',
         logoutSuccess: 'Successfully logged out, redirecting you',
         activationLinkExpired: 'Activation link expired',
@@ -69,20 +113,24 @@ const resources = {
         marketplaceCreatedSuccessfully: 'Marketplace created successfully!',
         marketplaceUpdatedSuccessfully: 'Marketplace updated successfully!',
         marketplaceDeletedSuccessfully: 'Marketplace deleted successfully!',
-        marketplaceStatusChangedSuccessfully: 'Marketplace status changed successfully!',
+        marketplaceStatusChangedSuccessfully:
+          'Marketplace status changed successfully!',
         consentCreatedSuccessfully: 'Consent created successfully!',
         consentUpdatedSuccessfully: 'Consent updated successfully!',
         consentDeletedSuccessfully: 'Consent deleted successfully!',
-        consentStatusChangedSuccessfully: 'Consent status changed successfully!',
+        consentStatusChangedSuccessfully:
+          'Consent status changed successfully!',
         consentAuthorizedSuccessfully: 'Consent authorized successfully!',
         productCreatedSuccessfully: 'Product created successfully!',
         productUpdatedSuccessfully: 'Product updated successfully!',
         productDeletedSuccessfully: 'Product deleted successfully!',
-        productStatusChangedSuccessfully: 'Product status changed successfully!',
+        productStatusChangedSuccessfully:
+          'Product status changed successfully!',
         priceStatusChangedSuccessfully: 'Price status changed successfully!',
         priceSetAsDefaultSuccessfully: 'Price set as default successfully!',
         priceCreatedSuccessfully: 'Price created successfully!',
-        permissionStatusChangedSuccessfully: 'Permission status changed successfully!',
+        permissionStatusChangedSuccessfully:
+          'Permission status changed successfully!',
       },
       reset: {
         title: 'Reset Password',
@@ -128,7 +176,7 @@ const resources = {
         login: 'Login',
       },
       sidebar: {
-        logout: 'Logout', 
+        logout: 'Logout',
         dashboard: 'Dashboard',
         pages: 'Pages',
         permissions: 'Permissions',
@@ -161,11 +209,16 @@ const resources = {
         revenue: 'Revenue',
       },
       searchBar: {
-        history: 'History',
         clearHistory: 'Clear History',
-        noHistory: 'No history',
-        favorites: 'Favorites',
-        noResults: 'No results found',
+        search: 'Type a command or search...',
+        noResults: 'No results found.',
+        history: 'Search History',
+        pages: 'Pages',
+        navigation: {
+          navigate: 'Navigate',
+          select: 'Select',
+          close: 'Close',
+        },
       },
       table: {
         name: 'Name',
@@ -204,7 +257,8 @@ const resources = {
         update: 'Update',
         actions: 'Actions',
         deleteConfirmTitle: 'Delete Permission',
-        deleteConfirmMessage: 'Are you sure you want to delete this permission? This action cannot be undone.',
+        deleteConfirmMessage:
+          'Are you sure you want to delete this permission? This action cannot be undone.',
         deleteConfirmCancel: 'Cancel',
         deleteConfirmDelete: 'Delete',
         createNewPermission: 'Create New Permission',
@@ -233,10 +287,12 @@ const resources = {
         project: 'Project',
         permissionDetails: 'Permission Details',
         permissionNotFound: 'Permission not found',
-        permissionNotFoundMessage: "The permission you're looking for doesn't exist.",
+        permissionNotFoundMessage:
+          "The permission you're looking for doesn't exist.",
         backToPermissions: 'Back to Permissions',
         noPermissionsFound: 'No permissions found',
-        noPermissionsFoundCriteria: 'No permissions found matching your criteria',
+        noPermissionsFoundCriteria:
+          'No permissions found matching your criteria',
         enterUsernamesSeparated: 'Enter usernames separated by commas',
         copy: 'Copy',
         created: 'Created',
@@ -256,7 +312,8 @@ const resources = {
         selectStatus: 'Select status',
         selectIsDefault: 'Select default',
         filters: 'Filters',
-        deleteConfirmMessage: 'Are you sure you want to delete this role? This action cannot be undone.',
+        deleteConfirmMessage:
+          'Are you sure you want to delete this role? This action cannot be undone.',
         noDescription: 'No description provided.',
         assignedPermissions: 'Assigned Permissions',
         active: 'Active',
@@ -306,7 +363,8 @@ const resources = {
         isDefault: 'Is Default',
         emptyState: {
           title: 'No roles yet',
-          description: 'Get started by creating your first role to manage user permissions.',
+          description:
+            'Get started by creating your first role to manage user permissions.',
         },
         mobile: {
           view: 'View',
@@ -356,7 +414,8 @@ const resources = {
         permissionUnassignError: 'Failed to unassign permission',
         searchPermissions: 'Search permissions...',
         noAvailablePermissions: 'No available permissions found',
-        allPermissionsAssigned: 'All permissions are already assigned to this page route',
+        allPermissionsAssigned:
+          'All permissions are already assigned to this page route',
         permissionsSelected: 'permission(s) selected',
         selectPageRoute: 'Select a page route',
         pageRoute: 'Page Route',
@@ -366,7 +425,8 @@ const resources = {
         createFirstPage: 'Create Your First Page',
         pageDetails: 'Page Details',
         pageNotFound: 'Page not found',
-        pageNotFoundMessage: 'The page you are looking for does not exist or has been deleted.',
+        pageNotFoundMessage:
+          'The page you are looking for does not exist or has been deleted.',
         backToPages: 'Back to Pages',
         basicInfo: 'Basic Information',
         content: 'Content',
@@ -389,7 +449,8 @@ const resources = {
         share: 'Share',
         copyUrl: 'Copy URL',
         deletePage: 'Delete Page',
-        deleteConfirmMessage: 'Are you sure you want to delete "{title}"? This action cannot be undone.',
+        deleteConfirmMessage:
+          'Are you sure you want to delete "{title}"? This action cannot be undone.',
         cancel: 'Cancel',
         saving: 'Saving...',
         save: 'Save',
@@ -462,7 +523,7 @@ const resources = {
             active: 'Active',
             inactive: 'Inactive',
           },
-          pageRoutePermissionInfo: {  
+          pageRoutePermissionInfo: {
             pageRouteInformation: 'Page Route Information',
             name: 'Name',
             path: 'Path',
@@ -487,11 +548,13 @@ const resources = {
             },
           },
           noPermissionsFound: 'No permissions found',
-          noPermissionsFoundCriteria: 'No permissions found matching your criteria',
+          noPermissionsFoundCriteria:
+            'No permissions found matching your criteria',
           createFirstPermission: 'Create Your First Permission',
           permissionDetails: 'Permission Details',
           permissionNotFound: 'Permission not found',
-          permissionNotFoundMessage: 'The permission you are looking for does not exist or has been deleted.',
+          permissionNotFoundMessage:
+            'The permission you are looking for does not exist or has been deleted.',
           backToPermissions: 'Back to Permissions',
           basicInfo: 'Basic Information',
           name: 'Name',
@@ -511,7 +574,8 @@ const resources = {
           createPermissionSubtitle: 'Create a new permission',
           editPermissionSubtitle: 'Update permission information',
           deletePermission: 'Delete Permission',
-          deleteConfirmMessage: 'Are you sure you want to delete "{name}" permission? This action cannot be undone.',
+          deleteConfirmMessage:
+            'Are you sure you want to delete "{name}" permission? This action cannot be undone.',
           cancel: 'Cancel',
           saving: 'Saving...',
           save: 'Save',
@@ -526,7 +590,8 @@ const resources = {
         attemptedPath: 'Attempted to access:',
         goBack: 'Go Back',
         goHome: 'Home Page',
-        contactAdmin: 'If you think you should have access to this page, please contact your system administrator.',
+        contactAdmin:
+          'If you think you should have access to this page, please contact your system administrator.',
       },
       product: {
         title: 'Products',
@@ -571,9 +636,11 @@ const resources = {
         nameMaxLength: 'Name cannot exceed 100 characters',
         descriptionMaxLength: 'Description cannot exceed 500 characters',
         unitLabelMaxLength: 'Unit label cannot exceed 50 characters',
-        statementDescriptorMaxLength: 'Statement descriptor cannot exceed 100 characters',
+        statementDescriptorMaxLength:
+          'Statement descriptor cannot exceed 100 characters',
         marketingFeatureRequired: 'Marketing feature is required',
-        marketingFeatureMaxLength: 'Marketing feature cannot exceed 100 characters',
+        marketingFeatureMaxLength:
+          'Marketing feature cannot exceed 100 characters',
         namePlaceholder: 'Enter product name',
         descriptionPlaceholder: 'Enter product description',
         unitLabelPlaceholder: 'e.g., per month, item, etc.',
@@ -582,7 +649,8 @@ const resources = {
         addMarketingFeature: 'Add Marketing Feature',
         emptyState: {
           title: 'No products yet',
-          description: 'Get started by creating your first product to manage your services and offerings.',
+          description:
+            'Get started by creating your first product to manage your services and offerings.',
         },
         mobile: {
           view: 'View',
@@ -596,8 +664,10 @@ const resources = {
         },
         deleteModal: {
           title: 'Delete Product',
-          description: 'Are you sure you want to delete this product? This action cannot be undone.',
-          warning: 'This will permanently remove the product and all associated data.',
+          description:
+            'Are you sure you want to delete this product? This action cannot be undone.',
+          warning:
+            'This will permanently remove the product and all associated data.',
         },
       },
       consents: {
@@ -645,7 +715,8 @@ const resources = {
         filters: 'Filters',
         emptyState: {
           title: 'No consents yet',
-          description: 'Get started by creating your first consent to manage your integrations.',
+          description:
+            'Get started by creating your first consent to manage your integrations.',
         },
         mobile: {
           view: 'View',
@@ -656,14 +727,15 @@ const resources = {
       },
       marketplace: {
         title: 'Marketplaces',
-        
+
         enterMarketplace: 'Enter marketplace',
         enterMarketplaceURL: 'Enter marketplace URL',
         selectStatus: 'Select status',
         create: 'Create Marketplace',
         edit: 'Edit Marketplace',
         update: 'Update Marketplace',
-        createDescription: 'Create a new marketplace with all necessary details',
+        createDescription:
+          'Create a new marketplace with all necessary details',
         editDescription: 'Update marketplace information and settings',
         name: 'Marketplace Name',
         website: 'Marketplace URL',
@@ -677,7 +749,8 @@ const resources = {
         updateError: 'Failed to update marketplace',
         deleteSuccess: 'Marketplace deleted successfully!',
         deleteError: 'Failed to delete marketplace',
-        deleteConfirm: 'Are you sure you want to delete marketplace "{{name}}"?',
+        deleteConfirm:
+          'Are you sure you want to delete marketplace "{{name}}"?',
         deleteTitle: 'Delete Marketplace',
         statusChangeSuccess: 'Marketplace status changed successfully!',
         statusChangeError: 'Failed to change marketplace status',
@@ -696,7 +769,8 @@ const resources = {
         filters: 'Filters',
         emptyState: {
           title: 'No marketplaces yet',
-          description: 'Get started by creating your first marketplace to manage your integrations.',
+          description:
+            'Get started by creating your first marketplace to manage your integrations.',
         },
         mobile: {
           view: 'View',
@@ -796,17 +870,65 @@ const resources = {
         billingCreatedSuccessfully: 'Billing created successfully!',
         errorUpdatingBilling: 'Error updating billing',
         nameRequired: 'Please fill in the "Name" field in the address form',
-        line1Required: 'Please fill in the "Address Line 1" field in the address form',
+        line1Required:
+          'Please fill in the "Address Line 1" field in the address form',
         cityRequired: 'Please fill in the "City" field in the address form',
         stateRequired: 'Please fill in the "State" field in the address form',
-        postalCodeRequired: 'Please fill in the "Postal Code" field in the address form',
-        countryRequired: 'Please fill in the "Country" field in the address form',
-        phoneRequired: 'Please fill in the "Phone Number" field in the address form',
+        postalCodeRequired:
+          'Please fill in the "Postal Code" field in the address form',
+        countryRequired:
+          'Please fill in the "Country" field in the address form',
+        phoneRequired:
+          'Please fill in the "Phone Number" field in the address form',
       },
     },
   },
   tr: {
     translation: {
+      routes: {
+        dashboard: 'Dashboard',
+        permissions: 'İzinler',
+        permissionManagement: 'İzin Yönetimi',
+        allServices: 'Tüm Hizmetler',
+        allResources: 'Tüm Kaynaklar',
+        pageRoutes: {
+          title: 'Sayfa Rotaları',
+          detail: 'Sayfa Rotası Detayı',
+          create: 'Sayfa Rotası Oluştur',
+          edit: 'Sayfa Rotası Düzenle',
+        },
+        pageRoutePermissions: {
+          title: 'Sayfa Rotası İzinleri',
+          detail: 'Sayfa Rotası İzin Detayı',
+          create: 'Sayfa Rotası İzin Oluştur',
+          edit: 'Sayfa Rotası İzin Düzenle',
+        },
+        roles: {
+          title: 'Roller',
+          detail: 'Rol Detayı',
+          create: 'Rol Oluştur',
+          edit: 'Rol Düzenle',
+        },
+        products: {
+          title: 'Ürünler',
+          detail: 'Ürün Detayı',
+          create: 'Ürün Oluştur',
+          edit: 'Ürün Düzenle',
+          priceDetail: 'Fiyat Detayı',
+        },
+        billings: {
+          title: 'Fatura Bilgileri',
+        },
+        marketplaces: {
+          title: 'Marketplaces',
+          create: 'Marketplace Oluştur',
+          detail: 'Marketplace Detayı',
+          edit: 'Marketplace Düzenle',
+        },
+        consents: {
+          title: 'Onaylar',
+        },
+      },
       notification: {
         success: 'Başarıyla giriş yapıldı!',
         error: 'Hata',
@@ -824,7 +946,8 @@ const resources = {
         tooManyRequests: 'Çok fazla istek',
         errInvalidToken: 'Geçersiz token',
         errInvalidValue: 'Geçersiz değer',
-        errNotAllowedForOnBehalfOfUsers: 'Başka bir kullanıcının yetkileriyle işlem yapılamaz',
+        errNotAllowedForOnBehalfOfUsers:
+          'Başka bir kullanıcının yetkileriyle işlem yapılamaz',
         atLeast8CharactersLong: 'En az 8 karakter olmalı',
         userAlreadyExists: 'Kullanıcı zaten mevcut',
         userNotFound: 'Kullanıcı bulunamadı',
@@ -860,7 +983,8 @@ const resources = {
         marketplaceCreatedSuccessfully: 'Marketplace başarıyla oluşturuldu!',
         marketplaceUpdatedSuccessfully: 'Marketplace başarıyla güncellendi!',
         marketplaceDeletedSuccessfully: 'Marketplace başarıyla silindi!',
-        marketplaceStatusChangedSuccessfully: 'Marketplace durumu başarıyla değiştirildi!',
+        marketplaceStatusChangedSuccessfully:
+          'Marketplace durumu başarıyla değiştirildi!',
         consentCreatedSuccessfully: 'Onay başarıyla oluşturuldu!',
         consentUpdatedSuccessfully: 'Onay başarıyla güncellendi!',
         consentDeletedSuccessfully: 'Onay başarıyla silindi!',
@@ -873,7 +997,8 @@ const resources = {
         priceStatusChangedSuccessfully: 'Fiyat durumu başarıyla değiştirildi!',
         priceSetAsDefaultSuccessfully: 'Fiyat varsayılan olarak ayarlandı!',
         priceCreatedSuccessfully: 'Fiyat başarıyla oluşturuldu!',
-        permissionStatusChangedSuccessfully: 'İzin durumu başarıyla değiştirildi!',
+        permissionStatusChangedSuccessfully:
+          'İzin durumu başarıyla değiştirildi!',
       },
       reset: {
         title: 'Reset Password',
@@ -950,11 +1075,16 @@ const resources = {
         revenue: 'Ciro',
       },
       searchBar: {
-        history: 'Geçmiş',
         clearHistory: 'Geçmişi Temizle',
-        noHistory: 'Geçmiş yok',
-        favorites: 'Favoriler',
+        search: 'Bir şeyler arayın',
         noResults: 'Sonuç bulunamadı',
+        history: 'Arama Geçmişi',
+        pages: 'Sayfalar',
+        navigation: {
+          navigate: 'Gezin',
+          select: 'Seç',
+          close: 'Kapat',
+        },
       },
       table: {
         name: 'Ad',
@@ -994,7 +1124,8 @@ const resources = {
         delete: 'Sil',
         update: 'Güncelle',
         deleteConfirmTitle: 'İzin Sil',
-        deleteConfirmMessage: 'Bu izni silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+        deleteConfirmMessage:
+          'Bu izni silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
         deleteConfirmCancel: 'İptal',
         deleteConfirmDelete: 'Sil',
         createNewPermission: 'Yeni İzin Oluştur',
@@ -1046,9 +1177,10 @@ const resources = {
         enterName: 'Rol adı girin',
         selectStatus: 'Durum seçin',
         selectIsDefault: 'Varsayılan seçin',
-        
-        searchPlaceholder: 'Rol ara...',  
-        deleteConfirmMessage: 'Rolü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+
+        searchPlaceholder: 'Rol ara...',
+        deleteConfirmMessage:
+          'Rolü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
         noDescription: 'Açıklama sağlanmamış.',
         assignedPermissions: 'Atanan İzinler',
         active: 'Aktif',
@@ -1098,7 +1230,8 @@ const resources = {
         isDefault: 'Varsayılan',
         emptyState: {
           title: 'Henüz rol yok',
-          description: 'Kullanıcı izinlerini yönetmek için ilk rolünüzü oluşturmaya başlayın.',
+          description:
+            'Kullanıcı izinlerini yönetmek için ilk rolünüzü oluşturmaya başlayın.',
         },
         mobile: {
           view: 'Görüntüle',
@@ -1120,12 +1253,12 @@ const resources = {
         newPage: 'Yeni Sayfa',
         permissions: 'İzin',
         searchPages: 'Sayfa ara...',
-        
+
         categories: 'Kategoriler',
         allCategories: 'Tüm Kategoriler',
         blog: 'Blog',
         help: 'Yardım',
-        
+
         about: 'Hakkımızda',
         contact: 'İletişim',
         view: 'Görüntüle',
@@ -1158,7 +1291,8 @@ const resources = {
         createFirstPage: 'İlk Sayfanızı Oluşturun',
         pageDetails: 'Sayfa Detayları',
         pageNotFound: 'Sayfa bulunamadı',
-        pageNotFoundMessage: 'Aradığınız sayfa mevcut değil veya silinmiş olabilir.',
+        pageNotFoundMessage:
+          'Aradığınız sayfa mevcut değil veya silinmiş olabilir.',
         backToPages: 'Sayfalara Geri Dön',
         basicInfo: 'Temel Bilgiler',
         content: 'İçerik',
@@ -1181,7 +1315,8 @@ const resources = {
         share: 'Paylaş',
         copyUrl: 'URL Kopyala',
         deletePage: 'Sayfayı Sil',
-        deleteConfirmMessage: '"{title}" sayfasını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+        deleteConfirmMessage:
+          '"{title}" sayfasını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
         cancel: 'İptal',
         saving: 'Kaydediliyor...',
         save: 'Kaydet',
@@ -1219,7 +1354,8 @@ const resources = {
         selectStatus: 'Durum seçin',
         searchFilter: 'Filtreler',
         noResults: 'Arama kriterlerinize uygun sayfa bulunamadı',
-        noResultsSubtext: 'Arama terimlerinizi veya filtrelerinizi ayarlamayı deneyin',
+        noResultsSubtext:
+          'Arama terimlerinizi veya filtrelerinizi ayarlamayı deneyin',
         noPages: 'Henüz sayfa bulunmuyor',
         table: {
           name: 'Ad',
@@ -1284,7 +1420,8 @@ const resources = {
           createFirstPermission: 'İlk İzininizi Oluşturun',
           permissionDetails: 'İzin Detayları',
           permissionNotFound: 'İzin bulunamadı',
-          permissionNotFoundMessage: 'Aradığınız izin mevcut değil veya silinmiş olabilir.',
+          permissionNotFoundMessage:
+            'Aradığınız izin mevcut değil veya silinmiş olabilir.',
           backToPermissions: 'İzinlere Geri Dön',
           basicInfo: 'Temel Bilgiler',
           name: 'İsim',
@@ -1304,7 +1441,8 @@ const resources = {
           createPermissionSubtitle: 'Yeni bir izin oluşturun',
           editPermissionSubtitle: 'İzin bilgilerini güncelleyin',
           deletePermission: 'İzni Sil',
-          deleteConfirmMessage: '"{name}" iznini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+          deleteConfirmMessage:
+            '"{name}" iznini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
           cancel: 'İptal',
           saving: 'Kaydediliyor...',
           save: 'Kaydet',
@@ -1319,7 +1457,8 @@ const resources = {
         attemptedPath: 'Erişmeye çalışılan sayfa:',
         goBack: 'Geri Dön',
         goHome: 'Ana Sayfa',
-        contactAdmin: 'Eğer bu sayfaya erişim gerektiğini düşünüyorsanız, sistem yöneticinizle iletişime geçin.',
+        contactAdmin:
+          'Eğer bu sayfaya erişim gerektiğini düşünüyorsanız, sistem yöneticinizle iletişime geçin.',
       },
       product: {
         title: 'Ürünler',
@@ -1365,7 +1504,8 @@ const resources = {
         nameMaxLength: 'Ad 100 karakteri aşamaz',
         descriptionMaxLength: 'Açıklama 500 karakteri aşamaz',
         unitLabelMaxLength: 'Birim etiketi 50 karakteri aşamaz',
-        statementDescriptorMaxLength: 'Açıklama tanımlayıcı 100 karakteri aşamaz',
+        statementDescriptorMaxLength:
+          'Açıklama tanımlayıcı 100 karakteri aşamaz',
         marketingFeatureRequired: 'Pazarlama özelliği gereklidir',
         marketingFeatureMaxLength: 'Pazarlama özelliği 100 karakteri aşamaz',
         namePlaceholder: 'Ürün adını girin',
@@ -1376,7 +1516,8 @@ const resources = {
         addMarketingFeature: 'Pazarlama Özelliği Ekle',
         emptyState: {
           title: 'Henüz ürün yok',
-          description: 'Hizmetlerinizi ve tekliflerinizi yönetmek için ilk ürününüzü oluşturmaya başlayın.',
+          description:
+            'Hizmetlerinizi ve tekliflerinizi yönetmek için ilk ürününüzü oluşturmaya başlayın.',
         },
         mobile: {
           view: 'Görüntüle',
@@ -1390,13 +1531,15 @@ const resources = {
         },
         deleteModal: {
           title: 'Ürünü Sil',
-          description: 'Bu ürünü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
-          warning: 'Bu, ürünü ve tüm ilişkili verileri kalıcı olarak kaldıracaktır.',
+          description:
+            'Bu ürünü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+          warning:
+            'Bu, ürünü ve tüm ilişkili verileri kalıcı olarak kaldıracaktır.',
         },
       },
       consents: {
         title: 'Onaylar',
-        
+
         enterMarketplace: 'Marketplace girin',
         enterMarketplaceURL: 'Marketplace URL girin',
         selectStatus: 'Durum seçin',
@@ -1440,7 +1583,8 @@ const resources = {
         filters: 'Filtreler',
         emptyState: {
           title: 'Henüz onay yok',
-          description: 'Entegrasyonlarınızı yönetmek için ilk onayınızı oluşturmaya başlayın.',
+          description:
+            'Entegrasyonlarınızı yönetmek için ilk onayınızı oluşturmaya başlayın.',
         },
         mobile: {
           view: 'Görüntüle',
@@ -1458,7 +1602,8 @@ const resources = {
         create: 'Marketplace Oluştur',
         edit: 'Marketplace Düzenle',
         update: 'Marketplace Güncelle',
-        createDescription: 'Gerekli tüm detaylarla yeni bir marketplace oluşturun',
+        createDescription:
+          'Gerekli tüm detaylarla yeni bir marketplace oluşturun',
         editDescription: 'Marketplace bilgilerini ve ayarlarını güncelleyin',
         name: 'Marketplace Adı',
         website: 'Marketplace URL',
@@ -1472,12 +1617,14 @@ const resources = {
         updateError: 'Marketplace güncellenemedi',
         deleteSuccess: 'Marketplace başarıyla silindi!',
         deleteError: 'Marketplace silinemedi',
-        deleteConfirm: 'Marketplace "{{name}}" silmek istediğinizden emin misiniz?',
+        deleteConfirm:
+          'Marketplace "{{name}}" silmek istediğinizden emin misiniz?',
         deleteTitle: 'Marketplace Sil',
         statusChangeSuccess: 'Marketplace durumu başarıyla değiştirildi!',
         statusChangeError: 'Marketplace durumu değiştirilemedi',
         description: 'Marketplace entegrasyonlarınızı yönetin',
-        detailDescription: 'Marketplace detaylarını ve bilgilerini görüntüleyin',
+        detailDescription:
+          'Marketplace detaylarını ve bilgilerini görüntüleyin',
         basicInfo: 'Temel Bilgiler',
         additionalInfo: 'Ek Bilgiler',
         notFound: 'Marketplace bulunamadı',
@@ -1490,7 +1637,8 @@ const resources = {
         urlPlaceholder: 'Marketplace URL girin (örn: https://example.com)',
         emptyState: {
           title: 'Henüz marketplace yok',
-          description: 'Entegrasyonlarınızı yönetmek için ilk marketplace\'inizi oluşturmaya başlayın.',
+          description:
+            "Entegrasyonlarınızı yönetmek için ilk marketplace'inizi oluşturmaya başlayın.",
         },
         mobile: {
           view: 'Görüntüle',
@@ -1590,12 +1738,15 @@ const resources = {
         billingCreatedSuccessfully: 'Fatura bilgileri başarıyla oluşturuldu!',
         errorUpdatingBilling: 'Fatura bilgileri güncellenirken hata oluştu',
         nameRequired: 'Lütfen adres formundaki "Ad ve soyadı" alanını doldurun',
-        line1Required: 'Lütfen adres formundaki "Adres satırı 1" alanını doldurun',
+        line1Required:
+          'Lütfen adres formundaki "Adres satırı 1" alanını doldurun',
         cityRequired: 'Lütfen adres formundaki "İl" alanını doldurun',
         stateRequired: 'Lütfen adres formundaki "İlçe" alanını doldurun',
-        postalCodeRequired: 'Lütfen adres formundaki "Posta kodu" alanını doldurun',
+        postalCodeRequired:
+          'Lütfen adres formundaki "Posta kodu" alanını doldurun',
         countryRequired: 'Lütfen adres formundaki "Ülke" alanını doldurun',
-        phoneRequired: 'Lütfen adres formundaki "Telefon numarası" alanını doldurun',
+        phoneRequired:
+          'Lütfen adres formundaki "Telefon numarası" alanını doldurun',
       },
     },
   },
@@ -1613,4 +1764,4 @@ i18n.use(initReactI18next).init({
   },
 });
 
-export default i18n; 
+export default i18n;
