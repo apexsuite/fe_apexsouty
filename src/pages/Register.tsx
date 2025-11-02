@@ -1,21 +1,22 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import Navbar from "@/components/Navbar";
-import { RootState, AppDispatch } from "@/lib/store";
-import i18n from "@/lib/i18n";
-import { useSelector, useDispatch } from "react-redux";
-import { Card, Form, Input, Button, Typography } from "antd";
-import { toast } from "react-toastify";
-import { registerUser, clearError } from "@/lib/authSlice";
-import { useEffect, useState } from "react";
+import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { RootState, AppDispatch } from '@/lib/store';
+import i18n from '@/lib/i18n';
+import { useSelector, useDispatch } from 'react-redux';
+import { Card, Form, Input, Button, Typography } from 'antd';
+import { toast } from 'react-toastify';
+import { registerUser, clearError } from '@/lib/authSlice';
+import { useEffect, useState } from 'react';
 
 export default function RegisterPage() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const lang = useSelector((state: RootState) => state.lang.language);
-  const { error, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { error, isAuthenticated } = useSelector(
+    (state: RootState) => state.auth
+  );
   const { t } = useTranslation();
-  const [success, setSuccess] = useState("");
+  const [success, setSuccess] = useState('');
 
   useEffect(() => {
     if (i18n.language !== lang) i18n.changeLanguage(lang);
@@ -36,18 +37,21 @@ export default function RegisterPage() {
 
   if (i18n.language !== lang) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="bg-background flex min-h-screen items-center justify-center">
         <span className="text-muted-foreground text-lg">Loading...</span>
       </div>
     );
   }
 
-
-
   const handleSubmit = async (values: any) => {
     // setForm(values); // This line was removed as per the edit hint
-    
-    if (!values.firstname || !values.lastname || !values.email || !values.password) {
+
+    if (
+      !values.firstname ||
+      !values.lastname ||
+      !values.email ||
+      !values.password
+    ) {
       return;
     }
 
@@ -55,7 +59,7 @@ export default function RegisterPage() {
       firstname: values.firstname,
       lastname: values.lastname,
       email: values.email,
-      language: lang, 
+      language: lang,
       password: values.password,
     };
 
@@ -63,7 +67,7 @@ export default function RegisterPage() {
       const result = await dispatch(registerUser(registerData)).unwrap();
       if (result.success) {
         toast.success('Successfully registered!');
-        setSuccess(t("register.success"));
+        setSuccess(t('register.success'));
         setTimeout(() => {
           navigate('/');
         }, 2000);
@@ -76,37 +80,77 @@ export default function RegisterPage() {
 
   return (
     <>
-      <Navbar minimal={!isAuthenticated} />
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Card className="bg-background text-foreground" style={{ width: '100%', maxWidth: 400, boxShadow: '0 2px 8px #f0f1f2' }}>
-          <Form layout="vertical" onFinish={handleSubmit} initialValues={{}} className="text-foreground">
-            <Typography.Title level={2} className="text-foreground" style={{ textAlign: 'center', marginBottom: 24 }}>{t("register.title")}</Typography.Title>
-            <Form.Item label={t("register.firstname")} name="firstname" rules={[{ required: true, message: t("register.fillAllFields") }]}> 
-              <Input placeholder={t("register.firstname")} />
+      <div className="bg-background flex min-h-screen items-center justify-center">
+        <Card
+          className="bg-background text-foreground"
+          style={{
+            width: '100%',
+            maxWidth: 400,
+            boxShadow: '0 2px 8px #f0f1f2',
+          }}
+        >
+          <Form
+            layout="vertical"
+            onFinish={handleSubmit}
+            initialValues={{}}
+            className="text-foreground"
+          >
+            <Typography.Title
+              level={2}
+              className="text-foreground"
+              style={{ textAlign: 'center', marginBottom: 24 }}
+            >
+              {t('register.title')}
+            </Typography.Title>
+            <Form.Item
+              label={t('register.firstname')}
+              name="firstname"
+              rules={[{ required: true, message: t('register.fillAllFields') }]}
+            >
+              <Input placeholder={t('register.firstname')} />
             </Form.Item>
-            <Form.Item label={t("register.lastname")} name="lastname" rules={[{ required: true, message: t("register.fillAllFields") }]}> 
-              <Input placeholder={t("register.lastname")} />
+            <Form.Item
+              label={t('register.lastname')}
+              name="lastname"
+              rules={[{ required: true, message: t('register.fillAllFields') }]}
+            >
+              <Input placeholder={t('register.lastname')} />
             </Form.Item>
-            <Form.Item label={t("register.email")} name="email" rules={[{ required: true, message: t("register.fillAllFields") }]}> 
-              <Input placeholder={t("register.email")} />
+            <Form.Item
+              label={t('register.email')}
+              name="email"
+              rules={[{ required: true, message: t('register.fillAllFields') }]}
+            >
+              <Input placeholder={t('register.email')} />
             </Form.Item>
-            <Form.Item label={t("register.password")} name="password" rules={[{ required: true, message: t("register.fillAllFields") }]}> 
-              <Input.Password placeholder={t("register.password")} />
+            <Form.Item
+              label={t('register.password')}
+              name="password"
+              rules={[{ required: true, message: t('register.fillAllFields') }]}
+            >
+              <Input.Password placeholder={t('register.password')} />
             </Form.Item>
 
-            {error && <div style={{ color: 'red', marginBottom: 12 }}>{error}</div>}
-            {success && <div style={{ color: 'green', marginBottom: 12 }}>{success}</div>}
+            {error && (
+              <div style={{ color: 'red', marginBottom: 12 }}>{error}</div>
+            )}
+            {success && (
+              <div style={{ color: 'green', marginBottom: 12 }}>{success}</div>
+            )}
             <Form.Item>
               <Button type="primary" htmlType="submit" block>
-                {t("register.submit")}
+                {t('register.submit')}
               </Button>
             </Form.Item>
             <div style={{ textAlign: 'center', fontSize: 14 }}>
-              {t("register.haveAccount")} <Link to="/" style={{ color: '#1677ff' }}>{t("register.login")}</Link>
+              {t('register.haveAccount')}{' '}
+              <Link to="/" style={{ color: '#1677ff' }}>
+                {t('register.login')}
+              </Link>
             </div>
           </Form>
         </Card>
       </div>
     </>
   );
-} 
+}
