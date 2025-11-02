@@ -5,6 +5,7 @@ import PageHeader from './components/PageHeader';
 import SubscriptionCard from './components/SubscriptionCard';
 import UpgradeSection from './components/UpgradeSection';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { t } from 'i18next';
 
 const Subscription = () => {
     const { data, isLoading, error } = useQuery({
@@ -21,7 +22,7 @@ const Subscription = () => {
     }
 
     if (!data?.activeSubscription) {
-        return <ErrorState error={new Error('Abonelik bilgisi bulunamadı')} />;
+        return <ErrorState error={new Error(t('subscriptions.errorState.subscriptionNotFound'))} />;
     }
 
     const isFreeUser = data.activeSubscription.productName?.toLowerCase() === 'free';

@@ -1,14 +1,15 @@
 import { Crown, Sparkles } from "lucide-react";
+import { t } from 'i18next';
 
 interface PageHeaderProps {
     isFreeUser: boolean;
 }
 
 const PageHeader = ({ isFreeUser }: PageHeaderProps) => {
-    const title = isFreeUser ? "Free Plan" : "Active Subscription";
+    const title = isFreeUser ? t('subscriptions.pageHeader.freePlan') : t('subscriptions.pageHeader.activeSubscription');
     const subtitle = isFreeUser
-        ? "You are currently using the Free plan. Upgrade to unlock more features."
-        : "Manage your current plan and explore upgrade options.";
+        ? t('subscriptions.pageHeader.freePlanSubtitle')
+        : t('subscriptions.pageHeader.activeSubscriptionSubtitle');
 
     return (
         <div className="flex items-center gap-4 mb-8">

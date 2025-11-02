@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { CreditCard, Calendar, Package, CheckCircle2, WorkflowIcon } from 'lucide-react';
 import dayjs from 'dayjs';
 import { ISubscription } from '@/services/subscription/types';
+import { t } from 'i18next';
 
 interface SubscriptionCardProps {
     subscription: ISubscription['activeSubscription'];
@@ -48,7 +49,7 @@ const SubscriptionCard = ({ subscription, isFreeUser }: SubscriptionCardProps) =
                         </div>
                         <div className="flex-1 min-w-0">
                             <p className="text-xs font-semibold text-black dark:text-white uppercase tracking-wide">
-                                Start Date
+                                {t('subscriptions.subscriptionCard.startDate')}
                             </p>
                             <p className={`${isFreeUser ? 'text-sm' : 'text-sm sm:text-base'} text-black dark:text-white truncate`}>
                                 {dayjs(subscription.startDate).format('MMMM D, YYYY')}
@@ -63,7 +64,7 @@ const SubscriptionCard = ({ subscription, isFreeUser }: SubscriptionCardProps) =
                             </div>
                             <div className="flex-1 min-w-0">
                                 <p className="text-xs font-semibold text-black dark:text-white uppercase tracking-wide">
-                                    Next Billing
+                                    {t('subscriptions.subscriptionCard.nextBilling')}
                                 </p>
                                 <p className={`${isFreeUser ? 'text-sm' : 'text-sm sm:text-base'} text-black dark:text-white truncate`}>
                                     {dayjs(subscription.nextBillingDate).format('MMMM D, YYYY')}
@@ -79,10 +80,10 @@ const SubscriptionCard = ({ subscription, isFreeUser }: SubscriptionCardProps) =
                             </div>
                             <div className="flex flex-col justify-center items-start flex-1 min-w-0">
                                 <p className="text-xs font-semibold text-black dark:text-white uppercase tracking-wide">
-                                    Capacity
+                                    {t('subscriptions.subscriptionCard.capacity')}
                                 </p>
                                 <p className={`${isFreeUser ? 'text-sm' : 'text-sm sm:text-base'} text-black dark:text-white truncate`}>
-                                    {subscription.capacity.toLocaleString()} products
+                                    {subscription.capacity.toLocaleString()} {t('subscriptions.subscriptionCard.products')}
                                 </p>
                             </div>
                         </div>
@@ -96,7 +97,7 @@ const SubscriptionCard = ({ subscription, isFreeUser }: SubscriptionCardProps) =
                                 <WorkflowIcon className={`${isFreeUser ? 'w-4 h-4' : 'w-6 h-6'} text-white dark:text-black`} />
                             </div>
                             <p className="text-xs sm:text-sm font-bold text-black dark:text-white uppercase tracking-wide">
-                                {isFreeUser ? 'Features' : 'Plan Features'}</p>
+                                {isFreeUser ? t('subscriptions.subscriptionCard.features') : t('subscriptions.subscriptionCard.planFeatures')}</p>
                         </div>
 
                         <div className={`grid grid-cols-1 ${isFreeUser ? 'gap-2' : 'sm:grid-cols-2 gap-4'}`}>
@@ -125,7 +126,7 @@ const SubscriptionCard = ({ subscription, isFreeUser }: SubscriptionCardProps) =
                 {!isFreeUser && (
                     <div className="flex flex-col justify-end">
                         <Button className="w-full sm:w-auto bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-200 text-white dark:text-black hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 font-semibold text-base py-6">
-                            Manage Subscription
+                            {t('subscriptions.subscriptionCard.manageSubscription')}
                         </Button>
                     </div>
                 )}

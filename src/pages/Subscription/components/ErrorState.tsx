@@ -1,5 +1,6 @@
 import { AlertCircle, RefreshCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { t } from 'i18next';
 
 interface ErrorStateProps {
     error: Error | unknown;
@@ -8,7 +9,7 @@ interface ErrorStateProps {
 const ErrorState = ({ error }: ErrorStateProps) => {
     const errorMessage = error instanceof Error
         ? error.message
-        : 'An error occurred while loading subscription information';
+        : t('subscriptions.errorState.errorMessage');
 
     return (
         <div className="flex items-center justify-center min-h-screen px-4 bg-gray-50 dark:bg-gray-900">
@@ -22,7 +23,7 @@ const ErrorState = ({ error }: ErrorStateProps) => {
 
                 <div className="space-y-4">
                     <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
-                        An Error Occurred
+                        {t('subscriptions.errorState.errorTitle')}
                     </h2>
                     <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6">
                         <p className="text-base sm:text-lg text-red-700 dark:text-red-300 leading-relaxed">
@@ -36,7 +37,7 @@ const ErrorState = ({ error }: ErrorStateProps) => {
                     className="bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-200 text-white dark:text-black hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 font-semibold"
                 >
                     <RefreshCcw className="w-4 h-4 mr-2" />
-                    Try Again
+                    {t('subscriptions.errorState.tryAgain')}
                 </Button>
             </div>
         </div>

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { authService, RegisterData, LoginData } from '../services/authService';
 import { toast } from 'react-toastify';
-import i18n from './i18n';
+import i18n from '../locales';
 import { clearPermissions } from './permissionSlice';
 
 interface User {
@@ -70,16 +70,16 @@ export const loginUser = createAsyncThunk(
   async (data: LoginData) => {
     try {
       const response = await authService.login(data);
-      
+
       if (!response) {
         throw new Error('No response received');
       }
-      
+
       const isSuccess = !response.error;
       if (!isSuccess) {
         throw new Error(response.message || response.error || 'Login failed');
       }
-      
+
       return response;
     } catch (error: any) {
       if (error.data && error.data.error) {
@@ -176,7 +176,7 @@ const authSlice = createSlice({
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
       if (state.user) {
         state.user = { ...state.user, ...action.payload };
-        
+
         if (typeof window !== 'undefined') {
           localStorage.setItem('user', JSON.stringify(state.user));
         }
@@ -184,7 +184,7 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-          // Register
+    // Register
     builder
       .addCase(registerUser.pending, (state) => {
         state.loading = true;
@@ -195,7 +195,7 @@ const authSlice = createSlice({
         if (action.payload.success && 'user' in action.payload && action.payload.user) {
           state.isAuthenticated = true;
           state.user = action.payload.user;
-          
+
           if (typeof window !== 'undefined') {
             localStorage.setItem('isAuth', 'true');
             localStorage.setItem('user', JSON.stringify(action.payload.user));
@@ -215,17 +215,17 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        
-        
+
+
         const isSuccess = action.payload && !action.payload.error;
-        
-        
+
+
         if (isSuccess) {
           state.isAuthenticated = true;
-          
+
           if (typeof window !== 'undefined') {
             localStorage.setItem('isAuth', 'true');
-            
+
             if ('data' in action.payload && action.payload.data && action.payload.data.user) {
               localStorage.setItem('user', JSON.stringify(action.payload.data.user));
               state.user = action.payload.data.user;
@@ -254,7 +254,7 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
         state.user = null;
         state.loading = false;
-        
+
         if (typeof window !== 'undefined') {
           localStorage.removeItem('isAuth');
           localStorage.removeItem('user');
@@ -321,7 +321,7 @@ const authSlice = createSlice({
             permissions: (responseData as any).permissions || []
           };
           state.user = userData;
-          
+
           if (typeof window !== 'undefined') {
             localStorage.setItem('isAuth', 'true');
             localStorage.setItem('user', JSON.stringify(userData));

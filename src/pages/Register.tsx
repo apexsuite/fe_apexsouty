@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { RootState, AppDispatch } from '@/lib/store';
-import i18n from '@/lib/i18n';
+import i18n from '@/locales';
 import { useSelector, useDispatch } from 'react-redux';
 import { Card, Form, Input, Button, Typography } from 'antd';
 import { toast } from 'react-toastify';

@@ -1,9 +1,9 @@
 import { Provider } from 'react-redux';
 import { store } from '@/lib/store';
-import '@/lib/i18n';
+import '@/locales';
 import { useEffect, useState, useRef } from 'react';
 import { setLanguage } from '@/lib/langSlice';
-import i18n from '@/lib/i18n';
+import i18n from '@/locales';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@/providers/theme';
 import { THEME_STORAGE_KEY } from '@/utils/constants/config';

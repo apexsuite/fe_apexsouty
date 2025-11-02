@@ -2,7 +2,7 @@ import { Globe, Menu as MenuIcon } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '@/lib/store';
 import { setLanguage } from '@/lib/langSlice';
-import i18n from '@/lib/i18n';
+import i18n from '@/locales';
 import SearchBar from '@/components/layouts/SearchBar';
 import { ThemeSwitcher } from '@/components/switcher/theme-switcher';
 import { SidebarTrigger } from '@/components/ui/sidebar';
