@@ -33,9 +33,7 @@ const Subscription = () => {
 
                 <div className="max-w-7xl mx-auto">
                     {isFreeUser ? (
-                        // Free user layout: Side by side view
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fade-in">
-                            {/* Current Plan - Compact */}
                             <div className="lg:col-span-4">
                                 <SubscriptionCard
                                     subscription={data.activeSubscription}
@@ -43,13 +41,11 @@ const Subscription = () => {
                                 />
                             </div>
 
-                            {/* Upgrade Options - Main focus */}
                             <div className="lg:col-span-8">
                                 <UpgradeSection pricingTable={data.pricingTable} />
                             </div>
                         </div>
                     ) : (
-                        // Premium user layout: Full width
                         <div className="max-w-5xl mx-auto animate-fade-in">
                             <SubscriptionCard
                                 subscription={data.activeSubscription}

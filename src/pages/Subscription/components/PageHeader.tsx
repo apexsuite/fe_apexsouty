@@ -11,20 +11,18 @@ const PageHeader = ({ isFreeUser }: PageHeaderProps) => {
         : "Manage your current plan and explore upgrade options.";
 
     return (
-        <div className="flex flex-col items-center gap-2 pb-6">
-            <div className="flex items-center flex-col gap-3">
-                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gray-900 text-white dark:bg-white dark:text-gray-900">
-                    {isFreeUser ? (
-                        <Crown className="w-5 h-5" />
-                    ) : (
-                        <Sparkles className="w-5 h-5" />
-                    )}
-                </div>
-                <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white tracking-tight">
-                    {title}
-                </h1>
+        <div className="flex flex-col items-center text-center mb-8">
+            <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-gray-900 text-white mb-4 shadow-lg">
+                {isFreeUser ? (
+                    <Crown className="w-7 h-7" />
+                ) : (
+                    <Sparkles className="w-7 h-7" />
+                )}
             </div>
-            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 max-w-2xl leading-relaxed">
+            <h1 className="text-3xl font-semibold text-gray-900 mb-2">
+                {title}
+            </h1>
+            <p className="text-sm text-gray-600 max-w-xl">
                 {subtitle}
             </p>
         </div>
