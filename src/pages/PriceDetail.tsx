@@ -4,28 +4,41 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AppDispatch, RootState } from '@/lib/store';
 import { getPriceDetail } from '@/lib/productSlice';
-import { ArrowLeft, DollarSign, Calendar, Activity, Star, Info, Clock, Hash } from 'lucide-react';
-import { 
-  Button, 
-  Card, 
-  Typography, 
-  Descriptions, 
-  Tag as AntTag, 
+import {
+  ArrowLeft,
+  DollarSign,
+  Calendar,
+  Activity,
+  Star,
+  Info,
+  Clock,
+  Hash,
+} from 'lucide-react';
+import {
+  Button,
+  Card,
+  Typography,
+  Descriptions,
+  Tag as AntTag,
   message,
   Spin,
-  theme
+  theme,
 } from 'antd';
+import { useTheme } from '@/providers/theme';
 
 const { Title, Text } = Typography;
 
 const PriceDetail: React.FC = () => {
   const { t } = useTranslation();
-  const { } = theme.useToken();
-  const { productId, priceId } = useParams<{ productId: string; priceId: string }>();
+  const {} = theme.useToken();
+  const { productId, priceId } = useParams<{
+    productId: string;
+    priceId: string;
+  }>();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { theme: _ } = useSelector((state: RootState) => state.theme);
-  
+  const { theme: _ } = useTheme();
+
   const [loading, setLoading] = useState(true);
   const [price, setPrice] = useState<any>(null);
 
@@ -38,10 +51,12 @@ const PriceDetail: React.FC = () => {
   const loadPriceDetail = async () => {
     try {
       setLoading(true);
-      const response = await dispatch(getPriceDetail({ productId: productId!, priceId: priceId! })).unwrap();
-      
+      const response = await dispatch(
+        getPriceDetail({ productId: productId!, priceId: priceId! })
+      ).unwrap();
+
       const priceData = response.data;
-      
+
       if (priceData && priceData.id) {
         setPrice(priceData);
       } else {
@@ -77,7 +92,7 @@ const PriceDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="flex h-64 items-center justify-center">
         <Spin size="large" />
       </div>
     );
@@ -88,9 +103,7 @@ const PriceDetail: React.FC = () => {
       <div className="p-6">
         <div className="text-center">
           <Title level={3}>{t('price.notFound')}</Title>
-          <Button onClick={handleBack}>
-            {t('common.back')}
-          </Button>
+          <Button onClick={handleBack}>{t('common.back')}</Button>
         </div>
       </div>
     );
@@ -99,28 +112,39 @@ const PriceDetail: React.FC = () => {
   const isDefaultPrice = false;
 
   return (
-    <div className="p-6 min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="w-full mx-auto">
-        <Card className="mb-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+    <div className="min-h-screen bg-gray-50 p-6 dark:bg-gray-900">
+      <div className="mx-auto w-full">
+        <Card className="mb-6 border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
                 onClick={handleBack}
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
               >
-                <ArrowLeft size={20} className="text-gray-600 dark:text-gray-300" />
+                <ArrowLeft
+                  size={20}
+                  className="text-gray-600 dark:text-gray-300"
+                />
               </button>
               <div className="flex items-center gap-3">
-                <div className="p-3 rounded-full bg-green-100 dark:bg-green-900">
-                  <DollarSign size={24} className="text-green-600 dark:text-green-400" />
+                <div className="rounded-full bg-green-100 p-3 dark:bg-green-900">
+                  <DollarSign
+                    size={24}
+                    className="text-green-600 dark:text-green-400"
+                  />
                 </div>
                 <div>
-                  <Title level={2} className="mb-1 text-gray-900 dark:text-white">
+                  <Title
+                    level={2}
+                    className="mb-1 text-gray-900 dark:text-white"
+                  >
                     {t('price.priceDetails')}
                   </Title>
                   <div className="flex gap-2">
                     <AntTag color={price.isActive ? 'green' : 'red'}>
-                      {price.isActive ? t('common.active') : t('common.inactive')}
+                      {price.isActive
+                        ? t('common.active')
+                        : t('common.inactive')}
                     </AntTag>
                     {isDefaultPrice && (
                       <AntTag color="gold" icon={<Star size={12} />}>
@@ -134,11 +158,14 @@ const PriceDetail: React.FC = () => {
           </div>
         </Card>
 
-        <Card className="mb-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-          <Title level={3} className="mb-4 text-gray-900 dark:text-white flex items-center gap-2">
+        <Card className="mb-6 border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+          <Title
+            level={3}
+            className="mb-4 flex items-center gap-2 text-gray-900 dark:text-white"
+          >
             <Info size={18} className="text-blue-500" /> {t('price.basicInfo')}
           </Title>
-          
+
           <Descriptions
             column={{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
             className="dark:text-gray-300"
@@ -148,20 +175,29 @@ const PriceDetail: React.FC = () => {
             <Descriptions.Item
               label={
                 <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                  <Hash size={16} className="text-gray-500 dark:text-gray-400" />
+                  <Hash
+                    size={16}
+                    className="text-gray-500 dark:text-gray-400"
+                  />
                   {t('price.priceId')}
                 </span>
               }
             >
-              <Text copyable className="font-medium text-gray-900 dark:text-white">
+              <Text
+                copyable
+                className="font-medium text-gray-900 dark:text-white"
+              >
                 {price.id}
               </Text>
             </Descriptions.Item>
-            
+
             <Descriptions.Item
               label={
                 <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                  <DollarSign size={16} className="text-gray-500 dark:text-gray-400" />
+                  <DollarSign
+                    size={16}
+                    className="text-gray-500 dark:text-gray-400"
+                  />
                   {t('price.currency')}
                 </span>
               }
@@ -170,11 +206,14 @@ const PriceDetail: React.FC = () => {
                 {price.currency.toUpperCase()}
               </span>
             </Descriptions.Item>
-            
+
             <Descriptions.Item
               label={
                 <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                  <Calendar size={16} className="text-gray-500 dark:text-gray-400" />
+                  <Calendar
+                    size={16}
+                    className="text-gray-500 dark:text-gray-400"
+                  />
                   {t('price.interval')}
                 </span>
               }
@@ -183,11 +222,14 @@ const PriceDetail: React.FC = () => {
                 {formatInterval(price.interval)}
               </span>
             </Descriptions.Item>
-            
+
             <Descriptions.Item
               label={
                 <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                  <DollarSign size={16} className="text-gray-500 dark:text-gray-400" />
+                  <DollarSign
+                    size={16}
+                    className="text-gray-500 dark:text-gray-400"
+                  />
                   {t('price.unitAmount')}
                 </span>
               }
@@ -196,11 +238,14 @@ const PriceDetail: React.FC = () => {
                 {formatCurrency(price.unitAmount, price.currency)}
               </span>
             </Descriptions.Item>
-            
+
             <Descriptions.Item
               label={
                 <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                  <Activity size={16} className="text-gray-500 dark:text-gray-400" />
+                  <Activity
+                    size={16}
+                    className="text-gray-500 dark:text-gray-400"
+                  />
                   {t('price.isActive')}
                 </span>
               }
@@ -209,11 +254,14 @@ const PriceDetail: React.FC = () => {
                 {price.isActive ? t('common.active') : t('common.inactive')}
               </AntTag>
             </Descriptions.Item>
-            
+
             <Descriptions.Item
               label={
                 <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                  <Star size={16} className="text-gray-500 dark:text-gray-400" />
+                  <Star
+                    size={16}
+                    className="text-gray-500 dark:text-gray-400"
+                  />
                   {t('price.default')}
                 </span>
               }
@@ -223,16 +271,17 @@ const PriceDetail: React.FC = () => {
                   {t('price.default')}
                 </AntTag>
               ) : (
-                <AntTag color="default">
-                  {t('common.no')}
-                </AntTag>
+                <AntTag color="default">{t('common.no')}</AntTag>
               )}
             </Descriptions.Item>
-            
+
             <Descriptions.Item
               label={
                 <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                  <Clock size={16} className="text-gray-500 dark:text-gray-400" />
+                  <Clock
+                    size={16}
+                    className="text-gray-500 dark:text-gray-400"
+                  />
                   {t('price.createdAt')}
                 </span>
               }
@@ -245,11 +294,15 @@ const PriceDetail: React.FC = () => {
         </Card>
 
         {price.product && (
-          <Card className="mb-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-            <Title level={3} className="mb-4 text-gray-900 dark:text-white flex items-center gap-2">
-              <Info size={18} className="text-purple-500" /> {t('product.basicInfo')} ({t('product.product')})
+          <Card className="mb-6 border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+            <Title
+              level={3}
+              className="mb-4 flex items-center gap-2 text-gray-900 dark:text-white"
+            >
+              <Info size={18} className="text-purple-500" />{' '}
+              {t('product.basicInfo')} ({t('product.product')})
             </Title>
-            
+
             <Descriptions
               column={{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
               className="dark:text-gray-300"
@@ -259,7 +312,10 @@ const PriceDetail: React.FC = () => {
               <Descriptions.Item
                 label={
                   <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                    <Hash size={16} className="text-gray-500 dark:text-gray-400" />
+                    <Hash
+                      size={16}
+                      className="text-gray-500 dark:text-gray-400"
+                    />
                     {t('product.name')}
                   </span>
                 }
@@ -268,11 +324,14 @@ const PriceDetail: React.FC = () => {
                   {price.product.name}
                 </span>
               </Descriptions.Item>
-              
+
               <Descriptions.Item
                 label={
                   <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                    <Info size={16} className="text-gray-500 dark:text-gray-400" />
+                    <Info
+                      size={16}
+                      className="text-gray-500 dark:text-gray-400"
+                    />
                     {t('product.description')}
                   </span>
                 }
@@ -281,11 +340,14 @@ const PriceDetail: React.FC = () => {
                   {price.product.description || t('product.noDescription')}
                 </span>
               </Descriptions.Item>
-              
+
               <Descriptions.Item
                 label={
                   <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                    <Hash size={16} className="text-gray-500 dark:text-gray-400" />
+                    <Hash
+                      size={16}
+                      className="text-gray-500 dark:text-gray-400"
+                    />
                     {t('product.unitLabel')}
                   </span>
                 }
@@ -294,50 +356,69 @@ const PriceDetail: React.FC = () => {
                   {price.product.unitLabel || t('product.noUnitLabel')}
                 </span>
               </Descriptions.Item>
-              
+
               <Descriptions.Item
                 label={
                   <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                    <Hash size={16} className="text-gray-500 dark:text-gray-400" />
+                    <Hash
+                      size={16}
+                      className="text-gray-500 dark:text-gray-400"
+                    />
                     {t('product.statementDescriptor')}
                   </span>
                 }
               >
                 <span className="font-medium text-gray-900 dark:text-white">
-                  {price.product.statementDescriptor || t('product.noStatementDescriptor')}
+                  {price.product.statementDescriptor ||
+                    t('product.noStatementDescriptor')}
                 </span>
               </Descriptions.Item>
-              
+
               <Descriptions.Item
                 label={
                   <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                    <Activity size={16} className="text-gray-500 dark:text-gray-400" />
+                    <Activity
+                      size={16}
+                      className="text-gray-500 dark:text-gray-400"
+                    />
                     {t('product.isActive')}
                   </span>
                 }
               >
                 <AntTag color={price.product.isActive ? 'green' : 'red'}>
-                  {price.product.isActive ? t('common.active') : t('common.inactive')}
+                  {price.product.isActive
+                    ? t('common.active')
+                    : t('common.inactive')}
                 </AntTag>
               </Descriptions.Item>
-              
+
               <Descriptions.Item
                 label={
                   <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                    <Star size={16} className="text-gray-500 dark:text-gray-400" />
+                    <Star
+                      size={16}
+                      className="text-gray-500 dark:text-gray-400"
+                    />
                     {t('product.isDefault')}
                   </span>
                 }
               >
-                <AntTag color={price.product.isDefaultProduct ? 'blue' : 'default'}>
-                  {price.product.isDefaultProduct ? t('common.yes') : t('common.no')}
+                <AntTag
+                  color={price.product.isDefaultProduct ? 'blue' : 'default'}
+                >
+                  {price.product.isDefaultProduct
+                    ? t('common.yes')
+                    : t('common.no')}
                 </AntTag>
               </Descriptions.Item>
-              
+
               <Descriptions.Item
                 label={
                   <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                    <Clock size={16} className="text-gray-500 dark:text-gray-400" />
+                    <Clock
+                      size={16}
+                      className="text-gray-500 dark:text-gray-400"
+                    />
                     {t('product.createdAt')}
                   </span>
                 }
@@ -348,20 +429,26 @@ const PriceDetail: React.FC = () => {
               </Descriptions.Item>
             </Descriptions>
 
-            {price.product.marketingFeatures && price.product.marketingFeatures.length > 0 && (
-              <div className="mt-4">
-                <Title level={5} className="mb-2 text-gray-900 dark:text-white">
-                  {t('product.marketingFeatures')}
-                </Title>
-                <div className="flex flex-wrap gap-2">
-                  {price.product.marketingFeatures.map((feature: string, index: number) => (
-                    <AntTag key={index} color="blue" className="text-sm">
-                      {feature}
-                    </AntTag>
-                  ))}
+            {price.product.marketingFeatures &&
+              price.product.marketingFeatures.length > 0 && (
+                <div className="mt-4">
+                  <Title
+                    level={5}
+                    className="mb-2 text-gray-900 dark:text-white"
+                  >
+                    {t('product.marketingFeatures')}
+                  </Title>
+                  <div className="flex flex-wrap gap-2">
+                    {price.product.marketingFeatures.map(
+                      (feature: string, index: number) => (
+                        <AntTag key={index} color="blue" className="text-sm">
+                          {feature}
+                        </AntTag>
+                      )
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
           </Card>
         )}
       </div>

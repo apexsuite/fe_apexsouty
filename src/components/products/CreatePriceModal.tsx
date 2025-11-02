@@ -1,14 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import {
-  Modal,
-  Form,
-  Select,
-  InputNumber,
-  Button,
-  theme
-} from 'antd';
+import { Modal, Form, Select, InputNumber, Button, theme } from 'antd';
 import PermissionGuard from '@/components/PermissionGuard';
 import { useErrorHandler } from '@/lib/useErrorHandler';
 import { DollarSign, Calendar, Activity } from 'lucide-react';
@@ -16,6 +9,7 @@ import { RootState } from '@/lib/store';
 import { AppDispatch } from '@/lib/store';
 import { useDispatch } from 'react-redux';
 import { createPrice } from '@/lib/productSlice';
+import { useTheme } from '@/providers/theme';
 
 const { Option } = Select;
 
@@ -39,11 +33,11 @@ const CreatePriceModal: React.FC<CreatePriceModalProps> = ({
   productId,
 }) => {
   const { t } = useTranslation();
-  const { } = theme.useToken();
+  const {} = theme.useToken();
   const dispatch = useDispatch<AppDispatch>();
-  const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
+  const { theme: currentTheme } = useTheme();
   const { handleError, showSuccess } = useErrorHandler();
-  
+
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
@@ -66,9 +60,7 @@ const CreatePriceModal: React.FC<CreatePriceModalProps> = ({
     onCancel();
   };
 
-  const currencyOptions = [
-    { value: 'usd', label: 'USD - US Dollar' },
-  ];
+  const currencyOptions = [{ value: 'usd', label: 'USD - US Dollar' }];
 
   const intervalOptions = [
     { value: 'month', label: t('price.intervals.month') },
@@ -79,8 +71,11 @@ const CreatePriceModal: React.FC<CreatePriceModalProps> = ({
     <Modal
       title={
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900">
-            <DollarSign size={20} className="text-blue-600 dark:text-blue-400" />
+          <div className="rounded-lg bg-blue-100 p-2 dark:bg-blue-900">
+            <DollarSign
+              size={20}
+              className="text-blue-600 dark:text-blue-400"
+            />
           </div>
           <span className="text-gray-900 dark:text-white">
             {t('price.createPrice')}
@@ -108,13 +103,14 @@ const CreatePriceModal: React.FC<CreatePriceModalProps> = ({
             name="currency"
             label={
               <span className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                <DollarSign size={16} className="text-gray-500 dark:text-gray-400" />
+                <DollarSign
+                  size={16}
+                  className="text-gray-500 dark:text-gray-400"
+                />
                 {t('price.currency')}
               </span>
             }
-            rules={[
-              { required: true, message: t('price.currencyRequired') }
-            ]}
+            rules={[{ required: true, message: t('price.currencyRequired') }]}
           >
             <Select
               placeholder={t('price.selectCurrency')}
@@ -134,13 +130,14 @@ const CreatePriceModal: React.FC<CreatePriceModalProps> = ({
             name="interval"
             label={
               <span className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                <Calendar size={16} className="text-gray-500 dark:text-gray-400" />
+                <Calendar
+                  size={16}
+                  className="text-gray-500 dark:text-gray-400"
+                />
                 {t('price.interval')}
               </span>
             }
-            rules={[
-              { required: true, message: t('price.intervalRequired') }
-            ]}
+            rules={[{ required: true, message: t('price.intervalRequired') }]}
           >
             <Select
               placeholder={t('price.selectInterval')}
@@ -160,13 +157,16 @@ const CreatePriceModal: React.FC<CreatePriceModalProps> = ({
             name="unitAmount"
             label={
               <span className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                <Activity size={16} className="text-gray-500 dark:text-gray-400" />
+                <Activity
+                  size={16}
+                  className="text-gray-500 dark:text-gray-400"
+                />
                 {t('price.unitAmount')}
               </span>
             }
             rules={[
               { required: true, message: t('price.unitAmountRequired') },
-              { type: 'number', min: 1, message: t('price.unitAmountMin') }
+              { type: 'number', min: 1, message: t('price.unitAmountMin') },
             ]}
             extra={t('price.unitAmountHelp')}
           >
@@ -177,18 +177,21 @@ const CreatePriceModal: React.FC<CreatePriceModalProps> = ({
               step={1}
               className="w-full"
               style={{
-                backgroundColor: currentTheme === 'dark' ? '#1f1f1f' : '#ffffff',
+                backgroundColor:
+                  currentTheme === 'dark' ? '#1f1f1f' : '#ffffff',
                 borderColor: currentTheme === 'dark' ? '#404040' : '#d9d9d9',
                 color: currentTheme === 'dark' ? '#ffffff' : '#000000',
               }}
-              formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              formatter={value =>
+                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+              }
               parser={() => 1}
             />
           </Form.Item>
         </div>
 
         {/* Form Actions */}
-        <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+        <div className="mt-8 flex justify-end gap-3 border-t border-gray-200 pt-6 dark:border-gray-700">
           <Button
             onClick={handleCancel}
             size="large"
@@ -201,16 +204,13 @@ const CreatePriceModal: React.FC<CreatePriceModalProps> = ({
           >
             {t('common.cancel')}
           </Button>
-          <PermissionGuard 
-            permission="create-price" 
-            mode="hide"
-          >
+          <PermissionGuard permission="create-price" mode="hide">
             <Button
               type="primary"
               htmlType="submit"
               loading={loading}
               size="large"
-              className="px-6 bg-blue-600 hover:bg-blue-700 border-blue-600 hover:border-blue-700"
+              className="border-blue-600 bg-blue-600 px-6 hover:border-blue-700 hover:bg-blue-700"
             >
               {t('price.createPrice')}
             </Button>

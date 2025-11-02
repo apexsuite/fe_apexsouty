@@ -7,19 +7,21 @@ import { createMarketplace } from '@/lib/marketplaceSlice';
 import { ArrowLeft, Save } from 'lucide-react';
 import { Card, Button, Input, Form } from 'antd';
 import { useErrorHandler } from '@/lib/useErrorHandler';
+import { useTheme } from '@/providers/theme';
 
 const MarketplaceCreate: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
+  const { theme: currentTheme } = useTheme();
   const { handleError, showSuccess } = useErrorHandler();
   const [form] = Form.useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-
-
-  const handleSubmit = async (values: { marketplace: string; marketplaceURL: string }) => {
+  const handleSubmit = async (values: {
+    marketplace: string;
+    marketplaceURL: string;
+  }) => {
     setIsSubmitting(true);
     try {
       const result = await dispatch(createMarketplace(values)).unwrap();
@@ -37,39 +39,39 @@ const MarketplaceCreate: React.FC = () => {
   };
 
   return (
-    <div 
+    <div
       style={{
         padding: '1.5rem',
         minHeight: '100vh',
         backgroundColor: currentTheme === 'dark' ? '#111827' : '#f9fafb',
-        color: currentTheme === 'dark' ? '#ffffff' : '#111827'
+        color: currentTheme === 'dark' ? '#ffffff' : '#111827',
       }}
     >
-      <div className="w-full mx-auto">
+      <div className="mx-auto w-full">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center gap-4 mb-4">
-            <Button 
-              icon={<ArrowLeft size={20} />} 
+          <div className="mb-4 flex items-center gap-4">
+            <Button
+              icon={<ArrowLeft size={20} />}
               onClick={handleBack}
               className="flex items-center gap-2"
             >
               {t('common.back')}
             </Button>
             <div className="flex-1">
-              <h1 
-                style={{ 
+              <h1
+                style={{
                   fontSize: '1.875rem',
                   fontWeight: 'bold',
-                  color: currentTheme === 'dark' ? '#ffffff' : '#111827'
+                  color: currentTheme === 'dark' ? '#ffffff' : '#111827',
                 }}
               >
                 {t('marketplace.create')}
               </h1>
-              <p 
-                style={{ 
+              <p
+                style={{
                   marginTop: '0.5rem',
-                  color: currentTheme === 'dark' ? '#d1d5db' : '#4b5563'
+                  color: currentTheme === 'dark' ? '#d1d5db' : '#4b5563',
                 }}
               >
                 {t('marketplace.createDescription')}
@@ -97,15 +99,16 @@ const MarketplaceCreate: React.FC = () => {
               rules={[
                 { required: true, message: t('marketplace.nameRequired') },
                 { min: 2, message: t('marketplace.nameMinLength') },
-                { max: 100, message: t('marketplace.nameMaxLength') }
+                { max: 100, message: t('marketplace.nameMaxLength') },
               ]}
             >
               <Input
                 placeholder={t('marketplace.namePlaceholder')}
                 style={{
-                  backgroundColor: currentTheme === 'dark' ? '#374151' : '#ffffff',
+                  backgroundColor:
+                    currentTheme === 'dark' ? '#374151' : '#ffffff',
                   borderColor: currentTheme === 'dark' ? '#4b5563' : '#d1d5db',
-                  color: currentTheme === 'dark' ? '#ffffff' : '#111827'
+                  color: currentTheme === 'dark' ? '#ffffff' : '#111827',
                 }}
               />
             </Form.Item>
@@ -115,15 +118,16 @@ const MarketplaceCreate: React.FC = () => {
               label={t('marketplace.website')}
               rules={[
                 { required: true, message: t('marketplace.urlRequired') },
-                { type: 'url', message: t('marketplace.urlInvalid') }
+                { type: 'url', message: t('marketplace.urlInvalid') },
               ]}
             >
               <Input
                 placeholder={t('marketplace.urlPlaceholder')}
                 style={{
-                  backgroundColor: currentTheme === 'dark' ? '#374151' : '#ffffff',
+                  backgroundColor:
+                    currentTheme === 'dark' ? '#374151' : '#ffffff',
                   borderColor: currentTheme === 'dark' ? '#4b5563' : '#d1d5db',
-                  color: currentTheme === 'dark' ? '#ffffff' : '#111827'
+                  color: currentTheme === 'dark' ? '#ffffff' : '#111827',
                 }}
               />
             </Form.Item>
@@ -139,9 +143,7 @@ const MarketplaceCreate: React.FC = () => {
                 >
                   {t('common.save')}
                 </Button>
-                <Button onClick={handleBack}>
-                  {t('common.cancel')}
-                </Button>
+                <Button onClick={handleBack}>{t('common.cancel')}</Button>
               </div>
             </Form.Item>
           </Form>

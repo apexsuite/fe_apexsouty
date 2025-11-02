@@ -3,29 +3,42 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AppDispatch, RootState } from '@/lib/store';
-import { fetchPermissions, setCurrentPageNumber, setPageSize, clearError, clearSearch, deletePermissionDirect } from '@/lib/pageRoutePermissionSlice';
+import {
+  fetchPermissions,
+  setCurrentPageNumber,
+  setPageSize,
+  clearError,
+  clearSearch,
+  deletePermissionDirect,
+} from '@/lib/pageRoutePermissionSlice';
 import { Plus, Search, Filter, X } from 'lucide-react';
 import { Pagination, Card, Select, Button } from 'antd';
 import PermissionGuard from '@/components/PermissionGuard';
 import PageRoutePermissionTable from '@/components/pageRoutePermissions/PageRoutePermissionTable';
 import { useErrorHandler } from '@/lib/useErrorHandler';
+import { useTheme } from '@/providers/theme';
 
 const PageRoutePermissionsRoute: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { pageRouteId } = useParams<{ pageRouteId?: string }>();
-  const { permissions, loading, totalPages, totalCount, currentPageNumber, pageSize } = useSelector(
-    (state: RootState) => state.permission
-  );
-  const theme = useSelector((state: RootState) => state.theme.theme);
+  const {
+    permissions,
+    loading,
+    totalPages,
+    totalCount,
+    currentPageNumber,
+    pageSize,
+  } = useSelector((state: RootState) => state.permission);
+  const { theme } = useTheme();
   const { handleError, showSuccess } = useErrorHandler();
-  
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     name: '',
     label: '',
-    isActive: undefined as boolean | undefined
+    isActive: undefined as boolean | undefined,
   });
   const [showFilters, setShowFilters] = useState(false);
 
@@ -33,20 +46,28 @@ const PageRoutePermissionsRoute: React.FC = () => {
     dispatch(clearError());
     dispatch(clearSearch());
     loadPermissions();
-  }, [pageRouteId, currentPageNumber, pageSize, searchTerm, filters.name, filters.label, filters.isActive]);
+  }, [
+    pageRouteId,
+    currentPageNumber,
+    pageSize,
+    searchTerm,
+    filters.name,
+    filters.label,
+    filters.isActive,
+  ]);
 
   useEffect(() => {
     if (searchTerm !== '') {
       dispatch(setCurrentPageNumber(1));
     }
   }, [searchTerm]);
-        
+
   useEffect(() => {
-    const hasActiveFilters = 
+    const hasActiveFilters =
       (filters.name && filters.name !== '') ||
       (filters.label && filters.label !== '') ||
-      (filters.isActive !== undefined);
-    
+      filters.isActive !== undefined;
+
     if (hasActiveFilters) {
       dispatch(setCurrentPageNumber(1));
     }
@@ -85,15 +106,21 @@ const PageRoutePermissionsRoute: React.FC = () => {
   };
 
   const handleViewPermission = (permissionId: string) => {
-    navigate(`/page-route-permissions/${pageRouteId || 'all'}/permissions/${permissionId}`);
+    navigate(
+      `/page-route-permissions/${pageRouteId || 'all'}/permissions/${permissionId}`
+    );
   };
 
   const handleEditPermission = (permissionId: string) => {
-    navigate(`/page-route-permissions/${pageRouteId || 'all'}/permissions/${permissionId}/edit`);
+    navigate(
+      `/page-route-permissions/${pageRouteId || 'all'}/permissions/${permissionId}/edit`
+    );
   };
 
   const handleCreatePermission = () => {
-    navigate(`/page-route-permissions/${pageRouteId || 'all'}/permissions/create`);
+    navigate(
+      `/page-route-permissions/${pageRouteId || 'all'}/permissions/create`
+    );
   };
 
   const handleDeletePermission = async (permissionId: string) => {
@@ -110,7 +137,7 @@ const PageRoutePermissionsRoute: React.FC = () => {
   const handleFilterChange = (key: string, value: any) => {
     setFilters(prev => ({
       ...prev,
-      [key]: value
+      [key]: value,
     }));
   };
 
@@ -118,50 +145,51 @@ const PageRoutePermissionsRoute: React.FC = () => {
     setFilters({
       name: '',
       label: '',
-      isActive: undefined
+      isActive: undefined,
     });
     dispatch(setCurrentPageNumber(1));
   };
 
   return (
-    <div 
+    <div
       style={{
         padding: '1.5rem',
         minHeight: '100vh',
         backgroundColor: theme === 'dark' ? '#111827' : '#f9fafb',
-        color: theme === 'dark' ? '#ffffff' : '#111827'
+        color: theme === 'dark' ? '#ffffff' : '#111827',
       }}
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <div>
-              <h1 
-                style={{ 
+              <h1
+                style={{
                   fontSize: '1.875rem',
                   fontWeight: 'bold',
-                  color: theme === 'dark' ? '#ffffff' : '#111827'
+                  color: theme === 'dark' ? '#ffffff' : '#111827',
                 }}
               >
                 {t('pages.pageRoutePermissions.title')}
               </h1>
-              <p 
-                style={{ 
+              <p
+                style={{
                   marginTop: '0.5rem',
-                  color: theme === 'dark' ? '#d1d5db' : '#4b5563'
+                  color: theme === 'dark' ? '#d1d5db' : '#4b5563',
                 }}
               >
-                {t('pages.pageRoutePermissions.subtitle')} {pageRouteId && `- Page Route ID: ${pageRouteId}`}
+                {t('pages.pageRoutePermissions.subtitle')}{' '}
+                {pageRouteId && `- Page Route ID: ${pageRouteId}`}
               </p>
             </div>
-            <PermissionGuard 
-              permission="create-page-route-permission" 
+            <PermissionGuard
+              permission="create-page-route-permission"
               mode="hide"
             >
               <button
                 onClick={handleCreatePermission}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+                className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
               >
                 <Plus size={20} />
                 {t('pages.pageRoutePermissions.newPermission')}
@@ -174,56 +202,80 @@ const PageRoutePermissionsRoute: React.FC = () => {
             style={{
               backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
               borderColor: theme === 'dark' ? '#374151' : '#e5e7eb',
-              marginBottom: '1.5rem'
+              marginBottom: '1.5rem',
             }}
           >
             <div className="flex flex-col gap-4">
               {/* Search Bar */}
-              <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex flex-col gap-4 md:flex-row">
                 <div className="flex-1">
                   <div className="relative">
-                    <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-400'}`} size={20} />
+                    <Search
+                      className={`absolute top-1/2 left-3 -translate-y-1/2 transform ${theme === 'dark' ? 'text-gray-400' : 'text-gray-400'}`}
+                      size={20}
+                    />
                     <input
                       type="text"
-                      placeholder={t('pages.pageRoutePermissions.searchPermissions')}
+                      placeholder={t(
+                        'pages.pageRoutePermissions.searchPermissions'
+                      )}
                       value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                        theme === 'dark' 
-                          ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
-                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                      onChange={e => setSearchTerm(e.target.value)}
+                      className={`w-full rounded-lg border py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
+                        theme === 'dark'
+                          ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                          : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
                       }`}
                       style={{
-                        backgroundColor: theme === 'dark' ? '#374151' : '#ffffff',
+                        backgroundColor:
+                          theme === 'dark' ? '#374151' : '#ffffff',
                         borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
-                        color: theme === 'dark' ? '#ffffff' : '#111827'
+                        color: theme === 'dark' ? '#ffffff' : '#111827',
                       }}
                     />
                   </div>
                 </div>
-                
+
                 <Button
                   onClick={() => setShowFilters(!showFilters)}
                   className={`flex items-center gap-2 ${
-                    Object.values(filters).some(value => value !== '' && value !== undefined) 
-                      ? 'bg-blue-600 text-white' 
-                      : theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-700'
+                    Object.values(filters).some(
+                      value => value !== '' && value !== undefined
+                    )
+                      ? 'bg-blue-600 text-white'
+                      : theme === 'dark'
+                        ? 'bg-gray-700 text-gray-300'
+                        : 'bg-gray-100 text-gray-700'
                   }`}
                   style={{
-                    backgroundColor: Object.values(filters).some(value => value !== '' && value !== undefined) 
-                      ? '#2563eb' 
-                      : theme === 'dark' ? '#374151' : '#f3f4f6',
+                    backgroundColor: Object.values(filters).some(
+                      value => value !== '' && value !== undefined
+                    )
+                      ? '#2563eb'
+                      : theme === 'dark'
+                        ? '#374151'
+                        : '#f3f4f6',
                     borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
-                    color: Object.values(filters).some(value => value !== '' && value !== undefined) 
-                      ? '#ffffff' 
-                      : theme === 'dark' ? '#d1d5db' : '#374151'
+                    color: Object.values(filters).some(
+                      value => value !== '' && value !== undefined
+                    )
+                      ? '#ffffff'
+                      : theme === 'dark'
+                        ? '#d1d5db'
+                        : '#374151',
                   }}
                 >
                   <Filter size={16} />
                   {t('pages.pageRoutePermissions.filters') || 'Filters'}
-                  {Object.values(filters).some(value => value !== '' && value !== undefined) && (
-                    <span className="ml-1 px-1.5 py-0.5 text-xs bg-white text-blue-600 rounded-full">
-                      {Object.values(filters).filter(value => value !== '' && value !== undefined).length}
+                  {Object.values(filters).some(
+                    value => value !== '' && value !== undefined
+                  ) && (
+                    <span className="ml-1 rounded-full bg-white px-1.5 py-0.5 text-xs text-blue-600">
+                      {
+                        Object.values(filters).filter(
+                          value => value !== '' && value !== undefined
+                        ).length
+                      }
                     </span>
                   )}
                 </Button>
@@ -231,68 +283,89 @@ const PageRoutePermissionsRoute: React.FC = () => {
 
               {/* Advanced Filters */}
               {showFilters && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="grid grid-cols-1 gap-4 border-t border-gray-200 p-4 md:grid-cols-3 dark:border-gray-700">
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <label
+                      className={`mb-2 block text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
+                    >
                       {t('pages.pageRoutePermissions.name') || 'Name'}
                     </label>
                     <input
                       type="text"
-                      placeholder={t('pages.pageRoutePermissions.enterName') || 'Enter name'}
+                      placeholder={
+                        t('pages.pageRoutePermissions.enterName') ||
+                        'Enter name'
+                      }
                       value={filters.name}
-                      onChange={(e) => handleFilterChange('name', e.target.value)}
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                        theme === 'dark' 
-                          ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
-                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                      onChange={e => handleFilterChange('name', e.target.value)}
+                      className={`w-full rounded-lg border px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
+                        theme === 'dark'
+                          ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                          : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
                       }`}
                     />
                   </div>
 
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <label
+                      className={`mb-2 block text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
+                    >
                       {t('pages.pageRoutePermissions.label') || 'Label'}
                     </label>
                     <input
                       type="text"
-                      placeholder={t('pages.pageRoutePermissions.enterLabel') || 'Enter label'}
+                      placeholder={
+                        t('pages.pageRoutePermissions.enterLabel') ||
+                        'Enter label'
+                      }
                       value={filters.label}
-                      onChange={(e) => handleFilterChange('label', e.target.value)}
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                        theme === 'dark' 
-                          ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
-                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                      onChange={e =>
+                        handleFilterChange('label', e.target.value)
+                      }
+                      className={`w-full rounded-lg border px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
+                        theme === 'dark'
+                          ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                          : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
                       }`}
                     />
                   </div>
 
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <label
+                      className={`mb-2 block text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
+                    >
                       {t('common.status') || 'Status'}
                     </label>
                     <Select
-                      placeholder={t('pages.pageRoutePermissions.selectStatus') || 'Select status'}
+                      placeholder={
+                        t('pages.pageRoutePermissions.selectStatus') ||
+                        'Select status'
+                      }
                       value={filters.isActive}
-                      onChange={(value) => handleFilterChange('isActive', value)}
+                      onChange={value => handleFilterChange('isActive', value)}
                       className="w-full"
                       suffixIcon={null}
                       showSearch={false}
                       options={[
                         { label: t('common.all') || 'All', value: undefined },
                         { label: t('common.active') || 'Active', value: true },
-                        { label: t('common.inactive') || 'Inactive', value: false }
+                        {
+                          label: t('common.inactive') || 'Inactive',
+                          value: false,
+                        },
                       ]}
                     />
                   </div>
 
-                  <div className="md:col-span-3 flex justify-end gap-2">
+                  <div className="flex justify-end gap-2 md:col-span-3">
                     <Button
                       onClick={clearFilters}
                       className="flex items-center gap-2"
                       style={{
-                        backgroundColor: theme === 'dark' ? '#374151' : '#f3f4f6',
+                        backgroundColor:
+                          theme === 'dark' ? '#374151' : '#f3f4f6',
                         borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
-                        color: theme === 'dark' ? '#d1d5db' : '#374151'
+                        color: theme === 'dark' ? '#d1d5db' : '#374151',
                       }}
                     >
                       <X size={16} />
@@ -305,13 +378,14 @@ const PageRoutePermissionsRoute: React.FC = () => {
           </Card>
         </div>
 
-
-        <div style={{ 
-          backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
-          border: `1px solid ${theme === 'dark' ? '#374151' : '#e5e7eb'}`,
-          borderRadius: '8px',
-          overflow: 'hidden'
-        }}>
+        <div
+          style={{
+            backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
+            border: `1px solid ${theme === 'dark' ? '#374151' : '#e5e7eb'}`,
+            borderRadius: '8px',
+            overflow: 'hidden',
+          }}
+        >
           <PageRoutePermissionTable
             permissions={permissions.filter(permission => permission !== null)}
             loading={loading}
@@ -322,30 +396,41 @@ const PageRoutePermissionsRoute: React.FC = () => {
         </div>
 
         {!loading && permissions.length === 0 && (
-          <div className="text-center py-12">
-            <div className={`mx-auto w-24 h-24 rounded-full flex items-center justify-center mb-4 transition-colors duration-200 ${
-              theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'
-            }`}>
-              <Search className={`transition-colors duration-200 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`} size={32} />
+          <div className="py-12 text-center">
+            <div
+              className={`mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full transition-colors duration-200 ${
+                theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'
+              }`}
+            >
+              <Search
+                className={`transition-colors duration-200 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`}
+                size={32}
+              />
             </div>
-            <h3 className={`text-lg font-medium mb-2 transition-colors duration-200 ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>{t('pages.pageRoutePermissions.noPermissionsFound')}</h3>
-            <p className={`mb-4 transition-colors duration-200 ${
-              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-            }`}>
+            <h3
+              className={`mb-2 text-lg font-medium transition-colors duration-200 ${
+                theme === 'dark' ? 'text-white' : 'text-gray-900'
+              }`}
+            >
+              {t('pages.pageRoutePermissions.noPermissionsFound')}
+            </h3>
+            <p
+              className={`mb-4 transition-colors duration-200 ${
+                theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+              }`}
+            >
               {searchTerm
                 ? t('pages.pageRoutePermissions.noPermissionsFoundCriteria')
                 : t('pages.pageRoutePermissions.noPermissionsFound')}
             </p>
             {!searchTerm && (
-              <PermissionGuard 
-                permission="create-page-route-permission" 
+              <PermissionGuard
+                permission="create-page-route-permission"
                 mode="hide"
               >
                 <button
                   onClick={handleCreatePermission}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+                  className="rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors duration-200 hover:bg-blue-700"
                 >
                   {t('pages.pageRoutePermissions.createFirstPermission')}
                 </button>
@@ -354,47 +439,50 @@ const PageRoutePermissionsRoute: React.FC = () => {
           </div>
         )}
 
-          <div style={{
+        <div
+          style={{
             marginTop: '16px',
             display: 'flex',
             justifyContent: 'right',
             padding: '16px',
             backgroundColor: 'var(--ant-color-bg-container)',
             border: '1px solid var(--ant-color-border)',
-            borderRadius: '8px'
-          }}>
+            borderRadius: '8px',
+          }}
+        >
           <Pagination
             current={currentPageNumber}
             total={totalPages * pageSize}
             pageSize={pageSize}
             showSizeChanger
             showTotal={(total, range) => (
-              <span style={{ 
-                color: theme === 'dark' ? '#d1d5db' : '#374151',
-                fontSize: '14px',
-                fontWeight: '500'
-              }}>
+              <span
+                style={{
+                  color: theme === 'dark' ? '#d1d5db' : '#374151',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                }}
+              >
                 {`${range[0]}-${range[1]} of ${totalCount || total} items`}
               </span>
             )}
-              onChange={(page, size) => {
-                handlePageChange(page);
-                if (size !== pageSize) {
-                  handlePageSizeChange(size);
-                }
-              }}
-              onShowSizeChange={(_current, size) => {
+            onChange={(page, size) => {
+              handlePageChange(page);
+              if (size !== pageSize) {
                 handlePageSizeChange(size);
-              }}
-              style={{
-                color: theme === 'dark' ? '#f9fafb' : '#111827'
-              }}
-            />
-          </div>
-        
+              }
+            }}
+            onShowSizeChange={(_current, size) => {
+              handlePageSizeChange(size);
+            }}
+            style={{
+              color: theme === 'dark' ? '#f9fafb' : '#111827',
+            }}
+          />
+        </div>
       </div>
     </div>
   );
 };
 
-export default PageRoutePermissionsRoute; 
+export default PageRoutePermissionsRoute;

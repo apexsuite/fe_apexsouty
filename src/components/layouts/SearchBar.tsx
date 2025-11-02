@@ -25,6 +25,7 @@ import {
   CommandSeparator,
 } from '@/components/ui/command';
 import { Kbd, KbdGroup } from '@/components/ui/kbd';
+import { COLORS } from '@/utils/constants/colors';
 
 const SearchBar = () => {
   const { t } = useTranslation();
@@ -216,9 +217,11 @@ const SearchBar = () => {
           ) : null}
 
           <CommandGroup heading={t('searchBar.pages')}>
-            {optimisticMenuItems.map((fav: MenuItem) => {
+            {optimisticMenuItems.map((fav: MenuItem, index: number) => {
               const Icon = fav.icon && (LucideIcons as any)[fav.icon];
               const isFavorite = fav.isFavourite === true;
+              const colorClasses =
+                COLORS[index % COLORS.length]?.light || COLORS[0]!.light;
               return (
                 <CommandItem
                   key={fav.id}
@@ -226,7 +229,7 @@ const SearchBar = () => {
                   className="flex items-center gap-3 py-3"
                 >
                   {Icon && (
-                    <div className="rounded bg-linear-to-b from-yellow-200 to-yellow-400 p-2 text-yellow-800 dark:from-yellow-200 dark:to-yellow-600">
+                    <div className={colorClasses}>
                       <Icon />
                     </div>
                   )}

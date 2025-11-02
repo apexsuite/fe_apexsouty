@@ -3,11 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { AppDispatch, RootState } from '@/lib/store';
-import { 
-  fetchConsents, 
-  requestConsentCallback, 
+import {
+  fetchConsents,
+  requestConsentCallback,
   setCurrentPageNumber,
-  setPageSize
+  setPageSize,
 } from '@/lib/consentSlice';
 import { Plus, Search, Filter, X } from 'lucide-react';
 import { Card, Typography, theme, Pagination, Select, Button } from 'antd';
@@ -15,22 +15,30 @@ import { useErrorHandler } from '@/lib/useErrorHandler';
 import PermissionGuard from '@/components/PermissionGuard';
 import ConsentTable from '@/components/consents/ConsentTable';
 import ConsentEmptyState from '@/components/consents/ConsentEmptyState';
+import { useTheme } from '@/providers/theme';
 
-const { } = Typography;
+const {} = Typography;
 
 const Consents: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { } = theme.useToken();
-  const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
-  const { consents, loading, currentPageNumber, pageSize, totalPages, totalCount } = useSelector((state: RootState) => state.consent);
+  const {} = theme.useToken();
+  const { theme: currentTheme } = useTheme();
+  const {
+    consents,
+    loading,
+    currentPageNumber,
+    pageSize,
+    totalPages,
+    totalCount,
+  } = useSelector((state: RootState) => state.consent);
   const { handleError } = useErrorHandler();
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     marketplace: '',
     marketplaceURL: '',
-    isActive: undefined as boolean | undefined
+    isActive: undefined as boolean | undefined,
   });
   const [showFilters, setShowFilters] = useState(false);
 
@@ -78,14 +86,19 @@ const Consents: React.FC = () => {
     dispatch(setCurrentPageNumber(1));
   };
 
-
-
   const handleAuthorizeConsent = async (consentId: string) => {
     try {
-      const response = await dispatch(requestConsentCallback(consentId)).unwrap();
-      
-      const redirectUrl = response?.data || response?.url || response?.data?.url || response?.redirectUrl || response?.data?.redirectUrl;
-      
+      const response = await dispatch(
+        requestConsentCallback(consentId)
+      ).unwrap();
+
+      const redirectUrl =
+        response?.data ||
+        response?.url ||
+        response?.data?.url ||
+        response?.redirectUrl ||
+        response?.data?.redirectUrl;
+
       if (redirectUrl && typeof redirectUrl === 'string') {
         window.location.href = redirectUrl;
       } else {
@@ -96,26 +109,32 @@ const Consents: React.FC = () => {
     }
   };
 
-
   const clearFilters = () => {
     setFilters({
       marketplace: '',
       marketplaceURL: '',
-      isActive: undefined
+      isActive: undefined,
     });
     setSearchTerm('');
   };
 
-  const hasActiveFilters = filters.marketplace || filters.marketplaceURL || filters.isActive !== undefined;
+  const hasActiveFilters =
+    filters.marketplace ||
+    filters.marketplaceURL ||
+    filters.isActive !== undefined;
 
   if (loading && consents.length === 0) {
     return (
-      <div className={`p-6 min-h-screen ${currentTheme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
-        <div className="w-full mx-auto md:px-8">
-          <div className="flex items-center justify-center h-64">
+      <div
+        className={`min-h-screen p-6 ${currentTheme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}
+      >
+        <div className="mx-auto w-full md:px-8">
+          <div className="flex h-64 items-center justify-center">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className={`text-lg ${currentTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+              <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
+              <p
+                className={`text-lg ${currentTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}
+              >
                 {t('common.loading') || 'Loading...'}
               </p>
             </div>
@@ -126,15 +145,21 @@ const Consents: React.FC = () => {
   }
 
   return (
-    <div className={`p-6 min-h-screen ${currentTheme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      <div className="w-full mx-auto md:px-8">
+    <div
+      className={`min-h-screen p-6 ${currentTheme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}
+    >
+      <div className="mx-auto w-full md:px-8">
         <div className="mb-6">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
             <div>
-              <h1 className={`text-3xl font-bold ${currentTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              <h1
+                className={`text-3xl font-bold ${currentTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}
+              >
                 {t('consents.title')}
               </h1>
-              <p className={`mt-2 ${currentTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+              <p
+                className={`mt-2 ${currentTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
+              >
                 {t('consents.description')}
               </p>
             </div>
@@ -151,24 +176,26 @@ const Consents: React.FC = () => {
           </div>
         </div>
 
-        <Card className={`mb-6 ${currentTheme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
+        <Card
+          className={`mb-6 ${currentTheme === 'dark' ? 'border-gray-700 bg-gray-800' : 'bg-white'}`}
+        >
           <div className="space-y-4">
-            <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex flex-col gap-4 md:flex-row">
               <div className="flex-1">
                 <div className="relative">
-                  <Search 
-                    size={20} 
-                    className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${currentTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`} 
+                  <Search
+                    size={20}
+                    className={`absolute top-1/2 left-3 -translate-y-1/2 transform ${currentTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}
                   />
                   <input
                     type="text"
                     placeholder={t('consents.searchPlaceholder')}
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                      currentTheme === 'dark' 
-                        ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
-                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                    onChange={e => setSearchTerm(e.target.value)}
+                    className={`w-full rounded-lg border py-2 pr-4 pl-10 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 ${
+                      currentTheme === 'dark'
+                        ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                        : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
                     }`}
                   />
                 </div>
@@ -176,11 +203,11 @@ const Consents: React.FC = () => {
               <Button
                 icon={<Filter size={16} />}
                 onClick={() => setShowFilters(!showFilters)}
-                className={`${hasActiveFilters ? 'bg-blue-100 text-blue-700 border-blue-300' : ''}`}
+                className={`${hasActiveFilters ? 'border-blue-300 bg-blue-100 text-blue-700' : ''}`}
               >
                 {t('consents.filters')}
                 {hasActiveFilters && (
-                  <span className="ml-1 bg-blue-600 text-white rounded-full px-2 py-0.5 text-xs">
+                  <span className="ml-1 rounded-full bg-blue-600 px-2 py-0.5 text-xs text-white">
                     {Object.values(filters).filter(Boolean).length}
                   </span>
                 )}
@@ -188,48 +215,68 @@ const Consents: React.FC = () => {
             </div>
 
             {showFilters && (
-              <div className={`p-4 rounded-lg border ${currentTheme === 'dark' ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'}`}>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div
+                className={`rounded-lg border p-4 ${currentTheme === 'dark' ? 'border-gray-600 bg-gray-700' : 'border-gray-200 bg-gray-50'}`}
+              >
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${currentTheme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <label
+                      className={`mb-2 block text-sm font-medium ${currentTheme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
+                    >
                       {t('consents.name')}
                     </label>
                     <input
                       type="text"
                       placeholder={t('consents.enterMarketplace')}
                       value={filters.marketplace}
-                      onChange={(e) => setFilters(prev => ({ ...prev, marketplace: e.target.value }))}
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                        currentTheme === 'dark' 
-                          ? 'bg-gray-600 border-gray-500 text-white placeholder-gray-400' 
-                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                      onChange={e =>
+                        setFilters(prev => ({
+                          ...prev,
+                          marketplace: e.target.value,
+                        }))
+                      }
+                      className={`w-full rounded-lg border px-3 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 ${
+                        currentTheme === 'dark'
+                          ? 'border-gray-500 bg-gray-600 text-white placeholder-gray-400'
+                          : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
                       }`}
                     />
                   </div>
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${currentTheme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <label
+                      className={`mb-2 block text-sm font-medium ${currentTheme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
+                    >
                       {t('consents.website')}
                     </label>
                     <input
                       type="text"
                       placeholder={t('consents.enterMarketplaceURL')}
                       value={filters.marketplaceURL}
-                      onChange={(e) => setFilters(prev => ({ ...prev, marketplaceURL: e.target.value }))}
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                        currentTheme === 'dark' 
-                          ? 'bg-gray-600 border-gray-500 text-white placeholder-gray-400' 
-                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                      onChange={e =>
+                        setFilters(prev => ({
+                          ...prev,
+                          marketplaceURL: e.target.value,
+                        }))
+                      }
+                      className={`w-full rounded-lg border px-3 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 ${
+                        currentTheme === 'dark'
+                          ? 'border-gray-500 bg-gray-600 text-white placeholder-gray-400'
+                          : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
                       }`}
                     />
                   </div>
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${currentTheme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <label
+                      className={`mb-2 block text-sm font-medium ${currentTheme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
+                    >
                       {t('consents.status')}
                     </label>
                     <Select
                       placeholder={t('consents.selectStatus')}
                       value={filters.isActive}
-                      onChange={(value) => setFilters(prev => ({ ...prev, isActive: value }))}
+                      onChange={value =>
+                        setFilters(prev => ({ ...prev, isActive: value }))
+                      }
                       className="w-full"
                       allowClear
                     >
@@ -239,7 +286,7 @@ const Consents: React.FC = () => {
                   </div>
                 </div>
                 {hasActiveFilters && (
-                  <div className="flex justify-end mt-4">
+                  <div className="mt-4 flex justify-end">
                     <Button
                       icon={<X size={16} />}
                       onClick={clearFilters}
@@ -263,10 +310,10 @@ const Consents: React.FC = () => {
               loading={loading}
               onAuthorize={handleAuthorizeConsent}
             />
-            
+
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex justify-center mt-6">
+              <div className="mt-6 flex justify-center">
                 <Pagination
                   current={currentPageNumber}
                   total={totalCount}
@@ -275,7 +322,7 @@ const Consents: React.FC = () => {
                   onShowSizeChange={handlePageSizeChange}
                   showSizeChanger
                   showQuickJumper
-                  showTotal={(total, range) => 
+                  showTotal={(total, range) =>
                     `${range[0]}-${range[1]} of ${total} items`
                   }
                   className={currentTheme === 'dark' ? 'dark-pagination' : ''}
@@ -284,7 +331,6 @@ const Consents: React.FC = () => {
             )}
           </>
         )}
-
       </div>
     </div>
   );

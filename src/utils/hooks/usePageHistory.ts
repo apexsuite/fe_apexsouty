@@ -10,7 +10,7 @@ interface PageHistoryItem {
 }
 
 const PAGE_HISTORY_KEY = 'history';
-const MAX_HISTORY_ITEMS = 3;
+const MAX_HISTORY_ITEMS = 5;
 
 export const usePageHistory = (): void => {
   const location = useLocation();

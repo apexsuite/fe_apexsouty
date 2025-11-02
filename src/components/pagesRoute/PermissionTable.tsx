@@ -2,7 +2,10 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { RootState, AppDispatch } from '@/lib/store';
-import { changePermissionStatus, deletePermission } from '@/lib/pageRoutePermissionSlice';
+import {
+  changePermissionStatus,
+  deletePermission,
+} from '@/lib/pageRoutePermissionSlice';
 import { Trash2, Plus, Edit, Search } from 'lucide-react';
 import { Button, Tag, Table, Space, Switch, Input, Pagination } from 'antd';
 import { useErrorHandler } from '@/lib/useErrorHandler';
@@ -10,6 +13,7 @@ import CreatePermissionModal from './CreatePermissionModal';
 import DeletePermissionModal from './DeletePermissionModal';
 import EditPermissionModal from './EditPermissionModal';
 import type { ColumnsType } from 'antd/es/table';
+import { useTheme } from '@/providers/theme';
 
 interface PermissionTableProps {
   pageRouteId: string;
@@ -26,14 +30,16 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
-  const theme = useSelector((state: RootState) => state.theme.theme);
+  const { theme } = useTheme();
   const { handleError, showSuccess } = useErrorHandler();
 
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [localPermissions, setLocalPermissions] = useState<any[]>([]);
-  const [loadingStates, setLoadingStates] = useState<{ [key: string]: boolean }>({});
+  const [loadingStates, setLoadingStates] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [selectedPermission, setSelectedPermission] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -48,12 +54,13 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
   // Filter permissions based on search term
   const filteredPermissions = useMemo(() => {
     if (!searchTerm) return localPermissions;
-    
+
     const lowerSearchTerm = searchTerm.toLowerCase();
-    return localPermissions.filter((permission) => 
-      permission.name?.toLowerCase().includes(lowerSearchTerm) ||
-      permission.description?.toLowerCase().includes(lowerSearchTerm) ||
-      permission.label?.toLowerCase().includes(lowerSearchTerm)
+    return localPermissions.filter(
+      permission =>
+        permission.name?.toLowerCase().includes(lowerSearchTerm) ||
+        permission.description?.toLowerCase().includes(lowerSearchTerm) ||
+        permission.label?.toLowerCase().includes(lowerSearchTerm)
     );
   }, [localPermissions, searchTerm]);
 
@@ -81,18 +88,22 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
 
   const handleConfirmDelete = async () => {
     if (!selectedPermission) return;
-    
+
     try {
-      await dispatch(deletePermission({ 
-        pageRouteId, 
-        permissionId: selectedPermission.id 
-      })).unwrap();
-      
+      await dispatch(
+        deletePermission({
+          pageRouteId,
+          permissionId: selectedPermission.id,
+        })
+      ).unwrap();
+
       // Remove permission from local permissions array
-      const updatedPermissions = localPermissions.filter(p => p.id !== selectedPermission.id);
+      const updatedPermissions = localPermissions.filter(
+        p => p.id !== selectedPermission.id
+      );
       setLocalPermissions(updatedPermissions);
       onPermissionsChange(updatedPermissions);
-      
+
       showSuccess('permissionDeletedSuccessfully');
       setDeleteModalVisible(false);
       setSelectedPermission(null);
@@ -107,22 +118,27 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
     onPermissionsUpdate(); // Permissions listesini yenile
   };
 
-  const handleStatusChange = async (permissionId: string, isActive: boolean) => {
+  const handleStatusChange = async (
+    permissionId: string,
+    isActive: boolean
+  ) => {
     setLoadingStates(prev => ({ ...prev, [permissionId]: true }));
     try {
-      await dispatch(changePermissionStatus({ 
-        pageRouteId, 
-        permissionId, 
-        status: isActive 
-      })).unwrap();
-      
+      await dispatch(
+        changePermissionStatus({
+          pageRouteId,
+          permissionId,
+          status: isActive,
+        })
+      ).unwrap();
+
       // Update local permissions
-      const updatedPermissions = localPermissions.map(p => 
+      const updatedPermissions = localPermissions.map(p =>
         p.id === permissionId ? { ...p, isActive } : p
       );
       setLocalPermissions(updatedPermissions);
       onPermissionsChange(updatedPermissions);
-      
+
       showSuccess('permissionStatusChangedSuccessfully');
     } catch (error: any) {
       handleError(error);
@@ -142,7 +158,9 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
       dataIndex: 'name',
       key: 'name',
       render: (text: string) => (
-        <span className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+        <span
+          className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
+        >
           {text}
         </span>
       ),
@@ -152,7 +170,9 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
       dataIndex: 'description',
       key: 'description',
       render: (text: string) => (
-        <span className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+        <span
+          className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}
+        >
           {text || 'No description'}
         </span>
       ),
@@ -161,9 +181,7 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
       title: 'Label',
       dataIndex: 'label',
       key: 'label',
-      render: (text: string) => text ? (
-        <Tag color="blue">{text}</Tag>
-      ) : null,
+      render: (text: string) => (text ? <Tag color="blue">{text}</Tag> : null),
     },
     {
       title: 'Status',
@@ -174,12 +192,12 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
           <Switch
             checked={isActive}
             loading={loadingStates[record.id]}
-            onChange={(checked) => handleStatusChange(record.id, checked)}
+            onChange={checked => handleStatusChange(record.id, checked)}
             className={theme === 'dark' ? 'dark-switch' : ''}
           />
           <Tag color={isActive ? 'green' : 'red'} className="text-xs">
-          {isActive ? 'Active' : 'Inactive'}
-        </Tag>
+            {isActive ? 'Active' : 'Inactive'}
+          </Tag>
         </div>
       ),
     },
@@ -214,9 +232,11 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+      <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
         <div className="flex items-center gap-2">
-          <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+          <h3
+            className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
+          >
             {t('pages.permissions')}
           </h3>
           <Tag color="blue">{localPermissions.length}</Tag>
@@ -225,15 +245,20 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
         <div className="w-full sm:w-72">
           <Input
             placeholder={t('permissions.searchPermissions')}
-            prefix={<Search size={16} className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} />}
+            prefix={
+              <Search
+                size={16}
+                className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}
+              />
+            }
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={e => setSearchTerm(e.target.value)}
             allowClear
             className={`${theme === 'dark' ? 'dark-input' : ''}`}
             style={{
               backgroundColor: theme === 'dark' ? '#374151' : '#ffffff',
               borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
-              color: theme === 'dark' ? '#ffffff' : '#111827'
+              color: theme === 'dark' ? '#ffffff' : '#111827',
             }}
           />
         </div>
@@ -247,10 +272,10 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
         </Button>
       </div>
 
-
-
       {/* Desktop Table View - Hidden on Mobile */}
-      <div className={`hidden md:block ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} ${theme === 'dark' ? 'dark-modal' : ''}`}>
+      <div
+        className={`hidden md:block ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} ${theme === 'dark' ? 'dark-modal' : ''}`}
+      >
         <Table
           columns={columns}
           dataSource={paginatedPermissions}
@@ -263,62 +288,92 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
           }}
           locale={{
             emptyText: (
-              <div className={`text-center py-8 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                <p>{searchTerm ? t('permissions.noResultsFound') || 'No results found' : t('pages.noPermissionsAssigned')}</p>
-                <p className="text-sm">{searchTerm ? t('permissions.tryDifferentSearch') || 'Try a different search term' : t('pages.createFirstPermission')}</p>
+              <div
+                className={`py-8 text-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}
+              >
+                <p>
+                  {searchTerm
+                    ? t('permissions.noResultsFound') || 'No results found'
+                    : t('pages.noPermissionsAssigned')}
+                </p>
+                <p className="text-sm">
+                  {searchTerm
+                    ? t('permissions.tryDifferentSearch') ||
+                      'Try a different search term'
+                    : t('pages.createFirstPermission')}
+                </p>
               </div>
-            )
+            ),
           }}
         />
       </div>
 
       {/* Desktop Pagination */}
       {filteredPermissions.length > 0 && (
-        <div className="hidden md:flex justify-center">
+        <div className="hidden justify-center md:flex">
           <Pagination
             current={currentPage}
             total={filteredPermissions.length}
             pageSize={pageSize}
-            onChange={(page) => setCurrentPage(page)}
+            onChange={page => setCurrentPage(page)}
             showSizeChanger={false}
-            showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
+            showTotal={(total, range) =>
+              `${range[0]}-${range[1]} of ${total} items`
+            }
             className={theme === 'dark' ? 'dark-pagination' : ''}
           />
         </div>
       )}
 
       {/* Mobile Card View - Hidden on Desktop */}
-      <div className="block md:hidden space-y-3">
+      <div className="block space-y-3 md:hidden">
         {paginatedPermissions.length === 0 ? (
-          <div className={`text-center py-8 rounded-lg border ${theme === 'dark' ? 'bg-gray-800 border-gray-700 text-gray-400' : 'bg-white border-gray-200 text-gray-500'}`}>
-            <p>{searchTerm ? t('permissions.noResultsFound') || 'No results found' : t('pages.noPermissionsAssigned')}</p>
-            <p className="text-sm">{searchTerm ? t('permissions.tryDifferentSearch') || 'Try a different search term' : t('pages.createFirstPermission')}</p>
+          <div
+            className={`rounded-lg border py-8 text-center ${theme === 'dark' ? 'border-gray-700 bg-gray-800 text-gray-400' : 'border-gray-200 bg-white text-gray-500'}`}
+          >
+            <p>
+              {searchTerm
+                ? t('permissions.noResultsFound') || 'No results found'
+                : t('pages.noPermissionsAssigned')}
+            </p>
+            <p className="text-sm">
+              {searchTerm
+                ? t('permissions.tryDifferentSearch') ||
+                  'Try a different search term'
+                : t('pages.createFirstPermission')}
+            </p>
           </div>
         ) : (
-          paginatedPermissions.map((permission) => (
+          paginatedPermissions.map(permission => (
             <div
               key={permission.id}
               className={`rounded-lg border p-4 ${
-                theme === 'dark' 
-                  ? 'bg-gray-800 border-gray-700' 
-                  : 'bg-white border-gray-200'
+                theme === 'dark'
+                  ? 'border-gray-700 bg-gray-800'
+                  : 'border-gray-200 bg-white'
               }`}
             >
               {/* Card Header */}
-              <div className="flex justify-between items-start mb-3">
+              <div className="mb-3 flex items-start justify-between">
                 <div className="flex-1">
-                  <h4 className={`font-medium text-base mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                  <h4
+                    className={`mb-1 text-base font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
+                  >
                     {permission.name}
                   </h4>
                   {permission.label && (
-                    <Tag color="blue" className="mb-2">{permission.label}</Tag>
+                    <Tag color="blue" className="mb-2">
+                      {permission.label}
+                    </Tag>
                   )}
                 </div>
                 <div className="flex items-center gap-1">
                   <Switch
                     checked={permission.isActive}
                     loading={loadingStates[permission.id]}
-                    onChange={(checked) => handleStatusChange(permission.id, checked)}
+                    onChange={checked =>
+                      handleStatusChange(permission.id, checked)
+                    }
                     className={theme === 'dark' ? 'dark-switch' : ''}
                     size="small"
                   />
@@ -327,20 +382,25 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
 
               {/* Description */}
               {permission.description && (
-                <p className={`text-sm mb-3 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                <p
+                  className={`mb-3 text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}
+                >
                   {permission.description}
                 </p>
               )}
 
               {/* Status Badge */}
               <div className="mb-3">
-                <Tag color={permission.isActive ? 'green' : 'red'} className="text-xs">
+                <Tag
+                  color={permission.isActive ? 'green' : 'red'}
+                  className="text-xs"
+                >
                   {permission.isActive ? 'Active' : 'Inactive'}
                 </Tag>
               </div>
 
               {/* Actions */}
-              <div className="flex gap-2 pt-3 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex gap-2 border-t border-gray-200 pt-3 dark:border-gray-700">
                 <Button
                   type="text"
                   icon={<Edit size={16} />}
@@ -368,12 +428,12 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
 
       {/* Mobile Pagination */}
       {filteredPermissions.length > 0 && (
-        <div className="flex md:hidden justify-center">
+        <div className="flex justify-center md:hidden">
           <Pagination
             current={currentPage}
             total={filteredPermissions.length}
             pageSize={pageSize}
-            onChange={(page) => setCurrentPage(page)}
+            onChange={page => setCurrentPage(page)}
             showSizeChanger={false}
             simple
             className={theme === 'dark' ? 'dark-pagination' : ''}
