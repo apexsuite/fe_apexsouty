@@ -32,7 +32,6 @@ export default function Sidebar({
 }) {
   const { t, i18n } = useTranslation();
   const lang = useSelector((state: RootState) => state.lang.language);
-  const theme = useSelector((state: RootState) => state.theme.theme);
   const dispatch = useDispatch<AppDispatch>();
   const favoritesMenu = useSelector(selectFavorites);
   const menuItems = useSelector((state: RootState) => state.menu.items);
@@ -217,7 +216,7 @@ export default function Sidebar({
         onClose={onMobileClose}
         width={260}
         bodyStyle={{ padding: 16 }}
-        className={`lg:hidden ${theme === 'dark' ? 'dark-drawer' : ''}`}
+        className="lg:hidden"
         closeIcon={false}
         maskClosable={true}
       >

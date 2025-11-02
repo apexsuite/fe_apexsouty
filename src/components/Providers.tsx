@@ -1,11 +1,10 @@
-import { Provider } from "react-redux";
-import { store } from "@/lib/store";
-import "@/lib/i18n";
-import { useEffect, useState, useRef } from "react";
-import { setLanguage } from "@/lib/langSlice";
-import { setTheme } from "@/lib/themeSlice";
-import i18n from "@/lib/i18n";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Provider } from 'react-redux';
+import { store } from '@/lib/store';
+import '@/lib/i18n';
+import { useEffect, useState, useRef } from 'react';
+import { setLanguage } from '@/lib/langSlice';
+import i18n from '@/lib/i18n';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,41 +18,25 @@ const queryClient = new QueryClient({
 
 function Spinner() {
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <span className="inline-block w-12 h-12 border-4 border-gray-300 border-t-primary rounded-full animate-spin"></span>
+    <div className="flex min-h-screen items-center justify-center">
+      <span className="border-t-primary inline-block h-12 w-12 animate-spin rounded-full border-4 border-gray-300"></span>
     </div>
   );
 }
 
-function applyTheme(theme: string) {
-  const root = window.document.documentElement;
-
-  root.classList.remove('dark', 'light');
-
-  if (theme === 'dark') {
-    root.classList.add('dark');
-  } else {
-    root.classList.add('light');
-  }
-}
-
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
-  const [isThemeChanging, setIsThemeChanging] = useState(false);
   const dispatchRef = useRef(store.dispatch);
-  const theme = store.getState().theme.theme;
 
   useEffect(() => {
-    const storedLang = typeof window === "undefined" ? "en" : localStorage.getItem("lang") || "en";
+    const storedLang =
+      typeof window === 'undefined'
+        ? 'en'
+        : localStorage.getItem('lang') || 'en';
     if (storedLang) {
       dispatchRef.current(setLanguage(storedLang));
       i18n.changeLanguage(storedLang);
     }
-
-    const storedTheme = localStorage.getItem('theme') as 'light' | 'dark' || 'light';
-    dispatchRef.current(setTheme(storedTheme));
-
-    applyTheme(storedTheme);
 
     setReady(true);
   }, []);
@@ -62,16 +45,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     if (!ready) return;
 
     const unsubscribe = store.subscribe(() => {
-      const newTheme = store.getState().theme.theme;
       const newLang = store.getState().lang.language;
-
-      if (newTheme !== theme) {
-        setIsThemeChanging(true);
-        setTimeout(() => {
-          applyTheme(newTheme);
-          setIsThemeChanging(false);
-        }, 100);
-      }
 
       if (newLang && newLang !== i18n.language) {
         i18n.changeLanguage(newLang);
@@ -79,17 +53,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     });
 
     return () => unsubscribe();
-  }, [ready, theme]);
+  }, [ready]);
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Provider store={store}>
-        {ready ? (
-          isThemeChanging ? <Spinner /> : children
-        ) : (
-          <Spinner />
-        )}
-      </Provider>
+      <Provider store={store}>{ready ? children : <Spinner />}</Provider>
     </QueryClientProvider>
   );
-} 
+}
