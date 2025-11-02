@@ -5,18 +5,19 @@ import { useNavigate } from 'react-router-dom';
 import { AppDispatch, RootState } from '@/lib/store';
 import { createProduct } from '@/lib/productSlice';
 import { ArrowLeft, Save } from 'lucide-react';
-import { 
-  Form, 
-  Input, 
-  Button, 
-  Card, 
-  Typography, 
+import {
+  Form,
+  Input,
+  Button,
+  Card,
+  Typography,
   Switch,
   Divider,
-  theme
+  theme,
 } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useErrorHandler } from '@/lib/useErrorHandler';
+import { useTheme } from '@/providers/theme';
 
 const { Title, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -26,7 +27,7 @@ const ProductCreate: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { token } = theme.useToken();
-  const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
+  const { theme: currentTheme } = useTheme();
   const { handleError, showSuccess } = useErrorHandler();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -60,11 +61,12 @@ const ProductCreate: React.FC = () => {
   };
 
   return (
-    <div 
-      className="p-6 min-h-screen" 
-      style={{ 
-        backgroundColor: currentTheme === 'dark' ? '#141414' : token.colorBgContainer,
-        color: token.colorText
+    <div
+      className="min-h-screen p-6"
+      style={{
+        backgroundColor:
+          currentTheme === 'dark' ? '#141414' : token.colorBgContainer,
+        color: token.colorText,
       }}
     >
       <div className="mb-6">
@@ -73,24 +75,28 @@ const ProductCreate: React.FC = () => {
           onClick={handleCancel}
           className="mb-4"
           style={{
-            backgroundColor: currentTheme === 'dark' ? '#262626' : token.colorBgContainer,
+            backgroundColor:
+              currentTheme === 'dark' ? '#262626' : token.colorBgContainer,
             borderColor: token.colorBorder,
-            color: token.colorText
+            color: token.colorText,
           }}
         >
           {t('common.back')}
         </Button>
-        <Title level={2} style={{ color: token.colorText }}>{t('product.create')}</Title>
+        <Title level={2} style={{ color: token.colorText }}>
+          {t('product.create')}
+        </Title>
         <Paragraph style={{ color: token.colorTextSecondary }}>
           {t('product.createDescription')}
         </Paragraph>
       </div>
 
-      <Card 
+      <Card
         className="max-w-4xl"
-        style={{ 
-          backgroundColor: currentTheme === 'dark' ? '#1f1f1f' : token.colorBgElevated,
-          borderColor: token.colorBorder
+        style={{
+          backgroundColor:
+            currentTheme === 'dark' ? '#1f1f1f' : token.colorBgElevated,
+          borderColor: token.colorBorder,
         }}
       >
         <Form
@@ -104,7 +110,7 @@ const ProductCreate: React.FC = () => {
             marketingFeatures: [''],
           }}
         >
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <div className="space-y-6">
               <Form.Item
                 name="name"
@@ -115,13 +121,16 @@ const ProductCreate: React.FC = () => {
                   { max: 100, message: t('product.nameMaxLength') },
                 ]}
               >
-                <Input 
+                <Input
                   placeholder={t('product.namePlaceholder')}
                   size="large"
                   style={{
-                    backgroundColor: currentTheme === 'dark' ? '#262626' : token.colorBgContainer,
+                    backgroundColor:
+                      currentTheme === 'dark'
+                        ? '#262626'
+                        : token.colorBgContainer,
                     borderColor: token.colorBorder,
-                    color: token.colorText
+                    color: token.colorText,
                   }}
                 />
               </Form.Item>
@@ -139,9 +148,12 @@ const ProductCreate: React.FC = () => {
                   showCount
                   maxLength={500}
                   style={{
-                    backgroundColor: currentTheme === 'dark' ? '#262626' : token.colorBgContainer,
+                    backgroundColor:
+                      currentTheme === 'dark'
+                        ? '#262626'
+                        : token.colorBgContainer,
                     borderColor: token.colorBorder,
-                    color: token.colorText
+                    color: token.colorText,
                   }}
                 />
               </Form.Item>
@@ -149,37 +161,44 @@ const ProductCreate: React.FC = () => {
               <Form.Item
                 name="unitLabel"
                 label={t('product.unitLabel')}
-                rules={[
-                  { max: 50, message: t('product.unitLabelMaxLength') },
-                ]}
+                rules={[{ max: 50, message: t('product.unitLabelMaxLength') }]}
               >
-                <Input 
+                <Input
                   placeholder={t('product.unitLabelPlaceholder')}
                   size="large"
                   style={{
-                    backgroundColor: currentTheme === 'dark' ? '#262626' : token.colorBgContainer,
+                    backgroundColor:
+                      currentTheme === 'dark'
+                        ? '#262626'
+                        : token.colorBgContainer,
                     borderColor: token.colorBorder,
-                    color: token.colorText
+                    color: token.colorText,
                   }}
                 />
               </Form.Item>
             </div>
-                        
+
             <div className="space-y-6">
               <Form.Item
                 name="statementDescriptor"
                 label={t('product.statementDescriptor')}
                 rules={[
-                  { max: 100, message: t('product.statementDescriptorMaxLength') },
+                  {
+                    max: 100,
+                    message: t('product.statementDescriptorMaxLength'),
+                  },
                 ]}
               >
-                <Input 
+                <Input
                   placeholder={t('product.statementDescriptorPlaceholder')}
                   size="large"
                   style={{
-                    backgroundColor: currentTheme === 'dark' ? '#262626' : token.colorBgContainer,
+                    backgroundColor:
+                      currentTheme === 'dark'
+                        ? '#262626'
+                        : token.colorBgContainer,
                     borderColor: token.colorBorder,
-                    color: token.colorText
+                    color: token.colorText,
                   }}
                 />
               </Form.Item>
@@ -189,7 +208,7 @@ const ProductCreate: React.FC = () => {
                 label={t('product.status')}
                 valuePropName="checked"
               >
-                <Switch 
+                <Switch
                   checkedChildren={t('common.active')}
                   unCheckedChildren={t('common.inactive')}
                 />
@@ -200,7 +219,7 @@ const ProductCreate: React.FC = () => {
                 label={t('product.isDefault')}
                 valuePropName="checked"
               >
-                <Switch 
+                <Switch
                   checkedChildren={t('common.yes')}
                   unCheckedChildren={t('common.no')}
                 />
@@ -211,7 +230,7 @@ const ProductCreate: React.FC = () => {
                 label={t('product.isStripe')}
                 valuePropName="checked"
               >
-                <Switch 
+                <Switch
                   checkedChildren={t('common.yes')}
                   unCheckedChildren={t('common.no')}
                 />
@@ -230,41 +249,55 @@ const ProductCreate: React.FC = () => {
                             {...restField}
                             name={[name]}
                             rules={[
-                              { required: true, message: t('product.marketingFeatureRequired') },
-                              { max: 100, message: t('product.marketingFeatureMaxLength') },
+                              {
+                                required: true,
+                                message: t('product.marketingFeatureRequired'),
+                              },
+                              {
+                                max: 100,
+                                message: t('product.marketingFeatureMaxLength'),
+                              },
                             ]}
-                            className="flex-1 mb-0"
+                            className="mb-0 flex-1"
                           >
-                            <Input 
-                              placeholder={t('product.marketingFeaturePlaceholder')}
+                            <Input
+                              placeholder={t(
+                                'product.marketingFeaturePlaceholder'
+                              )}
                               style={{
-                                backgroundColor: currentTheme === 'dark' ? '#262626' : token.colorBgContainer,
+                                backgroundColor:
+                                  currentTheme === 'dark'
+                                    ? '#262626'
+                                    : token.colorBgContainer,
                                 borderColor: token.colorBorder,
-                                color: token.colorText
+                                color: token.colorText,
                               }}
                             />
                           </Form.Item>
                           {fields.length > 1 && (
                             <MinusCircleOutlined
                               onClick={() => remove(name)}
-                              className="text-red-500 cursor-pointer hover:text-red-700"
+                              className="cursor-pointer text-red-500 hover:text-red-700"
                             />
                           )}
                         </div>
                       ))}
-                                             <Button
-                         type="dashed"
-                         onClick={() => add()}
-                         block
-                         icon={<PlusOutlined />}
-                         style={{
-                           backgroundColor: currentTheme === 'dark' ? '#262626' : token.colorBgContainer,
-                           borderColor: token.colorBorder,
-                           color: token.colorText
-                         }}
-                       >
-                         {t('product.addMarketingFeature')}
-                       </Button>
+                      <Button
+                        type="dashed"
+                        onClick={() => add()}
+                        block
+                        icon={<PlusOutlined />}
+                        style={{
+                          backgroundColor:
+                            currentTheme === 'dark'
+                              ? '#262626'
+                              : token.colorBgContainer,
+                          borderColor: token.colorBorder,
+                          color: token.colorText,
+                        }}
+                      >
+                        {t('product.addMarketingFeature')}
+                      </Button>
                     </div>
                   )}
                 </Form.List>
@@ -275,13 +308,14 @@ const ProductCreate: React.FC = () => {
           <Divider />
 
           <div className="flex justify-end gap-3">
-            <Button 
-              onClick={handleCancel} 
+            <Button
+              onClick={handleCancel}
               size="large"
               style={{
-                backgroundColor: currentTheme === 'dark' ? '#262626' : token.colorBgContainer,
+                backgroundColor:
+                  currentTheme === 'dark' ? '#262626' : token.colorBgContainer,
                 borderColor: token.colorBorder,
-                color: token.colorText
+                color: token.colorText,
               }}
             >
               {t('common.cancel')}
@@ -302,4 +336,4 @@ const ProductCreate: React.FC = () => {
   );
 };
 
-export default ProductCreate; 
+export default ProductCreate;

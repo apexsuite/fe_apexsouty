@@ -6,21 +6,24 @@ import { AppDispatch, RootState } from '@/lib/store';
 import { fetchMarketplace } from '@/lib/marketplaceSlice';
 import { ArrowLeft, Edit, ExternalLink } from 'lucide-react';
 import { Card, Button, Tag, Spin } from 'antd';
+import { useTheme } from '@/providers/theme';
 
 const MarketplaceDetail: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { id } = useParams<{ id: string }>();
-  const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
-  const { marketplace, loading } = useSelector((state: RootState) => state.marketplace);
+  const { theme: currentTheme } = useTheme();
+
+  const { marketplace, loading } = useSelector(
+    (state: RootState) => state.marketplace
+  );
 
   useEffect(() => {
     if (id) {
       dispatch(fetchMarketplace(id));
     }
   }, [id, dispatch]);
-
 
   const handleEdit = () => {
     if (id) {
@@ -34,14 +37,14 @@ const MarketplaceDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <div 
+      <div
         style={{
           padding: '1.5rem',
           minHeight: '100vh',
           backgroundColor: currentTheme === 'dark' ? '#111827' : '#f9fafb',
           display: 'flex',
           justifyContent: 'center',
-          alignItems: 'center'
+          alignItems: 'center',
         }}
       >
         <Spin size="large" />
@@ -51,17 +54,19 @@ const MarketplaceDetail: React.FC = () => {
 
   if (!marketplace) {
     return (
-      <div 
+      <div
         style={{
           padding: '1.5rem',
           minHeight: '100vh',
           backgroundColor: currentTheme === 'dark' ? '#111827' : '#f9fafb',
-          color: currentTheme === 'dark' ? '#ffffff' : '#111827'
+          color: currentTheme === 'dark' ? '#ffffff' : '#111827',
         }}
       >
-        <div className="max-w-4xl mx-auto">
+        <div className="mx-auto max-w-4xl">
           <div className="text-center">
-            <h1 style={{ color: currentTheme === 'dark' ? '#ffffff' : '#111827' }}>
+            <h1
+              style={{ color: currentTheme === 'dark' ? '#ffffff' : '#111827' }}
+            >
               {t('marketplace.notFound')}
             </h1>
             <Button onClick={handleBack} className="mt-4">
@@ -74,46 +79,46 @@ const MarketplaceDetail: React.FC = () => {
   }
 
   return (
-    <div 
+    <div
       style={{
         padding: '1.5rem',
         minHeight: '100vh',
         backgroundColor: currentTheme === 'dark' ? '#111827' : '#f9fafb',
-        color: currentTheme === 'dark' ? '#ffffff' : '#111827'
+        color: currentTheme === 'dark' ? '#ffffff' : '#111827',
       }}
     >
-      <div className="w-full mx-auto">
+      <div className="mx-auto w-full">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center gap-4 mb-4">
-            <Button 
-              icon={<ArrowLeft size={20} />} 
+          <div className="mb-4 flex items-center gap-4">
+            <Button
+              icon={<ArrowLeft size={20} />}
               onClick={handleBack}
               className="flex items-center gap-2"
             >
               {t('common.back')}
             </Button>
             <div className="flex-1">
-              <h1 
-                style={{ 
+              <h1
+                style={{
                   fontSize: '1.875rem',
                   fontWeight: 'bold',
-                  color: currentTheme === 'dark' ? '#ffffff' : '#111827'
+                  color: currentTheme === 'dark' ? '#ffffff' : '#111827',
                 }}
               >
                 {marketplace.marketplace}
               </h1>
-              <p 
-                style={{ 
+              <p
+                style={{
                   marginTop: '0.5rem',
-                  color: currentTheme === 'dark' ? '#d1d5db' : '#4b5563'
+                  color: currentTheme === 'dark' ? '#d1d5db' : '#4b5563',
                 }}
               >
                 {t('marketplace.detailDescription')}
               </p>
             </div>
-            <Button 
-              type="primary" 
+            <Button
+              type="primary"
               icon={<Edit size={20} />}
               onClick={handleEdit}
               className="flex items-center gap-2"
@@ -124,7 +129,7 @@ const MarketplaceDetail: React.FC = () => {
         </div>
 
         {/* Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* Basic Information */}
           <Card
             title={t('marketplace.basicInfo')}
@@ -135,26 +140,48 @@ const MarketplaceDetail: React.FC = () => {
           >
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1" style={{ color: currentTheme === 'dark' ? '#d1d5db' : '#374151' }}>
+                <label
+                  className="mb-1 block text-sm font-medium"
+                  style={{
+                    color: currentTheme === 'dark' ? '#d1d5db' : '#374151',
+                  }}
+                >
                   {t('marketplace.name')}
                 </label>
-                <p style={{ color: currentTheme === 'dark' ? '#ffffff' : '#111827' }}>
+                <p
+                  style={{
+                    color: currentTheme === 'dark' ? '#ffffff' : '#111827',
+                  }}
+                >
                   {marketplace.marketplace}
                 </p>
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium mb-1" style={{ color: currentTheme === 'dark' ? '#d1d5db' : '#374151' }}>
+                <label
+                  className="mb-1 block text-sm font-medium"
+                  style={{
+                    color: currentTheme === 'dark' ? '#d1d5db' : '#374151',
+                  }}
+                >
                   {t('marketplace.website')}
                 </label>
                 <div className="flex items-center gap-2">
-                  <span style={{ color: currentTheme === 'dark' ? '#ffffff' : '#111827' }}>
+                  <span
+                    style={{
+                      color: currentTheme === 'dark' ? '#ffffff' : '#111827',
+                    }}
+                  >
                     {marketplace.marketplaceURL}
                   </span>
                   {marketplace.marketplaceURL && (
-                    <a 
-                      href={marketplace.marketplaceURL.startsWith('http') ? marketplace.marketplaceURL : `https://${marketplace.marketplaceURL}`} 
-                      target="_blank" 
+                    <a
+                      href={
+                        marketplace.marketplaceURL.startsWith('http')
+                          ? marketplace.marketplaceURL
+                          : `https://${marketplace.marketplaceURL}`
+                      }
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-500 hover:text-blue-600"
                     >
@@ -165,11 +192,18 @@ const MarketplaceDetail: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1" style={{ color: currentTheme === 'dark' ? '#d1d5db' : '#374151' }}>
+                <label
+                  className="mb-1 block text-sm font-medium"
+                  style={{
+                    color: currentTheme === 'dark' ? '#d1d5db' : '#374151',
+                  }}
+                >
                   {t('marketplace.status')}
                 </label>
                 <Tag color={marketplace.isActive ? 'success' : 'default'}>
-                  {marketplace.isActive ? t('common.active') : t('common.inactive')}
+                  {marketplace.isActive
+                    ? t('common.active')
+                    : t('common.inactive')}
                 </Tag>
               </div>
             </div>
@@ -185,30 +219,58 @@ const MarketplaceDetail: React.FC = () => {
           >
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1" style={{ color: currentTheme === 'dark' ? '#d1d5db' : '#374151' }}>
+                <label
+                  className="mb-1 block text-sm font-medium"
+                  style={{
+                    color: currentTheme === 'dark' ? '#d1d5db' : '#374151',
+                  }}
+                >
                   {t('marketplace.createdAt')}
                 </label>
-                <p style={{ color: currentTheme === 'dark' ? '#ffffff' : '#111827' }}>
+                <p
+                  style={{
+                    color: currentTheme === 'dark' ? '#ffffff' : '#111827',
+                  }}
+                >
                   {new Date(marketplace.createdAt).toLocaleString()}
                 </p>
               </div>
 
               {marketplace.updatedAt && (
                 <div>
-                  <label className="block text-sm font-medium mb-1" style={{ color: currentTheme === 'dark' ? '#d1d5db' : '#374151' }}>
+                  <label
+                    className="mb-1 block text-sm font-medium"
+                    style={{
+                      color: currentTheme === 'dark' ? '#d1d5db' : '#374151',
+                    }}
+                  >
                     {t('marketplace.updatedAt')}
                   </label>
-                  <p style={{ color: currentTheme === 'dark' ? '#ffffff' : '#111827' }}>
+                  <p
+                    style={{
+                      color: currentTheme === 'dark' ? '#ffffff' : '#111827',
+                    }}
+                  >
                     {new Date(marketplace.updatedAt).toLocaleString()}
                   </p>
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium mb-1" style={{ color: currentTheme === 'dark' ? '#d1d5db' : '#374151' }}>
+                <label
+                  className="mb-1 block text-sm font-medium"
+                  style={{
+                    color: currentTheme === 'dark' ? '#d1d5db' : '#374151',
+                  }}
+                >
                   ID
                 </label>
-                <p style={{ color: currentTheme === 'dark' ? '#ffffff' : '#111827', fontFamily: 'monospace' }}>
+                <p
+                  style={{
+                    color: currentTheme === 'dark' ? '#ffffff' : '#111827',
+                    fontFamily: 'monospace',
+                  }}
+                >
                   {marketplace.id}
                 </p>
               </div>

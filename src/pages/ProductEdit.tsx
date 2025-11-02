@@ -5,16 +5,16 @@ import { useTranslation } from 'react-i18next';
 import { AppDispatch, RootState } from '@/lib/store';
 import { fetchProduct, updateProduct } from '@/lib/productSlice';
 import { ArrowLeft, Save } from 'lucide-react';
-import { 
-  Form, 
-  Input, 
-  Button, 
-  Card, 
-  Typography, 
+import {
+  Form,
+  Input,
+  Button,
+  Card,
+  Typography,
   Switch,
   Divider,
   Spin,
-  theme
+  theme,
 } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useErrorHandler } from '@/lib/useErrorHandler';
@@ -27,8 +27,7 @@ const ProductEdit: React.FC = () => {
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { } = theme.useToken();
-  const { theme: _ } = useSelector((state: RootState) => state.theme);
+  const {} = theme.useToken();
   const { handleError, showSuccess } = useErrorHandler();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -50,9 +49,10 @@ const ProductEdit: React.FC = () => {
         name: product.name,
         description: product.description,
         isActive: product.isActive,
-        marketingFeatures: product.marketingFeatures.length > 0 
-          ? product.marketingFeatures 
-          : [''],
+        marketingFeatures:
+          product.marketingFeatures.length > 0
+            ? product.marketingFeatures
+            : [''],
         statementDescriptor: product.statementDescriptor,
         unitLabel: product.unitLabel,
       });
@@ -99,7 +99,7 @@ const ProductEdit: React.FC = () => {
 
   if (initialLoading || fetchLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="flex h-64 items-center justify-center">
         <Spin size="large" />
       </div>
     );
@@ -110,32 +110,33 @@ const ProductEdit: React.FC = () => {
       <div className="p-6">
         <div className="text-center">
           <Title level={3}>{t('product.notFound')}</Title>
-          <Button onClick={handleCancel}>
-            {t('common.back')}
-          </Button>
+          <Button onClick={handleCancel}>{t('common.back')}</Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gray-50 p-6 dark:bg-gray-900">
+      <div className="mx-auto max-w-4xl">
         {/* Header */}
-        <Card className="mb-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+        <Card className="mb-6 border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
                 onClick={handleCancel}
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
               >
-                <ArrowLeft size={20} className="text-gray-600 dark:text-gray-300" />
+                <ArrowLeft
+                  size={20}
+                  className="text-gray-600 dark:text-gray-300"
+                />
               </button>
               <div>
                 <Title level={2} className="mb-1 text-gray-900 dark:text-white">
                   {t('product.edit')}
                 </Title>
-                <Paragraph className="text-gray-600 dark:text-gray-300 mb-0">
+                <Paragraph className="mb-0 text-gray-600 dark:text-gray-300">
                   {t('product.editDescription')}
                 </Paragraph>
               </div>
@@ -144,13 +145,9 @@ const ProductEdit: React.FC = () => {
         </Card>
 
         {/* Form */}
-        <Card className="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={onFinish}
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+          <Form form={form} layout="vertical" onFinish={onFinish}>
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               {/* Sol Kolon */}
               <div className="space-y-6">
                 <Form.Item
@@ -162,10 +159,10 @@ const ProductEdit: React.FC = () => {
                     { max: 100, message: t('product.nameMaxLength') },
                   ]}
                 >
-                  <Input 
+                  <Input
                     placeholder={t('product.namePlaceholder')}
                     size="large"
-                    className="dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                    className="dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
                   />
                 </Form.Item>
 
@@ -181,7 +178,7 @@ const ProductEdit: React.FC = () => {
                     rows={4}
                     showCount
                     maxLength={500}
-                    className="dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                    className="dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
                   />
                 </Form.Item>
 
@@ -192,10 +189,10 @@ const ProductEdit: React.FC = () => {
                     { max: 50, message: t('product.unitLabelMaxLength') },
                   ]}
                 >
-                  <Input 
+                  <Input
                     placeholder={t('product.unitLabelPlaceholder')}
                     size="large"
-                    className="dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                    className="dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
                   />
                 </Form.Item>
               </div>
@@ -206,13 +203,16 @@ const ProductEdit: React.FC = () => {
                   name="statementDescriptor"
                   label={t('product.statementDescriptor')}
                   rules={[
-                    { max: 100, message: t('product.statementDescriptorMaxLength') },
+                    {
+                      max: 100,
+                      message: t('product.statementDescriptorMaxLength'),
+                    },
                   ]}
                 >
-                  <Input 
+                  <Input
                     placeholder={t('product.statementDescriptorPlaceholder')}
                     size="large"
-                    className="dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                    className="dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
                   />
                 </Form.Item>
 
@@ -221,7 +221,7 @@ const ProductEdit: React.FC = () => {
                   label={t('product.status')}
                   valuePropName="checked"
                 >
-                  <Switch 
+                  <Switch
                     checkedChildren={t('common.active')}
                     unCheckedChildren={t('common.inactive')}
                     className="dark:bg-gray-600"
@@ -241,20 +241,32 @@ const ProductEdit: React.FC = () => {
                               {...restField}
                               name={[name]}
                               rules={[
-                                { required: true, message: t('product.marketingFeatureRequired') },
-                                { max: 100, message: t('product.marketingFeatureMaxLength') },
+                                {
+                                  required: true,
+                                  message: t(
+                                    'product.marketingFeatureRequired'
+                                  ),
+                                },
+                                {
+                                  max: 100,
+                                  message: t(
+                                    'product.marketingFeatureMaxLength'
+                                  ),
+                                },
                               ]}
-                              className="flex-1 mb-0"
+                              className="mb-0 flex-1"
                             >
-                              <Input 
-                                placeholder={t('product.marketingFeaturePlaceholder')}
-                                className="dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                              <Input
+                                placeholder={t(
+                                  'product.marketingFeaturePlaceholder'
+                                )}
+                                className="dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
                               />
                             </Form.Item>
                             {fields.length > 1 && (
                               <MinusCircleOutlined
                                 onClick={() => remove(name)}
-                                className="text-red-500 cursor-pointer hover:text-red-700"
+                                className="cursor-pointer text-red-500 hover:text-red-700"
                               />
                             )}
                           </div>
@@ -264,7 +276,7 @@ const ProductEdit: React.FC = () => {
                           onClick={() => add()}
                           block
                           icon={<PlusOutlined />}
-                          className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                          className="dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                         >
                           {t('product.addMarketingFeature')}
                         </Button>
@@ -278,10 +290,10 @@ const ProductEdit: React.FC = () => {
             <Divider />
 
             <div className="flex justify-end gap-3">
-              <Button 
-                onClick={handleCancel} 
+              <Button
+                onClick={handleCancel}
                 size="large"
-                className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                className="dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               >
                 {t('common.cancel')}
               </Button>
@@ -291,7 +303,7 @@ const ProductEdit: React.FC = () => {
                 loading={loading}
                 icon={<Save size={16} />}
                 size="large"
-                className="bg-blue-600 hover:bg-blue-700 border-blue-600 hover:border-blue-700"
+                className="border-blue-600 bg-blue-600 hover:border-blue-700 hover:bg-blue-700"
               >
                 {t('product.update')}
               </Button>
@@ -303,4 +315,4 @@ const ProductEdit: React.FC = () => {
   );
 };
 
-export default ProductEdit; 
+export default ProductEdit;
