@@ -176,7 +176,7 @@ const SearchBar = () => {
             {t('searchBar.search')}
           </span>
         </span>
-        <Kbd>⌘K</Kbd>
+        <Kbd className="hidden md:block">⌘K</Kbd>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder={t('searchBar.search')} />

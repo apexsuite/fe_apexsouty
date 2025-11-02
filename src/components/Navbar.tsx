@@ -1,4 +1,4 @@
-import { Globe, Menu as MenuIcon } from 'lucide-react';
+import { Globe } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '@/lib/store';
 import { setLanguage } from '@/lib/langSlice';
@@ -7,7 +7,7 @@ import SearchBar from '@/components/layouts/SearchBar';
 import { ThemeSwitcher } from '@/components/switcher/theme-switcher';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 
-export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
+export default function Navbar() {
   const lang = useSelector((state: RootState) => state.lang.language);
   const dispatch = useDispatch();
   return (
@@ -16,18 +16,7 @@ export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
         className={`border-border bg-background sticky top-0 z-40 flex w-full items-center justify-between border-b px-4 py-6 shadow-sm md:px-12`}
       >
         <SidebarTrigger className="-ml-1" />
-        <div className="flex items-center gap-2">
-          <button
-            className="group rounded p-2 hover:bg-green-100 lg:hidden dark:hover:bg-green-900"
-            onClick={onMenuClick}
-            aria-label="Menüyü Aç"
-          >
-            <MenuIcon
-              size={24}
-              className="transition-colors group-hover:text-green-600 dark:group-hover:text-green-300"
-            />
-          </button>
-        </div>
+
         <div className="hidden items-center gap-2 md:flex">
           <span className="text-green-700 dark:text-green-300">
             <svg
