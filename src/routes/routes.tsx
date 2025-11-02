@@ -58,6 +58,7 @@ const Subscription = lazy(() => import('@/pages/Subscription'));
 const NewPermissionExamples = lazy(
   () => import('@/examples/NewPermissionExamples')
 );
+const Region = lazy(() => import('@/pages/Region'));
 
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isAuthenticated = useSelector(
@@ -307,7 +308,12 @@ export const protectedRoutes: RouteObject[] = [
       {
         path: "subscription",
         element: <Subscription />,
-        handle: {title: 'Subscription'}
+        handle: { title: 'Subscription' }
+      },
+      {
+        path: "regions",
+        element: <Region />,
+        handle: { title: 'Region' }
       }
     ],
   },
