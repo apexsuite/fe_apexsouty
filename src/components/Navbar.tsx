@@ -1,76 +1,66 @@
-import { Globe } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '@/lib/store';
 import { setLanguage } from '@/lib/langSlice';
 import i18n from '@/locales';
 import SearchBar from '@/components/layouts/SearchBar';
 import { ThemeSwitcher } from '@/components/switcher/theme-switcher';
-import { SidebarTrigger } from '@/components/ui/sidebar';
+import { cn } from '@/lib/utils';
+import { SidebarTrigger } from './ui/sidebar';
 
 export default function Navbar() {
   const lang = useSelector((state: RootState) => state.lang.language);
   const dispatch = useDispatch();
-  return (
-    <>
-      <nav
-        className={`border-border bg-background sticky top-0 z-40 flex w-full items-center justify-between border-b px-4 py-6 shadow-sm md:px-12`}
-      >
-        <SidebarTrigger className="-ml-1" />
 
-        <div className="hidden items-center gap-2 md:flex">
-          <span className="text-green-700 dark:text-green-300">
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12 2C6.477 2 2 6.477 2 12c0 5.523 4.477 10 10 10s10-4.477 10-10c0-5.523-4.477-10-10-10Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Zm0-14a6 6 0 1 0 0 12A6 6 0 0 0 12 6Z"
-                fill="currentColor"
-              />
-            </svg>
-          </span>
-          <span className="text-xl font-bold text-green-700 dark:text-green-300">
-            ApexScouty
-          </span>
-        </div>
-        <div className="flex w-full justify-center">
+  const handleLanguageChange = (language: 'en' | 'tr') => {
+    try {
+      dispatch(setLanguage(language));
+      i18n.changeLanguage(language);
+    } catch (error) {
+      console.error('Language change error:', error);
+    }
+  };
+
+  return (
+    <nav className="border-border bg-background sticky top-0 z-40 w-full border-b shadow-sm">
+      <div className="flex h-16 items-center justify-between gap-4 px-4 md:px-6 lg:px-8">
+        <div className="md:flex-1 md:max-w-md flex items-center gap-2">
+          <SidebarTrigger className='block md:hidden' />
           <SearchBar />
         </div>
-        <div className="ml-auto flex items-center gap-2">
-          <Globe size={18} className="text-muted-foreground" />
-          <button
-            className={`cursor-pointer px-1 font-semibold ${lang === 'en' ? 'text-red-700' : 'text-muted-foreground'}`}
-            onClick={() => {
-              try {
-                dispatch(setLanguage('en'));
-                i18n.changeLanguage('en');
-              } catch (error) {
-                console.error('Language change error:', error);
-              }
-            }}
-          >
-            EN
-          </button>
-          <span className="text-muted-foreground">|</span>
-          <button
-            className={`cursor-pointer px-1 font-semibold ${lang === 'tr' ? 'text-red-700' : 'text-muted-foreground'}`}
-            onClick={() => {
-              try {
-                dispatch(setLanguage('tr'));
-                i18n.changeLanguage('tr');
-              } catch (error) {
-                console.error('Language change error:', error);
-              }
-            }}
-          >
-            TR
-          </button>
+
+        <div className="flex items-center gap-3">
+          <div className="bg-background ring-border inline-flex h-8 items-center gap-1 rounded-md p-1 ring-1">
+            <button
+              type="button"
+              onClick={() => handleLanguageChange('en')}
+              className={cn(
+                "relative flex h-6 items-center justify-center rounded px-3 text-xs font-semibold transition-all duration-300",
+                lang === 'en'
+                  ? "bg-secondary text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+              aria-label="Switch to English"
+            >
+              EN
+            </button>
+            <button
+              type="button"
+              onClick={() => handleLanguageChange('tr')}
+              className={cn(
+                "relative flex h-6 items-center justify-center rounded px-3 text-xs font-semibold transition-all duration-300",
+                lang === 'tr'
+                  ? "bg-secondary text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+              aria-label="Türkçe'ye geç"
+            >
+              TR
+            </button>
+          </div>
+
           <ThemeSwitcher />
         </div>
-      </nav>
-    </>
+      </div>
+    </nav>
   );
 }

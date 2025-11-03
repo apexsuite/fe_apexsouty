@@ -3,8 +3,8 @@ import { apiRequest } from '@/services/api';
 
 export interface Consent {
   id: string;
-  marketplace: string;
-  marketplaceURL: string;
+  regionName: string;
+  regionURL: string;
   isActive: boolean;
   createdAt: string;
   updatedAt?: string;
@@ -168,7 +168,7 @@ const consentSlice = createSlice({
       })
       .addCase(fetchConsents.fulfilled, (state, action) => {
         state.loading = false;
-        
+
         if (action.payload && action.payload.data && Array.isArray(action.payload.data)) {
           state.consents = action.payload.data;
           state.totalPages = 1;
