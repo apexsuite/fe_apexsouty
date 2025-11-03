@@ -2,12 +2,10 @@ import {
     ColumnDef,
     flexRender,
     getCoreRowModel,
-    getPaginationRowModel,
     useReactTable,
 } from "@tanstack/react-table"
 
 import {
-    Table,
     TableBody,
     TableCell,
     TableHead,
@@ -53,63 +51,67 @@ export default function CustomDataTable<TData, TValue>({
     })
 
     return (
-        <div className="space-y-4">
-            <div className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
-                <Table>
-                    <TableHeader>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id} className="border-b bg-muted/50 hover:bg-muted/50">
-                                {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id} className="h-12 px-4 font-semibold">
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext()
-                                            )}
-                                    </TableHead>
-                                ))}
-                            </TableRow>
-                        ))}
-                    </TableHeader>
-                    <TableBody>
-                        {isLoading ? (
-                            <TableLoadingState columnCount={columns.length} />
-                        ) : table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row) => (
-                                <TableRow
-                                    key={row.id}
-                                    data-state={row.getIsSelected() && "selected"}
-                                    className="border-b transition-colors hover:bg-muted/50"
-                                >
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id} className="px-4 py-3">
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </TableCell>
+        <div className="flex flex-col gap-4">
+            <div className="max-h-[calc(100vh-300px)] overflow-hidden rounded-lg border border-border bg-card shadow-sm">
+                <div className="max-h-[calc(100vh-350px)] overflow-auto">
+                    <table className="w-full caption-bottom text-sm">
+                        <TableHeader className="sticky top-0 z-10 bg-muted">
+                            {table.getHeaderGroups().map((headerGroup) => (
+                                <TableRow key={headerGroup.id} className="border-b hover:bg-muted">
+                                    {headerGroup.headers.map((header) => (
+                                        <TableHead key={header.id} className="h-12 bg-muted px-4 font-semibold">
+                                            {header.isPlaceholder
+                                                ? null
+                                                : flexRender(
+                                                    header.column.columnDef.header,
+                                                    header.getContext()
+                                                )}
+                                        </TableHead>
                                     ))}
                                 </TableRow>
-                            ))
-                        ) : (
-                            <TableEmptyState columnCount={columns.length} />
-                        )}
-                    </TableBody>
-                </Table>
+                            ))}
+                        </TableHeader>
+                        <TableBody>
+                            {isLoading ? (
+                                <TableLoadingState columnCount={columns.length} />
+                            ) : table.getRowModel().rows?.length ? (
+                                table.getRowModel().rows.map((row) => (
+                                    <TableRow
+                                        key={row.id}
+                                        data-state={row.getIsSelected() && "selected"}
+                                        className="border-b transition-colors hover:bg-muted/50"
+                                    >
+                                        {row.getVisibleCells().map((cell) => (
+                                            <TableCell key={cell.id} className="px-4 py-3">
+                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableEmptyState columnCount={columns.length} />
+                            )}
+                        </TableBody>
+                    </table>
+                </div>
             </div>
 
-            <TablePaginationControls
-                currentPage={paginationState.currentPage}
-                currentPageSize={paginationState.currentPageSize}
-                pageCount={paginationState.pageCount}
-                totalCount={totalCount}
-                canGoPrevious={paginationState.canGoPrevious}
-                canGoNext={paginationState.canGoNext}
-                isLoading={isLoading}
-                onPageSizeChange={paginationState.handlePageSizeChange}
-                onFirstPage={paginationState.handleFirstPage}
-                onPreviousPage={paginationState.handlePreviousPage}
-                onNextPage={paginationState.handleNextPage}
-                onLastPage={paginationState.handleLastPage}
-            />
+            <div className="shrink-0">
+                <TablePaginationControls
+                    currentPage={paginationState.currentPage}
+                    currentPageSize={paginationState.currentPageSize}
+                    pageCount={paginationState.pageCount}
+                    totalCount={totalCount}
+                    canGoPrevious={paginationState.canGoPrevious}
+                    canGoNext={paginationState.canGoNext}
+                    isLoading={isLoading}
+                    onPageSizeChange={paginationState.handlePageSizeChange}
+                    onFirstPage={paginationState.handleFirstPage}
+                    onPreviousPage={paginationState.handlePreviousPage}
+                    onNextPage={paginationState.handleNextPage}
+                    onLastPage={paginationState.handleLastPage}
+                />
+            </div>
         </div>
     )
 }

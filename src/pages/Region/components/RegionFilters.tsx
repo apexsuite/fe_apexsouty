@@ -76,6 +76,7 @@ const RegionFilters = () => {
                     variant="outline"
                     onClick={() => setShowFilters(!showFilters)}
                     className="gap-2"
+                    size={"sm"}
                 >
                     <Filter className="h-4 w-4" />
                     {showFilters ? "Hide Filters" : "Show Filters"}
@@ -118,6 +119,7 @@ const RegionFilters = () => {
                                 name="isActive"
                                 label="Status"
                                 options={statusOptions}
+                                placeholder="All Status"
                             />
                         </div>
 
@@ -126,6 +128,7 @@ const RegionFilters = () => {
                                 type="submit"
                                 variant="default"
                                 className="gap-2 bg-green-500 text-white hover:bg-green-600"
+                                size="sm"
                             >
                                 <Search className="h-4 w-4" />
                                 Apply Filters
@@ -134,6 +137,7 @@ const RegionFilters = () => {
                                 type="reset"
                                 variant="outline"
                                 className="gap-2"
+                                size="sm"
                             >
                                 <X className="h-4 w-4" />
                                 Reset

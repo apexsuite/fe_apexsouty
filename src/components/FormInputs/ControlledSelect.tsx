@@ -1,6 +1,13 @@
 import { Controller, Control, FieldValues, Path, FieldError } from 'react-hook-form';
 import { Label } from '../ui/label';
 import { cn } from '@/lib/utils';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '../ui/select';
 
 interface SelectOption {
     value: string;
@@ -40,35 +47,42 @@ export function ControlledSelect<T extends FieldValues>({
                     {required && <span className="text-destructive ml-1">*</span>}
                 </Label>
             )}
-            
+
             <Controller
                 control={control}
                 name={name}
                 render={({ field }) => (
-                    <select
-                        {...field}
-                        id={name}
+                    <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
                         disabled={disabled}
-                        aria-invalid={error ? 'true' : 'false'}
-                        className={cn(
-                            'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
-                            error && 'border-destructive focus-visible:ring-destructive/20'
-                        )}
                     >
-                        {placeholder && <option value="">{placeholder}</option>}
-                        {options.map((option) => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </select>
+                        <SelectTrigger
+                            id={name}
+                            aria-invalid={error ? 'true' : 'false'}
+                            className={cn(
+                                error && 'border-destructive focus:ring-destructive/20'
+                            )}
+                        >
+                            <SelectValue placeholder={placeholder} />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {options
+                                .filter((option) => option.value !== '')
+                                .map((option) => (
+                                    <SelectItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </SelectItem>
+                                ))}
+                        </SelectContent>
+                    </Select>
                 )}
             />
-            
+
             {description && !error && (
                 <p className="text-sm text-muted-foreground">{description}</p>
             )}
-            
+
             {error && (
                 <p className="text-sm font-medium text-destructive">{error.message}</p>
             )}
