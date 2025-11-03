@@ -48,10 +48,11 @@ const ProductEdit = lazy(() => import('@/pages/ProductEdit'));
 const ProductDetail = lazy(() => import('@/pages/ProductDetail'));
 const PriceDetail = lazy(() => import('@/pages/PriceDetail'));
 const BillingForm = lazy(() => import('@/components/billing/BillingForm'));
-const Marketplaces = lazy(() => import('@/pages/Marketplaces'));
+
+const Marketplaces = lazy(() => import('@/pages/MarketPlaces'));
+const MarketPlaceForm = lazy(() => import('@/pages/MarketPlaces/MarketPlaceForm'));
 const MarketplaceDetail = lazy(() => import('@/pages/MarketplaceDetail'));
-const MarketplaceEdit = lazy(() => import('@/pages/MarketplaceEdit'));
-const MarketplaceCreate = lazy(() => import('@/pages/MarketplaceCreate'));
+
 const Consents = lazy(() => import('@/pages/Consents'));
 const PermissionTest = lazy(() => import('@/components/PermissionTest'));
 const Subscription = lazy(() => import('@/pages/Subscription'));
@@ -276,7 +277,7 @@ export const protectedRoutes: RouteObject[] = [
           },
           {
             path: 'create',
-            element: <MarketplaceCreate />,
+            element: <MarketPlaceForm />,
             handle: { title: 'routes.marketplaces.create' },
           },
           {
@@ -286,7 +287,7 @@ export const protectedRoutes: RouteObject[] = [
           },
           {
             path: ':id/edit',
-            element: <MarketplaceEdit />,
+            element: <MarketPlaceForm />,
             handle: { title: 'routes.marketplaces.edit' },
           },
         ],
