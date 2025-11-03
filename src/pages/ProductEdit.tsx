@@ -227,6 +227,27 @@ const ProductEdit: React.FC = () => {
                     className="dark:bg-gray-600"
                   />
                 </Form.Item>
+                <Form.Item
+                  name="isDefault"
+                  label={t('product.isDefault')}
+                  valuePropName="checked"
+                >
+                  <Switch
+                    checkedChildren={t('common.yes')}
+                    unCheckedChildren={t('common.no')}
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name="isStripe"
+                  label={t('product.isStripe')}
+                  valuePropName="checked"
+                >
+                  <Switch
+                    checkedChildren={t('common.yes')}
+                    unCheckedChildren={t('common.no')}
+                  />
+                </Form.Item>
 
                 <Form.Item
                   name="marketingFeatures"
