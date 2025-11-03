@@ -28,3 +28,11 @@ export interface IRegionRequest extends IPageParams {
     regionURL?: string;
     isActive?: string;
 }
+
+export interface IRegionCreateRequest {
+    regionName: string;
+    regionURL: string;
+}
+
+
+

@@ -1,9 +1,10 @@
 import { useForm } from "react-hook-form";
-import { Search, X, Filter } from "lucide-react";
+import { Search, X, Filter, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { ControlledInputText, ControlledSelect } from "@/components/FormInputs";
 import useQueryParams from "@/utils/hooks/useQueryParams";
+import { useNavigate } from "react-router-dom";
 
 
 interface FilterFormData {
@@ -24,6 +25,8 @@ const RegionFilters = () => {
         clearAllQueryParams,
         deleteQueryParams,
     } = useQueryParams();
+
+    const navigate = useNavigate();
 
     const [showFilters, setShowFilters] = useState(false);
     const { control, handleSubmit, reset, watch } = useForm<FilterFormData>({
@@ -81,6 +84,14 @@ const RegionFilters = () => {
                             !
                         </span>
                     )}
+                </Button>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate("/regions/create")}
+                >
+                    <Plus className="h-4 w-4" />
+                    Create
                 </Button>
             </div>
 

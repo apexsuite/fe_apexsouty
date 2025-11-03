@@ -1,4 +1,4 @@
-import { Controller, Control, FieldValues, Path, FieldError } from 'react-hook-form';
+import { Controller, Control, FieldValues, Path } from 'react-hook-form';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { cn } from '@/lib/utils';
@@ -9,7 +9,6 @@ interface ControlledInputTextProps<T extends FieldValues> {
     label?: string;
     placeholder?: string;
     type?: string;
-    error?: FieldError;
     required?: boolean;
     disabled?: boolean;
     className?: string;
@@ -21,12 +20,10 @@ export function ControlledInputText<T extends FieldValues>({
     name,
     label,
     placeholder,
-    type = 'text',
-    error,
-    required = false,
     disabled = false,
-    className,
-    description,
+    type = 'text',
+    required = false,
+    className
 }: ControlledInputTextProps<T>) {
     return (
         <div className={cn('space-y-2', className)}>
@@ -40,26 +37,23 @@ export function ControlledInputText<T extends FieldValues>({
             <Controller
                 control={control}
                 name={name}
-                render={({ field }) => (
-                    <Input
-                        {...field}
-                        id={name}
-                        type={type}
-                        placeholder={placeholder}
-                        disabled={disabled}
-                        aria-invalid={error ? 'true' : 'false'}
-                        className={cn(error && 'border-destructive focus-visible:ring-destructive/20')}
-                    />
+                render={({ field, fieldState }) => (
+                    <div className="flex flex-col gap-1">
+                        <Input
+                            {...field}
+                            id={name}
+                            type={type}
+                            placeholder={placeholder}
+                            disabled={disabled}
+                            aria-invalid={fieldState.error ? 'true' : 'false'}
+                            className={cn(fieldState.error && 'border-destructive focus-visible:ring-destructive/20')}
+                        />
+                        {fieldState.error && (
+                            <span className="text-xs font-medium text-destructive">{fieldState.error.message}</span>
+                        )}
+                    </div>
                 )}
             />
-
-            {description && !error && (
-                <p className="text-sm text-muted-foreground">{description}</p>
-            )}
-
-            {error && (
-                <p className="text-sm font-medium text-destructive">{error.message}</p>
-            )}
         </div>
     );
 }

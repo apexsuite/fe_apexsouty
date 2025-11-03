@@ -1,8 +1,18 @@
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { IRegion } from "@/services/region/types";
 import { ColumnDef } from "@tanstack/react-table";
+import dayjs from "dayjs";
+import { Check, CircleX, Edit, Trash } from "lucide-react";
+import { NavigateFunction } from "react-router-dom";
 
-const getRegionColumns = (): ColumnDef<IRegion>[] =>
+interface IRegionColumnsProps {
+    navigate: NavigateFunction;
+    deleteRegion: (id: string) => void;
+    changeRegionStatus: (id: string) => void;
+}
+
+const getRegionColumns = ({ navigate, deleteRegion, changeRegionStatus }: IRegionColumnsProps): ColumnDef<IRegion>[] =>
     [
         {
             accessorKey: "regionName",
@@ -61,12 +71,31 @@ const getRegionColumns = (): ColumnDef<IRegion>[] =>
             header: "Created At",
             cell: ({ row }) => (
                 <span className="text-sm">
-                    {new Date(row.original.createdAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                    })}
+                    {dayjs(row.original.createdAt).format("DD/MM/YYYY HH:mm")}
                 </span>
+            ),
+        },
+        {
+            accessorKey: "id",
+            header: "Actions",
+            cell: ({ row }) => (
+                <div className="flex gap-2">
+                    <Button variant="outline" tooltip="Edit Region" size="sm" onClick={() => navigate(`/regions/${row.original.id}/edit`)}>
+                        <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" tooltip="Delete Region" size="sm" onClick={() => deleteRegion(row.original.id)}>
+                        <Trash className="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" tooltip="Change Region Status" size="sm" onClick={() => changeRegionStatus(row.original.id)}>
+                        {
+                            row.original.isActive ? (
+                                <Check className="h-4 w-4" />
+                            ) : (
+                                <CircleX className="h-4 w-4" />
+                            )
+                        }
+                    </Button>
+                </div>
             ),
         },
     ];
