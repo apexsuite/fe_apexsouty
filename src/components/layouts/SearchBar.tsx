@@ -166,17 +166,21 @@ const SearchBar = () => {
 
   return (
     <>
-      <Button variant="outline" onClick={() => setOpen(true)}>
-        <span className="flex grow items-center">
+      <Button 
+        variant="outline" 
+        onClick={() => setOpen(true)}
+        className="gap-2 md:w-full md:justify-between"
+      >
+        <span className="flex items-center gap-2">
           <LucideIcons.SearchIcon
-            className="text-muted-foreground/80 -ms-1 me-3"
+            className="text-muted-foreground/80 size-4 shrink-0"
             aria-hidden="true"
           />
-          <span className="text-muted-foreground/70 font-normal">
+          <span className="text-muted-foreground/70 hidden font-normal md:inline">
             {t('searchBar.search')}
           </span>
         </span>
-        <Kbd className="hidden md:block">⌘K</Kbd>
+        <Kbd className="hidden lg:block">⌘K</Kbd>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder={t('searchBar.search')} />

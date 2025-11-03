@@ -24,11 +24,13 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
 
   return (
     <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <Navbar />
-        {children}
-      </SidebarInset>
+      <div className="flex h-screen w-full overflow-hidden">
+        <AppSidebar />
+        <SidebarInset className="flex-1 overflow-auto">
+          <Navbar />
+          {children}
+        </SidebarInset>
+      </div>
     </SidebarProvider>
   );
 }
