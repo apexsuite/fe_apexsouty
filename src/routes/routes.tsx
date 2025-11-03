@@ -51,7 +51,7 @@ const BillingForm = lazy(() => import('@/components/billing/BillingForm'));
 
 const Marketplaces = lazy(() => import('@/pages/MarketPlaces'));
 const MarketPlaceForm = lazy(() => import('@/pages/MarketPlaces/MarketPlaceForm'));
-const MarketplaceDetail = lazy(() => import('@/pages/MarketplaceDetail'));
+const MarketPlaceDetail = lazy(() => import('@/pages/MarketPlaces/MarketPlaceDetail'));
 
 const Consents = lazy(() => import('@/pages/Consents'));
 const PermissionTest = lazy(() => import('@/components/PermissionTest'));
@@ -282,7 +282,7 @@ export const protectedRoutes: RouteObject[] = [
           },
           {
             path: ':id',
-            element: <MarketplaceDetail />,
+            element: <MarketPlaceDetail />,
             handle: { title: 'routes.marketplaces.detail' },
           },
           {

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { IMarketplace } from "@/services/marketplaces/type";
 import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
-import { Check, CircleX, Edit, Trash } from "lucide-react";
+import { Check, CircleX, Edit, Eye, Trash } from "lucide-react";
 import { NavigateFunction } from "react-router-dom";
 
 interface IMarketPlaceColumnsProps {
@@ -74,6 +74,9 @@ const getMarketPlaceColumns = ({
             header: "Actions",
             cell: ({ row }) => (
                 <div className="flex gap-2">
+                    <Button variant="outline" tooltip="View Market Place" size="sm" onClick={() => navigate(`/marketplaces/${row.original.id}`)}>
+                        <Eye className="h-4 w-4" />
+                    </Button>
                     <Button variant="outline" tooltip="Edit Market Place" size="sm" onClick={() => navigate(`/marketplaces/${row.original.id}/edit`)}>
                         <Edit className="h-4 w-4" />
                     </Button>
