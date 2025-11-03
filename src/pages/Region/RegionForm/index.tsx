@@ -88,7 +88,7 @@ const RegionForm = () => {
     }
 
     return (
-        <div className="container max-w-2xl mx-auto space-y-6 py-8 px-4 mt-10 border rounded-lg shadow-sm">
+        <div className="m-8 space-y-4 p-8 border rounded-lg shadow-sm">
             <div className="flex items-center justify-between">
                 <div className="space-y-1">
                     <h1 className="text-3xl font-bold tracking-tight">

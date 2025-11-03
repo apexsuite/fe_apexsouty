@@ -1,34 +1,31 @@
-import { useForm } from "react-hook-form";
-import { Search, X, Filter, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import { ControlledInputText, ControlledSelect } from "@/components/FormInputs";
-import useQueryParams from "@/utils/hooks/useQueryParams";
-import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import { statusOptions } from "@/utils/constants/common";
-
+import useQueryParams from "@/utils/hooks/useQueryParams";
+import { Filter, Plus, Search, X } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 interface FilterFormData {
-    regionName?: string;
-    regionURL?: string;
+    marketplace?: string;
+    marketplaceURL?: string;
     isActive?: string;
 }
 
-const RegionFilters = () => {
+const MarketPlaceFilters = () => {
     const {
         updateQueryParams,
         clearAllQueryParams,
         deleteQueryParams,
     } = useQueryParams();
-
     const navigate = useNavigate();
-
     const [showFilters, setShowFilters] = useState(false);
     const { control, handleSubmit, reset, watch } = useForm<FilterFormData>({
         mode: "onChange",
         defaultValues: {
-            regionName: "",
-            regionURL: "",
+            marketplace: "",
+            marketplaceURL: "",
             isActive: ""
         },
     });
@@ -49,8 +46,8 @@ const RegionFilters = () => {
     const handleReset = () => {
         clearAllQueryParams();
         reset({
-            regionName: "",
-            regionURL: "",
+            marketplace: "",
+            marketplaceURL: "",
             isActive: ""
         });
     };
@@ -58,12 +55,11 @@ const RegionFilters = () => {
     const hasActiveFilters = () => {
         const values = watch();
         return (
-            (values.regionName && values.regionName.trim() !== "") ||
-            (values.regionURL && values.regionURL.trim() !== "") ||
+            (values.marketplace && values.marketplace.trim() !== "") ||
+            (values.marketplaceURL && values.marketplaceURL.trim() !== "") ||
             (values.isActive && values.isActive !== "")
         );
     };
-
     return (
         <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -84,7 +80,7 @@ const RegionFilters = () => {
                 <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => navigate("/regions/create")}
+                    onClick={() => navigate("/marketplaces/create")}
                 >
                     <Plus className="h-4 w-4" />
                     Create
@@ -97,15 +93,15 @@ const RegionFilters = () => {
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                             <ControlledInputText
                                 control={control}
-                                name="regionName"
-                                label="Region Name"
+                                name="marketplace"
+                                label="Marketplace Name"
                                 placeholder="e.g., North America"
                             />
 
                             <ControlledInputText
                                 control={control}
-                                name="regionURL"
-                                label="Region URL"
+                                name="marketplaceURL"
+                                label="Marketplace URL"
                                 placeholder="e.g., https://..."
                             />
 
@@ -145,4 +141,4 @@ const RegionFilters = () => {
     );
 };
 
-export default RegionFilters;
+export default MarketPlaceFilters;
