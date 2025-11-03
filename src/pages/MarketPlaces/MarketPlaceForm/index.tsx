@@ -4,7 +4,7 @@ import { createMarketplace, getMarketplaceById, updateMarketplace } from "@/serv
 import { IMarketPlaceCreateRequest } from "@/services/marketplaces/type";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -34,6 +34,11 @@ const MarketPlaceForm = () => {
         enabled: isEditMode,
     });
 
+    const { data: regionsData, isLoading: isLoadingRegions } = useQuery({
+        queryKey: ['regions'],
+        queryFn: () => getRegions({ page: 1, pageSize: 1000 }),
+    });
+
     useEffect(() => {
         if (marketplaceData && isEditMode) {
             reset({
@@ -44,6 +49,7 @@ const MarketPlaceForm = () => {
             });
         }
     }, [marketplaceData, reset, isEditMode]);
+
 
     const { mutate: createMarketplaceMutation, isPending: isCreating } = useMutation({
         mutationFn: createMarketplace,
@@ -71,12 +77,9 @@ const MarketPlaceForm = () => {
         },
     });
 
-    const { data: regionsData, isLoading: isLoadingRegions } = useQuery({
-        queryKey: ['regions'],
-        queryFn: () => getRegions({ page: 1, pageSize: 1000 }),
-    });
-
-    const regions = regionsData?.items || [];
+    const regionsOptions = useMemo(() => {
+        return regionsData?.items.map((region) => ({ label: region.regionName, value: region.id })) || [];
+    }, [regionsData]);
 
     const onSubmit = (data: IMarketPlaceCreateRequest) => {
         if (isEditMode) {
@@ -85,6 +88,7 @@ const MarketPlaceForm = () => {
             createMarketplaceMutation(data);
         }
     };
+
 
     const isPending = isCreating || isUpdating;
 
@@ -132,12 +136,12 @@ const MarketPlaceForm = () => {
                         placeholder="e.g., A1234567890"
                     />
                     <ControlledSelect
-                        disabled={isLoadingRegions}
                         control={control}
                         name="regionId"
                         label="Region"
                         placeholder="Select Region"
-                        options={regions.map((region) => ({ label: region.regionName, value: region.id }))}
+                        options={regionsOptions}
+                        disabled={isLoadingRegions}
                     />
                     <div className="flex gap-2">
                         <Button

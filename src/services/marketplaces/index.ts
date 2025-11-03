@@ -1,6 +1,6 @@
 import { IPageResponse } from "@/types/common.types";
 import { apiRequest } from "../api";
-import { IMarketplace, IMarketPlaceCreateRequest, IMarketPlaceRequest } from "./type";
+import { IMarketplace, IMarketPlaceCreateRequest, IMarketplaceDetail, IMarketPlaceRequest } from "./type";
 
 export const getMarketplaces = async (params: IMarketPlaceRequest): Promise<IPageResponse<IMarketplace>> => {
     const response = await apiRequest('/amazon/marketplaces', {
@@ -19,7 +19,7 @@ export const createMarketplace = async (data: IMarketPlaceCreateRequest): Promis
     return response.data || response;
 };
 
-export const getMarketplaceById = async (id: string): Promise<IMarketplace> => {
+export const getMarketplaceById = async (id: string): Promise<IMarketplaceDetail> => {
     const response = await apiRequest(`/amazon/marketplaces/${id}`, {
         method: 'GET',
     });
