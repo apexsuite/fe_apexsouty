@@ -1,6 +1,6 @@
 import { useTheme } from '@/providers/theme';
 import { cn } from '@/lib/utils';
-import { THEME_CONFIG } from '@/utils/constants/config';
+import { THEME_CONFIG } from '@/utils/constants/theme';
 
 interface ThemeSwitcherProps {
   className?: string;

@@ -3,7 +3,7 @@ import type { RootState } from '@/lib/store';
 import { setLanguage } from '@/lib/langSlice';
 import i18n from '@/locales';
 import SearchBar from '@/components/layouts/SearchBar';
-import { ThemeSwitcher } from '@/components/switcher/theme-switcher';
+import { ThemeSwitcher } from '@/components/ui/theme-switcher';
 import { cn } from '@/lib/utils';
 import { SidebarTrigger } from './ui/sidebar';
 
@@ -23,8 +23,8 @@ export default function Navbar() {
   return (
     <nav className="border-border bg-background sticky top-0 z-40 w-full border-b">
       <div className="flex h-16 items-center justify-between gap-4 px-4 md:px-6 lg:px-8">
+        <SidebarTrigger />
         <div className="flex items-center gap-2 md:max-w-md md:flex-1">
-          <SidebarTrigger className="block md:hidden" />
           <SearchBar />
         </div>
 

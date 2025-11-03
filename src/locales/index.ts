@@ -3,32 +3,32 @@ import { initReactI18next } from 'react-i18next';
 
 import tr from './tr/translation.json';
 import en from './en/translation.json';
+import { isClient } from '@/utils/helpers/common';
+import { Language } from '@/utils/enums/Language';
 
 const getInitialLang = () => {
-  if (typeof window === 'undefined') {
-    return 'en';
-  }
+  if (!isClient) return Language.English;
 
   try {
-    return localStorage.getItem('lang') || 'en';
+    return localStorage.getItem('lang') || Language.English;
   } catch {
-    return 'en';
+    return Language.English;
   }
 };
 
 const resources = {
   en: {
-    translation: en
+    translation: en,
   },
   tr: {
-    translation: tr
+    translation: tr,
   },
 };
 
 i18n.use(initReactI18next).init({
   resources,
   lng: getInitialLang(),
-  fallbackLng: 'en',
+  fallbackLng: Language.English,
   interpolation: {
     escapeValue: false,
   },

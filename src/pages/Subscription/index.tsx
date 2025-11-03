@@ -8,56 +8,61 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { t } from 'i18next';
 
 const Subscription = () => {
-    const { data, isLoading, error } = useQuery({
-        queryKey: ['subscription'],
-        queryFn: getSubscription,
-    });
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['subscription'],
+    queryFn: getSubscription,
+  });
 
-    if (isLoading) {
-        return <LoadingSpinner />;
-    }
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
-    if (error) {
-        return <ErrorState error={error} />;
-    }
+  if (error) {
+    return <ErrorState error={error} />;
+  }
 
-    if (!data?.activeSubscription) {
-        return <ErrorState error={new Error(t('subscriptions.errorState.subscriptionNotFound'))} />;
-    }
-
-    const isFreeUser = data.activeSubscription.productName?.toLowerCase() === 'free';
-
+  if (!data?.activeSubscription) {
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-7xl mx-auto">
-                <PageHeader isFreeUser={isFreeUser} />
-
-                <div className="max-w-7xl mx-auto">
-                    {isFreeUser ? (
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fade-in">
-                            <div className="lg:col-span-4">
-                                <SubscriptionCard
-                                    subscription={data.activeSubscription}
-                                    isFreeUser={isFreeUser}
-                                />
-                            </div>
-
-                            <div className="lg:col-span-8">
-                                <UpgradeSection pricingTable={data.pricingTable} />
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="max-w-5xl mx-auto animate-fade-in">
-                            <SubscriptionCard
-                                subscription={data.activeSubscription}
-                                isFreeUser={isFreeUser}
-                            />
-                        </div>
-                    )}
-                </div>
-            </div>
-        </div>
+      <ErrorState
+        error={new Error(t('subscriptions.errorState.subscriptionNotFound'))}
+      />
     );
+  }
+
+  const isFreeUser =
+    data.activeSubscription.productName?.toLowerCase() === 'free';
+
+  return (
+    <div className="min-h-screen bg-linear-to-br from-gray-50 via-gray-100 to-gray-50 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <div className="mx-auto max-w-7xl">
+        <PageHeader isFreeUser={isFreeUser} />
+
+        <div className="mx-auto max-w-7xl">
+          {isFreeUser ? (
+            <div className="animate-fade-in grid grid-cols-1 gap-6 lg:grid-cols-12">
+              <div className="lg:col-span-4">
+                <SubscriptionCard
+                  subscription={data.activeSubscription}
+                  isFreeUser={isFreeUser}
+                />
+              </div>
+
+              <div className="lg:col-span-8">
+                <UpgradeSection pricingTable={data.pricingTable} />
+              </div>
+            </div>
+          ) : (
+            <div className="animate-fade-in mx-auto max-w-5xl">
+              <SubscriptionCard
+                subscription={data.activeSubscription}
+                isFreeUser={isFreeUser}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Subscription;

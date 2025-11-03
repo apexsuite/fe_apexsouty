@@ -6,7 +6,7 @@ import { setLanguage } from '@/lib/langSlice';
 import i18n from '@/locales';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@/providers/theme';
-import { THEME_STORAGE_KEY } from '@/utils/constants/config';
+import { THEME_STORAGE_KEY } from '@/utils/constants/theme';
 
 const queryClient = new QueryClient({
   defaultOptions: {

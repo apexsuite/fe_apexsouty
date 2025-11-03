@@ -46,7 +46,7 @@ import CustomButton from '../CustomButton';
 
 type LucideIconComponent = React.ComponentType<{ size?: number }>;
 
-interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> { }
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {}
 
 const getSortedFavorites = (favorites: MenuItem[]): MenuItem[] => {
   return [...favorites].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
@@ -115,41 +115,47 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 
   return (
     <Sidebar {...props} collapsible="icon" className="flex h-screen flex-col">
-      <SidebarHeader className="shrink-0 border-b border-border/40 pb-4">
+      <SidebarHeader className="border-b pb-4">
         <div className="flex items-center justify-between gap-2">
-          {state === "expanded" && (
+          {state === 'expanded' && (
             <div
               onClick={() => handleNavigate('/dashboard')}
               className="group flex cursor-pointer items-center gap-2 transition-all duration-300 hover:opacity-80"
             >
-              <div className="flex size-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary/90 to-primary shadow-md ring-1 ring-primary/20">
-                <span className="text-lg font-bold text-primary-foreground">A</span>
+              <div className="from-primary/90 to-primary ring-primary/20 flex size-10 items-center justify-center rounded-lg bg-linear-to-br shadow-md ring-1">
+                <span className="text-primary-foreground text-lg font-bold">
+                  A
+                </span>
               </div>
-              <span className="text-lg font-bold leading-tight tracking-tight">
+              <span className="text-lg leading-tight font-bold tracking-tight">
                 ApexScouty
               </span>
             </div>
           )}
           <div className="flex flex-col items-center gap-2">
-            {state === "collapsed" && (
+            {state === 'collapsed' && (
               <div
                 onClick={() => handleNavigate('/dashboard')}
-                className="group flex size-8 cursor-pointer items-center justify-center rounded-lg bg-gradient-to-br from-primary/90 to-primary shadow-md ring-1 ring-primary/20 transition-all duration-300 hover:opacity-80"
+                className="group from-primary/90 to-primary ring-primary/20 mb-2 flex size-8 cursor-pointer items-center justify-center rounded-lg bg-linear-to-br shadow-md ring-1 transition-all duration-300 hover:opacity-80"
               >
-                <span className="text-base font-bold text-primary-foreground">A</span>
+                <span className="text-primary-foreground text-base font-bold">
+                  A
+                </span>
               </div>
             )}
-            <SidebarTrigger className="ml-auto" />
           </div>
         </div>
       </SidebarHeader>
       <SidebarContent className="flex-1 overflow-y-auto">
         {favoritesMenu.length > 0 && (
           <SidebarGroup>
-            {state === "expanded" && (
+            {state === 'expanded' && (
               <SidebarGroupLabel className="flex items-center gap-2 px-2">
-                <LucideIcons.Star className="size-4 text-yellow-500" fill="currentColor" />
-                <span className="text-xs font-semibold tracking-wider text-foreground/80">
+                <LucideIcons.Star
+                  className="size-4 text-yellow-500"
+                  fill="currentColor"
+                />
+                <span className="text-foreground/80 text-xs font-semibold tracking-wider">
                   {t('sidebar.favorites')}
                 </span>
               </SidebarGroupLabel>
@@ -182,7 +188,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
                                 {...provided.dragHandleProps}
                                 className={cn(
                                   snapshot.isDragging &&
-                                  'group flex cursor-grab items-center gap-3 bg-yellow-50 active:cursor-grabbing dark:bg-yellow-900/20'
+                                    'group flex cursor-grab items-center gap-3 bg-yellow-50 active:cursor-grabbing dark:bg-yellow-900/20'
                                 )}
                               >
                                 <SidebarMenuButton
@@ -233,19 +239,21 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
           </SidebarGroup>
         )}
       </SidebarContent>
-      <SidebarFooter className="shrink-0 border-t border-border/40">
+      <SidebarFooter className="border-t">
         <Button
           variant="outline"
           onClick={handleLogout}
           className={cn(
-            "w-full gap-2",
-            state === "collapsed" ? "justify-center px-2" : "justify-start"
+            'w-full gap-2',
+            state === 'collapsed' ? 'justify-center px-2' : 'justify-start'
           )}
         >
-          <LucideIcons.LogOut className={state === "collapsed" ? "size-5" : ""} />
-          {state === "expanded" && t('sidebar.logout')}
+          <LucideIcons.LogOut
+            className={state === 'collapsed' ? 'size-5' : ''}
+          />
+          {state === 'expanded' && t('sidebar.logout')}
         </Button>
-        {state === "expanded" && (
+        {state === 'expanded' && (
           <div className="text-muted-foreground px-2 text-center text-xs">
             © 2024 ApexScouty
           </div>

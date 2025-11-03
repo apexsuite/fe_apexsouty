@@ -73,7 +73,7 @@ const ConsentTable: React.FC<ConsentTableProps> = ({
               size="small"
               icon={<ExternalLink size={14} />}
               onClick={() => window.open(text, '_blank')}
-              className="flex-shrink-0"
+              className="shrink-0"
             />
           </Tooltip>
         </div>

@@ -1,6 +1,26 @@
 [
-  { "id": "fav1", "label": "All resources", "icon": "Grid", "href": "/all-resources" },
-  { "id": "fav2", "label": "Resource groups", "icon": "Folder", "href": "/resource-groups" },
-  { "id": "fav3", "label": "Load balancers", "icon": "Sliders", "href": "/load-balancers" },
-  { "id": "fav4", "label": "Virtual networks", "icon": "Network", "href": "/virtual-networks" }
-] 
+  {
+    "id": "fav1",
+    "label": "All resources",
+    "icon": "Grid",
+    "href": "/all-resources"
+  },
+  {
+    "id": "fav2",
+    "label": "Resource groups",
+    "icon": "Folder",
+    "href": "/resource-groups"
+  },
+  {
+    "id": "fav3",
+    "label": "Load balancers",
+    "icon": "Sliders",
+    "href": "/load-balancers"
+  },
+  {
+    "id": "fav4",
+    "label": "Virtual networks",
+    "icon": "Network",
+    "href": "/virtual-networks"
+  }
+]

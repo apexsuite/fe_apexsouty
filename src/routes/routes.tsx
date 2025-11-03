@@ -50,11 +50,14 @@ const PriceDetail = lazy(() => import('@/pages/PriceDetail'));
 const BillingForm = lazy(() => import('@/components/billing/BillingForm'));
 
 const Marketplaces = lazy(() => import('@/pages/MarketPlaces'));
-const MarketPlaceForm = lazy(() => import('@/pages/MarketPlaces/MarketPlaceForm'));
-const MarketPlaceDetail = lazy(() => import('@/pages/MarketPlaces/MarketPlaceDetail'));
+const MarketPlaceForm = lazy(
+  () => import('@/pages/MarketPlaces/MarketPlaceForm')
+);
+const MarketPlaceDetail = lazy(
+  () => import('@/pages/MarketPlaces/MarketPlaceDetail')
+);
 
 const Consents = lazy(() => import('@/pages/Consents'));
-const PermissionTest = lazy(() => import('@/components/PermissionTest'));
 const Subscription = lazy(() => import('@/pages/Subscription'));
 const NewPermissionExamples = lazy(
   () => import('@/examples/NewPermissionExamples')
@@ -298,22 +301,17 @@ export const protectedRoutes: RouteObject[] = [
         handle: { title: 'routes.consents.title' },
       },
       {
-        path: 'permission-test',
-        element: <PermissionTest />,
-        handle: { title: 'Permission Test' },
-      },
-      {
         path: 'permission-examples',
         element: <NewPermissionExamples />,
         handle: { title: 'Permission Examples' },
       },
       {
-        path: "subscription",
+        path: 'subscription',
         element: <Subscription />,
-        handle: { title: 'Subscription' }
+        handle: { title: 'Subscription' },
       },
       {
-        path: "regions",
+        path: 'regions',
         children: [
           {
             index: true,
@@ -321,7 +319,7 @@ export const protectedRoutes: RouteObject[] = [
             handle: { title: 'Region' },
           },
           {
-            path: "create",
+            path: 'create',
             element: <RegionForm />,
             handle: { title: 'Region Create' },
           },
@@ -330,8 +328,8 @@ export const protectedRoutes: RouteObject[] = [
             element: <RegionForm />,
             handle: { title: 'Region Edit' },
           },
-        ]
-      }
+        ],
+      },
     ],
   },
 ];
