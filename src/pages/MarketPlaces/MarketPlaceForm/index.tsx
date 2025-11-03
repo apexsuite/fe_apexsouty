@@ -148,7 +148,6 @@ const MarketPlaceForm = () => {
                             type="button"
                             variant="outline"
                             onClick={() => navigate('/marketplaces')}
-                            className="w-full"
                         >
                             Cancel
                         </Button>

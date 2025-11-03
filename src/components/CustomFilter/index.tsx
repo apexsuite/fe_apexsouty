@@ -105,18 +105,17 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
                 );
               })}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex gap-2">
               <CustomButton
                 type="submit"
-                variant="default"
                 label="Apply Filters"
                 icon={<Search />}
               />
               <CustomButton
                 type="reset"
-                variant="outline"
                 label="Reset"
                 icon={<X />}
+                variant="outline"
               />
             </div>
           </form>

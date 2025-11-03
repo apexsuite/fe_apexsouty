@@ -20,7 +20,6 @@ interface LinkProps {
 }
 
 export interface TooltipProps {
-  message: string;
   position?: 'top' | 'bottom' | 'left' | 'right';
   align?: 'start' | 'center' | 'end';
   sideOffset?: number;
@@ -32,6 +31,7 @@ export interface CustomButtonProps
   icon?: React.ReactNode;
   iconPosition?: 'left' | 'right';
   loading?: boolean;
+  tooltip?: string;
   tooltipProps?: TooltipProps;
   linkProps?: LinkProps;
 }
@@ -42,6 +42,7 @@ const CustomButton = React.forwardRef<HTMLButtonElement, CustomButtonProps>(
       icon,
       iconPosition = 'left',
       label,
+      tooltip,
       tooltipProps,
       loading,
       linkProps,
@@ -105,16 +106,16 @@ const CustomButton = React.forwardRef<HTMLButtonElement, CustomButtonProps>(
       ButtonContent
     );
 
-    const content = tooltipProps ? (
+    const content = tooltip ? (
       <Tooltip>
         <TooltipTrigger asChild>{wrappedButton}</TooltipTrigger>
         <TooltipContent
           className="text-sm"
-          side={tooltipProps.position}
-          sideOffset={tooltipProps.sideOffset}
-          align={tooltipProps.align}
+          side={tooltipProps?.position}
+          sideOffset={tooltipProps?.sideOffset}
+          align={tooltipProps?.align}
         >
-          {tooltipProps.message}
+          {tooltip}
         </TooltipContent>
       </Tooltip>
     ) : (
