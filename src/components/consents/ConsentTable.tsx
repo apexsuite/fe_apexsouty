@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/lib/store';
 import { ExternalLink } from 'lucide-react';
 import { Button, Tag, Table, Space, Card, Pagination, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
@@ -10,8 +8,8 @@ import { useTheme } from '@/providers/theme';
 
 interface Consent {
   id: string;
-  marketplace: string;
-  marketplaceURL: string;
+  regionName: string;
+  regionURL: string;
   isActive: boolean;
   createdAt: string;
   updatedAt?: string;
@@ -48,8 +46,8 @@ const ConsentTable: React.FC<ConsentTableProps> = ({
   const columns: ColumnsType<Consent> = [
     {
       title: t('consents.name'),
-      dataIndex: 'marketplace',
-      key: 'marketplace',
+      dataIndex: 'regionName',
+      key: 'regionName',
       render: (text: string) => (
         <span
           className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
@@ -60,8 +58,8 @@ const ConsentTable: React.FC<ConsentTableProps> = ({
     },
     {
       title: t('consents.website'),
-      dataIndex: 'marketplaceURL',
-      key: 'marketplaceURL',
+      dataIndex: 'regionURL',
+      key: 'regionURL',
       render: (text: string) => (
         <div className="flex items-center gap-2">
           <span
@@ -136,20 +134,20 @@ const ConsentTable: React.FC<ConsentTableProps> = ({
                   fontSize: '14px',
                 }}
               >
-                {consent.marketplace}
+                {consent.regionName}
               </h3>
               <div className="mt-1 flex items-center gap-2">
                 <span
                   className="flex-1 truncate text-xs"
                   style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
                 >
-                  {consent.marketplaceURL}
+                  {consent.regionURL}
                 </span>
                 <Button
                   type="text"
                   size="small"
                   icon={<ExternalLink size={12} />}
-                  onClick={() => window.open(consent.marketplaceURL, '_blank')}
+                  onClick={() => window.open(consent.regionURL, '_blank')}
                   className="flex-shrink-0 p-1"
                 />
               </div>
