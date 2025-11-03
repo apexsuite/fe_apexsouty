@@ -33,21 +33,21 @@ const Subscription = () => {
     data.activeSubscription.productName?.toLowerCase() === 'free';
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 via-gray-100 to-gray-50 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="space-y-4 p-4 lg:p-8">
       <div className="mx-auto max-w-7xl">
         <PageHeader isFreeUser={isFreeUser} />
 
         <div className="mx-auto max-w-7xl">
           {isFreeUser ? (
-            <div className="animate-fade-in grid grid-cols-1 gap-6 lg:grid-cols-12">
-              <div className="lg:col-span-4">
+            <div className="flex flex-col lg:flex-row gap-4 w-full">
+              <div className="w-full lg:w-1/3">
                 <SubscriptionCard
                   subscription={data.activeSubscription}
                   isFreeUser={isFreeUser}
                 />
               </div>
 
-              <div className="lg:col-span-8">
+              <div className="w-full lg:w-2/3">
                 <UpgradeSection pricingTable={data.pricingTable} />
               </div>
             </div>

@@ -20,9 +20,9 @@ const PageHeader = ({ isFreeUser }: PageHeaderProps) => {
                     <Sparkles className="w-7 h-7" />
                 )}
             </div>
-            <div className="flex flex-col justify-center mt-4">
-                <h1 className="text-xl font-semibold text-gray-900">{title}</h1>
-                <p className="text-sm text-gray-600">{subtitle}</p>
+            <div className="flex flex-col justify-center">
+                <h1 className="text-xl font-semibold">{title}</h1>
+                <p className="text-sm text">{subtitle}</p>
             </div>
         </div>
     );

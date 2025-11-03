@@ -11,7 +11,7 @@ const UpgradeSection = ({ pricingTable }: UpgradeSectionProps) => {
     }
 
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+        <div className="rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 h-full">
             <PricingPage
                 publishableKey={pricingTable.publishableKey}
                 tableId={pricingTable.tableId}
