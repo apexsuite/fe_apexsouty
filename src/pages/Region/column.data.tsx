@@ -87,21 +87,18 @@ const getRegionColumns = ({
         <CustomButton
           variant="outline"
           tooltip="Edit Region"
-          size="sm"
           icon={<Edit />}
           onClick={() => navigate(`/regions/${row.original.id}/edit`)}
         />
         <CustomButton
           variant="outline"
           tooltip="Change Region Status"
-          size="sm"
           onClick={() => changeRegionStatus(row.original.id)}
           icon={row.original.isActive ? <ToggleRight /> : <ToggleLeft />}
         />
         <CustomButton
           variant="outline"
           tooltip="Delete Region"
-          size="sm"
           onClick={() => deleteRegion(row.original.id)}
           icon={<Trash2 />}
         />

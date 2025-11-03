@@ -166,8 +166,8 @@ const SearchBar = () => {
 
   return (
     <>
-      <Button 
-        variant="outline" 
+      <Button
+        variant="outline"
         onClick={() => setOpen(true)}
         className="gap-2 md:w-full md:justify-between"
       >
@@ -180,7 +180,10 @@ const SearchBar = () => {
             {t('searchBar.search')}
           </span>
         </span>
-        <Kbd className="hidden lg:block">⌘K</Kbd>
+        <KbdGroup>
+          <Kbd className="hidden lg:flex">⌘</Kbd>
+          <Kbd className="hidden lg:flex">K</Kbd>
+        </KbdGroup>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder={t('searchBar.search')} />
@@ -197,7 +200,6 @@ const SearchBar = () => {
                       size="sm"
                       className="h-6 cursor-pointer px-2 text-xs"
                       onClick={handleClearHistory}
-                      aria-label={t('searchBar.clearHistory')}
                     >
                       <LucideIcons.X size={14} className="-me-1" />
                       {t('searchBar.clearHistory')}

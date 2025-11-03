@@ -12,7 +12,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
 const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
-  const [showFilters, setShowFilters] = useState(false);
+  const [open, setOpen] = useState<boolean>(false);
   const { updateQueryParams, clearAllQueryParams, deleteQueryParams } =
     useQueryParams();
   const navigate = useNavigate();
@@ -64,8 +64,8 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
         <CustomButton
           variant="outline"
           icon={<Filter />}
-          label={showFilters ? 'Hide Filters' : 'Show Filters'}
-          onClick={() => setShowFilters(!showFilters)}
+          label={open ? 'Hide Filters' : 'Show Filters'}
+          onClick={() => setOpen(!open)}
         />
         <CustomButton
           label="Create"
@@ -73,14 +73,14 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
           onClick={() => navigate(path)}
         />
       </div>
-      {showFilters && (
+      {open && (
         <div className="card rounded-md border p-6">
           <form
             onSubmit={handleSubmit(handleSearch)}
             onReset={handleReset}
             className="space-y-4"
           >
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-5">
               {inputs.map(input => {
                 if (input.type === INPUT_TYPES.Select) {
                   return (
