@@ -21,10 +21,10 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="border-border bg-background sticky top-0 z-40 w-full border-b shadow-sm">
+    <nav className="border-border bg-background sticky top-0 z-40 w-full border-b">
       <div className="flex h-16 items-center justify-between gap-4 px-4 md:px-6 lg:px-8">
-        <div className="md:flex-1 md:max-w-md flex items-center gap-2">
-          <SidebarTrigger className='block md:hidden' />
+        <div className="flex items-center gap-2 md:max-w-md md:flex-1">
+          <SidebarTrigger className="block md:hidden" />
           <SearchBar />
         </div>
 
@@ -34,10 +34,10 @@ export default function Navbar() {
               type="button"
               onClick={() => handleLanguageChange('en')}
               className={cn(
-                "relative flex h-6 items-center justify-center rounded px-3 text-xs font-semibold transition-all duration-300",
+                'relative flex h-6 items-center justify-center rounded px-3 text-xs font-semibold transition-all duration-300',
                 lang === 'en'
-                  ? "bg-secondary text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? 'bg-secondary text-foreground'
+                  : 'text-muted-foreground hover:text-foreground'
               )}
               aria-label="Switch to English"
             >
@@ -47,10 +47,10 @@ export default function Navbar() {
               type="button"
               onClick={() => handleLanguageChange('tr')}
               className={cn(
-                "relative flex h-6 items-center justify-center rounded px-3 text-xs font-semibold transition-all duration-300",
+                'relative flex h-6 items-center justify-center rounded px-3 text-xs font-semibold transition-all duration-300',
                 lang === 'tr'
-                  ? "bg-secondary text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? 'bg-secondary text-foreground'
+                  : 'text-muted-foreground hover:text-foreground'
               )}
               aria-label="Türkçe'ye geç"
             >
