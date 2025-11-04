@@ -22,7 +22,7 @@ export interface FilterInputs {
  */
 export interface CustomFilterProps {
   inputs: FilterInputs[];
-  path: string;
+  path?: string;
 }
 
 export type FilterFormData = Record<string, string>;
