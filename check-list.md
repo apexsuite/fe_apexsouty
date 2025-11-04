@@ -9,3 +9,4 @@
 [] tailwind versiyon güncelleme
 [] prettier kurulumu
 [] middleware 
+[] Register sayfası hatalar düzeltilip eksikler giderilecek

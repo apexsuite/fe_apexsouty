@@ -8,6 +8,8 @@ import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@/lib/store";
 import { validateAmazonConsent } from "@/lib/consentSlice";
 import { useErrorHandler } from "@/lib/useErrorHandler";
+import CustomDataTable from "@/components/CustomDataTable";
+import useQueryParamHandler from "@/utils/hooks/useQueryParamHandler";
 
 interface Resource {
   name: string;
@@ -27,6 +29,8 @@ export default function Dashboard() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const { handleError, showSuccess } = useErrorHandler();
 
+
+  useQueryParamHandler();
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/");
@@ -49,7 +53,7 @@ export default function Dashboard() {
   // Senaryo 2: Amazon callback validate - Dashboard'a geldiğinde kontrol et
   useEffect(() => {
     if (!isAuthenticated) return;
-    
+
     try {
       const raw = localStorage.getItem('pendingAmazonValidateParams');
       if (raw) {
@@ -60,18 +64,18 @@ export default function Dashboard() {
             selling_partner_id: parsed.selling_partner_id || '',
             spapi_oauth_code: parsed.spapi_oauth_code || '',
           }))
-          .unwrap()
-          .then(() => {
-            // Başarılı olursa sessizce devam et
-            showSuccess('consentValidationSuccess');
-          })
-          .catch((err: any) => {
-            // Hata varsa uyarı mesajı göster
-            handleError(err);
-          })
-          .finally(() => {
-            localStorage.removeItem('pendingAmazonValidateParams');
-          });
+            .unwrap()
+            .then(() => {
+              // Başarılı olursa sessizce devam et
+              showSuccess('consentValidationSuccess');
+            })
+            .catch((err: any) => {
+              // Hata varsa uyarı mesajı göster
+              handleError(err);
+            })
+            .finally(() => {
+              localStorage.removeItem('pendingAmazonValidateParams');
+            });
         }
       }
     } catch (e) {
@@ -98,6 +102,30 @@ export default function Dashboard() {
     ? resources
     : resources.filter(r => r.favorite === 1);
 
+  const data = [
+    { name: "John Doe", type: "User", lastViewed: "2021-01-01" },
+    { name: "Jane Doe", type: "User", lastViewed: "2021-01-01" },
+    { name: "John Doe", type: "User", lastViewed: "2021-01-01" },
+    { name: "Jane Doe", type: "User", lastViewed: "2021-01-01" },
+
+    { name: "John Doe", type: "User", lastViewed: "2021-01-01" },
+    { name: "Jane Doe", type: "User", lastViewed: "2021-01-01" },
+  ]
+
+  const fakeColumns = [
+    {
+      header: "Name",
+      accessorKey: "name",
+    },
+    {
+      header: "Type",
+      accessorKey: "type",
+    },
+    {
+      header: "Last Viewed",
+      accessorKey: "lastViewed",
+    }
+  ]
   return (
     <div className="min-h-screen w-full px-6 md:px-12 py-12 bg-background">
       <div style={{ marginBottom: 32 }}>

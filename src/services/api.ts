@@ -38,13 +38,14 @@ export const apiRequest = async (endpoint: string, options: any = {}) => {
     url,
     method: options.method || 'GET',
     headers,
+    params: options.params || {},
     data: options.body ? JSON.parse(options.body) : undefined,
     withCredentials: true,
   };
 
   try {
     const response = await axios(config);
-    
+
     // HTTP status code kontrolü
     if (response.status >= 200 && response.status < 300) {
       return response.data;

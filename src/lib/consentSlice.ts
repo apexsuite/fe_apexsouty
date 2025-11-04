@@ -3,8 +3,8 @@ import { apiRequest } from '@/services/api';
 
 export interface Consent {
   id: string;
-  marketplace: string;
-  marketplaceURL: string;
+  regionName: string;
+  regionURL: string;
   isActive: boolean;
   createdAt: string;
   updatedAt?: string;

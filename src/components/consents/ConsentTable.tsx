@@ -1,16 +1,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/lib/store';
 import { ExternalLink } from 'lucide-react';
 import { Button, Tag, Table, Space, Card, Pagination, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import PermissionGuard from '@/components/PermissionGuard';
+import { useTheme } from '@/providers/theme';
 
 interface Consent {
   id: string;
-  marketplace: string;
-  marketplaceURL: string;
+  regionName: string;
+  regionURL: string;
   isActive: boolean;
   createdAt: string;
   updatedAt?: string;
@@ -28,7 +27,7 @@ const ConsentTable: React.FC<ConsentTableProps> = ({
   onAuthorize,
 }) => {
   const { t } = useTranslation();
-  const theme = useSelector((state: RootState) => state.theme.theme);
+  const { theme } = useTheme();
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
@@ -47,21 +46,25 @@ const ConsentTable: React.FC<ConsentTableProps> = ({
   const columns: ColumnsType<Consent> = [
     {
       title: t('consents.name'),
-      dataIndex: 'marketplace',
-      key: 'marketplace',
+      dataIndex: 'regionName',
+      key: 'regionName',
       render: (text: string) => (
-        <span className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+        <span
+          className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
+        >
           {text}
         </span>
       ),
     },
     {
       title: t('consents.website'),
-      dataIndex: 'marketplaceURL',
-      key: 'marketplaceURL',
+      dataIndex: 'regionURL',
+      key: 'regionURL',
       render: (text: string) => (
         <div className="flex items-center gap-2">
-          <span className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} truncate`}>
+          <span
+            className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} truncate`}
+          >
             {text}
           </span>
           <Tooltip title="Open URL">
@@ -70,7 +73,7 @@ const ConsentTable: React.FC<ConsentTableProps> = ({
               size="small"
               icon={<ExternalLink size={14} />}
               onClick={() => window.open(text, '_blank')}
-              className="flex-shrink-0"
+              className="shrink-0"
             />
           </Tooltip>
         </div>
@@ -111,42 +114,45 @@ const ConsentTable: React.FC<ConsentTableProps> = ({
   const ConsentCard: React.FC<{ consent: Consent }> = ({ consent }) => {
     return (
       <Card
-        style={{ 
+        style={{
           backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
           borderColor: theme === 'dark' ? '#374151' : '#e5e7eb',
           borderRadius: '6px',
           boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-          marginBottom: '8px'
+          marginBottom: '8px',
         }}
         bodyStyle={{ padding: '12px 16px' }}
       >
         <div className="space-y-3">
           {/* Header */}
-          <div className="flex justify-between items-start">
-            <div className="flex-1 min-w-0">
-              <h3 
-                className="font-medium truncate"
-                style={{ color: theme === 'dark' ? '#ffffff' : '#111827', fontSize: '14px' }}
+          <div className="flex items-start justify-between">
+            <div className="min-w-0 flex-1">
+              <h3
+                className="truncate font-medium"
+                style={{
+                  color: theme === 'dark' ? '#ffffff' : '#111827',
+                  fontSize: '14px',
+                }}
               >
-                {consent.marketplace}
+                {consent.regionName}
               </h3>
-              <div className="flex items-center gap-2 mt-1">
-                <span 
-                  className="text-xs truncate flex-1"
+              <div className="mt-1 flex items-center gap-2">
+                <span
+                  className="flex-1 truncate text-xs"
                   style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}
                 >
-                  {consent.marketplaceURL}
+                  {consent.regionURL}
                 </span>
                 <Button
                   type="text"
                   size="small"
                   icon={<ExternalLink size={12} />}
-                  onClick={() => window.open(consent.marketplaceURL, '_blank')}
+                  onClick={() => window.open(consent.regionURL, '_blank')}
                   className="flex-shrink-0 p-1"
                 />
               </div>
             </div>
-            <Tag 
+            <Tag
               color={consent.isActive ? 'green' : 'red'}
               style={{ fontSize: '10px', padding: '0 6px', lineHeight: '18px' }}
             >
@@ -155,7 +161,10 @@ const ConsentTable: React.FC<ConsentTableProps> = ({
           </div>
 
           {/* Actions */}
-          <div className="flex gap-2 pt-2 border-t" style={{ borderColor: theme === 'dark' ? '#374151' : '#e5e7eb' }}>
+          <div
+            className="flex gap-2 border-t pt-2"
+            style={{ borderColor: theme === 'dark' ? '#374151' : '#e5e7eb' }}
+          >
             <PermissionGuard permission="authorize-consent" mode="hide">
               <Button
                 type="primary"
@@ -175,7 +184,9 @@ const ConsentTable: React.FC<ConsentTableProps> = ({
   return (
     <div className="space-y-4">
       {/* Desktop Table View - Hidden on Mobile */}
-      <div className={`hidden md:block ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
+      <div
+        className={`hidden md:block ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}
+      >
         <Table
           columns={columns}
           dataSource={paginatedConsents}
@@ -188,43 +199,53 @@ const ConsentTable: React.FC<ConsentTableProps> = ({
           }}
           locale={{
             emptyText: (
-              <div className={`text-center py-8 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+              <div
+                className={`py-8 text-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}
+              >
                 <p>{t('consents.emptyState.title')}</p>
-                <p className="text-sm">{t('consents.emptyState.description')}</p>
+                <p className="text-sm">
+                  {t('consents.emptyState.description')}
+                </p>
               </div>
-            )
+            ),
           }}
         />
       </div>
 
       {/* Desktop Pagination */}
       {filteredConsents.length > 0 && (
-        <div className="hidden md:flex justify-center">
+        <div className="hidden justify-center md:flex">
           <Pagination
             current={currentPage}
             total={filteredConsents.length}
             pageSize={pageSize}
-            onChange={(page) => setCurrentPage(page)}
+            onChange={page => setCurrentPage(page)}
             showSizeChanger={false}
-            showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
+            showTotal={(total, range) =>
+              `${range[0]}-${range[1]} of ${total} items`
+            }
             className={theme === 'dark' ? 'dark-pagination' : ''}
           />
         </div>
       )}
 
       {/* Mobile Card View - Hidden on Desktop */}
-      <div className="block md:hidden space-y-3">
+      <div className="block space-y-3 md:hidden">
         {paginatedConsents.length === 0 ? (
-          <div className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} p-8 text-center`}>
+          <div
+            className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-lg border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} p-8 text-center`}
+          >
             <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
               {t('consents.emptyState.title')}
             </p>
-            <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+            <p
+              className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}
+            >
               {t('consents.emptyState.description')}
             </p>
           </div>
         ) : (
-          paginatedConsents.map((consent) => (
+          paginatedConsents.map(consent => (
             <ConsentCard key={consent.id} consent={consent} />
           ))
         )}
@@ -232,12 +253,12 @@ const ConsentTable: React.FC<ConsentTableProps> = ({
 
       {/* Mobile Pagination */}
       {filteredConsents.length > 0 && (
-        <div className="flex md:hidden justify-center">
+        <div className="flex justify-center md:hidden">
           <Pagination
             current={currentPage}
             total={filteredConsents.length}
             pageSize={pageSize}
-            onChange={(page) => setCurrentPage(page)}
+            onChange={page => setCurrentPage(page)}
             showSizeChanger={false}
             simple
             className={theme === 'dark' ? 'dark-pagination' : ''}

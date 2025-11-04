@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+  import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -32,6 +32,7 @@ import { AppDispatch } from '@/lib/store';
 import { useDispatch } from 'react-redux';
 import { updatePriceStatus, setDefaultPrice } from '@/lib/productSlice';
 import CreatePriceModal from './CreatePriceModal';
+import { useTheme } from '@/providers/theme';
 
 const { Title } = Typography;
 
@@ -66,7 +67,7 @@ const PriceTable: React.FC<PriceTableProps> = ({
   const { token } = theme.useToken();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
+  const { theme: currentTheme } = useTheme();
   const { handleError, showSuccess } = useErrorHandler();
   
   const [loadingStates, setLoadingStates] = useState<{ [key: string]: boolean }>({});

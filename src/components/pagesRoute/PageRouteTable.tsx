@@ -8,6 +8,7 @@ import { RootState } from '@/lib/store';
 import { PageRoute } from '@/lib/pageSlice';
 import PermissionGuard from '@/components/PermissionGuard';
 import * as LucideIcons from 'lucide-react';
+import { useTheme } from '@/providers/theme';
 
 // Function to get Lucide icon dynamically
 const getLucideIcon = (iconName: string) => {
@@ -43,7 +44,7 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
+  const { theme: currentTheme } = useTheme();
   const [isMobile, setIsMobile] = useState(false);
   const [openCard, setOpenCard] = useState<string | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);

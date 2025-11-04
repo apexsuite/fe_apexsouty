@@ -1,18 +1,12 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  Modal,
-  Form,
-  Input,
-  Switch,
-  Button,
-  theme
-} from 'antd';
+import { Modal, Form, Input, Switch, Button, theme } from 'antd';
 import { useErrorHandler } from '@/lib/useErrorHandler';
 import { Shield, Info, Tag, Activity } from 'lucide-react';
-import { RootState, AppDispatch } from '@/lib/store';
+import { AppDispatch } from '@/lib/store';
 import { createPermission } from '@/lib/pageRoutePermissionSlice';
+import { useTheme } from '@/providers/theme';
 
 interface CreatePermissionModalProps {
   visible: boolean;
@@ -37,9 +31,9 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const dispatch = useDispatch<AppDispatch>();
-  const { theme: currentTheme } = useSelector((state: RootState) => state.theme);
+  const { theme: currentTheme } = useTheme();
   const { handleError, showSuccess } = useErrorHandler();
-  
+
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
@@ -50,9 +44,9 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
         pageRouteId: pageRouteId,
         permissionData: {
           ...values,
-        }
+        },
       };
-      
+
       await dispatch(createPermission(payload)).unwrap();
       showSuccess('permissionCreatedSuccessfully');
       form.resetFields();
@@ -73,7 +67,7 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
     <Modal
       title={
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900">
+          <div className="rounded-lg bg-blue-100 p-2 dark:bg-blue-900">
             <Shield size={20} className="text-blue-600 dark:text-blue-400" />
           </div>
           <span className="text-gray-900 dark:text-white">
@@ -87,7 +81,8 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
       width={600}
       className={`${currentTheme === 'dark' ? 'dark-modal' : ''}`}
       style={{
-        backgroundColor: currentTheme === 'dark' ? '#1f2937' : token.colorBgContainer,
+        backgroundColor:
+          currentTheme === 'dark' ? '#1f2937' : token.colorBgContainer,
       }}
     >
       <Form
@@ -105,8 +100,16 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
             </span>
           }
           rules={[
-            { required: true, message: t('permissions.nameRequired') || 'Name is required' },
-            { min: 2, message: t('permissions.nameMinLength') || 'Name must be at least 2 characters' }
+            {
+              required: true,
+              message: t('permissions.nameRequired') || 'Name is required',
+            },
+            {
+              min: 2,
+              message:
+                t('permissions.nameMinLength') ||
+                'Name must be at least 2 characters',
+            },
           ]}
         >
           <Input
@@ -124,13 +127,26 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
             </span>
           }
           rules={[
-            { required: true, message: t('permissions.descriptionRequired') || 'Description is required' },
-            { min: 5, message: t('permissions.descriptionMinLength') || 'Description must be at least 5 characters' }
+            {
+              required: true,
+              message:
+                t('permissions.descriptionRequired') ||
+                'Description is required',
+            },
+            {
+              min: 5,
+              message:
+                t('permissions.descriptionMinLength') ||
+                'Description must be at least 5 characters',
+            },
           ]}
         >
           <Input.TextArea
             rows={3}
-            placeholder={t('permissions.enterDescription') || 'Enter permission description'}
+            placeholder={
+              t('permissions.enterDescription') ||
+              'Enter permission description'
+            }
             className={currentTheme === 'dark' ? 'dark-input' : ''}
           />
         </Form.Item>
@@ -144,12 +160,22 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
             </span>
           }
           rules={[
-            { required: true, message: t('permissions.labelRequired') || 'Label is required' },
-            { min: 2, message: t('permissions.labelMinLength') || 'Label must be at least 2 characters' }
+            {
+              required: true,
+              message: t('permissions.labelRequired') || 'Label is required',
+            },
+            {
+              min: 2,
+              message:
+                t('permissions.labelMinLength') ||
+                'Label must be at least 2 characters',
+            },
           ]}
         >
           <Input
-            placeholder={t('permissions.enterLabel') || 'Enter permission label'}
+            placeholder={
+              t('permissions.enterLabel') || 'Enter permission label'
+            }
             className={currentTheme === 'dark' ? 'dark-input' : ''}
           />
         </Form.Item>
@@ -158,14 +184,17 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
           name="isActive"
           label={
             <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-              <Activity size={16} className="text-gray-500 dark:text-gray-400" />
+              <Activity
+                size={16}
+                className="text-gray-500 dark:text-gray-400"
+              />
               {t('permissions.isActive') || 'Is Active'}
             </span>
           }
           valuePropName="checked"
           initialValue={true}
         >
-          <Switch 
+          <Switch
             className={currentTheme === 'dark' ? 'dark-switch' : ''}
             checkedChildren={t('common.yes') || 'Yes'}
             unCheckedChildren={t('common.no') || 'No'}

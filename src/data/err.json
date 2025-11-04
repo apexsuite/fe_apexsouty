@@ -1,0 +1,114 @@
+{
+  "activationLinkExpired": [
+    { "tr": "Aktivasyon linki süresi doldu" },
+    { "en": "Activation link expired" }
+  ],
+  "forgotPasswordLinkExpired": [
+    { "tr": "Şifre sıfırlama linki süresi doldu" },
+    { "en": "Forgot password link expired" }
+  ],
+  "errUserNotActivated": [
+    { "tr": "Kullanıcı aktivasyonu yapılmadı" },
+    { "en": "User not activated" }
+  ],
+  "errInvalidCredentials": [
+    { "tr": "Geçersiz kimlik bilgileri" },
+    { "en": "Invalid credentials" }
+  ],
+  "someValidationErrorsOccurred": [
+    { "tr": "Bazı doğrulama hataları oluştu" },
+    { "en": "Some validation errors occurred" }
+  ],
+  "anErrorOccurred": [
+    { "tr": "Bir hata oluştu" },
+    { "en": "An error occurred" }
+  ],
+  "serviceUnavailable": [
+    { "tr": "Hizmet mevcut değil" },
+    { "en": "Service unavailable" }
+  ],
+  "tooManyRequests": [
+    { "tr": "Çok fazla istek" },
+    { "en": "Too many requests" }
+  ],
+  "errInvalidToken": [{ "tr": "Geçersiz token" }, { "en": "Invalid token" }],
+  "errInvalidValue": [{ "tr": "Geçersiz değer" }, { "en": "Invalid value" }],
+  "errNotAllowedForOnBehalfOfUsers": [
+    { "tr": "Başka bir kullanıcının yetkileriyle işlem yapılamaz" },
+    { "en": "Not allowed for on behalf of users" }
+  ],
+  "atLeast8CharactersLong": [
+    { "tr": "En az 8 karakter olmalı" },
+    { "en": "At least 8 characters long" }
+  ],
+  "userAlreadyExists": [
+    { "tr": "Kullanıcı zaten mevcut" },
+    { "en": "User already exists" }
+  ],
+  "userNotFound": [
+    { "tr": "Kullanıcı bulunamadı" },
+    { "en": "User not found" }
+  ],
+  "userAlreadyActivated": [
+    { "tr": "Kullanıcı zaten aktif" },
+    { "en": "User already activated" }
+  ],
+  "errInvalidEmail": [{ "tr": "Geçersiz email" }, { "en": "Invalid email" }],
+  "errInvalidRoles": [{ "tr": "Geçersiz yetki" }, { "en": "Invalid role" }],
+  "recordNotFound": [
+    { "tr": "Kayıt bulunamadı" },
+    { "en": "Record not found" }
+  ],
+  "permissionAlreadyExists": [
+    { "tr": "Yetki zaten mevcut" },
+    { "en": "Permission already exists" }
+  ],
+  "errFavouriteListIsFull": [
+    { "tr": "Favori listesi dolu" },
+    { "en": "Favourite list is full" }
+  ],
+  "errServiceAlreadyInFavouriteList": [
+    { "tr": "Hizmet zaten favori listesinde" },
+    { "en": "Service already in favourite list" }
+  ],
+  "errProductAlreadyExists": [
+    { "tr": "Ürün zaten mevcut" },
+    { "en": "Product already exists" }
+  ],
+  "errDefaultProductAlreadyExists": [
+    { "tr": "Varsayılan ürün zaten mevcut" },
+    { "en": "Default product already exists" }
+  ],
+  "errFieldExceedsLengthLimit": [
+    { "tr": "Alan uzunluğu sınırını aştı" },
+    { "en": "Field exceeds length limit" }
+  ],
+  "errPriceAlreadyExists": [
+    { "tr": "Fiyat zaten mevcut" },
+    { "en": "Price already exists" }
+  ],
+  "errProductCannotHavePrice": [
+    { "tr": "Ürün fiyatı olamaz" },
+    { "en": "Product cannot have price" }
+  ],
+  "errDefaultProductNotFound": [
+    { "tr": "Varsayılan ürün bulunamadı" },
+    { "en": "Default product not found" }
+  ],
+  "errUserAlreadyHasSubscription": [
+    { "tr": "Kullanıcının zaten aboneliği var" },
+    { "en": "User already has subscription" }
+  ],
+  "errMarketplaceAlreadyExists": [
+    { "tr": "Marketplace zaten mevcut" },
+    { "en": "Marketplace already exists" }
+  ],
+  "errRolePermissionAlreadyExists": [
+    { "tr": "Yetki zaten mevcut" },
+    { "en": "Role permission already exists" }
+  ],
+  "errRolePermissionNotActive": [
+    { "tr": "Yetki aktif değil" },
+    { "en": "Role permission not active" }
+  ]
+}
