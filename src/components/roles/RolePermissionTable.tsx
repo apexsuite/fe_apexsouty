@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { AppDispatch, RootState } from '@/lib/store';
+import { AppDispatch } from '@/lib/store';
 import { fetchPermissions } from '@/lib/pageRoutePermissionSlice';
 import { createRolePermissions, deleteRolePermission } from '@/lib/roleSlice';
 import {
@@ -370,8 +370,8 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
                   e.stopPropagation();
                   handleUnassignPermission(
                     permission.permissionId ||
-                      permission.permission?.id ||
-                      permission.id
+                    permission.permission?.id ||
+                    permission.id
                   );
                 }}
                 style={{
@@ -473,7 +473,7 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
                 >
                   {searchTerm
                     ? t('permissions.tryDifferentSearch') ||
-                      'Try a different search term'
+                    'Try a different search term'
                     : t('pages.createFirstPermission')}
                 </p>
               </div>
@@ -529,7 +529,7 @@ const RolePermissionTable: React.FC<RolePermissionTableProps> = ({
                     <p className="text-sm">
                       {searchTerm
                         ? t('permissions.tryDifferentSearch') ||
-                          'Try a different search term'
+                        'Try a different search term'
                         : t('pages.createFirstPermission')}
                     </p>
                   </div>

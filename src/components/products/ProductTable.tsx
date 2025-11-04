@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { Table, Button, Space, Tag, Switch, Tooltip, theme, Card } from 'antd';
 import {
   Edit,
@@ -12,7 +11,6 @@ import {
   ChevronUp,
 } from 'lucide-react';
 import type { ColumnsType } from 'antd/es/table';
-import { RootState } from '@/lib/store';
 import PermissionGuard from '@/components/PermissionGuard';
 import { useTheme } from '@/providers/theme';
 

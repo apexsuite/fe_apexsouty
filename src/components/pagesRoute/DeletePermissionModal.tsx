@@ -1,9 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { Modal, Button, Typography, theme } from 'antd';
 import { AlertTriangle, Trash2 } from 'lucide-react';
-import { RootState } from '@/lib/store';
 import { useTheme } from '@/providers/theme';
 
 const { Title, Text } = Typography;
@@ -96,11 +94,10 @@ const DeletePermissionModal: React.FC<DeletePermissionModalProps> = ({
                   {t('permissions.status') || 'Status'}:
                 </Text>
                 <span
-                  className={`rounded px-2 py-1 text-xs font-medium ${
-                    permission.isActive
+                  className={`rounded px-2 py-1 text-xs font-medium ${permission.isActive
                       ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
                       : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                  }`}
+                    }`}
                 >
                   {permission.isActive
                     ? t('common.active') || 'Active'

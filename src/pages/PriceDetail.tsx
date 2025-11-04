@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { AppDispatch, RootState } from '@/lib/store';
+import { AppDispatch } from '@/lib/store';
 import { getPriceDetail } from '@/lib/productSlice';
 import {
   ArrowLeft,
@@ -30,7 +30,7 @@ const { Title, Text } = Typography;
 
 const PriceDetail: React.FC = () => {
   const { t } = useTranslation();
-  const {} = theme.useToken();
+  const { } = theme.useToken();
   const { productId, priceId } = useParams<{
     productId: string;
     priceId: string;

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { Table, Button, Space, Tag, Card, theme, Tooltip } from 'antd';
 import {
   Edit,
@@ -11,7 +10,6 @@ import {
   Calendar,
 } from 'lucide-react';
 import type { ColumnsType } from 'antd/es/table';
-import { RootState } from '@/lib/store';
 import PermissionGuard from '@/components/PermissionGuard';
 import DeleteModal from './DeleteModal';
 import { useTheme } from '@/providers/theme';

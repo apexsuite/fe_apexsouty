@@ -42,7 +42,7 @@ export const fetchProducts = createAsyncThunk(
     if (params.name) queryParams.append('name', params.name);
     if (params.unitLabel) queryParams.append('unitLabel', params.unitLabel);
     if (params.isActive !== undefined) queryParams.append('isActive', params.isActive.toString());
-    
+
     const response = await apiRequest(`/products?${queryParams.toString()}`);
     return response;
   }
@@ -198,13 +198,13 @@ const productSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-             .addCase(fetchProducts.fulfilled, (state, action) => {
-         state.loading = false;
-         state.products = action.payload.data?.items || [];
-         state.totalPages = action.payload.data?.pageCount || 1;
-         state.totalCount = action.payload.data?.totalCount || 0;
-         state.error = null;
-       })
+      .addCase(fetchProducts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.products = action.payload.data?.items || [];
+        state.totalPages = action.payload.data?.pageCount || 1;
+        state.totalCount = action.payload.data?.totalCount || 0;
+        state.error = null;
+      })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to fetch products';
@@ -216,11 +216,11 @@ const productSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-             .addCase(fetchProduct.fulfilled, (state, action) => {
-         state.loading = false;
-         state.product = action.payload.data;
-         state.error = null;
-       })
+      .addCase(fetchProduct.fulfilled, (state, action) => {
+        state.loading = false;
+        state.product = action.payload.data;
+        state.error = null;
+      })
       .addCase(fetchProduct.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to fetch product';
@@ -247,19 +247,19 @@ const productSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-             .addCase(updateProduct.fulfilled, (state, action) => {
-         state.loading = false;
-         // Update the product in the list if it exists
-         const index = state.products.findIndex(p => p.id === action.payload.data?.id);
-         if (index !== -1) {
-           state.products[index] = action.payload.data;
-         }
-         // Update the current product if it's the same one
-         if (state.product && state.product.id === action.payload.data?.id) {
-           state.product = action.payload.data;
-         }
-         state.error = null;
-       })
+      .addCase(updateProduct.fulfilled, (state, action) => {
+        state.loading = false;
+        // Update the product in the list if it exists
+        const index = state.products.findIndex(p => p.id === action.payload.data?.id);
+        if (index !== -1) {
+          state.products[index] = action.payload.data;
+        }
+        // Update the current product if it's the same one
+        if (state.product && state.product.id === action.payload.data?.id) {
+          state.product = action.payload.data;
+        }
+        state.error = null;
+      })
       .addCase(updateProduct.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to update product';
@@ -292,19 +292,19 @@ const productSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-             .addCase(changeProductStatus.fulfilled, (state, action) => {
-         state.loading = false;
-         // Update the product status in the list
-         const index = state.products.findIndex(p => p.id === action.payload.data?.id);
-         if (index !== -1) {
-           state.products[index].isActive = action.payload.data.isActive;
-         }
-         // Update the current product if it's the same one
-         if (state.product && state.product.id === action.payload.data?.id) {
-           state.product.isActive = action.payload.data.isActive;
-         }
-         state.error = null;
-       })
+      .addCase(changeProductStatus.fulfilled, (state, action) => {
+        state.loading = false;
+        // Update the product status in the list
+        const index = state.products.findIndex(p => p.id === action.payload.data?.id);
+        if (index !== -1) {
+          state.products[index]!.isActive = action.payload.data.isActive;
+        }
+        // Update the current product if it's the same one
+        if (state.product && state.product.id === action.payload.data?.id) {
+          state.product.isActive = action.payload.data.isActive;
+        }
+        state.error = null;
+      })
       .addCase(changeProductStatus.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to change product status';

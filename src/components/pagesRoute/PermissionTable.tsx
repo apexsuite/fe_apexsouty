@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { RootState, AppDispatch } from '@/lib/store';
+import { AppDispatch } from '@/lib/store';
 import {
   changePermissionStatus,
   deletePermission,
@@ -299,7 +299,7 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
                 <p className="text-sm">
                   {searchTerm
                     ? t('permissions.tryDifferentSearch') ||
-                      'Try a different search term'
+                    'Try a different search term'
                     : t('pages.createFirstPermission')}
                 </p>
               </div>
@@ -339,7 +339,7 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
             <p className="text-sm">
               {searchTerm
                 ? t('permissions.tryDifferentSearch') ||
-                  'Try a different search term'
+                'Try a different search term'
                 : t('pages.createFirstPermission')}
             </p>
           </div>
@@ -347,11 +347,10 @@ const PermissionTable: React.FC<PermissionTableProps> = ({
           paginatedPermissions.map(permission => (
             <div
               key={permission.id}
-              className={`rounded-lg border p-4 ${
-                theme === 'dark'
+              className={`rounded-lg border p-4 ${theme === 'dark'
                   ? 'border-gray-700 bg-gray-800'
                   : 'border-gray-200 bg-white'
-              }`}
+                }`}
             >
               {/* Card Header */}
               <div className="mb-3 flex items-start justify-between">

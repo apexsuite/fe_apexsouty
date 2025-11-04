@@ -58,10 +58,10 @@ export const handleValidationErrors = (error: any, t: (key: string) => string) =
   try {
     if (!error?.error?.validations || !Array.isArray(error.error.validations)) {
       const apiMessage = error?.error?.message || error?.message;
-      
+
       if (apiMessage && typeof apiMessage === 'string') {
         const isTranslationKey = /^[a-z][a-zA-Z0-9]*$/.test(apiMessage) || /^[a-z]+(-[a-z]+)*$/.test(apiMessage);
-        
+
         if (isTranslationKey) {
           const translatedMessage = t(`notification.${apiMessage}`) || apiMessage;
           toast.error(translatedMessage);
@@ -75,15 +75,15 @@ export const handleValidationErrors = (error: any, t: (key: string) => string) =
     }
 
     const validations = error.error.validations as ValidationError[];
-    
+
     if (validations.length > 0) {
       const firstValidation = validations[0];
-      const { key, message } = firstValidation;
-      
-            const fieldTitle = fieldKeyMapping[key] || key.charAt(0).toUpperCase() + key.slice(1);
-      
+      const { key, message } = firstValidation as ValidationError;
+
+      const fieldTitle = fieldKeyMapping[key] || key.charAt(0).toUpperCase() + key.slice(1);
+
       const translatedMessage = t(`notification.${message}`) || message;
-      
+
       toast.error(`${fieldTitle}: ${translatedMessage}`, {
         position: "top-right",
         autoClose: 5000,
@@ -93,7 +93,7 @@ export const handleValidationErrors = (error: any, t: (key: string) => string) =
         draggable: true,
       });
     }
-    
+
   } catch (parseError) {
     console.error('Error parsing validation errors:', parseError);
     toast.error(t('notification.anErrorOccurred'));
@@ -107,19 +107,19 @@ export const handleValidationErrors = (error: any, t: (key: string) => string) =
 export const handleApiError = (error: any, t: (key: string) => string) => {
   try {
     const actualError = error?.data || error;
-    
-    
+
+
     if (actualError?.error?.validations && Array.isArray(actualError.error.validations)) {
       handleValidationErrors(actualError, t);
       return;
     }
-    
+
     if (actualError?.error?.message) {
       const apiMessage = actualError.error.message;
-      
+
       if (apiMessage && typeof apiMessage === 'string') {
         const isTranslationKey = /^[a-z][a-zA-Z0-9]*$/.test(apiMessage) || /^[a-z]+(-[a-z]+)*$/.test(apiMessage);
-        
+
         if (isTranslationKey) {
           const translatedMessage = t(`notification.${apiMessage}`) || apiMessage;
           toast.error(translatedMessage);
@@ -129,11 +129,11 @@ export const handleApiError = (error: any, t: (key: string) => string) => {
         return;
       }
     }
-    
+
     const status = error?.status || error?.response?.status;
-    
+
     let errorMessage = t('notification.anErrorOccurred');
-    
+
     switch (status) {
       case 400:
         errorMessage = t('notification.someValidationErrorsOccurred');
@@ -157,12 +157,12 @@ export const handleApiError = (error: any, t: (key: string) => string) => {
         errorMessage = t('notification.serviceUnavailable');
         break;
       default:
-              
+
         const apiMessage = actualError?.error?.message || error?.error?.message || error?.message;
-        
+
         if (apiMessage && typeof apiMessage === 'string') {
           const isTranslationKey = /^[a-z][a-zA-Z0-9]*$/.test(apiMessage) || /^[a-z]+(-[a-z]+)*$/.test(apiMessage);
-          
+
           if (isTranslationKey) {
             errorMessage = t(`notification.${apiMessage}`) || apiMessage;
           } else {
@@ -172,9 +172,9 @@ export const handleApiError = (error: any, t: (key: string) => string) => {
           errorMessage = t('notification.anErrorOccurred');
         }
     }
-    
+
     toast.error(errorMessage);
-    
+
   } catch (parseError) {
     console.error('Error handling API error:', parseError);
     toast.error(t('notification.anErrorOccurred'));

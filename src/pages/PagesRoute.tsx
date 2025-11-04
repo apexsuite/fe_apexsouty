@@ -36,9 +36,9 @@ const PagesRoute: React.FC = () => {
   const theme = useTheme();
   const { handleError, showSuccess } = useErrorHandler();
 
-  const themeKey = theme === 'light' ? 'light' : 'dark';
+  const themeKey = theme.theme === 'light' ? 'light' : 'dark';
 
-  useEffect(() => {}, [theme]);
+  useEffect(() => { }, [theme]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
@@ -214,8 +214,8 @@ const PagesRoute: React.FC = () => {
       style={{
         padding: '1.5rem',
         minHeight: '100vh',
-        backgroundColor: theme === 'dark' ? '#111827' : '#f9fafb',
-        color: theme === 'dark' ? '#ffffff' : '#111827',
+        backgroundColor: theme.theme === 'dark' ? '#111827' : '#f9fafb',
+        color: theme.theme === 'dark' ? '#ffffff' : '#111827',
       }}
     >
       <div className="mx-auto max-w-7xl">
@@ -227,7 +227,7 @@ const PagesRoute: React.FC = () => {
                 style={{
                   fontSize: '1.875rem',
                   fontWeight: 'bold',
-                  color: theme === 'dark' ? '#ffffff' : '#111827',
+                  color: theme.theme === 'dark' ? '#ffffff' : '#111827',
                 }}
               >
                 {t('pages.title')}
@@ -235,7 +235,7 @@ const PagesRoute: React.FC = () => {
               <p
                 style={{
                   marginTop: '0.5rem',
-                  color: theme === 'dark' ? '#d1d5db' : '#4b5563',
+                  color: theme.theme === 'dark' ? '#d1d5db' : '#4b5563',
                 }}
               >
                 {t('pages.subtitle')}
@@ -256,8 +256,8 @@ const PagesRoute: React.FC = () => {
         {/* Search and Filters */}
         <Card
           style={{
-            backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
-            borderColor: theme === 'dark' ? '#374151' : '#e5e7eb',
+            backgroundColor: theme.theme === 'dark' ? '#1f2937' : '#ffffff',
+            borderColor: theme.theme === 'dark' ? '#374151' : '#e5e7eb',
             marginBottom: '1.5rem',
           }}
         >
@@ -271,19 +271,18 @@ const PagesRoute: React.FC = () => {
                     placeholder={t('pages.searchPlaceholder')}
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
-                    className={`w-full rounded-lg border py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
-                      theme === 'dark'
-                        ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
-                        : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
-                    }`}
+                    className={`w-full rounded-lg border py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${theme.theme === 'dark'
+                      ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                      : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+                      }`}
                     style={{
-                      backgroundColor: theme === 'dark' ? '#374151' : '#ffffff',
-                      borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
-                      color: theme === 'dark' ? '#ffffff' : '#111827',
+                      backgroundColor: theme.theme === 'dark' ? '#374151' : '#ffffff',
+                      borderColor: theme.theme === 'dark' ? '#4b5563' : '#d1d5db',
+                      color: theme.theme === 'dark' ? '#ffffff' : '#111827',
                     }}
                   />
                   <Search
-                    className={`absolute top-1/2 left-3 -translate-y-1/2 transform ${theme === 'dark' ? 'text-gray-400' : 'text-gray-400'}`}
+                    className={`absolute top-1/2 left-3 -translate-y-1/2 transform ${theme.theme === 'dark' ? 'text-gray-400' : 'text-gray-400'}`}
                     size={20}
                   />
                 </div>
@@ -291,29 +290,28 @@ const PagesRoute: React.FC = () => {
 
               <Button
                 onClick={() => setShowFilters(!showFilters)}
-                className={`flex items-center gap-2 ${
-                  Object.values(filters).some(
-                    value => value !== '' && value !== undefined
-                  )
-                    ? 'bg-blue-600 text-white'
-                    : theme === 'dark'
-                      ? 'bg-gray-700 text-gray-300'
-                      : 'bg-gray-100 text-gray-700'
-                }`}
+                className={`flex items-center gap-2 ${Object.values(filters).some(
+                  value => value !== '' && value !== undefined
+                )
+                  ? 'bg-blue-600 text-white'
+                  : theme.theme === 'dark'
+                    ? 'bg-gray-700 text-gray-300'
+                    : 'bg-gray-100 text-gray-700'
+                  }`}
                 style={{
                   backgroundColor: Object.values(filters).some(
                     value => value !== '' && value !== undefined
                   )
                     ? '#2563eb'
-                    : theme === 'dark'
+                    : theme.theme === 'dark'
                       ? '#374151'
                       : '#f3f4f6',
-                  borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
+                  borderColor: theme.theme === 'dark' ? '#4b5563' : '#d1d5db',
                   color: Object.values(filters).some(
                     value => value !== '' && value !== undefined
                   )
                     ? '#ffffff'
-                    : theme === 'dark'
+                    : theme.theme === 'dark'
                       ? '#d1d5db'
                       : '#374151',
                 }}
@@ -323,14 +321,14 @@ const PagesRoute: React.FC = () => {
                 {Object.values(filters).some(
                   value => value !== '' && value !== undefined
                 ) && (
-                  <span className="ml-1 rounded-full bg-white px-1.5 py-0.5 text-xs text-blue-600">
-                    {
-                      Object.values(filters).filter(
-                        value => value !== '' && value !== undefined
-                      ).length
-                    }
-                  </span>
-                )}
+                    <span className="ml-1 rounded-full bg-white px-1.5 py-0.5 text-xs text-blue-600">
+                      {
+                        Object.values(filters).filter(
+                          value => value !== '' && value !== undefined
+                        ).length
+                      }
+                    </span>
+                  )}
               </Button>
             </div>
 
@@ -339,7 +337,7 @@ const PagesRoute: React.FC = () => {
               <div className="grid grid-cols-1 gap-4 border-t border-gray-200 p-4 md:grid-cols-4 dark:border-gray-700">
                 <div>
                   <label
-                    className={`mb-2 block text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
+                    className={`mb-2 block text-sm font-medium ${theme.theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
                   >
                     {t('pages.name')}
                   </label>
@@ -348,17 +346,16 @@ const PagesRoute: React.FC = () => {
                     placeholder={t('pages.enterName')}
                     value={filters.name}
                     onChange={e => handleFilterChange('name', e.target.value)}
-                    className={`w-full rounded-lg border px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
-                      theme === 'dark'
-                        ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
-                        : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
-                    }`}
+                    className={`w-full rounded-lg border px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${theme.theme === 'dark'
+                      ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                      : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+                      }`}
                   />
                 </div>
 
                 <div>
                   <label
-                    className={`mb-2 block text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
+                    className={`mb-2 block text-sm font-medium ${theme.theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
                   >
                     {t('pages.path')}
                   </label>
@@ -367,17 +364,16 @@ const PagesRoute: React.FC = () => {
                     placeholder={t('pages.enterPath')}
                     value={filters.path}
                     onChange={e => handleFilterChange('path', e.target.value)}
-                    className={`w-full rounded-lg border px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
-                      theme === 'dark'
-                        ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
-                        : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
-                    }`}
+                    className={`w-full rounded-lg border px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${theme.theme === 'dark'
+                      ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                      : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+                      }`}
                   />
                 </div>
 
                 <div>
                   <label
-                    className={`mb-2 block text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
+                    className={`mb-2 block text-sm font-medium ${theme.theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
                   >
                     {t('pages.component')}
                   </label>
@@ -388,17 +384,16 @@ const PagesRoute: React.FC = () => {
                     onChange={e =>
                       handleFilterChange('component', e.target.value)
                     }
-                    className={`w-full rounded-lg border px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
-                      theme === 'dark'
-                        ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
-                        : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
-                    }`}
+                    className={`w-full rounded-lg border px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${theme.theme === 'dark'
+                      ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                      : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+                      }`}
                   />
                 </div>
 
                 <div>
                   <label
-                    className={`mb-2 block text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
+                    className={`mb-2 block text-sm font-medium ${theme.theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
                   >
                     {t('pages.table.status')}
                   </label>
@@ -422,9 +417,9 @@ const PagesRoute: React.FC = () => {
                     onClick={clearFilters}
                     className="flex items-center gap-2"
                     style={{
-                      backgroundColor: theme === 'dark' ? '#374151' : '#f3f4f6',
-                      borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
-                      color: theme === 'dark' ? '#d1d5db' : '#374151',
+                      backgroundColor: theme.theme === 'dark' ? '#374151' : '#f3f4f6',
+                      borderColor: theme.theme === 'dark' ? '#4b5563' : '#d1d5db',
+                      color: theme.theme === 'dark' ? '#d1d5db' : '#374151',
                     }}
                   >
                     <X size={16} />
@@ -438,8 +433,8 @@ const PagesRoute: React.FC = () => {
 
         <div
           style={{
-            backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
-            border: `1px solid ${theme === 'dark' ? '#374151' : '#e5e7eb'}`,
+            backgroundColor: theme.theme === 'dark' ? '#1f2937' : '#ffffff',
+            border: `1px solid ${theme.theme === 'dark' ? '#374151' : '#e5e7eb'}`,
             borderRadius: '8px',
             overflow: 'hidden',
           }}
@@ -449,7 +444,7 @@ const PagesRoute: React.FC = () => {
               style={{
                 padding: '40px 20px',
                 textAlign: 'center',
-                color: theme === 'dark' ? '#9ca3af' : '#6b7280',
+                color: theme.theme === 'dark' ? '#9ca3af' : '#6b7280',
               }}
             >
               {searchTerm ? (
@@ -504,7 +499,7 @@ const PagesRoute: React.FC = () => {
             showTotal={(_, range) => (
               <span
                 style={{
-                  color: theme === 'dark' ? '#d1d5db' : '#374151',
+                  color: theme.theme === 'dark' ? '#d1d5db' : '#374151',
                   fontSize: '14px',
                   fontWeight: '500',
                 }}
@@ -524,7 +519,7 @@ const PagesRoute: React.FC = () => {
               handlePageSizeChange(size);
             }}
             style={{
-              color: theme === 'dark' ? '#f9fafb' : '#111827',
+              color: theme.theme === 'dark' ? '#f9fafb' : '#111827',
             }}
           />
         </div>

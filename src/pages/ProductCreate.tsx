@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { AppDispatch, RootState } from '@/lib/store';
+import { AppDispatch } from '@/lib/store';
 import { createProduct } from '@/lib/productSlice';
 import { ArrowLeft, Save } from 'lucide-react';
 import {

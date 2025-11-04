@@ -25,7 +25,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-  SidebarTrigger,
   useSidebar,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
@@ -46,7 +45,7 @@ import CustomButton from '../CustomButton';
 
 type LucideIconComponent = React.ComponentType<{ size?: number }>;
 
-interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {}
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> { }
 
 const getSortedFavorites = (favorites: MenuItem[]): MenuItem[] => {
   return [...favorites].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
@@ -188,7 +187,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
                                 {...provided.dragHandleProps}
                                 className={cn(
                                   snapshot.isDragging &&
-                                    'group flex cursor-grab items-center gap-3 bg-yellow-50 active:cursor-grabbing dark:bg-yellow-900/20'
+                                  'group flex cursor-grab items-center gap-3 bg-yellow-50 active:cursor-grabbing dark:bg-yellow-900/20'
                                 )}
                               >
                                 <SidebarMenuButton

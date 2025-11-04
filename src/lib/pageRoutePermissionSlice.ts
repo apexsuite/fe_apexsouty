@@ -96,11 +96,11 @@ const initialState: PermissionState = {
 
 export const fetchPermissions = createAsyncThunk(
   'permission/fetchPermissions',
-  async (params: { 
-    page?: number; 
-    pageSize?: number; 
-    name?: string; 
-    description?: string; 
+  async (params: {
+    page?: number;
+    pageSize?: number;
+    name?: string;
+    description?: string;
     label?: string;
     isActive?: boolean;
   } = {}, { rejectWithValue }) => {
@@ -229,10 +229,10 @@ export const deletePermissionDirect = createAsyncThunk(
 
 export const changePermissionStatus = createAsyncThunk(
   'permission/changePermissionStatus',
-  async ({ pageRouteId, permissionId, status }: { 
-    pageRouteId: string; 
-    permissionId: string; 
-    status: boolean 
+  async ({ pageRouteId, permissionId, status }: {
+    pageRouteId: string;
+    permissionId: string;
+    status: boolean
   }, { rejectWithValue }) => {
     try {
       const response = await apiRequest(`/page-routes/${pageRouteId}/permissions/${permissionId}/change-status`, {
@@ -282,14 +282,14 @@ const permissionSlice = createSlice({
       .addCase(fetchPermissions.fulfilled, (state, action) => {
         state.loading = false;
         const validPermissions = (action.payload.data?.items || []).filter((permission: any) => permission !== null);
-        
+
         if (state.isSearching && validPermissions.length === 0) {
           state.filteredPermissions = [];
         } else {
           state.permissions = validPermissions;
           state.filteredPermissions = validPermissions;
         }
-        
+
         state.totalPages = action.payload.data?.pageCount || 0;
         state.totalCount = action.payload.data?.totalCount || 0;
         state.currentPageNumber = action.payload.data?.page || 1;
@@ -411,7 +411,7 @@ const permissionSlice = createSlice({
         const { permissionId, status } = action.payload;
         const index = state.permissions.findIndex(p => p.id === permissionId);
         if (index !== -1) {
-          state.permissions[index].isActive = status;
+          state.permissions[index]!.isActive = status;
         }
         if (state.currentPermission?.id === permissionId) {
           state.currentPermission.isActive = status;
@@ -424,13 +424,13 @@ const permissionSlice = createSlice({
   },
 });
 
-export const { 
-  setCurrentPageNumber, 
-  setPageSize, 
-  clearCurrentPermission, 
-  clearError, 
-  setSearching, 
-  setFilteredPermissions, 
-  clearSearch 
+export const {
+  setCurrentPageNumber,
+  setPageSize,
+  clearCurrentPermission,
+  clearError,
+  setSearching,
+  setFilteredPermissions,
+  clearSearch
 } = permissionSlice.actions;
 export default permissionSlice.reducer; 

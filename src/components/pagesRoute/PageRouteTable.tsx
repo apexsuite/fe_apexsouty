@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { Table, Button, Space, Tag, Card, Switch, theme, Tooltip } from 'antd';
 import { Edit, Eye, Trash2, ChevronDown, ChevronUp, FolderOpen } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { ColumnsType } from 'antd/es/table';
-import { RootState } from '@/lib/store';
 import { PageRoute } from '@/lib/pageSlice';
 import PermissionGuard from '@/components/PermissionGuard';
 import * as LucideIcons from 'lucide-react';
@@ -13,12 +11,12 @@ import { useTheme } from '@/providers/theme';
 // Function to get Lucide icon dynamically
 const getLucideIcon = (iconName: string) => {
   if (!iconName) return LucideIcons.Circle;
-  
+
   const pascalCaseName = iconName
     .split('-')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join('');
-  
+
   const IconComponent = (LucideIcons as any)[pascalCaseName];
   return IconComponent || LucideIcons.Circle;
 };
@@ -67,7 +65,7 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
 
   const handleDeleteConfirm = async () => {
     if (!selectedPageRoute) return;
-    
+
     setIsDeleting(true);
     try {
       await onDelete(selectedPageRoute.id);
@@ -91,9 +89,9 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
       key: 'name',
       dataIndex: 'name',
       render: (name: string) => (
-        <span style={{ 
+        <span style={{
           color: currentTheme === 'dark' ? '#ffffff' : token.colorText,
-          fontWeight: 500 
+          fontWeight: 500
         }}>
           {name}
         </span>
@@ -104,9 +102,9 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
       key: 'component',
       dataIndex: 'component',
       render: (component: string) => (
-        <span style={{ 
+        <span style={{
           color: currentTheme === 'dark' ? '#ffffff' : token.colorText,
-          fontWeight: 500 
+          fontWeight: 500
         }}>
           {component}
         </span>
@@ -141,8 +139,8 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
       dataIndex: 'is_active',
       render: (isActive: boolean, record: PageRoute) => (
         <div className="flex items-center gap-2">
-          <PermissionGuard 
-            permission="change-page-route-status" 
+          <PermissionGuard
+            permission="change-page-route-status"
             mode="disable"
           >
             <Switch
@@ -183,8 +181,8 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
       key: 'actions',
       render: (_, record: PageRoute) => (
         <Space size="small">
-          <PermissionGuard 
-            permission="get-page-route" 
+          <PermissionGuard
+            permission="get-page-route"
             mode="hide"
           >
             <Tooltip title="View">
@@ -197,9 +195,9 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
               />
             </Tooltip>
           </PermissionGuard>
-          
-          <PermissionGuard 
-            permission="update-page-route" 
+
+          <PermissionGuard
+            permission="update-page-route"
             mode="hide"
           >
             <Tooltip title="Edit">
@@ -213,8 +211,8 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
             </Tooltip>
           </PermissionGuard>
 
-          <PermissionGuard 
-            permission="delete-page-route" 
+          <PermissionGuard
+            permission="delete-page-route"
             mode="hide"
           >
             <Tooltip title="Delete">
@@ -237,10 +235,10 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
   const PageRouteCard: React.FC<{ pageRoute: PageRoute }> = ({ pageRoute }) => {
     const isExpanded = openCard === pageRoute.id;
     const IconComponent = getLucideIcon(pageRoute.icon);
-    
+
     return (
       <Card
-        style={{ 
+        style={{
           cursor: 'pointer',
           backgroundColor: currentTheme === 'dark' ? '#1f2937' : '#ffffff',
           borderColor: currentTheme === 'dark' ? '#374151' : '#e5e7eb',
@@ -253,27 +251,27 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
         <div className="flex justify-between items-start">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <IconComponent 
-                size={14} 
-                className={currentTheme === 'dark' ? 'text-blue-400' : 'text-blue-500'} 
+              <IconComponent
+                size={14}
+                className={currentTheme === 'dark' ? 'text-blue-400' : 'text-blue-500'}
               />
-              <h3 
+              <h3
                 className="font-medium text-sm truncate flex-1"
                 style={{ color: currentTheme === 'dark' ? '#ffffff' : '#111827' }}
               >
                 {pageRoute.name}
               </h3>
             </div>
-            
+
             <div className="flex items-center gap-2 mb-1">
-              <span 
+              <span
                 className="text-xs"
                 style={{ color: currentTheme === 'dark' ? '#9ca3af' : '#6b7280' }}
               >
                 Status:
               </span>
-              <PermissionGuard 
-                permission="change-page-route-status" 
+              <PermissionGuard
+                permission="change-page-route-status"
                 mode="disable"
               >
                 <div onClick={(e) => e.stopPropagation()}>
@@ -284,42 +282,42 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
                   />
                 </div>
               </PermissionGuard>
-              <Tag 
+              <Tag
                 color={pageRoute.is_active ? 'success' : 'default'}
                 style={{ fontSize: '10px' }}
               >
                 {pageRoute.is_active ? 'Active' : 'Inactive'}
               </Tag>
             </div>
-            
+
             <div className="flex items-center gap-1 mb-1">
               <FolderOpen size={12} className={currentTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} />
-              <span 
+              <span
                 className="text-xs truncate flex-1"
                 style={{ color: currentTheme === 'dark' ? '#d1d5db' : '#6b7280' }}
               >
                 {pageRoute.component}
               </span>
             </div>
-            
+
             <div className="flex items-center gap-2 mb-1">
-              <Tag 
-                color="blue" 
-                style={{ 
-                  fontSize: '10px', 
+              <Tag
+                color="blue"
+                style={{
+                  fontSize: '10px',
                   fontFamily: 'monospace',
-                  marginRight: 0 
+                  marginRight: 0
                 }}
               >
                 {pageRoute.path}
               </Tag>
-              <Tag 
+              <Tag
                 color={pageRoute.is_visible ? 'green' : 'red'}
                 style={{ fontSize: '10px' }}
               >
                 {pageRoute.is_visible ? 'Visible' : 'Hidden'}
               </Tag>
-              <Tag 
+              <Tag
                 color="purple"
                 style={{ fontSize: '10px' }}
               >
@@ -327,13 +325,13 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
               </Tag>
             </div>
           </div>
-          
-          <Button 
-            type="text" 
-            size="small" 
-            onClick={(e) => { 
-              e.stopPropagation(); 
-              setOpenCard(isExpanded ? null : pageRoute.id); 
+
+          <Button
+            type="text"
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpenCard(isExpanded ? null : pageRoute.id);
             }}
             className="p-0 h-auto"
             style={{ minWidth: 'auto' }}
@@ -343,13 +341,13 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
         </div>
 
         {isExpanded && (
-          <div 
+          <div
             className="mt-3 pt-3 border-t"
             style={{ borderColor: currentTheme === 'dark' ? '#374151' : '#e5e7eb' }}
           >
             <div className="flex flex-wrap gap-1">
-              <PermissionGuard 
-                permission="get-page-route" 
+              <PermissionGuard
+                permission="get-page-route"
                 mode="hide"
               >
                 <Button
@@ -360,7 +358,7 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
                     e.stopPropagation();
                     onView(pageRoute.id);
                   }}
-                  style={{ 
+                  style={{
                     color: currentTheme === 'dark' ? '#ffffff' : token.colorPrimary,
                     fontSize: '11px',
                     height: '24px',
@@ -370,9 +368,9 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
                   View
                 </Button>
               </PermissionGuard>
-              
-              <PermissionGuard 
-                permission="update-page-route" 
+
+              <PermissionGuard
+                permission="update-page-route"
                 mode="hide"
               >
                 <Button
@@ -383,7 +381,7 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
                     e.stopPropagation();
                     onEdit(pageRoute.id);
                   }}
-                  style={{ 
+                  style={{
                     color: currentTheme === 'dark' ? '#ffffff' : token.colorSuccess,
                     fontSize: '11px',
                     height: '24px',
@@ -394,8 +392,8 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
                 </Button>
               </PermissionGuard>
 
-              <PermissionGuard 
-                permission="delete-page-route" 
+              <PermissionGuard
+                permission="delete-page-route"
                 mode="hide"
               >
                 <Button
@@ -407,7 +405,7 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
                     e.stopPropagation();
                     handleDeleteClick(pageRoute);
                   }}
-                  style={{ 
+                  style={{
                     color: currentTheme === 'dark' ? '#ef4444' : '#dc2626',
                     fontSize: '11px',
                     height: '24px',
@@ -441,9 +439,8 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
         {/* Delete Modal */}
         {showDeleteModal && selectedPageRoute && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className={`rounded-lg p-6 max-w-md w-full mx-4 ${
-              currentTheme === 'dark' ? 'bg-gray-800 border border-gray-700' : 'bg-white'
-            }`}>
+            <div className={`rounded-lg p-6 max-w-md w-full mx-4 ${currentTheme === 'dark' ? 'bg-gray-800 border border-gray-700' : 'bg-white'
+              }`}>
               <h3 className={`text-lg font-semibold mb-4 ${currentTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 {t('pages.deletePage')}
               </h3>
@@ -453,11 +450,10 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
               <div className="flex gap-3">
                 <button
                   onClick={handleDeleteCancel}
-                  className={`flex-1 px-4 py-2 border rounded-lg transition-colors disabled:opacity-50 ${
-                    currentTheme === 'dark' 
-                      ? 'border-gray-600 hover:bg-gray-700 text-gray-300' 
+                  className={`flex-1 px-4 py-2 border rounded-lg transition-colors disabled:opacity-50 ${currentTheme === 'dark'
+                      ? 'border-gray-600 hover:bg-gray-700 text-gray-300'
                       : 'border-gray-300 hover:bg-gray-50 text-gray-700'
-                  }`}
+                    }`}
                   disabled={isDeleting}
                 >
                   {t('pages.cancel')}
@@ -470,7 +466,7 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
                   {isDeleting ? t('pages.saving') : t('pages.delete')}
                 </button>
               </div>
-            </div>  
+            </div>
           </div>
         )}
       </>
@@ -496,9 +492,8 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
       {/* Delete Modal */}
       {showDeleteModal && selectedPageRoute && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className={`rounded-lg p-6 max-w-md w-full mx-4 ${
-            currentTheme === 'dark' ? 'bg-gray-800 border border-gray-700' : 'bg-white'
-          }`}>
+          <div className={`rounded-lg p-6 max-w-md w-full mx-4 ${currentTheme === 'dark' ? 'bg-gray-800 border border-gray-700' : 'bg-white'
+            }`}>
             <h3 className={`text-lg font-semibold mb-4 ${currentTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               {t('pages.deletePage')}
             </h3>
@@ -508,11 +503,10 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
             <div className="flex gap-3">
               <button
                 onClick={handleDeleteCancel}
-                className={`flex-1 px-4 py-2 border rounded-lg transition-colors disabled:opacity-50 ${
-                  currentTheme === 'dark' 
-                    ? 'border-gray-600 hover:bg-gray-700 text-gray-300' 
+                className={`flex-1 px-4 py-2 border rounded-lg transition-colors disabled:opacity-50 ${currentTheme === 'dark'
+                    ? 'border-gray-600 hover:bg-gray-700 text-gray-300'
                     : 'border-gray-300 hover:bg-gray-50 text-gray-700'
-                }`}
+                  }`}
                 disabled={isDeleting}
               >
                 {t('pages.cancel')}
@@ -525,7 +519,7 @@ const PageRouteTable: React.FC<PageRouteTableProps> = ({
                 {isDeleting ? t('pages.saving') : t('pages.delete')}
               </button>
             </div>
-          </div>  
+          </div>
         </div>
       )}
     </>

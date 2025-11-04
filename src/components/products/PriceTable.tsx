@@ -1,24 +1,23 @@
-  import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Table, 
-  Button, 
-  Space, 
-  Tag, 
-  Switch, 
-  Tooltip, 
+import {
+  Table,
+  Button,
+  Space,
+  Tag,
+  Switch,
+  Tooltip,
   Card,
   Typography,
-  theme 
+  theme
 } from 'antd';
 import PermissionGuard from '@/components/PermissionGuard';
 import { useErrorHandler } from '@/lib/useErrorHandler';
-import { 
-  Plus, 
-  Eye, 
-  Star, 
+import {
+  Plus,
+  Eye,
+  Star,
   StarOff,
   DollarSign,
   Calendar,
@@ -27,7 +26,6 @@ import {
   ChevronUp
 } from 'lucide-react';
 import type { ColumnsType } from 'antd/es/table';
-import { RootState } from '@/lib/store';
 import { AppDispatch } from '@/lib/store';
 import { useDispatch } from 'react-redux';
 import { updatePriceStatus, setDefaultPrice } from '@/lib/productSlice';
@@ -69,7 +67,7 @@ const PriceTable: React.FC<PriceTableProps> = ({
   const dispatch = useDispatch<AppDispatch>();
   const { theme: currentTheme } = useTheme();
   const { handleError, showSuccess } = useErrorHandler();
-  
+
   const [loadingStates, setLoadingStates] = useState<{ [key: string]: boolean }>({});
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -102,7 +100,7 @@ const PriceTable: React.FC<PriceTableProps> = ({
   const handleSetDefault = async (priceId: string, event?: React.MouseEvent) => {
     event?.preventDefault();
     event?.stopPropagation();
-    
+
     setLoadingStates(prev => ({ ...prev, [priceId]: true }));
     try {
       await dispatch(setDefaultPrice({ productId, priceId })).unwrap();
@@ -118,7 +116,7 @@ const PriceTable: React.FC<PriceTableProps> = ({
   const handleViewDetail = (priceId: string, event?: React.MouseEvent) => {
     event?.preventDefault();
     event?.stopPropagation();
-    
+
     // Yeni sayfaya yönlendir
     navigate(`/products/${productId}/prices/${priceId}`);
   };
@@ -175,7 +173,7 @@ const PriceTable: React.FC<PriceTableProps> = ({
       dataIndex: 'unitAmount',
       key: 'unitAmount',
       render: (unitAmount: number, record: Price) => (
-        <span 
+        <span
           style={{ color: currentTheme === 'dark' ? '#ffffff' : token.colorText }}
           className="font-medium"
         >
@@ -194,8 +192,8 @@ const PriceTable: React.FC<PriceTableProps> = ({
       key: 'isActive',
       render: (isActive: boolean, record: Price) => (
         <div className="flex items-center gap-2">
-          <PermissionGuard 
-            permission="change-price-status" 
+          <PermissionGuard
+            permission="change-price-status"
             mode="disable"
           >
             <Switch
@@ -221,7 +219,7 @@ const PriceTable: React.FC<PriceTableProps> = ({
       key: 'default',
       render: (_, record: Price) => {
         const isDefault = defaultPriceId === record.id;
-        
+
         return (
           <div className="flex items-center gap-2">
             {isDefault ? (
@@ -229,8 +227,8 @@ const PriceTable: React.FC<PriceTableProps> = ({
                 {t('price.default')}
               </Tag>
             ) : (
-              <PermissionGuard 
-                permission="set-default-price" 
+              <PermissionGuard
+                permission="set-default-price"
                 mode="hide"
               >
                 <Button
@@ -254,14 +252,14 @@ const PriceTable: React.FC<PriceTableProps> = ({
       key: 'actions',
       render: (_, record: Price) => (
         <Space size="small">
-          <PermissionGuard 
-            permission="get-price" 
+          <PermissionGuard
+            permission="get-price"
             mode="hide"
           >
             <Tooltip title={t('common.view')}>
               <div
                 onClick={(e) => handleViewDetail(record.id, e)}
-                style={{ 
+                style={{
                   color: currentTheme === 'dark' ? '#ffffff' : token.colorPrimary,
                   cursor: 'pointer',
                   padding: '4px 8px',
@@ -291,10 +289,10 @@ const PriceTable: React.FC<PriceTableProps> = ({
   const PriceCard: React.FC<{ price: Price }> = ({ price }) => {
     const isExpanded = openCard === price.id;
     const isDefault = defaultPriceId === price.id;
-    
+
     return (
       <Card
-        style={{ 
+        style={{
           cursor: 'pointer',
           backgroundColor: currentTheme === 'dark' ? '#1f2937' : '#ffffff',
           borderColor: currentTheme === 'dark' ? '#374151' : '#e5e7eb',
@@ -307,19 +305,19 @@ const PriceTable: React.FC<PriceTableProps> = ({
         <div className="flex justify-between items-start">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <DollarSign 
-                size={14} 
-                className={currentTheme === 'dark' ? 'text-blue-400' : 'text-blue-500'} 
+              <DollarSign
+                size={14}
+                className={currentTheme === 'dark' ? 'text-blue-400' : 'text-blue-500'}
               />
-              <h3 
+              <h3
                 className="font-medium text-sm truncate flex-1"
                 style={{ color: currentTheme === 'dark' ? '#ffffff' : '#111827' }}
               >
                 {formatCurrency(price.unitAmount, price.currency)}
               </h3>
               {isDefault && (
-                <Tag 
-                  color="gold" 
+                <Tag
+                  color="gold"
                   icon={<Star size={10} />}
                   style={{ fontSize: '10px' }}
                 >
@@ -327,16 +325,16 @@ const PriceTable: React.FC<PriceTableProps> = ({
                 </Tag>
               )}
             </div>
-            
+
             <div className="flex items-center gap-2 mb-1">
-              <span 
+              <span
                 className="text-xs"
                 style={{ color: currentTheme === 'dark' ? '#9ca3af' : '#6b7280' }}
               >
                 Status:
               </span>
-              <PermissionGuard 
-                permission="change-price-status" 
+              <PermissionGuard
+                permission="change-price-status"
                 mode="disable"
               >
                 <div onClick={(e) => e.stopPropagation()}>
@@ -348,24 +346,24 @@ const PriceTable: React.FC<PriceTableProps> = ({
                   />
                 </div>
               </PermissionGuard>
-              <Tag 
+              <Tag
                 color={price.isActive ? 'success' : 'default'}
                 style={{ fontSize: '10px' }}
               >
                 {price.isActive ? 'Active' : 'Inactive'}
               </Tag>
             </div>
-            
+
             <div className="flex items-center gap-2 mb-1">
-              <Tag 
-                color="blue" 
+              <Tag
+                color="blue"
                 style={{ fontSize: '10px', marginRight: 0 }}
               >
                 {price.currency.toUpperCase()}
               </Tag>
               <div className="flex items-center gap-1">
                 <Calendar size={10} className={currentTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'} />
-                <span 
+                <span
                   className="text-xs"
                   style={{ color: currentTheme === 'dark' ? '#9ca3af' : '#6b7280' }}
                 >
@@ -374,13 +372,13 @@ const PriceTable: React.FC<PriceTableProps> = ({
               </div>
             </div>
           </div>
-          
-          <Button 
-            type="text" 
-            size="small" 
-            onClick={(e) => { 
-              e.stopPropagation(); 
-              setOpenCard(isExpanded ? null : price.id); 
+
+          <Button
+            type="text"
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpenCard(isExpanded ? null : price.id);
             }}
             className="p-0 h-auto"
             style={{ minWidth: 'auto' }}
@@ -390,13 +388,13 @@ const PriceTable: React.FC<PriceTableProps> = ({
         </div>
 
         {isExpanded && (
-          <div 
+          <div
             className="mt-3 pt-3 border-t"
             style={{ borderColor: currentTheme === 'dark' ? '#374151' : '#e5e7eb' }}
           >
             <div className="flex flex-wrap gap-1">
-              <PermissionGuard 
-                permission="get-price" 
+              <PermissionGuard
+                permission="get-price"
                 mode="hide"
               >
                 <Button
@@ -407,7 +405,7 @@ const PriceTable: React.FC<PriceTableProps> = ({
                     e.stopPropagation();
                     handleViewDetail(price.id, e);
                   }}
-                  style={{ 
+                  style={{
                     color: currentTheme === 'dark' ? '#ffffff' : token.colorPrimary,
                     fontSize: '11px',
                     height: '24px',
@@ -417,10 +415,10 @@ const PriceTable: React.FC<PriceTableProps> = ({
                   View
                 </Button>
               </PermissionGuard>
-              
+
               {!isDefault && (
-                <PermissionGuard 
-                  permission="set-default-price" 
+                <PermissionGuard
+                  permission="set-default-price"
                   mode="hide"
                 >
                   <Button
@@ -432,7 +430,7 @@ const PriceTable: React.FC<PriceTableProps> = ({
                       e.stopPropagation();
                       handleSetDefault(price.id, e);
                     }}
-                    style={{ 
+                    style={{
                       color: '#f59e0b',
                       fontSize: '11px',
                       height: '24px',
@@ -468,8 +466,8 @@ const PriceTable: React.FC<PriceTableProps> = ({
               </p>
             </div>
           </div>
-          <PermissionGuard 
-            permission="create-price" 
+          <PermissionGuard
+            permission="create-price"
             mode="hide"
           >
             <Button

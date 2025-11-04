@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Modal, Form, Input, Switch, Button, theme } from 'antd';
 import { useErrorHandler } from '@/lib/useErrorHandler';
 import { Edit, Info, Tag as TagIcon, Activity } from 'lucide-react';
-import { RootState, AppDispatch } from '@/lib/store';
+import { AppDispatch } from '@/lib/store';
 import { updatePermission } from '@/lib/pageRoutePermissionSlice';
 import { useTheme } from '@/providers/theme';
 

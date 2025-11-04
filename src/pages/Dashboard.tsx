@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@/lib/store";
 import { validateAmazonConsent } from "@/lib/consentSlice";
 import { useErrorHandler } from "@/lib/useErrorHandler";
-import CustomDataTable from "@/components/CustomDataTable";
 import useQueryParamHandler from "@/utils/hooks/useQueryParamHandler";
 
 interface Resource {
@@ -102,30 +101,6 @@ export default function Dashboard() {
     ? resources
     : resources.filter(r => r.favorite === 1);
 
-  const data = [
-    { name: "John Doe", type: "User", lastViewed: "2021-01-01" },
-    { name: "Jane Doe", type: "User", lastViewed: "2021-01-01" },
-    { name: "John Doe", type: "User", lastViewed: "2021-01-01" },
-    { name: "Jane Doe", type: "User", lastViewed: "2021-01-01" },
-
-    { name: "John Doe", type: "User", lastViewed: "2021-01-01" },
-    { name: "Jane Doe", type: "User", lastViewed: "2021-01-01" },
-  ]
-
-  const fakeColumns = [
-    {
-      header: "Name",
-      accessorKey: "name",
-    },
-    {
-      header: "Type",
-      accessorKey: "type",
-    },
-    {
-      header: "Last Viewed",
-      accessorKey: "lastViewed",
-    }
-  ]
   return (
     <div className="min-h-screen w-full px-6 md:px-12 py-12 bg-background">
       <div style={{ marginBottom: 32 }}>

@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { Modal, Form, Select, InputNumber, Button, theme } from 'antd';
 import PermissionGuard from '@/components/PermissionGuard';
 import { useErrorHandler } from '@/lib/useErrorHandler';
 import { DollarSign, Calendar, Activity } from 'lucide-react';
-import { RootState } from '@/lib/store';
 import { AppDispatch } from '@/lib/store';
 import { useDispatch } from 'react-redux';
 import { createPrice } from '@/lib/productSlice';
@@ -33,7 +31,7 @@ const CreatePriceModal: React.FC<CreatePriceModalProps> = ({
   productId,
 }) => {
   const { t } = useTranslation();
-  const {} = theme.useToken();
+  const { } = theme.useToken();
   const dispatch = useDispatch<AppDispatch>();
   const { theme: currentTheme } = useTheme();
   const { handleError, showSuccess } = useErrorHandler();

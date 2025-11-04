@@ -47,7 +47,7 @@ export const fetchMarketplaces = createAsyncThunk(
     if (params.marketplace) queryParams.append('marketplace', params.marketplace);
     if (params.marketplaceURL) queryParams.append('marketplaceURL', params.marketplaceURL);
     if (params.isActive !== undefined) queryParams.append('isActive', params.isActive.toString());
-    
+
     const response = await apiRequest(`/amazon/marketplaces?${queryParams.toString()}`);
     return response;
   }
@@ -136,7 +136,7 @@ const marketplaceSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchMarketplaces.fulfilled, (state, action) => {
-            state.loading = false;
+        state.loading = false;
         state.marketplaces = action.payload.data?.items || [];
         state.totalPages = action.payload.data?.pageCount || 1;
         state.totalCount = action.payload.data?.totalCount || 0;
@@ -224,7 +224,7 @@ const marketplaceSlice = createSlice({
         state.loading = false;
         const index = state.marketplaces.findIndex(m => m.id === action.payload.data?.id);
         if (index !== -1) {
-          state.marketplaces[index].isActive = action.payload.data.isActive;
+          state.marketplaces[index]!.isActive = action.payload.data.isActive;
         }
         if (state.marketplace && state.marketplace.id === action.payload.data?.id) {
           state.marketplace.isActive = action.payload.data.isActive;

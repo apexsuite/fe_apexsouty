@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Modal, Form, Input, Switch, Button, theme } from 'antd';
 import { useErrorHandler } from '@/lib/useErrorHandler';
 import { Shield, Info, Tag, Activity } from 'lucide-react';
