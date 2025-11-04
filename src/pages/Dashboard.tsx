@@ -9,6 +9,7 @@ import type { RootState } from "@/lib/store";
 import { validateAmazonConsent } from "@/lib/consentSlice";
 import { useErrorHandler } from "@/lib/useErrorHandler";
 import CustomDataTable from "@/components/CustomDataTable";
+import useQueryParamHandler from "@/utils/hooks/useQueryParamHandler";
 
 interface Resource {
   name: string;
@@ -28,6 +29,8 @@ export default function Dashboard() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const { handleError, showSuccess } = useErrorHandler();
 
+
+  useQueryParamHandler();
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/");

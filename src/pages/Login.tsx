@@ -10,6 +10,7 @@ import { requestAmazonConsentCallback } from '@/lib/consentSlice';
 import { toast } from 'react-toastify';
 import { useNavigate, Link } from 'react-router-dom';
 import { useErrorHandler } from '@/lib/useErrorHandler';
+import useQueryParamHandler from '@/utils/hooks/useQueryParamHandler';
 
 export default function Login() {
   const { t, i18n } = useTranslation();
@@ -26,6 +27,8 @@ export default function Login() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { handleError } = useErrorHandler();
+
+  useQueryParamHandler();
 
   useEffect(() => {
     if (i18n.language !== lang) i18n.changeLanguage(lang);
