@@ -5,7 +5,7 @@ type CustomPageLayoutProps = {
   title: string;
   description: string;
   datatable: React.ReactNode;
-  filters: CustomFilterProps;
+  filters?: CustomFilterProps;
 };
 
 const CustomPageLayout = ({

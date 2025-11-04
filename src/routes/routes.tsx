@@ -58,6 +58,7 @@ const MarketPlaceDetail = lazy(
 );
 
 const Consents = lazy(() => import('@/pages/Consents'));
+
 const Subscription = lazy(() => import('@/pages/Subscription'));
 const NewPermissionExamples = lazy(
   () => import('@/examples/NewPermissionExamples')
