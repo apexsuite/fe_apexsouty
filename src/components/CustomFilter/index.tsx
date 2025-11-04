@@ -67,11 +67,15 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
           label={open ? 'Hide Filters' : 'Show Filters'}
           onClick={() => setOpen(!open)}
         />
-        <CustomButton
-          label="Create"
-          icon={<Plus />}
-          onClick={() => navigate(path)}
-        />
+        {
+          path && (
+            <CustomButton
+              label="Create"
+              icon={<Plus />}
+              onClick={() => navigate(path)}
+            />
+          )
+        }
       </div>
       {open && (
         <div className="card rounded-md border p-6">

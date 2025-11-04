@@ -3,15 +3,11 @@ import CustomPageLayout from "@/components/CustomPageLayout";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getConsents, getConsentLink } from "@/services/consents";
 import { IConsent } from "@/services/consents/types";
-import usePagination from "@/utils/hooks/usePagination";
 import getConsentsColumns from "./column.data";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 
 const Consents = () => {
-    const [page, setPage] = usePagination();
-
-
     const { data, isLoading } = useQuery({
         queryKey: ['consents'],
         queryFn: () => getConsents(),
