@@ -8,6 +8,10 @@ import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@/lib/store";
 import { validateAmazonConsent } from "@/lib/consentSlice";
 import { useErrorHandler } from "@/lib/useErrorHandler";
+import { useMutation } from "@tanstack/react-query";
+import { IConsentValidate } from "@/services/consents/types";
+import { validateAmazonConsentV2 } from "@/services/consents";
+import { toast } from "react-toastify";
 
 interface Resource {
   name: string;
@@ -26,6 +30,17 @@ export default function Dashboard() {
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const { handleError, showSuccess } = useErrorHandler();
+
+  const valdiateAmazonConsentMutation = useMutation({
+    mutationFn: (params: IConsentValidate) => validateAmazonConsentV2(params),
+    onSuccess: () => {
+      toast.success('Amazon consent validation successful');
+      localStorage.removeItem('pendingAmazonValidateParams');
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Amazon consent validation failed');
+    },
+  });
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -55,23 +70,28 @@ export default function Dashboard() {
       if (raw) {
         const parsed = JSON.parse(raw);
         if (parsed && (parsed.state || parsed.selling_partner_id || parsed.spapi_oauth_code)) {
-          dispatch<any>(validateAmazonConsent({
+          // dispatch<any>(validateAmazonConsent({
+          //   state: parsed.state || '',
+          //   selling_partner_id: parsed.selling_partner_id || '',
+          //   spapi_oauth_code: parsed.spapi_oauth_code || '',
+          // }))
+          //   .unwrap()
+          //   .then(() => {
+          //     // Başarılı olursa sessizce devam et
+          //     showSuccess('consentValidationSuccess');
+          //   })
+          //   .catch((err: any) => {
+          //     // Hata varsa uyarı mesajı göster
+          //     handleError(err);
+          //   })
+          //   .finally(() => {
+          //     localStorage.removeItem('pendingAmazonValidateParams');
+          //   });
+          valdiateAmazonConsentMutation.mutate({
             state: parsed.state || '',
-            selling_partner_id: parsed.selling_partner_id || '',
-            spapi_oauth_code: parsed.spapi_oauth_code || '',
-          }))
-            .unwrap()
-            .then(() => {
-              // Başarılı olursa sessizce devam et
-              showSuccess('consentValidationSuccess');
-            })
-            .catch((err: any) => {
-              // Hata varsa uyarı mesajı göster
-              handleError(err);
-            })
-            .finally(() => {
-              localStorage.removeItem('pendingAmazonValidateParams');
-            });
+            sellingPartnerId: parsed.selling_partner_id || '',
+            spapiOauthCode: parsed.spapi_oauth_code || '',
+          });
         }
       }
     } catch (e) {

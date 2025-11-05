@@ -28,7 +28,7 @@ export const getConsentLink = async (marketplaceId: string): Promise<{ data: str
     return response;
 };
 
-export const validateAmazonConsent = async (params: IConsentValidate): Promise<{ data: string }> => {
+export const validateAmazonConsentV2 = async (params: IConsentValidate): Promise<{ data: string }> => {
     const response = await apiRequest('/amazon/consents/validate', {
         method: 'POST',
         body: JSON.stringify(params),

@@ -10,6 +10,10 @@ import { requestAmazonConsentCallback } from '@/lib/consentSlice';
 import { toast } from 'react-toastify';
 import { useNavigate, Link } from 'react-router-dom';
 import { useErrorHandler } from '@/lib/useErrorHandler';
+import useQueryParamHandler from '@/utils/hooks/useQueryParamHandler';
+import { useMutation } from '@tanstack/react-query';
+import { requestConsentsCallback } from '@/services/consents';
+import { IConsentsCallback } from '@/services/consents/types';
 
 export default function Login() {
   const { t, i18n } = useTranslation();
@@ -26,6 +30,27 @@ export default function Login() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { handleError } = useErrorHandler();
+
+  const requestConsentsCallbackMutation = useMutation({
+    mutationFn: (params: IConsentsCallback) => requestConsentsCallback(params),
+    onSuccess: (response) => {
+      const redirectUrl = response?.data;
+      if (redirectUrl && typeof redirectUrl === 'string') {
+        localStorage.removeItem('pendingAmazonCallbackParams');
+        window.location.href = redirectUrl;
+      } else {
+        handleError({ message: 'Authorization URL not found in response' });
+        localStorage.removeItem('pendingAmazonCallbackParams');
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Error requesting Amazon consent callback');
+      handleError(error);
+      localStorage.removeItem('pendingAmazonCallbackParams');
+    },
+  });
+
+  useQueryParamHandler();
 
   useEffect(() => {
     if (i18n.language !== lang) i18n.changeLanguage(lang);
@@ -64,6 +89,7 @@ export default function Login() {
           const pendingCallbackParams = localStorage.getItem(
             'pendingAmazonCallbackParams'
           );
+
           if (pendingCallbackParams) {
             try {
               const params = JSON.parse(pendingCallbackParams);
@@ -72,30 +98,11 @@ export default function Login() {
                 params.amazonState &&
                 params.sellingPartnerId
               ) {
-                const response = await dispatch(
-                  requestAmazonConsentCallback({
-                    amazonCallbackUri: params.amazonCallbackUri,
-                    amazonState: params.amazonState,
-                    sellingPartnerId: params.sellingPartnerId,
-                  })
-                ).unwrap();
-
-                const redirectUrl =
-                  response?.url ||
-                  response?.data?.url ||
-                  response?.redirectUrl ||
-                  response?.data?.redirectUrl ||
-                  response;
-                if (redirectUrl && typeof redirectUrl === 'string') {
-                  localStorage.removeItem('pendingAmazonCallbackParams');
-                  window.location.href = redirectUrl;
-                  return;
-                } else {
-                  handleError({
-                    message: 'Authorization URL not found in response',
-                  });
-                  localStorage.removeItem('pendingAmazonCallbackParams');
-                }
+                requestConsentsCallbackMutation.mutate({
+                  amazonCallbackUri: params.amazonCallbackUri,
+                  amazonState: params.amazonState,
+                  sellingPartnerId: params.sellingPartnerId,
+                });
               }
             } catch (parseError) {
               console.error(
@@ -109,52 +116,6 @@ export default function Login() {
           navigate('/dashboard');
         } catch (checkError) {
           console.error('CheckAuth failed after login:', checkError);
-
-          const pendingCallbackParams = localStorage.getItem(
-            'pendingAmazonCallbackParams'
-          );
-          if (pendingCallbackParams) {
-            try {
-              const params = JSON.parse(pendingCallbackParams);
-              if (
-                params.amazonCallbackUri &&
-                params.amazonState &&
-                params.sellingPartnerId
-              ) {
-                const response = await dispatch(
-                  requestAmazonConsentCallback({
-                    amazonCallbackUri: params.amazonCallbackUri,
-                    amazonState: params.amazonState,
-                    sellingPartnerId: params.sellingPartnerId,
-                  })
-                ).unwrap();
-
-                const redirectUrl =
-                  response?.url ||
-                  response?.data?.url ||
-                  response?.redirectUrl ||
-                  response?.data?.redirectUrl ||
-                  response;
-                if (redirectUrl && typeof redirectUrl === 'string') {
-                  localStorage.removeItem('pendingAmazonCallbackParams');
-                  window.location.href = redirectUrl;
-                  return;
-                } else {
-                  handleError({
-                    message: 'Authorization URL not found in response',
-                  });
-                  localStorage.removeItem('pendingAmazonCallbackParams');
-                }
-              }
-            } catch (parseError) {
-              console.error(
-                'Error parsing pendingAmazonCallbackParams:',
-                parseError
-              );
-              localStorage.removeItem('pendingAmazonCallbackParams');
-            }
-          }
-
           navigate('/dashboard');
           setIsAuthenticated(true);
         }
