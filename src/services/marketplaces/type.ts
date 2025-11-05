@@ -7,7 +7,13 @@ export interface IMarketplace {
     marketplace: string;
     marketplaceKey: string;
     marketplaceURL: string;
-    region: string;
+    region: {
+        createdAt: string;
+        id: string;
+        isActive: boolean;
+        regionName: string;
+        regionURL: string;
+    };
     regionId: string;
 }
 

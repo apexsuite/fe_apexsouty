@@ -50,7 +50,7 @@ const getMarketPlaceColumns = ({
       accessorKey: 'region',
       header: 'Region',
       cell: ({ row }) => (
-        <span className="font-medium">{row.original.region}</span>
+        <span className="font-medium">{row.original.region.regionName}</span>
       ),
     },
     {
