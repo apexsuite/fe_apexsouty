@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '@/lib/store';
 import { loginUser, clearError, checkAuth } from '@/lib/authSlice';
-import { requestAmazonConsentCallback } from '@/lib/consentSlice';
 import { toast } from 'react-toastify';
 import { useNavigate, Link } from 'react-router-dom';
 import { useErrorHandler } from '@/lib/useErrorHandler';
