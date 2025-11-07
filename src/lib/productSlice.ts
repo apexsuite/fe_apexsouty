@@ -62,9 +62,12 @@ export const createProduct = createAsyncThunk(
     name: string;
     description: string;
     isActive: boolean;
+    isDeafultProduct: boolean;
+    isStripeProduct: boolean;
     marketingFeatures: string[];
     statementDescriptor: string;
     unitLabel: string;
+    capacity: number | null;
   }) => {
     const response = await apiRequest('/products', {
       method: 'POST',
@@ -85,6 +88,7 @@ export const updateProduct = createAsyncThunk(
       marketingFeatures: string[];
       statementDescriptor: string;
       unitLabel: string;
+      capacity: number | null;
     };
   }) => {
     const response = await apiRequest(`/products/${productId}`, {

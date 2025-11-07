@@ -8,6 +8,7 @@ import { ArrowLeft, Save } from 'lucide-react';
 import {
   Form,
   Input,
+  InputNumber,
   Button,
   Card,
   Typography,
@@ -27,7 +28,7 @@ const ProductEdit: React.FC = () => {
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const {} = theme.useToken();
+  const { } = theme.useToken();
   const { handleError, showSuccess } = useErrorHandler();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -55,6 +56,7 @@ const ProductEdit: React.FC = () => {
             : [''],
         statementDescriptor: product.statementDescriptor,
         unitLabel: product.unitLabel,
+        capacity: product.capacity ?? null,
       });
       setInitialLoading(false);
     }
@@ -81,6 +83,8 @@ const ProductEdit: React.FC = () => {
         marketingFeatures: values.marketingFeatures || [],
         statementDescriptor: values.statementDescriptor || '',
         unitLabel: values.unitLabel || '',
+        capacity:
+          typeof values.capacity === 'number' ? values.capacity : null,
       };
 
       await dispatch(updateProduct({ productId, productData })).unwrap();
@@ -195,6 +199,26 @@ const ProductEdit: React.FC = () => {
                     className="dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
                   />
                 </Form.Item>
+
+                <Form.Item
+                  name="capacity"
+                  label={t('product.capacity')}
+                  rules={[
+                    { required: true, message: t('product.capacityRequired') },
+                    {
+                      type: 'number',
+                      min: 0,
+                      message: t('product.capacityMin'),
+                    },
+                  ]}
+                >
+                  <InputNumber
+                    placeholder={t('product.capacityPlaceholder')}
+                    min={0}
+                    className="w-full dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                    style={{ width: '100%' }}
+                  />
+                </Form.Item>
               </div>
 
               {/* Sağ Kolon */}
@@ -228,8 +252,8 @@ const ProductEdit: React.FC = () => {
                   />
                 </Form.Item>
                 <Form.Item
-                  name="isDefault"
-                  label={t('product.isDefault')}
+                  name="isDeafultProduct"
+                  label={t('product.isDeafultProduct')}
                   valuePropName="checked"
                 >
                   <Switch
@@ -239,8 +263,8 @@ const ProductEdit: React.FC = () => {
                 </Form.Item>
 
                 <Form.Item
-                  name="isStripe"
-                  label={t('product.isStripe')}
+                  name="isStripeProduct"
+                  label={t('product.isStripeProduct')}
                   valuePropName="checked"
                 >
                   <Switch

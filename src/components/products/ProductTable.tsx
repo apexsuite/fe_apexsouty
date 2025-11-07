@@ -19,6 +19,7 @@ export interface Product {
   name: string;
   description: string;
   isActive: boolean;
+  capacity?: number | null;
   marketingFeatures: string[];
   statementDescriptor: string;
   unitLabel: string;

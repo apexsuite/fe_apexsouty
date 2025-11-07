@@ -44,7 +44,7 @@ const fieldKeyMapping: Record<string, string> = {
   'isVisible': 'Is Visible',
   'isUnderConstruction': 'Under Construction',
   'isDefault': 'Is Default',
-  'isStripe': 'Is Stripe',
+  'isStripeProduct': 'Is Stripe Product',
   'marketingFeatures': 'Marketing Features',
   'statementDescriptor': 'Statement Descriptor',
   'unitLabel': 'Unit Label',

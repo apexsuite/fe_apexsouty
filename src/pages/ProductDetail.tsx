@@ -4,13 +4,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AppDispatch, RootState } from '@/lib/store';
 import { fetchProduct } from '@/lib/productSlice';
-import { ArrowLeft, Edit, Calendar,  } from 'lucide-react';
-import { 
-  Button, 
-  Card, 
-  Typography, 
-  Descriptions, 
-  Tag as AntTag, 
+import { ArrowLeft, Edit, Calendar, Package } from 'lucide-react';
+import {
+  Button,
+  Card,
+  Typography,
+  Descriptions,
+  Tag as AntTag,
   message,
   Spin,
 } from 'antd';
@@ -26,7 +26,7 @@ const ProductDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
 
-  const { product,  loading: fetchLoading, } = useSelector(
+  const { product, loading: fetchLoading, } = useSelector(
     (state: RootState) => state.product
   );
 
@@ -132,7 +132,7 @@ const ProductDetail: React.FC = () => {
           <Title level={3} className="mb-4 text-gray-900 dark:text-white" style={{ fontSize: '1.125rem' }}>
             {t('product.basicInfo')}
           </Title>
-          
+
           <Descriptions
             column={{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
             className="dark:text-gray-300"
@@ -151,7 +151,7 @@ const ProductDetail: React.FC = () => {
                 {product.name}
               </span>
             </Descriptions.Item>
-            
+
             <Descriptions.Item
               label={
                 <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
@@ -164,7 +164,7 @@ const ProductDetail: React.FC = () => {
                 {product.description || t('product.noDescription')}
               </span>
             </Descriptions.Item>
-            
+
             <Descriptions.Item
               label={
                 <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
@@ -177,7 +177,22 @@ const ProductDetail: React.FC = () => {
                 {product.unitLabel || t('product.noUnitLabel')}
               </span>
             </Descriptions.Item>
-            
+
+            <Descriptions.Item
+              label={
+                <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+                  <Package size={16} className="text-gray-500 dark:text-gray-400" />
+                  {t('product.capacity')}
+                </span>
+              }
+            >
+              <span className="font-medium text-gray-900 dark:text-white">
+                {typeof product.capacity === 'number'
+                  ? product.capacity.toLocaleString()
+                  : t('product.noCapacity')}
+              </span>
+            </Descriptions.Item>
+
             <Descriptions.Item
               label={
                 <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
@@ -190,7 +205,7 @@ const ProductDetail: React.FC = () => {
                 {product.statementDescriptor || t('product.noStatementDescriptor')}
               </span>
             </Descriptions.Item>
-            
+
             <Descriptions.Item
               label={
                 <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300">

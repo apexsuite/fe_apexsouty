@@ -8,6 +8,7 @@ import { ArrowLeft, Save } from 'lucide-react';
 import {
   Form,
   Input,
+  InputNumber,
   Button,
   Card,
   Typography,
@@ -39,11 +40,13 @@ const ProductCreate: React.FC = () => {
         name: values.name,
         description: values.description || '',
         isActive: values.isActive !== false,
-        isDefault: values.isDefault || false,
-        isStripe: values.isStripe || false,
+        isDeafultProduct: values.isDeafultProduct || false,
+        isStripeProduct: values.isStripeProduct || false,
         marketingFeatures: values.marketingFeatures || [],
         statementDescriptor: values.statementDescriptor || '',
         unitLabel: values.unitLabel || '',
+        capacity:
+          typeof values.capacity === 'number' ? values.capacity : null,
       };
 
       await dispatch(createProduct(productData)).unwrap();
@@ -105,9 +108,10 @@ const ProductCreate: React.FC = () => {
           onFinish={onFinish}
           initialValues={{
             isActive: true,
-            isDefault: false,
-            isStripe: false,
+            isDeafultProduct: false,
+            isStripeProduct: false,
             marketingFeatures: [''],
+            capacity: null,
           }}
         >
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -176,6 +180,33 @@ const ProductCreate: React.FC = () => {
                   }}
                 />
               </Form.Item>
+
+              <Form.Item
+                name="capacity"
+                label={t('product.capacity')}
+                rules={[
+                  { required: true, message: t('product.capacityRequired') },
+                  {
+                    type: 'number',
+                    min: 0,
+                    message: t('product.capacityMin'),
+                  },
+                ]}
+              >
+                <InputNumber
+                  placeholder={t('product.capacityPlaceholder')}
+                  min={0}
+                  style={{
+                    width: '100%',
+                    backgroundColor:
+                      currentTheme === 'dark'
+                        ? '#262626'
+                        : token.colorBgContainer,
+                    borderColor: token.colorBorder,
+                    color: token.colorText,
+                  }}
+                />
+              </Form.Item>
             </div>
 
             <div className="space-y-6">
@@ -215,8 +246,8 @@ const ProductCreate: React.FC = () => {
               </Form.Item>
 
               <Form.Item
-                name="isDefault"
-                label={t('product.isDefault')}
+                name="isDeafultProduct"
+                label={t('product.isDeafultProduct')}
                 valuePropName="checked"
               >
                 <Switch
@@ -226,8 +257,8 @@ const ProductCreate: React.FC = () => {
               </Form.Item>
 
               <Form.Item
-                name="isStripe"
-                label={t('product.isStripe')}
+                name="isStripeProduct"
+                label={t('product.isStripeProduct')}
                 valuePropName="checked"
               >
                 <Switch

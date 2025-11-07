@@ -168,7 +168,7 @@ const CreatePriceModal: React.FC<CreatePriceModalProps> = ({
             ]}
             extra={t('price.unitAmountHelp')}
           >
-            <InputNumber
+            <InputNumber<number>
               placeholder={t('price.enterUnitAmount')}
               size="large"
               min={1}
@@ -181,9 +181,11 @@ const CreatePriceModal: React.FC<CreatePriceModalProps> = ({
                 color: currentTheme === 'dark' ? '#ffffff' : '#000000',
               }}
               formatter={value =>
-                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                `${value || ''}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
               }
-              parser={() => 1}
+              parser={value =>
+                Number((value || '0').replace(/,/g, ''))
+              }
             />
           </Form.Item>
         </div>
