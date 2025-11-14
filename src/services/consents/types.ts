@@ -6,7 +6,7 @@ export interface IConsent {
     regionName: string;
     regionURL: string;
     createdAt: string;
-    consent: {
+    consent?: {
         createdAt: string;
         expiresAt: string;
         id: string;

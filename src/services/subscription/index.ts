@@ -10,3 +10,10 @@ export const getSubscription = async (): Promise<ISubscription> => {
     return response.data || response;
 };
 
+export const getManageSubscription = async (): Promise<{ data: string }> => {
+    const response = await apiRequest('/subscriptions/manage', {
+        method: 'GET',
+    });
+
+    return response;
+};

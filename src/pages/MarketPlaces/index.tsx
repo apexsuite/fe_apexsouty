@@ -43,6 +43,8 @@ const MarketPlaces = () => {
   const { data, isLoading } = useQuery({
     queryKey: ['marketplaces', params],
     queryFn: () => getMarketplaces(params),
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 
   const { mutate: deleteMarketplaceMutation } = useMutation({

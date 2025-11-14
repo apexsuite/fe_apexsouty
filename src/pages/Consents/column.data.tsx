@@ -2,12 +2,19 @@ import { IConsent } from "@/services/consents/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 const getConsentsColumns = (): ColumnDef<IConsent>[] => [
     {
         id: 'expander',
         header: () => null,
         cell: ({ row }) => {
+
+            const hasConsent = row.original.marketplaces?.some(marketplace => marketplace.id === row.original.consent?.marketplaceId);
+            if (hasConsent) {
+                return null;
+            }
+
             const hasMarketplaces = row.original.marketplaces && row.original.marketplaces.length > 0;
 
             if (!hasMarketplaces) {
@@ -29,9 +36,7 @@ const getConsentsColumns = (): ColumnDef<IConsent>[] => [
                 </Button>
             );
         },
-        size: 50,
-        minSize: 50,
-        maxSize: 50,
+        size: 30,
     },
     {
         accessorKey: 'regionName',
@@ -51,6 +56,28 @@ const getConsentsColumns = (): ColumnDef<IConsent>[] => [
             </a>
         ),
     },
+    {
+        accessorKey: 'isActive',
+        header: 'Status',
+        cell: ({ row }) => {
+            const hasConsent = row.original.marketplaces?.some(marketplace => marketplace.id === row.original.consent?.marketplaceId);
+            if (hasConsent) {
+                return (
+                    <Badge variant={row.original.consent?.isActive ? 'default' : 'destructive'}>
+                        {row.original.consent?.isActive ? 'Active' : 'Inactive'}
+                    </Badge>
+                )
+            }
+            return <Badge>Inactive</Badge>;
+        }
+    },
+    {
+        accessorKey: 'sellingPartnerId',
+        header: 'Selling Partner ID',
+        cell: ({ row }) => (
+            <span className="font-medium">{row.original?.consent?.sellingPartnerId ?? '-'}</span>
+        ),
+    }
 ];
 
 export default getConsentsColumns;

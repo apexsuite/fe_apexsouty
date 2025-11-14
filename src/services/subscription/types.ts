@@ -5,7 +5,9 @@ export interface ISubscription {
         nextBillingDate: string;
         productDescription: string;
         productName: string;
+        priceId: string;
         productPrices: {
+            id: string;
             currency: string;
             interval: string;
             unitAmount: number;

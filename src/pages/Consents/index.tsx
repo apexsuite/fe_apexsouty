@@ -11,6 +11,8 @@ const Consents = () => {
     const { data, isLoading } = useQuery({
         queryKey: ['consents'],
         queryFn: () => getConsents(),
+        staleTime: 0,
+        refetchOnMount: 'always',
     });
 
     const columns = getConsentsColumns();

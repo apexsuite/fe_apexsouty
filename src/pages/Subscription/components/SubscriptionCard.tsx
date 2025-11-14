@@ -3,6 +3,9 @@ import { CreditCard, Calendar, Package, CheckCircle2, WorkflowIcon } from 'lucid
 import dayjs from 'dayjs';
 import { ISubscription } from '@/services/subscription/types';
 import { t } from 'i18next';
+import { useMutation } from '@tanstack/react-query';
+import { getManageSubscription } from '@/services/subscription';
+import { toast } from 'react-toastify';
 
 interface SubscriptionCardProps {
     subscription: ISubscription['activeSubscription'];
@@ -10,6 +13,25 @@ interface SubscriptionCardProps {
 }
 
 const SubscriptionCard = ({ subscription, isFreeUser }: SubscriptionCardProps) => {
+    const currentPrice = subscription.productPrices?.find(
+        price => price.id === subscription.priceId
+    );
+
+    const manageSubscriptionMutation = useMutation({
+        mutationFn: getManageSubscription,
+        onSuccess: (response) => {
+            if (response.data) {
+                window.open(response.data, '_blank');
+            }
+        },
+        onError: (error: any) => {
+            toast.error(error.message || 'Failed to get manage subscription link');
+        },
+    });
+
+    const handleManageSubscription = () => {
+        manageSubscriptionMutation.mutate();
+    };
 
     return (
         <div className={`rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-2xl transition-all duration-300 ${!isFreeUser ? 'transform hover:-translate-y-1' : ''} ${isFreeUser ? 'h-full' : ''}`}>
@@ -29,13 +51,13 @@ const SubscriptionCard = ({ subscription, isFreeUser }: SubscriptionCardProps) =
                     </p>
                 </div>
 
-                {subscription.productPrices?.[0] && !isFreeUser && (
+                {currentPrice && !isFreeUser && (
                     <div className="flex flex-col items-center sm:items-end px-8 py-6 rounded-2xl relative z-10 shadow-lg">
                         <div className="text-4xl sm:text-5xl font-bold">
-                            ${(subscription.productPrices[0].unitAmount / 100).toFixed(2)}
+                            ${(currentPrice.unitAmount / 100).toFixed(2)}
                         </div>
                         <div className="text-base mt-2 font-medium">
-                            /month
+                            /{currentPrice.interval}
                         </div>
                     </div>
                 )}
@@ -128,8 +150,15 @@ const SubscriptionCard = ({ subscription, isFreeUser }: SubscriptionCardProps) =
 
                 {!isFreeUser && (
                     <div className="flex flex-col justify-end">
-                        <Button className="w-full sm:w-auto bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-200 text-white dark:text-black hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 font-semibold text-base py-6">
-                            {t('subscriptions.subscriptionCard.manageSubscription')}
+                        <Button
+                            onClick={handleManageSubscription}
+                            disabled={manageSubscriptionMutation.isPending}
+                            className="w-full sm:w-auto bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-200 text-white dark:text-black hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 font-semibold text-base py-6"
+                        >
+                            {manageSubscriptionMutation.isPending
+                                ? 'Loading...'
+                                : t('subscriptions.subscriptionCard.manageSubscription')
+                            }
                         </Button>
                     </div>
                 )}

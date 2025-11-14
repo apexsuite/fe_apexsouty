@@ -11,6 +11,8 @@ const Subscription = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ['subscription'],
     queryFn: getSubscription,
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 
   if (isLoading) {

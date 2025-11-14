@@ -43,6 +43,8 @@ const Region = () => {
   const { data, isLoading } = useQuery({
     queryKey: ['regions', params],
     queryFn: () => getRegions(params),
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 
   const { mutate: deleteRegionMutation } = useMutation({
