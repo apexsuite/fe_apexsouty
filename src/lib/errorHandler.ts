@@ -58,30 +58,21 @@ const fieldKeyMapping: Record<string, string> = {
   unitLabel: 'Unit Label',
 };
 
-/**
- * err.json dosyasından key'e göre mesajı bulur ve params değerlerini replace eder
- * @param key - Hata mesajı key'i
- * @param params - Replace edilecek parametreler
- * @param language - Dil kodu (tr veya en)
- * @returns Çevrilmiş ve replace edilmiş mesaj
- */
 const getErrorMessageFromKey = (
   key: string,
-  params?: Record<string, string>,
-  language: string = 'en'
+  params?: Record<string, string>
 ): string | null => {
   try {
-    const errorData = (
+    const err = (
       errorMessages as unknown as Record<string, Array<Record<string, string>>>
     )[key];
 
-    if (!errorData || !Array.isArray(errorData)) {
+    if (!err || !Array.isArray(err)) {
       return null;
     }
 
-    // Dil bilgisine göre mesajı bul
     const lang = localStorage.getItem('lang') || 'en';
-    const messageObj = errorData.find(item => item[lang]);
+    const messageObj = err.find(item => item[lang]);
 
     if (!messageObj || !messageObj[lang]) {
       return null;
@@ -115,8 +106,7 @@ const getErrorMessageFromKey = (
  */
 export const handleValidationErrors = (
   error: any,
-  t: (key: string) => string,
-  language: string = 'en'
+  t: (key: string) => string
 ) => {
   try {
     // Yeni hata formatını kontrol et: { key, message, params }
@@ -126,7 +116,7 @@ export const handleValidationErrors = (
       const { key, message, params } = errorResponse;
 
       // err.json'dan mesajı bul
-      const translatedMessage = getErrorMessageFromKey(key, params, language);
+      const translatedMessage = getErrorMessageFromKey(key, params);
 
       if (translatedMessage) {
         toast.error(translatedMessage, {
@@ -184,7 +174,7 @@ export const handleValidationErrors = (
 
       // Yeni format için err.json'dan mesajı bul
       if (key) {
-        const translatedMessage = getErrorMessageFromKey(key, params, language);
+        const translatedMessage = getErrorMessageFromKey(key, params);
 
         if (translatedMessage) {
           toast.error(translatedMessage, {
@@ -222,13 +212,8 @@ export const handleValidationErrors = (
 /**
  * @param error - API'den gelen hata objesi
  * @param t - i18n translation fonksiyonu
- * @param language - Dil kodu (tr veya en)
  */
-export const handleApiError = (
-  error: any,
-  t: (key: string) => string,
-  language: string = 'en'
-) => {
+export const handleApiError = (error: any, t: (key: string) => string) => {
   try {
     const actualError = error?.data || error;
 
@@ -239,7 +224,7 @@ export const handleApiError = (
       const { key, message, params } = errorResponse;
 
       // err.json'dan mesajı bul
-      const translatedMessage = getErrorMessageFromKey(key, params, language);
+      const translatedMessage = getErrorMessageFromKey(key, params);
 
       if (translatedMessage) {
         toast.error(translatedMessage);
@@ -257,7 +242,7 @@ export const handleApiError = (
       actualError?.error?.validations &&
       Array.isArray(actualError.error.validations)
     ) {
-      handleValidationErrors(actualError, t, language);
+      handleValidationErrors(actualError, t);
       return;
     }
 

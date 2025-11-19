@@ -1,6 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import { RootState } from './store';
 import {
   handleApiError,
   handleValidationErrors,
@@ -15,7 +13,6 @@ import {
  */
 export const useErrorHandler = () => {
   const { t } = useTranslation();
-  const language = useSelector((state: RootState) => state.lang.language);
 
   return {
     /**
@@ -28,8 +25,7 @@ export const useErrorHandler = () => {
      * Validation hatalarını handle eder
      * @param error - API'den gelen validation hata objesi
      */
-    handleValidationError: (error: any) =>
-      handleValidationErrors(error, t, language),
+    handleValidationError: (error: any) => handleValidationErrors(error, t),
 
     /**
      * Başarı mesajı gösterir
