@@ -1,69 +1,171 @@
 import { toast } from 'react-toastify';
+import errorMessages from '../data/err.json';
 
 interface ValidationError {
   key: string;
   message: string;
+  params?: Record<string, string>;
+}
+
+interface ErrorResponse {
+  key?: string;
+  message?: string;
+  params?: Record<string, string>;
 }
 
 const fieldKeyMapping: Record<string, string> = {
-  'icon': 'Icon',
-  'name': 'Name',
-  'email': 'Email',
-  'password': 'Password',
-  'username': 'Username',
-  'description': 'Description',
-  'path': 'Path',
-  'component': 'Component',
-  'title': 'Title',
-  'content': 'Content',
-  'slug': 'Slug',
-  'category': 'Category',
-  'status': 'Status',
-  'role': 'Role',
-  'permission': 'Permission',
-  'marketplace': 'Marketplace',
-  'product': 'Product',
-  'price': 'Price',
-  'currency': 'Currency',
-  'interval': 'Interval',
-  'unitAmount': 'Unit Amount',
-  'website': 'Website',
-  'url': 'URL',
-  'phone': 'Phone',
-  'address': 'Address',
-  'city': 'City',
-  'state': 'State',
-  'postalCode': 'Postal Code',
-  'country': 'Country',
-  'firstName': 'First Name',
-  'lastName': 'Last Name',
-  'firstname': 'First Name',
-  'lastname': 'Last Name',
-  'parentID': 'Parent ID',
-  'isActive': 'Is Active',
-  'isVisible': 'Is Visible',
-  'isUnderConstruction': 'Under Construction',
-  'isDefault': 'Is Default',
-  'isStripeProduct': 'Is Stripe Product',
-  'marketingFeatures': 'Marketing Features',
-  'statementDescriptor': 'Statement Descriptor',
-  'unitLabel': 'Unit Label',
+  icon: 'Icon',
+  name: 'Name',
+  email: 'Email',
+  password: 'Password',
+  username: 'Username',
+  description: 'Description',
+  path: 'Path',
+  component: 'Component',
+  title: 'Title',
+  content: 'Content',
+  slug: 'Slug',
+  category: 'Category',
+  status: 'Status',
+  role: 'Role',
+  permission: 'Permission',
+  marketplace: 'Marketplace',
+  product: 'Product',
+  price: 'Price',
+  currency: 'Currency',
+  interval: 'Interval',
+  unitAmount: 'Unit Amount',
+  website: 'Website',
+  url: 'URL',
+  phone: 'Phone',
+  address: 'Address',
+  city: 'City',
+  state: 'State',
+  postalCode: 'Postal Code',
+  country: 'Country',
+  firstName: 'First Name',
+  lastName: 'Last Name',
+  firstname: 'First Name',
+  lastname: 'Last Name',
+  parentID: 'Parent ID',
+  isActive: 'Is Active',
+  isVisible: 'Is Visible',
+  isUnderConstruction: 'Under Construction',
+  isDefault: 'Is Default',
+  isStripeProduct: 'Is Stripe Product',
+  marketingFeatures: 'Marketing Features',
+  statementDescriptor: 'Statement Descriptor',
+  unitLabel: 'Unit Label',
+};
+
+/**
+ * err.json dosyasından key'e göre mesajı bulur ve params değerlerini replace eder
+ * @param key - Hata mesajı key'i
+ * @param params - Replace edilecek parametreler
+ * @param language - Dil kodu (tr veya en)
+ * @returns Çevrilmiş ve replace edilmiş mesaj
+ */
+const getErrorMessageFromKey = (
+  key: string,
+  params?: Record<string, string>,
+  language: string = 'en'
+): string | null => {
+  try {
+    const errorData = (
+      errorMessages as unknown as Record<string, Array<Record<string, string>>>
+    )[key];
+
+    if (!errorData || !Array.isArray(errorData)) {
+      return null;
+    }
+
+    // Dil bilgisine göre mesajı bul
+    const lang = localStorage.getItem('lang') || 'en';
+    const messageObj = errorData.find(item => item[lang]);
+
+    if (!messageObj || !messageObj[lang]) {
+      return null;
+    }
+    let message = messageObj[lang];
+
+    // Params varsa replace et
+    if (params && typeof params === 'object') {
+      Object.keys(params).forEach(paramKey => {
+        const paramValue = params[paramKey];
+        if (paramValue && typeof paramValue === 'string') {
+          message = message.replace(
+            new RegExp(`\\{${paramKey}\\}`, 'g'),
+            paramValue
+          );
+        }
+      });
+    }
+
+    return message;
+  } catch (error) {
+    console.error('Error getting message from key:', error);
+    return null;
+  }
 };
 
 /**
  * @param error - API'den gelen hata objesi
  * @param t - i18n translation fonksiyonu
+ * @param language - Dil kodu (tr veya en)
  */
-export const handleValidationErrors = (error: any, t: (key: string) => string) => {
+export const handleValidationErrors = (
+  error: any,
+  t: (key: string) => string,
+  language: string = 'en'
+) => {
   try {
+    // Yeni hata formatını kontrol et: { key, message, params }
+    const errorResponse = error?.error as ErrorResponse | undefined;
+
+    if (errorResponse?.key) {
+      const { key, message, params } = errorResponse;
+
+      // err.json'dan mesajı bul
+      const translatedMessage = getErrorMessageFromKey(key, params, language);
+
+      if (translatedMessage) {
+        toast.error(translatedMessage, {
+          position: 'top-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        return;
+      } else {
+        // Key bulunamadıysa message göster
+        if (message && typeof message === 'string') {
+          toast.error(message, {
+            position: 'top-right',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+          return;
+        }
+      }
+    }
+
+    // Eski validations formatını kontrol et
     if (!error?.error?.validations || !Array.isArray(error.error.validations)) {
       const apiMessage = error?.error?.message || error?.message;
 
       if (apiMessage && typeof apiMessage === 'string') {
-        const isTranslationKey = /^[a-z][a-zA-Z0-9]*$/.test(apiMessage) || /^[a-z]+(-[a-z]+)*$/.test(apiMessage);
+        const isTranslationKey =
+          /^[a-z][a-zA-Z0-9]*$/.test(apiMessage) ||
+          /^[a-z]+(-[a-z]+)*$/.test(apiMessage);
 
         if (isTranslationKey) {
-          const translatedMessage = t(`notification.${apiMessage}`) || apiMessage;
+          const translatedMessage =
+            t(`notification.${apiMessage}`) || apiMessage;
           toast.error(translatedMessage);
         } else {
           toast.error(apiMessage);
@@ -78,14 +180,32 @@ export const handleValidationErrors = (error: any, t: (key: string) => string) =
 
     if (validations.length > 0) {
       const firstValidation = validations[0];
-      const { key, message } = firstValidation as ValidationError;
+      const { key, message, params } = firstValidation as ValidationError;
 
-      const fieldTitle = fieldKeyMapping[key] || key.charAt(0).toUpperCase() + key.slice(1);
+      // Yeni format için err.json'dan mesajı bul
+      if (key) {
+        const translatedMessage = getErrorMessageFromKey(key, params, language);
 
+        if (translatedMessage) {
+          toast.error(translatedMessage, {
+            position: 'top-right',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+          return;
+        }
+      }
+
+      // Eski format için fallback
+      const fieldTitle =
+        fieldKeyMapping[key] || key.charAt(0).toUpperCase() + key.slice(1);
       const translatedMessage = t(`notification.${message}`) || message;
 
       toast.error(`${fieldTitle}: ${translatedMessage}`, {
-        position: "top-right",
+        position: 'top-right',
         autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,
@@ -93,7 +213,6 @@ export const handleValidationErrors = (error: any, t: (key: string) => string) =
         draggable: true,
       });
     }
-
   } catch (parseError) {
     console.error('Error parsing validation errors:', parseError);
     toast.error(t('notification.anErrorOccurred'));
@@ -103,14 +222,42 @@ export const handleValidationErrors = (error: any, t: (key: string) => string) =
 /**
  * @param error - API'den gelen hata objesi
  * @param t - i18n translation fonksiyonu
+ * @param language - Dil kodu (tr veya en)
  */
-export const handleApiError = (error: any, t: (key: string) => string) => {
+export const handleApiError = (
+  error: any,
+  t: (key: string) => string,
+  language: string = 'en'
+) => {
   try {
     const actualError = error?.data || error;
 
+    // Yeni hata formatını kontrol et: { key, message, params }
+    const errorResponse = actualError?.error as ErrorResponse | undefined;
 
-    if (actualError?.error?.validations && Array.isArray(actualError.error.validations)) {
-      handleValidationErrors(actualError, t);
+    if (errorResponse?.key) {
+      const { key, message, params } = errorResponse;
+
+      // err.json'dan mesajı bul
+      const translatedMessage = getErrorMessageFromKey(key, params, language);
+
+      if (translatedMessage) {
+        toast.error(translatedMessage);
+        return;
+      } else {
+        // Key bulunamadıysa message göster
+        if (message && typeof message === 'string') {
+          toast.error(message);
+          return;
+        }
+      }
+    }
+
+    if (
+      actualError?.error?.validations &&
+      Array.isArray(actualError.error.validations)
+    ) {
+      handleValidationErrors(actualError, t, language);
       return;
     }
 
@@ -118,10 +265,13 @@ export const handleApiError = (error: any, t: (key: string) => string) => {
       const apiMessage = actualError.error.message;
 
       if (apiMessage && typeof apiMessage === 'string') {
-        const isTranslationKey = /^[a-z][a-zA-Z0-9]*$/.test(apiMessage) || /^[a-z]+(-[a-z]+)*$/.test(apiMessage);
+        const isTranslationKey =
+          /^[a-z][a-zA-Z0-9]*$/.test(apiMessage) ||
+          /^[a-z]+(-[a-z]+)*$/.test(apiMessage);
 
         if (isTranslationKey) {
-          const translatedMessage = t(`notification.${apiMessage}`) || apiMessage;
+          const translatedMessage =
+            t(`notification.${apiMessage}`) || apiMessage;
           toast.error(translatedMessage);
         } else {
           toast.error(apiMessage);
@@ -157,11 +307,15 @@ export const handleApiError = (error: any, t: (key: string) => string) => {
         errorMessage = t('notification.serviceUnavailable');
         break;
       default:
-
-        const apiMessage = actualError?.error?.message || error?.error?.message || error?.message;
+        const apiMessage =
+          actualError?.error?.message ||
+          error?.error?.message ||
+          error?.message;
 
         if (apiMessage && typeof apiMessage === 'string') {
-          const isTranslationKey = /^[a-z][a-zA-Z0-9]*$/.test(apiMessage) || /^[a-z]+(-[a-z]+)*$/.test(apiMessage);
+          const isTranslationKey =
+            /^[a-z][a-zA-Z0-9]*$/.test(apiMessage) ||
+            /^[a-z]+(-[a-z]+)*$/.test(apiMessage);
 
           if (isTranslationKey) {
             errorMessage = t(`notification.${apiMessage}`) || apiMessage;
@@ -174,7 +328,6 @@ export const handleApiError = (error: any, t: (key: string) => string) => {
     }
 
     toast.error(errorMessage);
-
   } catch (parseError) {
     console.error('Error handling API error:', parseError);
     toast.error(t('notification.anErrorOccurred'));
@@ -185,7 +338,10 @@ export const handleApiError = (error: any, t: (key: string) => string) => {
  * @param message - Gösterilecek mesaj
  * @param t - i18n translation fonksiyonu
  */
-export const showSuccessToast = (message: string, t: (key: string) => string) => {
+export const showSuccessToast = (
+  message: string,
+  t: (key: string) => string
+) => {
   const translatedMessage = t(`notification.${message}`) || message;
   toast.success(translatedMessage);
 };
@@ -194,7 +350,10 @@ export const showSuccessToast = (message: string, t: (key: string) => string) =>
  * @param message - Gösterilecek mesaj
  * @param t - i18n translation fonksiyonu
  */
-export const showWarningToast = (message: string, t: (key: string) => string) => {
+export const showWarningToast = (
+  message: string,
+  t: (key: string) => string
+) => {
   const translatedMessage = t(`notification.${message}`) || message;
   toast.warning(translatedMessage);
 };

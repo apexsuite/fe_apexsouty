@@ -1,5 +1,13 @@
 import { useTranslation } from 'react-i18next';
-import { handleApiError, handleValidationErrors, showSuccessToast, showWarningToast, showInfoToast } from './errorHandler';
+import { useSelector } from 'react-redux';
+import { RootState } from './store';
+import {
+  handleApiError,
+  handleValidationErrors,
+  showSuccessToast,
+  showWarningToast,
+  showInfoToast,
+} from './errorHandler';
 
 /**
  * Error handling için custom hook
@@ -7,6 +15,7 @@ import { handleApiError, handleValidationErrors, showSuccessToast, showWarningTo
  */
 export const useErrorHandler = () => {
   const { t } = useTranslation();
+  const language = useSelector((state: RootState) => state.lang.language);
 
   return {
     /**
@@ -14,25 +23,26 @@ export const useErrorHandler = () => {
      * @param error - API'den gelen hata objesi
      */
     handleError: (error: any) => handleApiError(error, t),
-    
+
     /**
      * Validation hatalarını handle eder
      * @param error - API'den gelen validation hata objesi
      */
-    handleValidationError: (error: any) => handleValidationErrors(error, t),
-    
+    handleValidationError: (error: any) =>
+      handleValidationErrors(error, t, language),
+
     /**
      * Başarı mesajı gösterir
      * @param message - Gösterilecek mesaj key'i
      */
     showSuccess: (message: string) => showSuccessToast(message, t),
-    
+
     /**
      * Uyarı mesajı gösterir
      * @param message - Gösterilecek mesaj key'i
      */
     showWarning: (message: string) => showWarningToast(message, t),
-    
+
     /**
      * Bilgi mesajı gösterir
      * @param message - Gösterilecek mesaj key'i

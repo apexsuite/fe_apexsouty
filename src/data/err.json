@@ -32,7 +32,14 @@
     { "en": "Too many requests" }
   ],
   "errInvalidToken": [{ "tr": "Geçersiz token" }, { "en": "Invalid token" }],
-  "errInvalidValue": [{ "tr": "Geçersiz değer" }, { "en": "Invalid value" }],
+  "errInvalidValue": [
+    { "tr": "{field} değeri geçersiz." },
+    { "en": "{field} value is invalid." }
+  ],
+  "errThisFieldIsRequired": [
+    { "tr": "{field} alanı zorunludur." },
+    { "en": "{field} field is required." }
+  ],
   "errNotAllowedForOnBehalfOfUsers": [
     { "tr": "Başka bir kullanıcının yetkileriyle işlem yapılamaz" },
     { "en": "Not allowed for on behalf of users" }
@@ -60,8 +67,8 @@
     { "en": "Record not found" }
   ],
   "permissionAlreadyExists": [
-    { "tr": "Yetki zaten mevcut" },
-    { "en": "Permission already exists" }
+    { "tr": "{permissionLabel} yetkisi zaten mevcut." },
+    { "en": "{permissionLabel} permission already exists." }
   ],
   "errFavouriteListIsFull": [
     { "tr": "Favori listesi dolu" },
@@ -80,8 +87,8 @@
     { "en": "Default product already exists" }
   ],
   "errFieldExceedsLengthLimit": [
-    { "tr": "Alan uzunluğu sınırını aştı" },
-    { "en": "Field exceeds length limit" }
+    { "tr": "{field} alanı {limit} limitini aştı." },
+    { "en": "{field} field exceeds {limit} limit." }
   ],
   "errPriceAlreadyExists": [
     { "tr": "Fiyat zaten mevcut" },
@@ -100,8 +107,8 @@
     { "en": "User already has subscription" }
   ],
   "errMarketplaceAlreadyExists": [
-    { "tr": "Marketplace zaten mevcut" },
-    { "en": "Marketplace already exists" }
+    { "tr": "{marketplaceName} marketplace zaten mevcut" },
+    { "en": "{marketplaceName} marketplace already exists" }
   ],
   "errRolePermissionAlreadyExists": [
     { "tr": "Yetki zaten mevcut" },
