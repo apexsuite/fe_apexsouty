@@ -66,6 +66,8 @@ const NewPermissionExamples = lazy(
 const Region = lazy(() => import('@/pages/Region'));
 const RegionForm = lazy(() => import('@/pages/Region/RegionForm'));
 
+const Vendor = lazy(() => import('@/pages/Vendor'));
+
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
@@ -330,6 +332,11 @@ export const protectedRoutes: RouteObject[] = [
             handle: { title: 'Region Edit' },
           },
         ],
+      },
+      {
+        path: 'vendors',
+        element: <Vendor />,
+        handle: { title: 'Vendor' },
       },
     ],
   },
