@@ -8,6 +8,7 @@ import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import getVendorColumns from './column.data';
 import CustomDataTable from '@/components/CustomDataTable';
+import { FILTER_INPUTS } from '@/pages/Vendor/filter.data';
 
 export default function Vendor() {
   const [page, setPage] = usePagination();
@@ -45,7 +46,7 @@ export default function Vendor() {
     <CustomPageLayout
       title="Vendors"
       description="View and manage vendors"
-      // filters={{ inputs: FILTER_INPUTS, path: '/regions/create' }}
+      filters={{ inputs: FILTER_INPUTS, path: '/vendors/create' }}
       datatable={
         <CustomDataTable
           columns={columns}
