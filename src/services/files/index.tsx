@@ -1,5 +1,5 @@
 import { apiRequest } from '@/services/api';
-import { IUploadFileRequest, IUploadFileResponse } from '@/services/files/types';
+import { IUploadFileResponse } from '@/services/files/types';
 
 export const uploadFile = async (
   file: File,

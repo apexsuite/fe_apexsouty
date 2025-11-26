@@ -6,7 +6,7 @@ import {
   type FilterFormData,
   INPUT_TYPES,
 } from '@/components/CustomFilter/types';
-import { Filter, ListFilter, Plus, Search, X } from 'lucide-react';
+import { ListFilter, Plus, Search, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
