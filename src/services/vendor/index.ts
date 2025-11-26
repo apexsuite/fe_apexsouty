@@ -1,6 +1,10 @@
 import { apiRequest } from '@/services/api';
-import { IVendor } from '@/services/vendor/types';
-import type { IPageParams, IPageResponse } from '@/types/common.types';
+import {
+  IVendor,
+  IVendorRequest,
+  type IVendorDetail,
+} from '@/services/vendor/types';
+import type { IPageResponse } from '@/types/common.types';
 
 export const getVendors = async (
   params: IVendorRequest
@@ -12,7 +16,17 @@ export const getVendors = async (
   return response.data;
 };
 
-export interface IVendorRequest extends IPageParams {
-  name?: string;
-  description?: string;
-}
+export const getVendor = async (id: string): Promise<IVendorDetail> => {
+  const response = await apiRequest(`/vendors/${id}`, {
+    method: 'GET',
+  });
+  return response.data;
+};
+
+export const createVendor = async (data: IVendor): Promise<IVendor> => {
+  const response = await apiRequest('/vendors', {
+    method: 'POST',
+    data,
+  });
+  return response.data;
+};

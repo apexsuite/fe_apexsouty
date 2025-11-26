@@ -6,7 +6,7 @@ import {
   type FilterFormData,
   INPUT_TYPES,
 } from '@/components/CustomFilter/types';
-import { Filter, Plus, Search, X } from 'lucide-react';
+import { Filter, ListFilter, Plus, Search, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -25,7 +25,7 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
   }, [inputs]);
 
   const { control, handleSubmit, reset } = useForm<FilterFormData>({
-    mode: 'onChange',
+    mode: 'onBlur',
     defaultValues,
   });
 
@@ -63,19 +63,18 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
       <div className="flex items-center justify-between">
         <CustomButton
           variant="outline"
-          icon={<Filter />}
-          label={open ? 'Hide Filters' : 'Show Filters'}
+          icon={<ListFilter />}
+          label="Filter"
           onClick={() => setOpen(!open)}
+          size="lg"
         />
-        {
-          path && (
-            <CustomButton
-              label="Create"
-              icon={<Plus />}
-              onClick={() => navigate(path)}
-            />
-          )
-        }
+        {path && (
+          <CustomButton
+            label="Create"
+            icon={<Plus />}
+            onClick={() => navigate(path)}
+          />
+        )}
       </div>
       {open && (
         <div className="card rounded-md border p-6">

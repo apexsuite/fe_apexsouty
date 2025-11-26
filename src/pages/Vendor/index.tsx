@@ -1,6 +1,7 @@
 import CustomPageLayout from '@/components/CustomPageLayout';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { getVendors, type IVendorRequest } from '@/services/vendor';
+import { getVendors } from '@/services/vendor';
+import { IVendorRequest } from '@/services/vendor/types';
 import usePagination from '@/utils/hooks/usePagination';
 import useQueryParams from '@/utils/hooks/useQueryParams';
 import { useQuery } from '@tanstack/react-query';
@@ -37,11 +38,12 @@ export default function Vendor() {
     refetchOnMount: 'always',
   });
 
+  const columns = getVendorColumns();
+
   if (isLoading) {
     return <LoadingSpinner />;
   }
 
-  const columns = getVendorColumns();
   return (
     <CustomPageLayout
       title="Vendors"

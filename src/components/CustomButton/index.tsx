@@ -72,7 +72,6 @@ const CustomButton = React.forwardRef<HTMLButtonElement, CustomButtonProps>(
 
     const wrappedButton = linkProps ? (
       <ShadcnButton
-        asChild
         {...props}
         className={className}
         disabled={isDisabled}

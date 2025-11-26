@@ -135,6 +135,10 @@
     @apply border-border outline-ring/50;
   }
 
+  svg:not([class*='size-']) {
+    @apply size-4! shrink-0;
+  }
+
   body {
     @apply bg-background text-foreground;
   }
