@@ -45,38 +45,40 @@ export default function Breadcrumb() {
   }
 
   return (
-    <BreadcrumbUI>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink
-            render={() => (
-              <Link to="/dashboard">
-                <Home />
-              </Link>
-            )}
-          />
-        </BreadcrumbItem>
+    <div className="bg-background border-border border-b px-4 py-3 md:px-6 lg:px-8">
+      <BreadcrumbUI>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink
+              render={() => (
+                <Link to="/dashboard">
+                  <Home />
+                </Link>
+              )}
+            />
+          </BreadcrumbItem>
 
-        {breadcrumbs.map((breadcrumb, index) => {
-          const isLast = index === breadcrumbs.length - 1;
-          return (
-            <div key={breadcrumb.path} className="contents">
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                {isLast ? (
-                  <BreadcrumbPage>{t(breadcrumb.title)}</BreadcrumbPage>
-                ) : (
-                  <BreadcrumbLink
-                    render={
-                      <Link to={breadcrumb.path}>{t(breadcrumb.title)}</Link>
-                    }
-                  />
-                )}
-              </BreadcrumbItem>
-            </div>
-          );
-        })}
-      </BreadcrumbList>
-    </BreadcrumbUI>
+          {breadcrumbs.map((breadcrumb, index) => {
+            const isLast = index === breadcrumbs.length - 1;
+            return (
+              <div key={breadcrumb.path} className="contents">
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  {isLast ? (
+                    <BreadcrumbPage>{t(breadcrumb.title)}</BreadcrumbPage>
+                  ) : (
+                    <BreadcrumbLink
+                      render={
+                        <Link to={breadcrumb.path}>{t(breadcrumb.title)}</Link>
+                      }
+                    />
+                  )}
+                </BreadcrumbItem>
+              </div>
+            );
+          })}
+        </BreadcrumbList>
+      </BreadcrumbUI>
+    </div>
   );
 }

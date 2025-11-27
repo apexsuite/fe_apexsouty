@@ -64,11 +64,7 @@ export default function Navbar() {
           </div>
         </div>
       </nav>
-
-      {/* Breadcrumb navbar altına eklendi */}
-      <div className="bg-background border-border border-b px-4 py-3 md:px-6 lg:px-8">
-        <Breadcrumb />
-      </div>
+      <Breadcrumb />
     </div>
   );
 }
