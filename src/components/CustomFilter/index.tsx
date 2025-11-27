@@ -6,7 +6,7 @@ import {
   type FilterFormData,
   INPUT_TYPES,
 } from '@/components/CustomFilter/types';
-import { ListFilter, Plus, Search, X } from 'lucide-react';
+import { ListFilter, Plus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -46,17 +46,6 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
     clearAllQueryParams();
     reset(defaultValues);
   };
-
-  // const hasActiveFilters = () => {
-  //   const values = watch();
-  //   return inputs.some(input => {
-  //     const value = values[input.name];
-  //     if (typeof value === 'string') {
-  //       return value.trim() !== '';
-  //     }
-  //     return value !== undefined && value !== '';
-  //   });
-  // };
 
   return (
     <div className="space-y-4">
@@ -108,18 +97,9 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
                 );
               })}
             </div>
-            <div className="flex gap-2">
-              <CustomButton
-                type="submit"
-                label="Apply Filters"
-                icon={<Search />}
-              />
-              <CustomButton
-                type="reset"
-                label="Reset"
-                icon={<X />}
-                variant="outline"
-              />
+            <div className="flex justify-end gap-2">
+              <CustomButton type="submit" label="Apply" />
+              <CustomButton type="reset" label="Clear" variant="outline" />
             </div>
           </form>
         </div>

@@ -1,28 +1,32 @@
 import { ControlledInputText } from '@/components/FormInputs';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import type { IVendorCreateRequest } from '@/services/vendor/types';
+import type {
+  IVendorCreateRequest,
+  IVendorFile,
+} from '@/services/vendor/types';
 import { createVendor, getVendor } from '@/services/vendor';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import CustomButton from '@/components/CustomButton';
 import { Uploader } from '@/components/Uploader';
 
 const VendorForm = () => {
-  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const queryClient = useQueryClient();
   const isEditMode = Boolean(id);
+  const navigate = useNavigate();
+  const [uploadedFiles, setUploadedFiles] = useState<IVendorFile[]>([]);
 
-  const { control, handleSubmit, reset } = useForm<IVendorCreateRequest>({
-    defaultValues: {
-      name: '',
-      description: '',
-      vendorFiles: [],
-    },
-  });
+  const { control, handleSubmit, reset, setValue } =
+    useForm<IVendorCreateRequest>({
+      defaultValues: {
+        name: '',
+        description: '',
+        vendorFiles: [],
+      },
+    });
 
   const { data: vendorData, isLoading: isLoadingVendor } = useQuery({
     queryKey: ['vendor', id],
@@ -43,21 +47,40 @@ const VendorForm = () => {
   const { mutate: createVendorMutation, isPending: isCreating } = useMutation({
     mutationFn: createVendor,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['vendors'] });
       toast.success('Vendor created successfully');
       reset();
       navigate('/vendors');
     },
     onError: (error: any) => {
-      toast.error(error.message || 'Failed to create vendor');
+      toast.error(error.message);
     },
   });
 
-  const onSubmit = (data: IVendorCreateRequest) => {
-    createVendorMutation(data as any);
+  const handleUploadSuccess = (filePaths: string[]) => {
+    // Her dosya yüklendiğinde fileName ve filePath ile vendor dosyalarını güncelle
+    const newFiles: IVendorFile[] = filePaths.map(filePath => {
+      const fileName = filePath.split('/').pop() || filePath;
+      return {
+        fileName,
+        filePath,
+      };
+    });
+
+    setUploadedFiles(prev => {
+      const updated = [...prev, ...newFiles];
+      setValue('vendorFiles', updated);
+      return updated;
+    });
   };
 
-  const isPending = isCreating;
+  const onSubmit = (data: IVendorCreateRequest) => {
+    // Form submit edildiğinde yüklenen dosyaları da gönder
+    const submitData: IVendorCreateRequest = {
+      ...data,
+      vendorFiles: uploadedFiles,
+    };
+    createVendorMutation(submitData as any);
+  };
 
   if (isLoadingVendor && isEditMode) {
     return <LoadingSpinner />;
@@ -78,11 +101,16 @@ const VendorForm = () => {
           label="Description"
           placeholder="Enter vendor description"
         />
-        <Uploader control={control} name="vendorFiles" folderType="vendor" />
+        <Uploader
+          control={control}
+          name="vendorFiles"
+          folderType="vendors"
+          onUploadSuccess={handleUploadSuccess}
+        />
         <CustomButton
           type="submit"
           label="Create Vendor"
-          loading={isPending}
+          loading={isCreating}
           className="w-full"
         />
       </form>

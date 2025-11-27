@@ -1,29 +1,30 @@
 import { apiRequest } from '@/services/api';
-import { IUploadFileResponse } from '@/services/files/types';
+import { type IFileRequest, type IFileResponse } from '@/services/files/types';
 
 export const uploadFile = async (
-  file: File,
-  folderType: string,
-  onProgress?: (progress: number) => void
-): Promise<IUploadFileResponse> => {
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('folderType', folderType);
-
+  data: IFileRequest
+): Promise<IFileResponse> => {
   const response = await apiRequest('/files', {
     method: 'POST',
-    data: formData,
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-    onUploadProgress: (progressEvent: any) => {
-      if (onProgress && progressEvent.total) {
-        const progress = Math.round(
-          (progressEvent.loaded * 100) / progressEvent.total
-        );
-        onProgress(progress);
-      }
-    },
+    body: JSON.stringify(data),
   });
   return response.data;
+};
+
+export const uploadFileToBlob = async (
+  uploadURL: string,
+  file: File
+): Promise<void> => {
+  const response = await fetch(uploadURL, {
+    method: 'PUT',
+    headers: {
+      'x-ms-blob-type': 'BlockBlob',
+      'Content-Type': file.type || 'application/octet-stream',
+    },
+    body: file,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Dosya yükleme başarısız: ${response.statusText}`);
+  }
 };

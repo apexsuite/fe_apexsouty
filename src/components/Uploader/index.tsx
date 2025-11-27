@@ -4,6 +4,7 @@ import { Upload, X } from 'lucide-react';
 import * as React from 'react';
 import { Controller, type Control } from 'react-hook-form';
 import { toast } from 'react-toastify';
+import { useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
   FileUpload,
@@ -12,23 +13,29 @@ import {
   FileUploadItemDelete,
   FileUploadItemMetadata,
   FileUploadItemPreview,
-  FileUploadItemProgress,
   FileUploadList,
   type FileUploadProps,
   FileUploadTrigger,
 } from '@/components/ui/file-upload';
-import { uploadFile } from '@/services/files';
+import { uploadFile, uploadFileToBlob } from '@/services/files';
+import CustomButton from '../CustomButton';
+
+// URL'den folderType'ı çıkaran yardımcı fonksiyon
+const extractPathFromUrl = (pathname: string): string => {
+  const match = pathname.match(/\/([^/]+)/);
+  return match?.[1] || 'default';
+};
 
 interface UploaderProps {
   control: Control<any>;
   name: string;
-  folderType: string;
+  folderType?: string;
   maxFiles?: number;
   multiple?: boolean;
   accept?: string;
   maxSize?: number;
   disabled?: boolean;
-  onUploadSuccess?: (urls: string[]) => void;
+  onUploadSuccess?: (filePaths: string[]) => void;
   onUploadError?: (error: Error) => void;
 }
 
@@ -36,61 +43,78 @@ export function Uploader({
   control,
   name,
   folderType,
+  accept,
   maxFiles = 2,
   multiple = true,
-  accept,
-  maxSize,
+  maxSize = 20 * 1024 * 1024, // 20MB
   disabled = false,
   onUploadSuccess,
   onUploadError,
 }: UploaderProps) {
-  const [uploadedUrls, setUploadedUrls] = React.useState<string[]>([]);
+  const location = useLocation();
+
+  const determinedPath = React.useMemo(() => {
+    if (folderType) return folderType;
+    return extractPathFromUrl(location.pathname);
+  }, [folderType, location.pathname]);
 
   const onUpload: NonNullable<FileUploadProps['onUpload']> = React.useCallback(
     async (files, { onProgress, onSuccess, onError }) => {
       try {
         const uploadPromises = files.map(async file => {
           try {
-            const response = await uploadFile(
-              file,
-              folderType,
-              (progress: number) => {
-                onProgress(file, progress);
-              }
-            );
+            // İlerleme göstergesi başlat
+            onProgress(file, 0);
 
+            // 1. Backend'den uploadURL ve filePath al
+            const response = await uploadFile({
+              fileName: file.name,
+              folderType: determinedPath,
+            });
+
+            // İlerleme güncelle
+            onProgress(file, 50);
+
+            // 2. Azure Blob Storage'a dosyayı yükle
+            await uploadFileToBlob(response.uploadURL, file);
+
+            // İlerleme tamamla
+            onProgress(file, 100);
             onSuccess(file);
-            return response.url;
+
+            return response.filePath;
           } catch (error) {
             const uploadError =
-              error instanceof Error ? error : new Error('Upload failed');
+              error instanceof Error ? error : new Error('Yükleme başarısız');
             onError(file, uploadError);
             throw uploadError;
           }
         });
 
-        const urls = await Promise.all(uploadPromises);
-        setUploadedUrls(prev => [...prev, ...urls]);
-        onUploadSuccess?.(urls);
+        const filePaths = await Promise.all(uploadPromises);
+        onUploadSuccess?.(filePaths);
 
-        toast.success('Files uploaded successfully');
+        toast.success('Dosyalar başarıyla yüklendi');
       } catch (error) {
         const errorMessage =
-          error instanceof Error ? error.message : 'Upload failed';
+          error instanceof Error ? error.message : 'Yükleme başarısız';
         toast.error(errorMessage);
         onUploadError?.(
           error instanceof Error ? error : new Error(errorMessage)
         );
       }
     },
-    [folderType, onUploadSuccess, onUploadError]
+    [determinedPath, onUploadSuccess, onUploadError]
   );
 
-  const onFileReject = React.useCallback((file: File, message: string) => {
-    const fileName =
-      file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name;
-    toast.error(`"${fileName}" reddedildi: ${message}`);
-  }, []);
+  const onFileReject = React.useCallback(
+    (_file: File, message: string) => {
+      const error = new Error(message);
+      toast.error(error.message);
+      onUploadError?.(error);
+    },
+    [onUploadError]
+  );
 
   return (
     <Controller
@@ -112,63 +136,62 @@ export function Uploader({
             disabled={disabled}
           >
             <FileUploadDropzone>
-              <div className="flex flex-col items-center gap-1 text-center">
-                <div className="flex items-center justify-center rounded-full border p-2.5">
-                  <Upload className="text-muted-foreground size-6" />
+              <div className="flex flex-col items-center gap-3 py-2 text-center">
+                <Upload className="text-primary size-6" />
+                <div className="space-y-1.5">
+                  <p className="text-foreground text-sm font-semibold">
+                    Dosyaları sürükle-bırak veya seç
+                  </p>
+                  <div className="flex flex-col gap-1">
+                    {accept && (
+                      <p className="text-muted-foreground flex items-center justify-center gap-1.5 text-xs">
+                        <span className="font-medium">
+                          Desteklenen formatlar:
+                        </span>
+                        <span className="bg-muted rounded px-2 py-0.5 font-mono">
+                          {accept
+                            .split(',')
+                            .map(type => type.trim())
+                            .join(', ')}
+                        </span>
+                      </p>
+                    )}
+                    {maxSize && (
+                      <p className="text-muted-foreground text-xs">
+                        <span className="font-medium">Maksimum boyut:</span>{' '}
+                        {(maxSize / 1024 / 1024).toFixed(1)} MB
+                      </p>
+                    )}
+                    <p className="text-muted-foreground text-xs">
+                      <span className="font-medium">Dosya limiti:</span> En
+                      fazla {maxFiles} dosya
+                    </p>
+                  </div>
                 </div>
-                <p className="text-sm font-medium">
-                  Dosyaları buraya sürükleyin ve bırakın
-                </p>
-                <p className="text-muted-foreground text-xs">
-                  veya göz atmak için tıklayın (maksimum {maxFiles} dosya)
-                </p>
-                <p className="text-muted-foreground text-xs">
-                  Dosya tipi: {accept?.split(',').join(', ')}
-                </p>
               </div>
               <FileUploadTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="mt-2 w-fit"
-                  disabled={disabled}
-                >
-                  Dosya Seç
-                </Button>
+                <CustomButton
+                  icon={<Upload />}
+                  label="Dosya Seç"
+                  variant="ghost"
+                />
               </FileUploadTrigger>
             </FileUploadDropzone>
             <FileUploadList>
               {(value || []).map((file: File, index: number) => (
-                <FileUploadItem key={index} value={file} className="flex-col">
-                  <div className="flex w-full items-center gap-2">
-                    <FileUploadItemPreview />
-                    <FileUploadItemMetadata />
-                    <FileUploadItemDelete asChild>
-                      <Button variant="ghost" size="icon" disabled={disabled}>
-                        <X />
-                      </Button>
-                    </FileUploadItemDelete>
-                  </div>
-                  <FileUploadItemProgress />
+                <FileUploadItem key={index} value={file}>
+                  <FileUploadItemPreview />
+                  <FileUploadItemMetadata />
+                  <FileUploadItemDelete asChild>
+                    <Button variant="ghost" size="icon" disabled={disabled}>
+                      <X />
+                    </Button>
+                  </FileUploadItemDelete>
                 </FileUploadItem>
               ))}
             </FileUploadList>
           </FileUpload>
-          {error && (
-            <p className="mt-1 text-sm text-red-500">{error.message}</p>
-          )}
-          {uploadedUrls.length > 0 && (
-            <div className="mt-2 text-xs text-gray-500">
-              <p>Yüklenen dosyalar:</p>
-              <ul className="list-disc pl-5">
-                {uploadedUrls.map((url, idx) => (
-                  <li key={idx} className="truncate">
-                    {url}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          {error && <p className="text-sm text-red-500">{error.message}</p>}
         </div>
       )}
     />

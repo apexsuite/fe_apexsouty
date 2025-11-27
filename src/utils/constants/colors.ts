@@ -39,4 +39,12 @@ export const COLORS = [
     light:
       'rounded-sm bg-gradient-to-b from-indigo-200 to-indigo-400 p-2 text-indigo-800 dark:from-indigo-200 dark:to-indigo-600',
   },
+  {
+    light:
+      'rounded-sm bg-gradient-to-b from-amber-200 to-amber-400 p-2 text-amber-800 dark:from-amber-200 dark:to-amber-600',
+  },
+  {
+    light:
+      'rounded-sm bg-gradient-to-b from-teal-200 to-teal-400 p-2 text-teal-800 dark:from-teal-200 dark:to-teal-600',
+  },
 ] as const;

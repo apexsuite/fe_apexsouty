@@ -6,6 +6,7 @@ import SearchBar from '@/components/layouts/SearchBar';
 import { ThemeSwitcher } from '@/components/ui/theme-switcher';
 import { cn } from '@/lib/utils';
 import { SidebarTrigger } from './ui/sidebar';
+import Breadcrumb from '@/components/Breadcrumb';
 
 export default function Navbar() {
   const lang = useSelector((state: RootState) => state.lang.language);
@@ -21,46 +22,53 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="border-border bg-background sticky top-0 z-40 w-full border-b">
-      <div className="flex h-16 items-center justify-between gap-4 px-4 md:px-6 lg:px-8">
-        <SidebarTrigger />
-        <div className="flex items-center gap-2 md:max-w-md md:flex-1">
-          <SearchBar />
-        </div>
-
-        <div className="flex items-center gap-3">
-          <div className="bg-background ring-border inline-flex h-8 items-center gap-1 rounded-md p-1 ring-1">
-            <button
-              type="button"
-              onClick={() => handleLanguageChange('en')}
-              className={cn(
-                'relative flex h-6 items-center justify-center rounded px-3 text-xs font-semibold transition-all duration-300',
-                lang === 'en'
-                  ? 'bg-secondary text-foreground'
-                  : 'text-muted-foreground hover:text-foreground'
-              )}
-              aria-label="Switch to English"
-            >
-              EN
-            </button>
-            <button
-              type="button"
-              onClick={() => handleLanguageChange('tr')}
-              className={cn(
-                'relative flex h-6 items-center justify-center rounded px-3 text-xs font-semibold transition-all duration-300',
-                lang === 'tr'
-                  ? 'bg-secondary text-foreground'
-                  : 'text-muted-foreground hover:text-foreground'
-              )}
-              aria-label="Türkçe'ye geç"
-            >
-              TR
-            </button>
+    <div className="sticky top-0 z-40 w-full">
+      <nav className="border-border bg-background border-b">
+        <div className="flex h-16 items-center justify-between gap-4 px-4 md:px-6 lg:px-8">
+          <SidebarTrigger />
+          <div className="flex items-center gap-2 md:max-w-md md:flex-1">
+            <SearchBar />
           </div>
 
-          <ThemeSwitcher />
+          <div className="flex items-center gap-3">
+            <div className="bg-background ring-border inline-flex h-8 items-center gap-1 rounded-md p-1 ring-1">
+              <button
+                type="button"
+                onClick={() => handleLanguageChange('en')}
+                className={cn(
+                  'relative flex h-6 items-center justify-center rounded px-3 text-xs font-semibold transition-all duration-300',
+                  lang === 'en'
+                    ? 'bg-secondary text-foreground'
+                    : 'text-muted-foreground hover:text-foreground'
+                )}
+                aria-label="Switch to English"
+              >
+                EN
+              </button>
+              <button
+                type="button"
+                onClick={() => handleLanguageChange('tr')}
+                className={cn(
+                  'relative flex h-6 items-center justify-center rounded px-3 text-xs font-semibold transition-all duration-300',
+                  lang === 'tr'
+                    ? 'bg-secondary text-foreground'
+                    : 'text-muted-foreground hover:text-foreground'
+                )}
+                aria-label="Türkçe'ye geç"
+              >
+                TR
+              </button>
+            </div>
+
+            <ThemeSwitcher />
+          </div>
         </div>
+      </nav>
+
+      {/* Breadcrumb navbar altına eklendi */}
+      <div className="bg-background border-border border-b px-4 py-3 md:px-6 lg:px-8">
+        <Breadcrumb />
       </div>
-    </nav>
+    </div>
   );
 }

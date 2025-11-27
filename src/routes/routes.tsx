@@ -307,50 +307,50 @@ export const protectedRoutes: RouteObject[] = [
       {
         path: 'permission-examples',
         element: <NewPermissionExamples />,
-        handle: { title: 'Permission Examples' },
+        handle: { title: 'routes.permissionExamples' },
       },
       {
         path: 'subscription',
         element: <Subscription />,
-        handle: { title: 'Subscription' },
+        handle: { title: 'routes.subscription.title' },
       },
       {
         path: 'regions',
+        handle: { title: 'routes.regions.title' },
         children: [
           {
             index: true,
             element: <Region />,
-            handle: { title: 'Region' },
           },
           {
             path: 'create',
             element: <RegionForm />,
-            handle: { title: 'Region Create' },
+            handle: { title: 'routes.regions.create' },
           },
           {
             path: ':id/edit',
             element: <RegionForm />,
-            handle: { title: 'Region Edit' },
+            handle: { title: 'routes.regions.edit' },
           },
         ],
       },
       {
         path: 'vendors',
+        handle: { title: 'routes.vendors.title' },
         children: [
           {
             index: true,
             element: <Vendor />,
-            handle: { title: 'Vendor' },
           },
           {
             path: 'create',
             element: <VendorForm />,
-            handle: { title: 'Vendor Create' },
+            handle: { title: 'routes.vendors.create' },
           },
           {
             path: ':id/edit',
             element: <VendorForm />,
-            handle: { title: 'Vendor Edit' },
+            handle: { title: 'routes.vendors.edit' },
           },
         ],
       },

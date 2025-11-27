@@ -41,7 +41,21 @@
         },
         "consents": {
             "title": "Consents"
-        }
+        },
+        "subscription": {
+            "title": "Subscription"
+        },
+        "regions": {
+            "title": "Regions",
+            "create": "Create Region",
+            "edit": "Edit Region"
+        },
+        "vendors": {
+            "title": "Vendors",
+            "create": "Create Vendor",
+            "edit": "Edit Vendor"
+        },
+        "permissionExamples": "Permission Examples"
     },
     "permissionManagement": "Permission Management",
     "allServices": "All Services",

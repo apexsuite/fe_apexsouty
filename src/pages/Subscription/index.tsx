@@ -41,7 +41,7 @@ const Subscription = () => {
 
         <div className="mx-auto max-w-7xl">
           {isFreeUser ? (
-            <div className="flex flex-col lg:flex-row gap-4 w-full">
+            <div className="flex w-full flex-col gap-4 lg:flex-row">
               <div className="w-full lg:w-1/3">
                 <SubscriptionCard
                   subscription={data.activeSubscription}

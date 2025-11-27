@@ -1,10 +1,9 @@
-export interface IUploadFileRequest {
+export interface IFileRequest {
   fileName: string;
   folderType: string;
 }
 
-export interface IUploadFileResponse {
-  url: string;
-  fileName?: string;
-  fileSize?: number;
+export interface IFileResponse {
+  filePath: string;
+  uploadURL: string;
 }

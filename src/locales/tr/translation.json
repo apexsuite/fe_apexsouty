@@ -41,7 +41,21 @@
         },
         "consents": {
             "title": "Onaylar"
-        }
+        },
+        "subscription": {
+            "title": "Abonelik"
+        },
+        "regions": {
+            "title": "Bölgeler",
+            "create": "Bölge Oluştur",
+            "edit": "Bölge Düzenle"
+        },
+        "vendors": {
+            "title": "Tedarikçiler",
+            "create": "Tedarikçi Oluştur",
+            "edit": "Tedarikçi Düzenle"
+        },
+        "permissionExamples": "İzin Örnekleri"
     },
     "notification": {
         "errNotAllowedForOnBehalfOfUsers": "Başka bir kullanıcının yetkileriyle işlem yapılamaz",

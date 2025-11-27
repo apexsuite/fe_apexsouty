@@ -493,8 +493,8 @@ function FileUploadRoot(props: FileUploadRootProps) {
         }
 
         if (acceptTypes) {
-          const fileType = file.type;
-          const fileExtension = `.${file.name.split('.').pop()}`;
+          const fileType = file.type || '';
+          const fileExtension = `.${file.name?.split('.').pop() ?? ''}`;
 
           if (
             !acceptTypes.some(
@@ -1009,8 +1009,8 @@ function formatBytes(bytes: number) {
 }
 
 function getFileIcon(file: File) {
-  const type = file.type;
-  const extension = file.name.split('.').pop()?.toLowerCase() ?? '';
+  const type = file.type || '';
+  const extension = file.name?.split('.').pop()?.toLowerCase() ?? '';
 
   if (type.startsWith('video/')) {
     return <FileVideoIcon />;
@@ -1076,7 +1076,8 @@ function FileUploadItemPreview(props: FileUploadItemPreviewProps) {
 
   const getDefaultRender = React.useCallback(
     (file: File) => {
-      if (itemContext.fileState?.file.type.startsWith('image/')) {
+      const fileType = itemContext.fileState?.file.type || '';
+      if (fileType.startsWith('image/')) {
         let url = context.urlCache.get(file);
         if (!url) {
           url = URL.createObjectURL(file);
@@ -1162,7 +1163,7 @@ function FileUploadItemMetadata(props: FileUploadItemMetadataProps) {
               size === 'sm' && 'text-[13px] leading-snug font-normal'
             )}
           >
-            {itemContext.fileState.file.name}
+            {itemContext.fileState.file.name || 'Dosya'}
           </span>
           <span
             id={itemContext.sizeId}
@@ -1171,7 +1172,7 @@ function FileUploadItemMetadata(props: FileUploadItemMetadataProps) {
               size === 'sm' && 'text-[11px] leading-snug'
             )}
           >
-            {formatBytes(itemContext.fileState.file.size)}
+            {formatBytes(itemContext.fileState.file.size || 0)}
           </span>
           {itemContext.fileState.error && (
             <span
