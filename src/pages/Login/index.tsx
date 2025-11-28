@@ -20,7 +20,7 @@ import { useErrorHandler } from '@/lib/useErrorHandler';
 import useQueryParamHandler from '@/utils/hooks/useQueryParamHandler';
 import { requestConsentsCallback } from '@/services/consents';
 import { IConsentsCallback } from '@/services/consents/types';
-
+  
 export default function Login() {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
@@ -37,15 +37,9 @@ export default function Login() {
 
   useQueryParamHandler();
 
-  const validationSchema = useMemo(
-    () => getLoginValidationSchema(t),
-    [t]
-  );
+  const validationSchema = useMemo(() => getLoginValidationSchema(t), [t]);
 
-  const {
-    control,
-    handleSubmit,
-  } = useForm<LoginFormData>({
+  const { control, handleSubmit } = useForm<LoginFormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       email: '',
@@ -55,7 +49,7 @@ export default function Login() {
 
   const requestConsentsCallbackMutation = useMutation({
     mutationFn: (params: IConsentsCallback) => requestConsentsCallback(params),
-    onSuccess: (response) => {
+    onSuccess: response => {
       const redirectUrl = response?.data;
       if (redirectUrl && typeof redirectUrl === 'string') {
         localStorage.removeItem('pendingAmazonCallbackParams');
@@ -65,7 +59,7 @@ export default function Login() {
         localStorage.removeItem('pendingAmazonCallbackParams');
       }
     },
-    onError: (error) => {
+    onError: error => {
       toast.error(error.message || 'Error requesting Amazon consent callback');
       handleError(error);
       localStorage.removeItem('pendingAmazonCallbackParams');
@@ -74,7 +68,7 @@ export default function Login() {
 
   const loginMutation = useMutation({
     mutationFn: (data: ILoginRequest) => login(data),
-    onSuccess: async (response) => {
+    onSuccess: async response => {
       if (response && !response.error) {
         if (response.token) {
           localStorage.setItem('token', response.token);
@@ -168,16 +162,16 @@ export default function Login() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-950">
-      <div className="absolute right-4 top-4 z-10">
+      <div className="absolute top-4 right-4 z-10">
         <LanguageSwitcher />
       </div>
 
       <div className="w-full max-w-md px-4">
         <div className="mb-8 flex items-center justify-center gap-2">
-          <div className="flex size-10 items-center justify-center rounded-lg bg-gray-800 dark:bg-gray-800 shadow-md">
+          <div className="flex size-10 items-center justify-center rounded-lg bg-gray-800 shadow-md dark:bg-gray-800">
             <span className="text-xl font-bold text-white">A</span>
           </div>
-          <span className="text-3xl font-bold leading-tight tracking-tight text-gray-800 dark:text-white">
+          <span className="text-3xl leading-tight font-bold tracking-tight text-gray-800 dark:text-white">
             ApexScouty
           </span>
         </div>
@@ -217,21 +211,23 @@ export default function Login() {
               />
 
               <div className="flex justify-end">
-                <Link
-                  to="/forgot-password"
-                  className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                <Button
+                  variant="link"
+                  onClick={() => navigate('/forgot-password')}
                 >
                   {t('login.forgot')}
-                </Link>
+                </Button>
               </div>
 
               <Button
                 type="submit"
-                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-900 dark:bg-gray-200 dark:hover:bg-gray-300 dark:text-gray-900"
                 size="xl"
                 disabled={loginMutation.isPending}
+                className="w-full"
               >
-                {loginMutation.isPending ? t('login.loggingIn') : t('login.signIn')}
+                {loginMutation.isPending
+                  ? t('login.loggingIn')
+                  : t('login.signIn')}
               </Button>
             </form>
           </CardContent>
@@ -250,4 +246,3 @@ export default function Login() {
     </div>
   );
 }
-

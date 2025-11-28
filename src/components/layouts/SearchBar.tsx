@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/command';
 import { Kbd, KbdGroup } from '@/components/ui/kbd';
 import { COLORS } from '@/utils/constants/colors';
+import { SHORTCUTS } from '@/utils/constants/shortcut';
 
 const SearchBar = () => {
   const { t } = useTranslation();
@@ -43,6 +44,10 @@ const SearchBar = () => {
       currentItems: MenuItem[],
       { pageRouteID, isFavorite }: { pageRouteID: string; isFavorite: boolean }
     ) => {
+      // Array olmadığı durumda boş array döndür
+      if (!Array.isArray(currentItems)) {
+        return [];
+      }
       return currentItems.map(item => {
         if ((item.pageRouteID || item.id) === pageRouteID) {
           return {
@@ -54,6 +59,11 @@ const SearchBar = () => {
       });
     }
   );
+
+  // optimisticMenuItems'ın array olduğundan emin ol
+  const safeOptimisticMenuItems = Array.isArray(optimisticMenuItems)
+    ? optimisticMenuItems
+    : [];
 
   const handleFavorite = async (isFavorite: boolean, pageRouteID: string) => {
     startTransition(async () => {
@@ -157,7 +167,7 @@ const SearchBar = () => {
   }, [open]);
 
   useKeyboardShortcut({
-    key: 'k',
+    key: SHORTCUTS.OPEN_SEARCH_BAR,
     metaKey: true,
     onPress: () => {
       setOpen(open => !open);
@@ -223,50 +233,51 @@ const SearchBar = () => {
           ) : null}
 
           <CommandGroup heading={t('searchBar.pages')}>
-            {optimisticMenuItems.map((fav: MenuItem, index: number) => {
-              const Icon = fav.icon && (LucideIcons as any)[fav.icon];
-              const isFavorite = fav.isFavourite === true;
-              const colorClasses =
-                COLORS[index % COLORS.length]?.light || COLORS[0]!.light;
-              return (
-                <CommandItem
-                  key={fav.id}
-                  onSelect={() => fav.path && handleNavigate(fav.path)}
-                  className="flex items-center gap-3 py-3"
-                >
-                  {Icon && (
-                    <div className={colorClasses}>
-                      <Icon />
-                    </div>
-                  )}
-                  <div className="min-w-0 flex-1">
-                    <div className="text-sm font-medium">{fav.label}</div>
-                    {fav.description && (
-                      <div className="text-muted-foreground mt-0.5 truncate text-xs">
-                        {fav.description}
+            {safeOptimisticMenuItems.length > 0 &&
+              safeOptimisticMenuItems.map((fav: MenuItem, index: number) => {
+                const Icon = fav.icon && (LucideIcons as any)[fav.icon];
+                const isFavorite = fav.isFavourite === true;
+                const colorClasses =
+                  COLORS[index % COLORS.length]?.light || COLORS[0]!.light;
+                return (
+                  <CommandItem
+                    key={fav.id}
+                    onSelect={() => fav.path && handleNavigate(fav.path)}
+                    className="flex items-center gap-3 py-3"
+                  >
+                    {Icon && (
+                      <div className={colorClasses}>
+                        <Icon />
                       </div>
                     )}
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="size-8 shrink-0 cursor-pointer hover:bg-transparent"
-                    type="button"
-                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      handleFavorite(isFavorite, fav.pageRouteID as string);
-                    }}
-                  >
-                    <LucideIcons.Star
-                      fill={isFavorite ? `#facc15` : 'transparent'}
-                      stroke={`#facc15`}
-                      className="transition-all"
-                    />
-                  </Button>
-                </CommandItem>
-              );
-            })}
+                    <div className="min-w-0 flex-1">
+                      <div className="text-sm font-medium">{fav.label}</div>
+                      {fav.description && (
+                        <div className="text-muted-foreground mt-0.5 truncate text-xs">
+                          {fav.description}
+                        </div>
+                      )}
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="size-8 shrink-0 cursor-pointer hover:bg-transparent"
+                      type="button"
+                      onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        handleFavorite(isFavorite, fav.pageRouteID as string);
+                      }}
+                    >
+                      <LucideIcons.Star
+                        fill={isFavorite ? `#facc15` : 'transparent'}
+                        stroke={`#facc15`}
+                        className="transition-all"
+                      />
+                    </Button>
+                  </CommandItem>
+                );
+              })}
           </CommandGroup>
         </CommandList>
         <div className="border-input text-muted-foreground flex items-center justify-between border-t px-3 py-2 text-xs">
