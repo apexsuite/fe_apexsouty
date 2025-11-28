@@ -153,6 +153,21 @@
         "button": "Sıfırlama Linki Gönder",
         "back": "Girişe Dön"
     },
+    "forgotPassword": {
+        "title": "Şifremi Unuttum",
+        "subtitle": "E-posta adresinizi girin, size şifre sıfırlama bağlantısı gönderelim.",
+        "emailAddress": "E-posta adresi",
+        "emailPlaceholder": "ornek@email.com",
+        "button": "Sıfırlama Linki Gönder",
+        "sending": "Gönderiliyor...",
+        "back": "Girişe Dön",
+        "success": "Şifre sıfırlama e-postası başarıyla gönderildi!",
+        "failed": "Şifre sıfırlama e-postası gönderilemedi",
+        "validation": {
+            "emailRequired": "E-posta adresi gereklidir",
+            "emailInvalid": "Lütfen geçerli bir e-posta adresi girin"
+        }
+    },
     "verifyEmail": {
         "success": "E-posta başarıyla doğrulandı!",
         "failed": "E-posta doğrulama başarısız",

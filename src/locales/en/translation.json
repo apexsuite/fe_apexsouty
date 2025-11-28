@@ -218,6 +218,21 @@
         "button": "Send Reset Link",
         "back": "Back to Login"
     },
+    "forgotPassword": {
+        "title": "Forgot Password",
+        "subtitle": "Enter your email address and we'll send you a link to reset your password.",
+        "emailAddress": "Email address",
+        "emailPlaceholder": "you@example.com",
+        "button": "Send Reset Link",
+        "sending": "Sending...",
+        "back": "Back to Login",
+        "success": "Password reset email sent successfully!",
+        "failed": "Failed to send password reset email",
+        "validation": {
+            "emailRequired": "Email address is required",
+            "emailInvalid": "Please enter a valid email address"
+        }
+    },
     "verifyEmail": {
         "success": "Email verified successfully!",
         "failed": "Email verification failed",

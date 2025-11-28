@@ -7,7 +7,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { RouteObject } from 'react-router-dom';
 
 const Login = lazy(() => import('@/pages/Login'));
-const Register = lazy(() => import('@/pages/Register/index'));
+const Register = lazy(() => import('@/pages/Register'));
 const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'));
 const VerifyEmail = lazy(() => import('@/pages/VerifyEmail'));
 const ResetPassword = lazy(() => import('@/pages/ResetPassword'));

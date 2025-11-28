@@ -1,5 +1,5 @@
 import { apiRequest } from "../api";
-import { IRegisterRequest, ILoginRequest, IVerifyEmailRequest } from "./types";
+import { IRegisterRequest, ILoginRequest, IVerifyEmailRequest, IForgotPasswordRequest } from "./types";
 
 export const register = async (request: IRegisterRequest) => {
     const response = await apiRequest('/auth/register', {
@@ -19,6 +19,14 @@ export const login = async (request: ILoginRequest) => {
 
 export const verifyEmail = async (request: IVerifyEmailRequest) => {
     const response = await apiRequest('/auth/verify-email', {
+        method: 'POST',
+        body: JSON.stringify(request),
+    });
+    return response;
+};
+
+export const forgotPassword = async (request: IForgotPasswordRequest) => {
+    const response = await apiRequest('/auth/forgot-password', {
         method: 'POST',
         body: JSON.stringify(request),
     });

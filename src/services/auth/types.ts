@@ -15,3 +15,8 @@ export interface IVerifyEmailRequest {
     id: string;
     token: string;
 }
+
+export interface IForgotPasswordRequest {
+    email: string;
+    language: string;
+}
