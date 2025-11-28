@@ -76,7 +76,6 @@ export default function Login() {
     mutationFn: (data: ILoginRequest) => login(data),
     onSuccess: async (response) => {
       if (response && !response.error) {
-        // Save token if present in response
         if (response.token) {
           localStorage.setItem('token', response.token);
         } else if (response.data?.token) {
@@ -168,41 +167,33 @@ export default function Login() {
   };
 
   return (
-    <div
-      className="relative flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: '#f0f4f8' }}
-    >
-      {/* Language Switcher - Top Right */}
+    <div className="relative flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-950">
       <div className="absolute right-4 top-4 z-10">
         <LanguageSwitcher />
       </div>
 
       <div className="w-full max-w-md px-4">
-        {/* Logo and Brand */}
         <div className="mb-8 flex items-center justify-center gap-2">
-          <div className="flex size-10 items-center justify-center rounded-lg bg-gray-800 shadow-md">
+          <div className="flex size-10 items-center justify-center rounded-lg bg-gray-800 dark:bg-gray-800 shadow-md">
             <span className="text-xl font-bold text-white">A</span>
           </div>
-          <span className="text-3xl font-bold leading-tight tracking-tight text-gray-800">
+          <span className="text-3xl font-bold leading-tight tracking-tight text-gray-800 dark:text-white">
             ApexScouty
           </span>
         </div>
 
-        {/* Title and Subtitle */}
         <div className="mb-8 text-center">
-          <h2 className="mb-2 text-3xl font-semibold text-gray-800">
+          <h2 className="mb-2 text-3xl font-semibold text-gray-800 dark:text-white">
             {t('login.signInTitle')}
           </h2>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-300">
             {t('login.subtitle')}
           </p>
         </div>
 
-        {/* Form Card */}
-        <Card className="border-none shadow-md">
+        <Card className="border-none shadow-md dark:bg-gray-800/50">
           <CardContent className="p-6">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-              {/* Email */}
               <ControlledInputText
                 control={control}
                 name="email"
@@ -214,7 +205,6 @@ export default function Login() {
                 autoComplete="email"
               />
 
-              {/* Password */}
               <ControlledInputText
                 control={control}
                 name="password"
@@ -226,20 +216,18 @@ export default function Login() {
                 autoComplete="current-password"
               />
 
-              {/* Forgot Password Link */}
               <div className="flex justify-end">
                 <Link
                   to="/forgot-password"
-                  className="text-sm font-medium text-blue-600 hover:text-blue-700"
+                  className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                 >
                   {t('login.forgot')}
                 </Link>
               </div>
 
-              {/* Submit Button */}
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-900 dark:bg-gray-200 dark:hover:bg-gray-300 dark:text-gray-900"
                 size="xl"
                 disabled={loginMutation.isPending}
               >
@@ -249,12 +237,11 @@ export default function Login() {
           </CardContent>
         </Card>
 
-        {/* Sign Up Link */}
-        <div className="mt-6 text-center text-sm text-gray-600">
+        <div className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
           {t('login.noAccount')}{' '}
           <Link
             to="/register"
-            className="font-medium text-blue-600 hover:text-blue-700"
+            className="font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
           >
             {t('login.signUp')}
           </Link>

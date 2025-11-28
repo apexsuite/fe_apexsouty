@@ -20,7 +20,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
 
   return (
     <div className={cn('flex items-center gap-2', className)}>
-      <Globe className="h-4 w-4 text-gray-600" />
+      <Globe className="h-4 w-4 text-gray-600 dark:text-gray-50" />
       <div className="bg-white ring-border inline-flex h-8 items-center gap-1 rounded-md p-1 ring-1 shadow-sm">
         <button
           type="button"
