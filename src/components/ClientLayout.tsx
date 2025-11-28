@@ -1,34 +1,35 @@
 import { useLocation } from 'react-router-dom';
-import Navbar from '@/components/Navbar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { usePageHistory } from '@/utils/hooks/usePageHistory';
 import { AppSidebar } from '@/components/layouts/Sidebar';
+import Navbar from '@/components/Navbar';
 
 interface ClientLayoutProps {
   children?: React.ReactNode;
 }
 
 export default function ClientLayout({ children }: ClientLayoutProps) {
-  const location = useLocation();
-  const pathname = location.pathname;
+  const { pathname } = useLocation();
   const isAuthPage =
     pathname === '/login' ||
     pathname === '/register' ||
     pathname === '/forgot-password';
 
-  usePageHistory();
-
   if (isAuthPage) {
     return <div className="bg-background min-h-screen">{children}</div>;
   }
 
+  usePageHistory();
+
   return (
     <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <Navbar />
-        {children}
-      </SidebarInset>
+      <div className="relative flex h-screen w-full">
+        <AppSidebar />
+        <SidebarInset className="flex flex-col">
+          <Navbar />
+          {children}
+        </SidebarInset>
+      </div>
     </SidebarProvider>
   );
 }

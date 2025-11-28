@@ -3,7 +3,6 @@ import type { RootState } from '@/lib/store';
 import { setLanguage } from '@/lib/langSlice';
 import i18n from '@/locales';
 import { cn } from '@/lib/utils';
-import { Globe } from 'lucide-react';
 
 export function LanguageSwitcher({ className }: { className?: string }) {
   const lang = useSelector((state: RootState) => state.lang.language);
@@ -20,8 +19,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
 
   return (
     <div className={cn('flex items-center gap-2', className)}>
-      <Globe className="h-4 w-4 text-gray-600 dark:text-gray-50" />
-      <div className="bg-white ring-border inline-flex h-8 items-center gap-1 rounded-md p-1 ring-1 shadow-sm">
+      <div className="ring-border inline-flex h-8 items-center gap-1 rounded-md bg-white p-1 shadow-sm ring-1">
         <button
           type="button"
           onClick={() => handleLanguageChange('en')}
@@ -52,4 +50,3 @@ export function LanguageSwitcher({ className }: { className?: string }) {
     </div>
   );
 }
-

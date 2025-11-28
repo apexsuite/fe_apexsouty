@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '@/lib/store';
 import * as LucideIcons from 'lucide-react';
@@ -24,7 +25,7 @@ import {
   SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
+  SidebarTrigger,
   useSidebar,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
@@ -41,11 +42,9 @@ import {
 import { logoutUser } from '@/lib/authSlice';
 import { clearPageHistory } from '@/utils/hooks/usePageHistory';
 import { COLORS } from '@/utils/constants/colors';
-import CustomButton from '../CustomButton';
+import CustomButton from '@/components/CustomButton';
 
 type LucideIconComponent = React.ComponentType<{ size?: number }>;
-
-interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> { }
 
 const getSortedFavorites = (favorites: MenuItem[]): MenuItem[] => {
   return [...favorites].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
@@ -60,21 +59,17 @@ const getIconComponent = (
     | undefined;
 };
 
-export function AppSidebar({ ...props }: AppSidebarProps) {
+export function AppSidebar() {
   const dispatch = useDispatch<AppDispatch>();
   const favoritesMenu = useSelector(selectFavorites);
   const menuItems = useSelector((state: RootState) => state.menu.items);
-  const navigate = useNavigate();
   const { state } = useSidebar();
+  const isCollapsed = state === 'collapsed';
 
   useEffect(() => {
     dispatch(fetchMenu());
     dispatch(fetchFavorites());
   }, [dispatch]);
-
-  const handleNavigate = (href: string) => {
-    navigate(href);
-  };
 
   const handleLogout = () => {
     dispatch(logoutUser());
@@ -113,37 +108,27 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
   };
 
   return (
-    <Sidebar {...props} collapsible="icon" className="flex h-screen flex-col">
-      <SidebarHeader className="border-b pb-4">
-        <div className="flex items-center justify-between gap-2">
-          {state === 'expanded' && (
-            <div
-              onClick={() => handleNavigate('/dashboard')}
-              className="group flex cursor-pointer items-center gap-2 transition-all duration-300 hover:opacity-80"
-            >
-              <div className="from-primary/90 to-primary ring-primary/20 flex size-10 items-center justify-center rounded-lg bg-linear-to-br shadow-md ring-1">
-                <span className="text-primary-foreground text-lg font-bold">
-                  A
-                </span>
-              </div>
-              <span className="text-lg leading-tight font-bold tracking-tight">
-                ApexScouty
-              </span>
-            </div>
+    <Sidebar variant="inset" collapsible="icon">
+      <SidebarHeader
+        className={cn(
+          'flex pt-3',
+          isCollapsed
+            ? 'flex-row items-center justify-between gap-y-4 md:flex-col md:items-start md:justify-start'
+            : 'flex-row items-center justify-between'
+        )}
+      >
+        <motion.div
+          key={isCollapsed ? 'header-collapsed' : 'header-expanded'}
+          className={cn(
+            'flex items-center gap-2',
+            isCollapsed ? 'flex-row md:flex-col-reverse' : 'flex-row'
           )}
-          <div className="flex flex-col items-center gap-2">
-            {state === 'collapsed' && (
-              <div
-                onClick={() => handleNavigate('/dashboard')}
-                className="group from-primary/90 to-primary ring-primary/20 mb-2 flex size-8 cursor-pointer items-center justify-center rounded-lg bg-linear-to-br shadow-md ring-1 transition-all duration-300 hover:opacity-80"
-              >
-                <span className="text-primary-foreground text-base font-bold">
-                  A
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+        >
+          <SidebarTrigger />
+        </motion.div>
       </SidebarHeader>
       <SidebarContent className="flex-1 overflow-y-auto">
         {favoritesMenu.length > 0 && (
@@ -187,7 +172,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
                                 {...provided.dragHandleProps}
                                 className={cn(
                                   snapshot.isDragging &&
-                                  'group flex cursor-grab items-center gap-3 bg-yellow-50 active:cursor-grabbing dark:bg-yellow-900/20'
+                                    'group flex cursor-grab items-center gap-3 bg-yellow-50 active:cursor-grabbing dark:bg-yellow-900/20'
                                 )}
                               >
                                 <SidebarMenuButton
@@ -238,7 +223,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
           </SidebarGroup>
         )}
       </SidebarContent>
-      <SidebarFooter className="border-t">
+      <SidebarFooter>
         <Button
           variant="outline"
           onClick={handleLogout}
@@ -258,7 +243,6 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
           </div>
         )}
       </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
   );
 }

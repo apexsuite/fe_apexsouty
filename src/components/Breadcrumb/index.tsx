@@ -7,7 +7,7 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Home } from 'lucide-react';
-import { useLocation, useMatches, Link } from 'react-router-dom';
+import { useMatches, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 interface RouteMatch {
@@ -23,12 +23,7 @@ interface RouteMatch {
 export default function Breadcrumb() {
   const { t } = useTranslation();
 
-  const location = useLocation();
   const matches = useMatches() as RouteMatch[];
-
-  if (location.pathname === '/dashboard') {
-    return null;
-  }
 
   const breadcrumbs = matches
     .filter(
@@ -45,40 +40,38 @@ export default function Breadcrumb() {
   }
 
   return (
-    <div className="bg-background border-border border-b px-4 py-3 md:px-6 lg:px-8">
-      <BreadcrumbUI>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink
-              render={() => (
-                <Link to="/dashboard">
-                  <Home />
-                </Link>
-              )}
-            />
-          </BreadcrumbItem>
+    <BreadcrumbUI>
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink
+            render={() => (
+              <Link to="/dashboard">
+                <Home />
+              </Link>
+            )}
+          />
+        </BreadcrumbItem>
 
-          {breadcrumbs.map((breadcrumb, index) => {
-            const isLast = index === breadcrumbs.length - 1;
-            return (
-              <div key={breadcrumb.path} className="contents">
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  {isLast ? (
-                    <BreadcrumbPage>{t(breadcrumb.title)}</BreadcrumbPage>
-                  ) : (
-                    <BreadcrumbLink
-                      render={
-                        <Link to={breadcrumb.path}>{t(breadcrumb.title)}</Link>
-                      }
-                    />
-                  )}
-                </BreadcrumbItem>
-              </div>
-            );
-          })}
-        </BreadcrumbList>
-      </BreadcrumbUI>
-    </div>
+        {breadcrumbs.map((breadcrumb, index) => {
+          const isLast = index === breadcrumbs.length - 1;
+          return (
+            <div key={breadcrumb.path} className="contents">
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                {isLast ? (
+                  <BreadcrumbPage>{t(breadcrumb.title)}</BreadcrumbPage>
+                ) : (
+                  <BreadcrumbLink
+                    render={
+                      <Link to={breadcrumb.path}>{t(breadcrumb.title)}</Link>
+                    }
+                  />
+                )}
+              </BreadcrumbItem>
+            </div>
+          );
+        })}
+      </BreadcrumbList>
+    </BreadcrumbUI>
   );
 }
