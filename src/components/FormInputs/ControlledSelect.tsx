@@ -8,6 +8,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '../ui/select';
+import { LucideIcon } from 'lucide-react';
 
 interface SelectOption {
     value: string;
@@ -25,6 +26,7 @@ interface ControlledSelectProps<T extends FieldValues> {
     className?: string;
     description?: string;
     placeholder?: string;
+    icon?: LucideIcon;
 }
 
 export function ControlledSelect<T extends FieldValues>({
@@ -38,6 +40,7 @@ export function ControlledSelect<T extends FieldValues>({
     className,
     description,
     placeholder,
+    icon: Icon
 }: ControlledSelectProps<T>) {
     return (
         <div className={cn('space-y-2', className)}>
@@ -52,30 +55,36 @@ export function ControlledSelect<T extends FieldValues>({
                 control={control}
                 name={name}
                 render={({ field }) => (
-                    <Select
-                        value={field.value}
-                        onValueChange={field.onChange}
-                        disabled={disabled}
-                    >
-                        <SelectTrigger
-                            id={name}
-                            aria-invalid={error ? 'true' : 'false'}
-                            className={cn(
-                                error && 'border-destructive focus:ring-destructive/20'
-                            )}
+                    <div className="relative">
+                        {Icon && (
+                            <Icon className="pointer-events-none absolute left-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        )}
+                        <Select
+                            value={field.value}
+                            onValueChange={field.onChange}
+                            disabled={disabled}
                         >
-                            <SelectValue placeholder={placeholder} />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {options
-                                .filter((option) => option.value !== '')
-                                .map((option) => (
-                                    <SelectItem key={option.value} value={option.value}>
-                                        {option.label}
-                                    </SelectItem>
-                                ))}
-                        </SelectContent>
-                    </Select>
+                            <SelectTrigger
+                                id={name}
+                                aria-invalid={error ? 'true' : 'false'}
+                                className={cn(
+                                    Icon && 'pl-9',
+                                    error && 'border-destructive focus:ring-destructive/20'
+                                )}
+                            >
+                                <SelectValue placeholder={placeholder} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {options
+                                    .filter((option) => option.value !== '')
+                                    .map((option) => (
+                                        <SelectItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </SelectItem>
+                                    ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
                 )}
             />
 

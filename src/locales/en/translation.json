@@ -189,11 +189,27 @@
     },
     "login": {
         "title": "Log In to ApexScouty",
+        "signInTitle": "Sign in to your account",
+        "subtitle": "Welcome back! Please enter your details.",
         "email": "Email",
+        "emailAddress": "Email address",
         "password": "Password",
         "forgot": "Forgot password?",
         "button": "Login",
-        "success": "Login successful!"
+        "signIn": "Sign in",
+        "loggingIn": "Logging in...",
+        "success": "Login successful!",
+        "failed": "Login failed",
+        "noAccount": "Don't have an account?",
+        "signUp": "Sign up",
+        "emailPlaceholder": "you@example.com",
+        "passwordPlaceholder": "Enter your password",
+        "validation": {
+            "emailRequired": "Email address is required",
+            "emailInvalid": "Please enter a valid email address",
+            "passwordRequired": "Password is required",
+            "passwordMin": "Password must be at least 6 characters"
+        }
     },
     "forgot": {
         "title": "Forgot Password",
@@ -202,20 +218,51 @@
         "button": "Send Reset Link",
         "back": "Back to Login"
     },
+    "verifyEmail": {
+        "success": "Email verified successfully!",
+        "failed": "Email verification failed",
+        "invalidLink": "Invalid verification link",
+        "verifying": "Verifying your email...",
+        "completed": "Email verification completed",
+        "redirecting": "Redirecting to login page...",
+        "goToLogin": "Go to Login"
+    },
     "register": {
         "title": "Register",
+        "createAccount": "Create your account",
+        "subtitle": "Start managing your services today.",
         "submit": "Register",
         "name": "Name",
         "email": "Email",
+        "emailAddress": "Email address",
         "username": "Username",
         "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "fullName": "Full Name",
         "language": "Language",
         "fillAllFields": "Please fill all fields",
         "firstname": "Firstname",
         "lastname": "Lastname",
-        "success": "Registration successful! You can now log in.",
+        "success": "Successfully registered!",
+        "failed": "Registration failed",
         "haveAccount": "Already have an account?",
-        "login": "Login"
+        "login": "Log in",
+        "signUp": "Sign Up",
+        "signingUp": "Signing up...",
+        "fullNamePlaceholder": "John Doe",
+        "emailPlaceholder": "you@example.com",
+        "passwordPlaceholder": "Enter your password",
+        "confirmPasswordPlaceholder": "Confirm your password",
+        "validation": {
+            "fullNameRequired": "Full name is required",
+            "fullNameMin": "Full name must be at least 2 characters",
+            "emailRequired": "Email address is required",
+            "emailInvalid": "Please enter a valid email address",
+            "passwordRequired": "Password is required",
+            "passwordMin": "Password must be at least 6 characters",
+            "confirmPasswordRequired": "Please confirm your password",
+            "passwordsNotMatch": "Passwords do not match"
+        }
     },
     "sidebar": {
         "logout": "Logout",
