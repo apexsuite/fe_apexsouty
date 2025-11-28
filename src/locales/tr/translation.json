@@ -124,11 +124,27 @@
     },
     "login": {
         "title": "ApexScouty Giriş",
+        "signInTitle": "Hesabınıza giriş yapın",
+        "subtitle": "Tekrar hoş geldiniz! Lütfen bilgilerinizi girin.",
         "email": "E-posta",
+        "emailAddress": "E-posta adresi",
         "password": "Şifre",
         "forgot": "Şifremi unuttum?",
         "button": "Giriş Yap",
-        "success": "Giriş başarılı!"
+        "signIn": "Giriş Yap",
+        "loggingIn": "Giriş yapılıyor...",
+        "success": "Giriş başarılı!",
+        "failed": "Giriş başarısız",
+        "noAccount": "Hesabınız yok mu?",
+        "signUp": "Kayıt ol",
+        "emailPlaceholder": "ornek@email.com",
+        "passwordPlaceholder": "Şifrenizi girin",
+        "validation": {
+            "emailRequired": "E-posta adresi gereklidir",
+            "emailInvalid": "Lütfen geçerli bir e-posta adresi girin",
+            "passwordRequired": "Şifre gereklidir",
+            "passwordMin": "Şifre en az 6 karakter olmalıdır"
+        }
     },
     "forgot": {
         "title": "Şifremi Unuttum",
@@ -137,18 +153,49 @@
         "button": "Sıfırlama Linki Gönder",
         "back": "Girişe Dön"
     },
+    "verifyEmail": {
+        "success": "E-posta başarıyla doğrulandı!",
+        "failed": "E-posta doğrulama başarısız",
+        "invalidLink": "Geçersiz doğrulama bağlantısı",
+        "verifying": "E-postanız doğrulanıyor...",
+        "completed": "E-posta doğrulama tamamlandı",
+        "redirecting": "Giriş sayfasına yönlendiriliyor...",
+        "goToLogin": "Giriş Sayfasına Git"
+    },
     "register": {
         "title": "Üye Ol",
+        "createAccount": "Hesabınızı oluşturun",
+        "subtitle": "Hizmetlerinizi yönetmeye bugün başlayın.",
         "submit": "Kayıt Ol",
         "email": "E-posta",
-        "language": "Dil",
+        "emailAddress": "E-posta adresi",
         "password": "Şifre",
+        "confirmPassword": "Şifreyi Onayla",
+        "fullName": "Ad Soyad",
+        "language": "Dil",
         "fillAllFields": "Lütfen tüm alanları doldurun.",
         "firstname": "Ad",
         "lastname": "Soyad",
-        "success": "Kayıt başarılı! Giriş yapabilirsiniz.",
+        "success": "Başarıyla kayıt olundu!",
+        "failed": "Kayıt başarısız",
         "haveAccount": "Zaten hesabınız var mı?",
-        "login": "Giriş Yap"
+        "login": "Giriş Yap",
+        "signUp": "Kayıt Ol",
+        "signingUp": "Kayıt yapılıyor...",
+        "fullNamePlaceholder": "Ahmet Yılmaz",
+        "emailPlaceholder": "ornek@email.com",
+        "passwordPlaceholder": "Şifrenizi girin",
+        "confirmPasswordPlaceholder": "Şifrenizi onaylayın",
+        "validation": {
+            "fullNameRequired": "Ad soyad gereklidir",
+            "fullNameMin": "Ad soyad en az 2 karakter olmalıdır",
+            "emailRequired": "E-posta adresi gereklidir",
+            "emailInvalid": "Lütfen geçerli bir e-posta adresi girin",
+            "passwordRequired": "Şifre gereklidir",
+            "passwordMin": "Şifre en az 6 karakter olmalıdır",
+            "confirmPasswordRequired": "Lütfen şifrenizi onaylayın",
+            "passwordsNotMatch": "Şifreler eşleşmiyor"
+        }
     },
     "sidebar": {
         "logout": "Çıkış Yap",
