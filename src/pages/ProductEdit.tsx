@@ -28,7 +28,7 @@ const ProductEdit: React.FC = () => {
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { } = theme.useToken();
+  const {} = theme.useToken();
   const { handleError, showSuccess } = useErrorHandler();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -57,6 +57,8 @@ const ProductEdit: React.FC = () => {
         statementDescriptor: product.statementDescriptor,
         unitLabel: product.unitLabel,
         capacity: product.capacity ?? null,
+        isDefaultProduct: product.isDefaultProduct,
+        isStripeProduct: product.isStripeProduct,
       });
       setInitialLoading(false);
     }
@@ -83,8 +85,7 @@ const ProductEdit: React.FC = () => {
         marketingFeatures: values.marketingFeatures || [],
         statementDescriptor: values.statementDescriptor || '',
         unitLabel: values.unitLabel || '',
-        capacity:
-          typeof values.capacity === 'number' ? values.capacity : null,
+        capacity: typeof values.capacity === 'number' ? values.capacity : null,
       };
 
       await dispatch(updateProduct({ productId, productData })).unwrap();
@@ -252,7 +253,7 @@ const ProductEdit: React.FC = () => {
                   />
                 </Form.Item>
                 <Form.Item
-                  name="isDeafultProduct"
+                  name="isDefaultProduct"
                   label={t('product.isDeafultProduct')}
                   valuePropName="checked"
                 >

@@ -28,6 +28,7 @@ import { Kbd, KbdGroup } from '@/components/ui/kbd';
 import { COLORS } from '@/utils/constants/colors';
 import { SHORTCUTS } from '@/utils/constants/shortcut';
 import { useSidebar } from '../ui/sidebar';
+import CustomButton from '@/components/CustomButton';
 
 const SearchBar = () => {
   const { t } = useTranslation();
@@ -185,7 +186,7 @@ const SearchBar = () => {
         size={isCollapsed ? 'icon' : 'default'}
       >
         <LucideIcons.SearchIcon
-          className="text-muted-foreground/80 size-4 shrink-0"
+          className="text-muted-foreground size-4 shrink-0"
           aria-hidden="true"
         />
         {!isCollapsed && (
@@ -212,15 +213,12 @@ const SearchBar = () => {
                 heading={
                   <div className="flex w-full items-center justify-between">
                     <span>{t('searchBar.history')}</span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-6 cursor-pointer px-2 text-xs"
+                    <CustomButton
+                      icon={<LucideIcons.X />}
                       onClick={handleClearHistory}
-                    >
-                      <LucideIcons.X size={14} className="-me-1" />
-                      {t('searchBar.clearHistory')}
-                    </Button>
+                      variant="ghost"
+                      size="icon-xs"
+                    />
                   </div>
                 }
               >

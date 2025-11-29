@@ -27,6 +27,8 @@ export interface Product {
   updatedAt: string;
   prices?: Price[];
   defaultPriceId?: string;
+  isDefaultProduct: boolean;
+  isStripeProduct: boolean;
 }
 
 export interface Price {

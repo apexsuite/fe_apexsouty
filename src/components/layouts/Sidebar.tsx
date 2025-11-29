@@ -107,7 +107,7 @@ export function AppSidebar() {
     <Sidebar variant="inset" collapsible="icon">
       <SidebarHeader
         className={cn(
-          'flex pt-3',
+          'flex pt-2',
           isCollapsed
             ? 'flex-row items-center justify-between gap-y-4 md:flex-col md:items-start md:justify-start'
             : 'flex-row items-center justify-between'
@@ -123,7 +123,9 @@ export function AppSidebar() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
-          <span>logo</span>
+          <div className="bg-sidebar-primary flex size-8 items-center justify-center rounded-md">
+            <span className="text-white">A</span>
+          </div>
           <SidebarTrigger />
         </motion.div>
       </SidebarHeader>
