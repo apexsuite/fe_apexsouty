@@ -28,7 +28,6 @@ import {
   SidebarTrigger,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import {
   fetchMenu,
@@ -43,18 +42,15 @@ import { logoutUser } from '@/lib/authSlice';
 import { clearPageHistory } from '@/utils/hooks/usePageHistory';
 import { COLORS } from '@/utils/constants/colors';
 import CustomButton from '@/components/CustomButton';
+import SearchBar from './search-bar';
+import { Separator } from '../ui/separator';
 
 type LucideIconComponent = React.ComponentType<{ size?: number }>;
 
-const getSortedFavorites = (favorites: MenuItem[]): MenuItem[] => {
-  return [...favorites].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-};
+const getIconComponent = (icon?: string): LucideIconComponent | undefined => {
+  if (!icon) return undefined;
 
-const getIconComponent = (
-  iconName?: string
-): LucideIconComponent | undefined => {
-  if (!iconName) return undefined;
-  return LucideIcons[iconName as keyof typeof LucideIcons] as
+  return LucideIcons[icon as keyof typeof LucideIcons] as
     | LucideIconComponent
     | undefined;
 };
@@ -120,26 +116,28 @@ export function AppSidebar() {
         <motion.div
           key={isCollapsed ? 'header-collapsed' : 'header-expanded'}
           className={cn(
-            'flex items-center gap-2',
-            isCollapsed ? 'flex-row md:flex-col-reverse' : 'flex-row'
+            'flex w-full items-center justify-between gap-2',
+            isCollapsed ? 'flex-row md:flex-col' : 'flex-row'
           )}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
+          <span>logo</span>
           <SidebarTrigger />
         </motion.div>
       </SidebarHeader>
-      <SidebarContent className="flex-1 overflow-y-auto">
+      {!isCollapsed && <Separator />}
+      <SidebarContent className="flex flex-1 flex-col items-center gap-2">
+        <div className="pt-2">
+          <SearchBar />
+        </div>
         {favoritesMenu.length > 0 && (
           <SidebarGroup>
             {state === 'expanded' && (
               <SidebarGroupLabel className="flex items-center gap-2 px-2">
-                <LucideIcons.Star
-                  className="size-4 text-yellow-500"
-                  fill="currentColor"
-                />
-                <span className="text-foreground/80 text-xs font-semibold tracking-wider">
+                <LucideIcons.Star fill="#facc15" stroke="#facc15" />
+                <span className="text-sm font-medium">
                   {t('sidebar.favorites')}
                 </span>
               </SidebarGroupLabel>
@@ -152,12 +150,10 @@ export function AppSidebar() {
                       ref={provided.innerRef}
                       {...provided.droppableProps}
                     >
-                      {getSortedFavorites(favoritesMenu).map((item, idx) => {
+                      {favoritesMenu.map((item: MenuItem, idx: number) => {
                         const Icon = getIconComponent(item.icon);
                         const draggableId = String(item.favouriteId || item.id);
-                        const colorClasses =
-                          COLORS[idx % COLORS.length]?.light ||
-                          COLORS[0]!.light;
+                        const colorClasses = COLORS[idx % COLORS.length];
 
                         return (
                           <Draggable
@@ -172,7 +168,7 @@ export function AppSidebar() {
                                 {...provided.dragHandleProps}
                                 className={cn(
                                   snapshot.isDragging &&
-                                    'group flex cursor-grab items-center gap-3 bg-yellow-50 active:cursor-grabbing dark:bg-yellow-900/20'
+                                    'group flex cursor-grab items-center gap-2 active:cursor-grabbing'
                                 )}
                               >
                                 <SidebarMenuButton
@@ -183,7 +179,7 @@ export function AppSidebar() {
                                   <Link to={item.path ?? '#'}>
                                     {Icon && (
                                       <div className={colorClasses}>
-                                        <Icon size={16} />
+                                        <Icon />
                                       </div>
                                     )}
                                     <span>{item.name || item.label}</span>
@@ -193,8 +189,7 @@ export function AppSidebar() {
                                   <SidebarMenuAction asChild>
                                     <CustomButton
                                       variant="ghost"
-                                      size="icon"
-                                      className="size-6"
+                                      size="icon-xs"
                                       icon={
                                         <LucideIcons.Star
                                           fill="#facc15"
@@ -224,19 +219,13 @@ export function AppSidebar() {
         )}
       </SidebarContent>
       <SidebarFooter>
-        <Button
-          variant="outline"
+        <CustomButton
+          icon={<LucideIcons.LogOut />}
+          label={t('sidebar.logout')}
           onClick={handleLogout}
-          className={cn(
-            'w-full gap-2',
-            state === 'collapsed' ? 'justify-center px-2' : 'justify-start'
-          )}
-        >
-          <LucideIcons.LogOut
-            className={state === 'collapsed' ? 'size-5' : ''}
-          />
-          {state === 'expanded' && t('sidebar.logout')}
-        </Button>
+          variant="outline"
+          size={isCollapsed ? 'icon' : 'default'}
+        />
         {state === 'expanded' && (
           <div className="text-muted-foreground px-2 text-center text-xs">
             © 2024 ApexScouty

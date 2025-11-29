@@ -27,6 +27,7 @@ import {
 import { Kbd, KbdGroup } from '@/components/ui/kbd';
 import { COLORS } from '@/utils/constants/colors';
 import { SHORTCUTS } from '@/utils/constants/shortcut';
+import { useSidebar } from '../ui/sidebar';
 
 const SearchBar = () => {
   const { t } = useTranslation();
@@ -35,6 +36,8 @@ const SearchBar = () => {
   const [, startTransition] = useTransition();
   const [history, setHistory] = useState(getPageHistory());
   const navigate = useNavigate();
+  const { state } = useSidebar();
+  const isCollapsed = state === 'collapsed';
 
   const dispatchRedux = useDispatch<AppDispatch>();
 
@@ -179,21 +182,25 @@ const SearchBar = () => {
       <Button
         variant="outline"
         onClick={() => setOpen(true)}
-        className="gap-2 md:w-full md:justify-between"
+        size={isCollapsed ? 'icon' : 'default'}
       >
-        <span className="flex items-center gap-2">
-          <LucideIcons.SearchIcon
-            className="text-muted-foreground/80 size-4 shrink-0"
-            aria-hidden="true"
-          />
-          <span className="text-muted-foreground/70 hidden font-normal md:inline">
-            {t('searchBar.search')}
-          </span>
-        </span>
-        <KbdGroup>
-          <Kbd className="hidden lg:flex">⌘</Kbd>
-          <Kbd className="hidden lg:flex">K</Kbd>
-        </KbdGroup>
+        <LucideIcons.SearchIcon
+          className="text-muted-foreground/80 size-4 shrink-0"
+          aria-hidden="true"
+        />
+        {!isCollapsed && (
+          <>
+            <span className="flex items-center gap-2">
+              <span className="text-muted-foreground/70 hidden font-normal md:inline">
+                {t('searchBar.search')}
+              </span>
+            </span>
+            <KbdGroup>
+              <Kbd className="hidden lg:flex">⌘</Kbd>
+              <Kbd className="hidden lg:flex">K</Kbd>
+            </KbdGroup>
+          </>
+        )}
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder={t('searchBar.search')} />
@@ -237,8 +244,7 @@ const SearchBar = () => {
               safeOptimisticMenuItems.map((fav: MenuItem, index: number) => {
                 const Icon = fav.icon && (LucideIcons as any)[fav.icon];
                 const isFavorite = fav.isFavourite === true;
-                const colorClasses =
-                  COLORS[index % COLORS.length]?.light || COLORS[0]!.light;
+                const colorClasses = COLORS[index % COLORS.length];
                 return (
                   <CommandItem
                     key={fav.id}

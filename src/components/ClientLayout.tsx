@@ -10,6 +10,7 @@ interface ClientLayoutProps {
 
 export default function ClientLayout({ children }: ClientLayoutProps) {
   const { pathname } = useLocation();
+
   const isAuthPage =
     pathname === '/login' ||
     pathname === '/register' ||

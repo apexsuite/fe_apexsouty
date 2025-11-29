@@ -65,7 +65,7 @@ const CustomButton = React.forwardRef<HTMLButtonElement, CustomButtonProps>(
       >
         {loading && <LoaderCircleIcon className="animate-spin" />}
         {!loading && icon && iconPosition === 'left' && icon}
-        {label}
+        {props.size === 'icon' ? undefined : label}
         {!loading && icon && iconPosition === 'right' && icon}
       </ShadcnButton>
     );
