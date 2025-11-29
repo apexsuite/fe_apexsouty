@@ -184,13 +184,14 @@ const SearchBar = () => {
         variant="outline"
         onClick={() => setOpen(true)}
         size={isCollapsed ? 'icon' : 'default'}
+        className="w-full"
       >
         <LucideIcons.SearchIcon
           className="text-muted-foreground size-4 shrink-0"
           aria-hidden="true"
         />
         {!isCollapsed && (
-          <>
+          <div className="flex w-full items-center justify-between">
             <span className="flex items-center gap-2">
               <span className="text-muted-foreground/70 hidden font-normal md:inline">
                 {t('searchBar.search')}
@@ -200,7 +201,7 @@ const SearchBar = () => {
               <Kbd className="hidden lg:flex">⌘</Kbd>
               <Kbd className="hidden lg:flex">K</Kbd>
             </KbdGroup>
-          </>
+          </div>
         )}
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>

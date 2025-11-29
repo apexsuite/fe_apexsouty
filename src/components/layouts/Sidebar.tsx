@@ -131,7 +131,7 @@ export function AppSidebar() {
       </SidebarHeader>
       {!isCollapsed && <Separator />}
       <SidebarContent className="flex flex-1 flex-col items-center gap-2">
-        <div className="pt-2">
+        <div className="w-full pt-2">
           <SearchBar />
         </div>
         {favoritesMenu.length > 0 && (
