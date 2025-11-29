@@ -184,7 +184,7 @@ const SearchBar = () => {
         variant="outline"
         onClick={() => setOpen(true)}
         size={isCollapsed ? 'icon' : 'default'}
-        className="w-full"
+        className={!isCollapsed ? 'w-full' : undefined}
       >
         <LucideIcons.SearchIcon
           className="text-muted-foreground size-4 shrink-0"
