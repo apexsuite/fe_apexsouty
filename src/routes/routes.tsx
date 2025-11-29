@@ -59,9 +59,6 @@ const MarketPlaceDetail = lazy(
 const Consents = lazy(() => import('@/pages/Consents'));
 
 const Subscription = lazy(() => import('@/pages/Subscription'));
-const NewPermissionExamples = lazy(
-  () => import('@/examples/NewPermissionExamples')
-);
 const Region = lazy(() => import('@/pages/Region'));
 const RegionForm = lazy(() => import('@/pages/Region/RegionForm'));
 
@@ -302,11 +299,6 @@ export const protectedRoutes: RouteObject[] = [
         path: 'consents',
         element: <Consents />,
         handle: { title: 'routes.consents.title' },
-      },
-      {
-        path: 'permission-examples',
-        element: <NewPermissionExamples />,
-        handle: { title: 'routes.permissionExamples' },
       },
       {
         path: 'subscription',

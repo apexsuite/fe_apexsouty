@@ -2,7 +2,7 @@ import { IConsent } from "@/services/consents/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import StatusBadge from '@/components/common/StatusBadge';
 
 const getConsentsColumns = (): ColumnDef<IConsent>[] => [
     {
@@ -63,12 +63,10 @@ const getConsentsColumns = (): ColumnDef<IConsent>[] => [
             const hasConsent = row.original.marketplaces?.some(marketplace => marketplace.id === row.original.consent?.marketplaceId);
             if (hasConsent) {
                 return (
-                    <Badge variant={row.original.consent?.isActive ? 'default' : 'destructive'}>
-                        {row.original.consent?.isActive ? 'Active' : 'Inactive'}
-                    </Badge>
+                    <StatusBadge isActive={row.original.consent?.isActive ?? false} />
                 )
             }
-            return <Badge>Inactive</Badge>;
+            return <StatusBadge isActive={false} />;
         }
     },
     {

@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { usePageHistory } from '@/utils/hooks/usePageHistory';
-import { AppSidebar } from '@/components/layouts/Sidebar';
+import { AppSidebar } from '@/components/layouts/sidebar';
 import Navbar from '@/components/Navbar';
 
 interface ClientLayoutProps {

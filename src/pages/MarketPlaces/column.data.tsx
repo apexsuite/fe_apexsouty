@@ -1,5 +1,5 @@
+import StatusBadge from '@/components/common/StatusBadge';
 import CustomButton from '@/components/CustomButton';
-import { Badge } from '@/components/ui/badge';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { IMarketplace } from '@/services/marketplaces/type';
 import { ColumnDef } from '@tanstack/react-table';
@@ -63,11 +63,7 @@ const getMarketPlaceColumns = ({
     {
       accessorKey: 'isActive',
       header: 'Status',
-      cell: ({ row }) => (
-        <Badge variant={row.original.isActive ? 'default' : 'destructive'}>
-          {row.original.isActive ? 'Active' : 'Inactive'}
-        </Badge>
-      ),
+      cell: ({ row }) => <StatusBadge isActive={row.original.isActive} />,
     },
     {
       accessorKey: 'id',

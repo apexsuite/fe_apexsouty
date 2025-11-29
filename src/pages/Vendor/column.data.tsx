@@ -1,13 +1,9 @@
-import { Badge } from '@/components/ui/badge';
+import StatusBadge, {
+  type StatusVariant,
+} from '@/components/common/StatusBadge';
 import type { IVendor } from '@/services/vendor/types';
 import type { Row } from '@tanstack/react-table';
 import dayjs from 'dayjs';
-
-const STATUS_MAP = {
-  active: 'success',
-  inactive: 'destructive',
-  pending: 'warning',
-};
 
 export default function getVendorColumns() {
   return [
@@ -27,14 +23,7 @@ export default function getVendorColumns() {
       accessorKey: 'status',
       header: 'Status',
       cell: ({ row }: { row: Row<IVendor> }) => (
-        <Badge
-          variant={
-            STATUS_MAP[row.original.status as keyof typeof STATUS_MAP] as any
-          }
-          className="capitalize"
-        >
-          {row.original.status}
-        </Badge>
+        <StatusBadge status={row.original.status as StatusVariant} />
       ),
     },
     {

@@ -1,5 +1,4 @@
 import { ControlledInputText } from '@/components/FormInputs';
-import { Button } from '@/components/ui/button';
 import { createRegion, getRegionById, updateRegion } from '@/services/region';
 import { IRegionCreateRequest } from '@/services/region/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -10,6 +9,7 @@ import regionValidationSchema from './region.validations';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
+import CustomButton from '@/components/CustomButton';
 
 const RegionForm = () => {
   const navigate = useNavigate();
@@ -116,27 +116,16 @@ const RegionForm = () => {
             placeholder="e.g., https://..."
           />
           <div className="flex flex-col gap-2">
-            <Button
-              type="button"
-              variant="outline"
+            <CustomButton
+              label="Cancel"
               onClick={() => navigate('/regions')}
-              className="w-full"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
+              variant="outline"
+            />
+            <CustomButton
+              label={isEditMode ? 'Update' : 'Create'}
+              onClick={handleSubmit(onSubmit)}
               disabled={isPending}
-              className="w-full bg-green-500 text-white hover:bg-green-600"
-            >
-              {isPending ? (
-                <Loader className="h-4 w-4 animate-spin" />
-              ) : isEditMode ? (
-                'Update'
-              ) : (
-                'Create'
-              )}
-            </Button>
+            />
           </div>
         </div>
       </form>
