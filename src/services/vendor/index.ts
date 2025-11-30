@@ -108,16 +108,12 @@ export const getVendorFileSample = async (
 
 export const processSelectedVendorFile = async (
   vendorId: string,
-  vendorFileId: string,
   data: IProcessSelectedVendorFileRequest
 ): Promise<IVendorDetail> => {
-  const response = await apiRequest(
-    `/vendors/${vendorId}/files/${vendorFileId}/process`,
-    {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }
-  );
+  const response = await apiRequest(`/vendors/${vendorId}/process`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
   return response.data ?? response;
 };
 

@@ -43,7 +43,6 @@ const VendorForm = () => {
         description: vendorData.description,
         vendorFiles: [],
       });
-      // Backend'den gelen mevcut dosyaları ayarla
       setExistingFiles(vendorData.vendorFiles || []);
     }
   }, [vendorData, reset, isEditMode]);
@@ -57,7 +56,6 @@ const VendorForm = () => {
           : 'Vendor başarıyla oluşturuldu'
       );
       reset();
-      // Create sonrası detay sayfasına yönlendir
       navigate(`/vendors/${response.id}`);
     },
     onError: (error: Error) => {
@@ -65,15 +63,23 @@ const VendorForm = () => {
     },
   });
 
+  /** filePath'ten orijinal dosya adını çıkarır (UUID prefix'i kaldırır) */
+  const extractFileName = (filePath: string): string => {
+    // Path'ten dosya adını al (son / sonrası)
+    const fullFileName = filePath.split('/').pop() || filePath;
+    // UUID prefix'ini kaldır (ilk _ sonrası)
+    const parts = fullFileName.split('_');
+    if (parts.length > 1) {
+      return parts.slice(1).join('_');
+    }
+    return fullFileName;
+  };
+
   const handleUploadSuccess = (filePaths: string[]) => {
-    // Her dosya yüklendiğinde fileName ve filePath ile vendor dosyalarını güncelle
-    const newFiles: IVendorFile[] = filePaths.map(filePath => {
-      const fileName = filePath.split('/').pop() || filePath;
-      return {
-        fileName,
-        filePath,
-      };
-    });
+    const newFiles: IVendorFile[] = filePaths.map(filePath => ({
+      fileName: extractFileName(filePath),
+      filePath,
+    }));
 
     setUploadedFiles(prev => [...prev, ...newFiles]);
   };

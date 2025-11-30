@@ -54,15 +54,6 @@ interface VendorFileCardProps {
   onProcessSuccess?: () => void;
 }
 
-/** Dosya adından orijinal adı çıkar (UUID prefix'i kaldır) */
-const extractOriginalFileName = (fileName: string): string => {
-  const parts = fileName.split('_');
-  if (parts.length > 1) {
-    return parts.slice(1).join('_');
-  }
-  return fileName;
-};
-
 /** Delimiter seçenekleri */
 const DELIMITER_OPTIONS = [
   { value: ',', label: 'Virgül (,)' },
@@ -159,7 +150,7 @@ export const VendorFileCard = ({
   // Dosya işleme mutation
   const { mutate: processFile, isPending: isProcessing } = useMutation({
     mutationFn: (processAgain: boolean) =>
-      processSelectedVendorFile(vendorId, file.id, {
+      processSelectedVendorFile(vendorId, {
         processAgain,
         vendorFileIds: [file.id],
       }),
@@ -189,7 +180,7 @@ export const VendorFileCard = ({
 
   // İlk satırı header olarak kullan
   const headers = parsedData?.[0] || [];
-  const dataRows = parsedData?.slice(1, 6) || []; // İlk 10 satır
+  const dataRows = parsedData?.slice(1, 15) || []; // İlk 10 satır
 
   // "Seçim yok" için özel değer (boş string Select.Item'da kullanılamaz)
   const NONE_VALUE = '__none__';
@@ -237,15 +228,17 @@ export const VendorFileCard = ({
       <FrameHeader onClick={() => setIsExpanded(!isExpanded)}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <FrameTitle className="text-base">
-              {extractOriginalFileName(file.fileName)}{' '}
-            </FrameTitle>
+            <FrameTitle className="text-base">{file.fileName}</FrameTitle>
 
             {mappedColumns.length > 0 && (
               <Badge size="lg">
                 {mappedColumns.length} / {headers.length} matched!
               </Badge>
             )}
+
+            <Badge variant="warning" size="lg">
+              {file.status}
+            </Badge>
 
             {file.isProcessed && (
               <Badge variant="success" size="lg">
