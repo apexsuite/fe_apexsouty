@@ -3,7 +3,6 @@ import StatusBadge, {
   type StatusVariant,
 } from '@/components/common/status-badge';
 import CustomButton from '@/components/CustomButton';
-import { ButtonGroup } from '@/components/ui/button-group';
 import { Group, GroupSeparator } from '@/components/ui/group';
 import type { IVendor } from '@/services/vendor/types';
 import type { Row } from '@tanstack/react-table';
@@ -34,11 +33,9 @@ export default function getVendorColumns({
     {
       accessorKey: 'createdAt',
       header: 'Created At',
-      cell: ({ row }: { row: Row<IVendor> }) => (
-        <span className="text-sm">
-          {dayjs(row.original.createdAt).format('DD/MM/YYYY HH:mm')}
-        </span>
-      ),
+      cell: ({ row }: { row: Row<IVendor> }) => {
+        return dayjs(row.original.createdAt).format('DD/MM/YYYY HH:mm');
+      },
     },
     {
       accessorKey: 'status',
