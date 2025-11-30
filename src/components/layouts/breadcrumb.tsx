@@ -25,15 +25,22 @@ export default function Breadcrumb() {
 
   const matches = useMatches() as RouteMatch[];
 
-  const breadcrumbs = matches
-    .filter(
-      match =>
-        match.handle?.title && match.pathname !== '/' && match.pathname !== ''
-    )
-    .map(match => ({
-      title: match.handle?.title || '',
-      path: match.pathname,
-    }));
+  const breadcrumbs = matches.reduce(
+    (acc, match) => {
+      if (
+        match.handle?.title &&
+        match.pathname !== '/' &&
+        match.pathname !== ''
+      ) {
+        acc.push({
+          title: match.handle?.title || '',
+          path: match.pathname,
+        });
+      }
+      return acc;
+    },
+    [] as { title: string; path: string }[]
+  );
 
   if (breadcrumbs.length === 0) {
     return null;
@@ -54,6 +61,7 @@ export default function Breadcrumb() {
 
         {breadcrumbs.map((breadcrumb, index) => {
           const isLast = index === breadcrumbs.length - 1;
+
           return (
             <div key={breadcrumb.path} className="contents">
               <BreadcrumbSeparator />

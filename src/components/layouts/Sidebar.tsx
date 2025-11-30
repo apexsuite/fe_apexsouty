@@ -55,7 +55,7 @@ const getIconComponent = (icon?: string): LucideIconComponent | undefined => {
     | undefined;
 };
 
-export function AppSidebar() {
+function DashboardSidebar() {
   const dispatch = useDispatch<AppDispatch>();
   const favoritesMenu = useSelector(selectFavorites);
   const menuItems = useSelector((state: RootState) => state.menu.items);
@@ -237,3 +237,5 @@ export function AppSidebar() {
     </Sidebar>
   );
 }
+
+export default DashboardSidebar;
