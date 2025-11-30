@@ -82,7 +82,6 @@ const VendorForm = () => {
   };
 
   const onSubmit = (data: IVendorCreateRequest) => {
-    // Form submit edildiğinde yüklenen dosyaları da gönder
     const submitData: IVendorCreateRequest = {
       ...data,
       vendorFiles: uploadedFiles,

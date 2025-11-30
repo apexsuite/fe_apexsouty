@@ -1,8 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { getVendor } from '@/services/vendor';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { Button } from '@/components/ui/button';
 import { Calendar, Factory, FileText, ToggleRight } from 'lucide-react';
 import { VendorFileCard } from './VendorFileCard';
 import { InfoSection } from '@/components/common/info-section';
@@ -33,12 +32,11 @@ const VendorDetail = () => {
 
   if (!vendor) {
     return (
-      <div className="flex flex-col items-center justify-center py-12">
-        <p className="text-muted-foreground">Vendor bulunamadı</p>
-        <Link to="/vendors">
-          <Button variant="link">Vendor listesine dön</Button>
-        </Link>
-      </div>
+      <Empty
+        title="Vendor not found"
+        description="Vendor not found"
+        icon={<Factory />}
+      />
     );
   }
 

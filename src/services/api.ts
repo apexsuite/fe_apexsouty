@@ -1,3 +1,4 @@
+import { isClient } from '@/utils/helpers/common';
 import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -11,7 +12,7 @@ export const apiConfig = {
 
 // Get token from localStorage
 const getToken = (): string | null => {
-  if (typeof window !== 'undefined') {
+  if (isClient) {
     return localStorage.getItem('token');
   }
   return null;

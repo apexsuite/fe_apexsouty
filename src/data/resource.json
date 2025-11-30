@@ -1,14 +1,74 @@
 [
-  { "name": "e12-prod", "type": "Kubernetes service", "lastViewed": "a few seconds ago", "favorite": 1 },
-  { "name": "talkinn", "type": "Kubernetes service", "lastViewed": "a minute ago", "favorite": 1 },
-  { "name": "e12-preprod", "type": "Kubernetes service", "lastViewed": "30 minutes ago", "favorite": 0 },
-  { "name": "e12storage", "type": "Storage account", "lastViewed": "31 minutes ago", "favorite": 1 },
-  { "name": "Microsoft Azure Sponsorluk (Yeni)", "type": "Subscription", "lastViewed": "2 weeks ago", "favorite": 0 },
-  { "name": "stkadir7610a152133007408", "type": "Storage account", "lastViewed": "a month ago", "favorite": 0 },
-  { "name": "e12-email-service", "type": "Email Communication Service", "lastViewed": "a month ago", "favorite": 1 },
-  { "name": "rg-blob-storage", "type": "Resource group", "lastViewed": "2 months ago", "favorite": 0 },
-  { "name": "rg-kadir-6823_ai", "type": "Resource group", "lastViewed": "2 months ago", "favorite": 0 },
-  { "name": "e12ai", "type": "Azure OpenAI", "lastViewed": "2 months ago", "favorite": 1 },
-  { "name": "e12-db", "type": "Azure Database for PostgreSQL flexible server", "lastViewed": "7 months ago", "favorite": 0 },
-  { "name": "kubernetes", "type": "Load balancer", "lastViewed": "7 months ago", "favorite": 0 }
-] 
+  {
+    "name": "e12-prod",
+    "type": "Kubernetes service",
+    "lastViewed": "a few seconds ago",
+    "favorite": 1
+  },
+  {
+    "name": "talkinn",
+    "type": "Kubernetes service",
+    "lastViewed": "a minute ago",
+    "favorite": 1
+  },
+  {
+    "name": "e12-preprod",
+    "type": "Kubernetes service",
+    "lastViewed": "30 minutes ago",
+    "favorite": 0
+  },
+  {
+    "name": "e12storage",
+    "type": "Storage account",
+    "lastViewed": "31 minutes ago",
+    "favorite": 1
+  },
+  {
+    "name": "Microsoft Azure Sponsorluk (Yeni)",
+    "type": "Subscription",
+    "lastViewed": "2 weeks ago",
+    "favorite": 0
+  },
+  {
+    "name": "stkadir7610a152133007408",
+    "type": "Storage account",
+    "lastViewed": "a month ago",
+    "favorite": 0
+  },
+  {
+    "name": "e12-email-service",
+    "type": "Email Communication Service",
+    "lastViewed": "a month ago",
+    "favorite": 1
+  },
+  {
+    "name": "rg-blob-storage",
+    "type": "Resource group",
+    "lastViewed": "2 months ago",
+    "favorite": 0
+  },
+  {
+    "name": "rg-kadir-6823_ai",
+    "type": "Resource group",
+    "lastViewed": "2 months ago",
+    "favorite": 0
+  },
+  {
+    "name": "e12ai",
+    "type": "Azure OpenAI",
+    "lastViewed": "2 months ago",
+    "favorite": 1
+  },
+  {
+    "name": "e12-db",
+    "type": "Azure Database for PostgreSQL flexible server",
+    "lastViewed": "7 months ago",
+    "favorite": 0
+  },
+  {
+    "name": "kubernetes",
+    "type": "Load balancer",
+    "lastViewed": "7 months ago",
+    "favorite": 0
+  }
+]

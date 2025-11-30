@@ -2,9 +2,12 @@ import { apiRequest } from '@/services/api';
 import {
   IVendor,
   IVendorRequest,
+  type IProcessSelectedVendorFileRequest,
   type IVendorCreateRequest,
   type IVendorDetail,
-  type IVendorFileUpdateRequest,
+  type IVendorFile,
+  type IVendorFileConfig,
+  type IVendorFileSample,
 } from '@/services/vendor/types';
 import type { IPageResponse } from '@/types/common.types';
 
@@ -18,19 +21,19 @@ export const getVendors = async (
   return response.data ?? response;
 };
 
-export const getVendor = async (id: string): Promise<IVendorDetail> => {
-  const response = await apiRequest(`/vendors/${id}`, {
-    method: 'GET',
-  });
-  return response.data ?? response;
-};
-
 export const createVendor = async (
   data: IVendorCreateRequest
 ): Promise<IVendorDetail> => {
   const response = await apiRequest('/vendors', {
     method: 'POST',
     body: JSON.stringify(data),
+  });
+  return response.data ?? response;
+};
+
+export const getVendor = async (id: string): Promise<IVendorDetail> => {
+  const response = await apiRequest(`/vendors/${id}`, {
+    method: 'GET',
   });
   return response.data ?? response;
 };
@@ -49,18 +52,82 @@ export const deleteVendor = async (id: string): Promise<void> => {
   return response.data ?? response;
 };
 
-/** Vendor dosyasının column mapping bilgilerini güncelle */
-export const updateVendorFileMapping = async (
+/** Vendor File Operations **/
+
+export const createVendorFile = async (
   vendorId: string,
-  vendorFileId: string,
-  data: IVendorFileUpdateRequest
+  data: IVendorFile
+): Promise<IVendorDetail> => {
+  const response = await apiRequest(`/vendors/${vendorId}/files`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+  return response.data ?? response;
+};
+
+export const deleteVendorFile = async (
+  vendorId: string,
+  vendorFileId: string
 ): Promise<void> => {
   const response = await apiRequest(
     `/vendors/${vendorId}/files/${vendorFileId}`,
     {
-      method: 'PUT',
+      method: 'DELETE',
+    }
+  );
+  return response.data ?? response;
+};
+
+export const createVendorFileConfig = async (
+  vendorId: string,
+  vendorFileId: string,
+  data: IVendorFileConfig
+): Promise<IVendorDetail> => {
+  const response = await apiRequest(
+    `/vendors/${vendorId}/files/${vendorFileId}/config`,
+    {
+      method: 'POST',
       body: JSON.stringify(data),
     }
   );
+  return response.data ?? response;
+};
+
+export const getVendorFileSample = async (
+  vendorId: string,
+  vendorFileId: string
+): Promise<IVendorFileSample> => {
+  const response = await apiRequest(
+    `/vendors/${vendorId}/files/${vendorFileId}/sample`,
+    {
+      method: 'GET',
+    }
+  );
+  return response.data ?? response;
+};
+
+export const processSelectedVendorFile = async (
+  vendorId: string,
+  vendorFileId: string,
+  data: IProcessSelectedVendorFileRequest
+): Promise<IVendorDetail> => {
+  const response = await apiRequest(
+    `/vendors/${vendorId}/files/${vendorFileId}/process`,
+    {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }
+  );
+  return response.data ?? response;
+};
+
+export const processAllVendorFiles = async (
+  vendorId: string,
+  processAgain: boolean
+): Promise<IVendorDetail> => {
+  const response = await apiRequest(`/vendors/${vendorId}/process/all`, {
+    method: 'POST',
+    body: JSON.stringify({ processAgain }),
+  });
   return response.data ?? response;
 };

@@ -19,11 +19,12 @@ export default function Vendor() {
   const queryClient = useQueryClient();
 
   const params = useMemo<IVendorRequest>(() => {
-    const { page, pageSize, name, description } = getQueryParams([
+    const { page, pageSize, name, description, status } = getQueryParams([
       'page',
       'pageSize',
       'name',
       'description',
+      'status',
     ]);
 
     return {
@@ -31,6 +32,7 @@ export default function Vendor() {
       pageSize: pageSize ? Number(pageSize) : 10,
       ...(name && { name }),
       ...(description && { description }),
+      ...(status && { status }),
     };
   }, [searchParams]);
 
@@ -57,7 +59,7 @@ export default function Vendor() {
       return deleteVendor(id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['vendors'] });
+      queryClient.invalidateQueries({ queryKey: [TAGS.VENDOR] });
     },
   });
 
