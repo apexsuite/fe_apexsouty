@@ -8,7 +8,6 @@ import StatusBadge, {
 
 interface DetailPageProps {
   name: string;
-  description: string;
   status?: StatusVariant;
   children: React.ReactNode;
   edit: {
@@ -19,7 +18,6 @@ interface DetailPageProps {
 
 export const DetailPage = ({
   name,
-  description,
   status,
   children,
   edit,
@@ -41,7 +39,6 @@ export const DetailPage = ({
               <h1 className="text-2xl font-bold tracking-tight">{name}</h1>
               {status && <StatusBadge status={status} />}
             </div>
-            <p className="text-muted-foreground text-sm">{description}</p>
           </div>
         </div>
         <CustomButton

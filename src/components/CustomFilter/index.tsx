@@ -84,7 +84,7 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
   };
 
   return (
-    <>
+    <div className="my-4">
       <div className="flex items-center justify-between">
         <Group>
           <Button
@@ -110,16 +110,12 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, height: 0, y: -10 }}
-            animate={{ opacity: 1, height: 'auto', y: 0 }}
-            exit={{ opacity: 0, height: 0, y: -10 }}
-            transition={{
-              duration: 0.2,
-              ease: [0.4, 0, 0.2, 1],
-            }}
+            initial={{ height: 0 }}
+            animate={{ height: 'auto' }}
+            exit={{ height: 0 }}
             style={{ overflow: 'hidden' }}
           >
-            <Card className="p-4">
+            <Card className="mt-4 p-4">
               <form onSubmit={handleSubmit(handleSearch)} onReset={handleReset}>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-5">
                   {inputs.map(input => {
@@ -159,7 +155,7 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 };
 

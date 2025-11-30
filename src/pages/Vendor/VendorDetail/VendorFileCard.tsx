@@ -189,7 +189,7 @@ export const VendorFileCard = ({
 
   // İlk satırı header olarak kullan
   const headers = parsedData?.[0] || [];
-  const dataRows = parsedData?.slice(1, 11) || []; // İlk 10 satır
+  const dataRows = parsedData?.slice(1, 6) || []; // İlk 10 satır
 
   // "Seçim yok" için özel değer (boş string Select.Item'da kullanılamaz)
   const NONE_VALUE = '__none__';

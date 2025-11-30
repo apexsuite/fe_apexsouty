@@ -68,7 +68,6 @@ const VendorDetail = () => {
   return (
     <DetailPage
       name={vendor.name}
-      description={vendor.description}
       edit={{
         label: 'Edit Vendor',
         path: `/vendors/${id}/edit`,

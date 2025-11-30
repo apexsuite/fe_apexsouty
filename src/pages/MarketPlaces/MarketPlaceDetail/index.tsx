@@ -53,7 +53,6 @@ const MarketPlaceDetail = () => {
   return (
     <DetailPage
       name={marketplace.marketplace}
-      description="Marketplace Detail Information"
       status={marketplace.isActive ? 'active' : 'inactive'}
       edit={{ label: 'Edit Marketplace', path: `/marketplaces/${id}/edit` }}
     >
