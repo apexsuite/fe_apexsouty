@@ -1,4 +1,4 @@
-import StatusBadge from '@/components/common/StatusBadge';
+import StatusBadge from '@/components/common/status-badge';
 import CustomButton from '@/components/CustomButton';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { IRegion } from '@/services/region/types';

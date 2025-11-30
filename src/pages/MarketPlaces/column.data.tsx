@@ -1,4 +1,4 @@
-import StatusBadge from '@/components/common/StatusBadge';
+import StatusBadge from '@/components/common/status-badge';
 import CustomButton from '@/components/CustomButton';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { IMarketplace } from '@/services/marketplaces/type';
@@ -50,7 +50,7 @@ const getMarketPlaceColumns = ({
       accessorKey: 'region',
       header: 'Region',
       cell: ({ row }) => (
-        <span className="font-medium">{row.original.region.regionName}</span>
+        <span className="font-medium">{row?.original?.region?.regionName}</span>
       ),
     },
     {

@@ -20,12 +20,12 @@ const StatusBadge = ({ isActive, status }: StatusBadgeProps) => {
       <Badge variant={isActive ? 'success' : 'error'} className="gap-1 p-0.5">
         {isActive ? (
           <>
-            <CheckCircle2 className="size-3.5" />
+            <CheckCircle2 className="size-3" />
             Active
           </>
         ) : (
           <>
-            <XCircle className="size-3.5" />
+            <XCircle className="size-3" />
             Inactive
           </>
         )}
@@ -33,23 +33,13 @@ const StatusBadge = ({ isActive, status }: StatusBadgeProps) => {
     );
   }
 
-  if (status) {
-    const normalizedStatus = status.toLowerCase();
-    const config = STATUS_MAP[normalizedStatus as StatusVariant];
-
-    if (config) {
-      const Icon = config.icon;
-      return (
-        <Badge variant={config.variant} className="gap-1 p-0.5">
-          <Icon className="size-3.5" />
-          {config.label}
-        </Badge>
-      );
-    }
+  if (status && Object.keys(STATUS_MAP).includes(status)) {
+    const config = STATUS_MAP[status as StatusVariant];
 
     return (
-      <Badge variant="secondary" className="p-0.5 capitalize">
-        {status}
+      <Badge variant={config.variant} className="gap-1 p-0.5">
+        <config.icon className="size-3" />
+        {config.label}
       </Badge>
     );
   }

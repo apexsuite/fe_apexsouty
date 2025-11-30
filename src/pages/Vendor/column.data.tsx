@@ -1,6 +1,6 @@
 import StatusBadge, {
   type StatusVariant,
-} from '@/components/common/StatusBadge';
+} from '@/components/common/status-badge';
 import type { IVendor } from '@/services/vendor/types';
 import type { Row } from '@tanstack/react-table';
 import dayjs from 'dayjs';

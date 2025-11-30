@@ -6,19 +6,18 @@ import { useQuery } from '@tanstack/react-query';
 import {
   ArrowLeft,
   Calendar,
-  Globe,
+  ExternalLink,
   Key,
   MapPin,
   Pencil,
-  ShoppingBag,
   Store,
+  ToggleRight,
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { DetailSection } from './components/DetailSection';
-import { InfoItem } from './components/InfoItem';
 import dayjs from 'dayjs';
 import CustomButton from '@/components/CustomButton';
-import StatusBadge from '@/components/common/StatusBadge';
+import StatusBadge from '@/components/common/status-badge';
+import { InfoSection } from '@/components/common/info-section';
 
 const MarketPlaceDetail = () => {
   const navigate = useNavigate();
@@ -88,104 +87,73 @@ const MarketPlaceDetail = () => {
       <Separator />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <DetailSection
+        <InfoSection
           title="Marketplace Information"
-          icon={<ShoppingBag className="h-5 w-5" />}
-        >
-          <div className="grid gap-6">
-            <InfoItem
-              label="Marketplace Name"
-              value={marketplace.marketplace}
-              icon={<Store className="h-4 w-4" />}
-            />
-            <InfoItem
-              label="Marketplace URL"
-              value={
-                <a
-                  href={marketplace.marketplaceURL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary flex items-center gap-2 hover:underline"
-                >
-                  {marketplace.marketplaceURL}
-                  <Globe className="h-4 w-4" />
-                </a>
-              }
-              icon={<Globe className="h-4 w-4" />}
-            />
-            <InfoItem
-              label="Marketplace Key"
-              value={
-                <code className="bg-muted rounded-md px-3 py-1.5 font-mono text-sm">
-                  {marketplace.marketplaceKey}
-                </code>
-              }
-              icon={<Key className="h-4 w-4" />}
-            />
-          </div>
-        </DetailSection>
-
-        <DetailSection
+          items={[
+            {
+              label: 'Marketplace Name',
+              value: marketplace.marketplace,
+              icon: <Store />,
+            },
+            {
+              label: 'Marketplace URL',
+              value: marketplace.marketplaceURL,
+              icon: <ExternalLink />,
+              type: 'link',
+            },
+            {
+              label: 'Marketplace Key',
+              value: marketplace.marketplaceKey,
+              icon: <Key />,
+              type: 'code',
+            },
+          ]}
+        />
+        <InfoSection
           title="Region Information"
-          icon={<MapPin className="h-5 w-5" />}
-        >
-          <div className="grid gap-6">
-            <InfoItem
-              label="Region Name"
-              value={marketplace.region.regionName}
-              icon={<MapPin className="h-4 w-4" />}
-            />
-            <InfoItem
-              label="Region URL"
-              value={
-                <a
-                  href={marketplace.region.regionURL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary flex items-center gap-2 hover:underline"
-                >
-                  {marketplace.region.regionURL}
-                  <Globe className="h-4 w-4" />
-                </a>
-              }
-              icon={<Globe className="h-4 w-4" />}
-            />
-            <InfoItem
-              label="Region Status"
-              value={<StatusBadge isActive={marketplace.region.isActive} />}
-            />
-          </div>
-        </DetailSection>
+          items={[
+            {
+              label: 'Region Name',
+              value: marketplace?.region?.regionName || '-',
+              icon: <MapPin />,
+            },
+            {
+              label: 'Region URL',
+              value: marketplace?.region?.regionURL || '-',
+              icon: <ExternalLink />,
+            },
+            {
+              label: 'Region Status',
+              value: <StatusBadge isActive={marketplace?.region?.isActive} />,
+              icon: <ToggleRight />,
+            },
+          ]}
+        />
       </div>
-
-      <DetailSection
+      <InfoSection
         title="System Information"
-        icon={<Calendar className="h-5 w-5" />}
-      >
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <InfoItem
-            label="Created Date"
-            value={formatDate(marketplace.createdAt)}
-            icon={<Calendar className="h-4 w-4" />}
-          />
-          <InfoItem
-            label="Marketplace ID"
-            value={
-              <code className="bg-muted rounded px-2 py-1 font-mono text-xs">
-                {marketplace.id}
-              </code>
-            }
-          />
-          <InfoItem
-            label="Region ID"
-            value={
-              <code className="bg-muted rounded px-2 py-1 font-mono text-xs">
-                {marketplace.regionId}
-              </code>
-            }
-          />
-        </div>
-      </DetailSection>
+        icon={<Calendar />}
+        layout="grid"
+        items={[
+          {
+            label: 'Created Date',
+            value: formatDate(marketplace.createdAt) || '-',
+            icon: <Calendar />,
+          },
+          {
+            label: 'Marketplace ID',
+            value: marketplace.id || '-',
+            type: 'code',
+            icon: <Key />,
+          },
+          {
+            label: 'Region ID',
+            value: marketplace.regionId || '-',
+            type: 'code',
+            icon: <MapPin />,
+          },
+        ]}
+      />
     </div>
   );
 };
