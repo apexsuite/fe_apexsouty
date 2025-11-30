@@ -38,7 +38,7 @@ const StatusBadge = ({ isActive, status }: StatusBadgeProps) => {
 
     return (
       <Badge variant={config.variant} className="gap-1 p-0.5">
-        <config.icon className="size-3" />
+        {config.icon && <config.icon className="size-3" />}
         {config.label}
       </Badge>
     );

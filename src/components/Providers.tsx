@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@/providers/theme';
 import { THEME_STORAGE_KEY } from '@/utils/constants/theme';
 import ToastProvider from '@/components/ToastProvider';
+import { ToastProvider as CustomToastProvider } from '@/components/ui/toast';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -54,6 +55,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       <Provider store={store}>
         <ThemeProvider defaultTheme="system" storageKey={THEME_STORAGE_KEY}>
           {children}
+          <CustomToastProvider position="top-center" />
           <ToastProvider />
         </ThemeProvider>
       </Provider>

@@ -53,7 +53,7 @@ export const apiRequest = async (endpoint: string, options: any = {}) => {
       throw {
         status: response.status,
         data: response.data,
-        message: `HTTP ${response.status}: ${response.statusText}`
+        message: `HTTP ${response.status}: ${response.statusText}`,
       };
     }
   } catch (error: any) {
@@ -62,10 +62,12 @@ export const apiRequest = async (endpoint: string, options: any = {}) => {
       throw {
         status: error.response.status,
         data: error.response.data,
-        message: error.response.data?.message || `HTTP ${error.response.status}: ${error.response.statusText}`
+        message:
+          error.response.data?.message ||
+          `HTTP ${error.response.status}: ${error.response.statusText}`,
       };
     }
     console.error('API request failed:', error);
     throw error;
   }
-}; 
+};

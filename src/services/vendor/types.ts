@@ -10,6 +10,22 @@ export interface IVendor {
   updatedAt: string;
 }
 
+export interface IVendorRequest extends IPageParams {
+  name?: string;
+  description?: string;
+}
+
+export interface IVendorFile {
+  fileName: string;
+  filePath: string;
+}
+
+export interface IVendorCreateRequest {
+  description?: string;
+  name?: string;
+  vendorFiles?: IVendorFile[];
+}
+
 export interface IVendorDetail {
   createdAt: string;
   description: string;
@@ -32,20 +48,4 @@ export interface IVendorDetail {
       status: string;
     },
   ];
-}
-
-export interface IVendorRequest extends IPageParams {
-  name?: string;
-  description?: string;
-}
-
-export interface IVendorFile {
-  fileName: string;
-  filePath: string;
-}
-
-export interface IVendorCreateRequest {
-  description?: string;
-  name?: string;
-  vendorFiles?: IVendorFile[];
 }

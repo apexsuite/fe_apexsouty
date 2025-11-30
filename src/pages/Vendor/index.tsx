@@ -1,20 +1,23 @@
 import CustomPageLayout from '@/components/CustomPageLayout';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { getVendors } from '@/services/vendor';
+import { deleteVendor, getVendors } from '@/services/vendor';
 import { IVendorRequest } from '@/services/vendor/types';
 import usePagination from '@/utils/hooks/usePagination';
 import useQueryParams from '@/utils/hooks/useQueryParams';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import getVendorColumns from './column.data';
 import CustomDataTable from '@/components/CustomDataTable';
 import { FILTER_INPUTS } from '@/pages/Vendor/filter.data';
+import { toastManager } from '@/components/ui/toast';
+import { TAGS } from '@/utils/constants/tags';
 
 export default function Vendor() {
   const [page, setPage] = usePagination();
   const [searchParams] = useSearchParams();
   const { getQueryParams } = useQueryParams();
+  const queryClient = useQueryClient();
 
   const params = useMemo<IVendorRequest>(() => {
     const { page, pageSize, name, description } = getQueryParams([
@@ -32,16 +35,38 @@ export default function Vendor() {
     };
   }, [searchParams]);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['vendors', params],
+  const { data: vendors, isFetching } = useQuery({
+    queryKey: [TAGS.VENDOR, params],
     queryFn: () => getVendors(params),
-    staleTime: 0,
-    refetchOnMount: 'always',
   });
 
-  const columns = getVendorColumns();
+  const { mutateAsync: deleteVendorMutation } = useMutation({
+    mutationFn: (id: string) => {
+      toastManager.promise(deleteVendor(id), {
+        loading: {
+          title: 'Deleting',
+        },
+        success: () => ({
+          title: 'Vendor deleted successfully',
+        }),
+        error: (error: Error) => ({
+          title: 'Error',
+          description: error.message ?? 'Failed to delete vendor',
+        }),
+      });
 
-  if (isLoading) {
+      return deleteVendor(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['vendors'] });
+    },
+  });
+
+  const columns = getVendorColumns({
+    deleteVendor: deleteVendorMutation,
+  });
+
+  if (isFetching) {
     return <LoadingSpinner />;
   }
 
@@ -53,12 +78,12 @@ export default function Vendor() {
       datatable={
         <CustomDataTable
           columns={columns}
-          data={data?.items || []}
+          data={vendors?.items || []}
           pagination={page.componentParams}
           setPagination={setPage}
-          totalCount={data?.totalCount || 0}
-          pageCount={data?.pageCount}
-          isLoading={isLoading}
+          totalCount={vendors?.totalCount || 0}
+          pageCount={vendors?.pageCount}
+          isLoading={isFetching}
         />
       }
     />
