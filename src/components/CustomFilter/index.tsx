@@ -15,7 +15,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Group } from '../ui/group';
+import { Group } from '@/components/ui/group';
 
 const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
   const [open, setOpen] = useState<boolean>(false);
@@ -52,6 +52,19 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
     reset(values);
   }, [inputs, searchParams, reset]);
 
+  /**
+   * @description This hook is used to count the active filters.
+   */
+  const activeFilters = useMemo(() => {
+    const params = inputs.map(input => input.name);
+    const excludedParams = ['page', 'pageSize', 'tab'];
+
+    return params.filter(i => {
+      const value = searchParams.get(i);
+      return value !== null && value !== '' && !excludedParams.includes(i);
+    }).length;
+  }, [inputs, searchParams]);
+
   const handleSearch = async (formValues: FilterFormData) => {
     Object.keys(formValues).forEach(field => {
       deleteQueryParams([field]);
@@ -70,41 +83,30 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
     reset(defaultValues);
   };
 
-  const activeFilterCount = useMemo(() => {
-    const filterFieldNames = inputs.map(input => input.name);
-    const excludedParams = ['page', 'pageSize', 'tab'];
-
-    return filterFieldNames.filter(fieldName => {
-      const value = searchParams.get(fieldName);
-      return (
-        value !== null && value !== '' && !excludedParams.includes(fieldName)
-      );
-    }).length;
-  }, [inputs, searchParams]);
-
   return (
-    <div className="space-y-4">
+    <>
       <div className="flex items-center justify-between">
         <Group>
           <Button
-            variant={activeFilterCount > 0 ? 'default' : 'outline'}
+            variant={activeFilters > 0 ? 'default' : 'outline'}
             onClick={() => setOpen(!open)}
             size="lg"
           >
             <ListFilter />
             <span>Filter</span>
-            {activeFilterCount > 0 && (
+            {activeFilters > 0 && (
               <Badge
                 variant="secondary"
                 className="flex size-4 items-center justify-center rounded-full p-1"
               >
-                {activeFilterCount}
+                {activeFilters}
               </Badge>
             )}
           </Button>
         </Group>
         {path && <CreateButton path={path} />}
       </div>
+
       <AnimatePresence>
         {open && (
           <motion.div
@@ -115,6 +117,7 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
               duration: 0.2,
               ease: [0.4, 0, 0.2, 1],
             }}
+            style={{ overflow: 'hidden' }}
           >
             <Card className="p-4">
               <form onSubmit={handleSubmit(handleSearch)} onReset={handleReset}>
@@ -143,18 +146,11 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
                     );
                   })}
                   <div className="col-start-6 flex items-end justify-end gap-2">
+                    <CustomButton type="submit" label="Apply" />
                     <CustomButton
                       type="reset"
                       label="Clear"
                       variant="outline"
-                      size="lg"
-                      className="h-fit"
-                    />
-                    <CustomButton
-                      type="submit"
-                      label="Apply"
-                      size="lg"
-                      className="h-fit"
                     />
                   </div>
                 </div>
@@ -163,7 +159,7 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </>
   );
 };
 
