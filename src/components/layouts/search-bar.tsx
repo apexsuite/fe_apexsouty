@@ -48,7 +48,6 @@ const SearchBar = () => {
       currentItems: MenuItem[],
       { pageRouteID, isFavorite }: { pageRouteID: string; isFavorite: boolean }
     ) => {
-      // Array olmadığı durumda boş array döndür
       if (!Array.isArray(currentItems)) {
         return [];
       }
@@ -64,7 +63,6 @@ const SearchBar = () => {
     }
   );
 
-  // optimisticMenuItems'ın array olduğundan emin ol
   const safeOptimisticMenuItems = Array.isArray(optimisticMenuItems)
     ? optimisticMenuItems
     : [];
@@ -119,14 +117,6 @@ const SearchBar = () => {
             await dispatchRedux(
               deleteFavorite(favoriteItem.favouriteId)
             ).unwrap();
-          } else {
-            console.error('favouriteId bulunamadı:', {
-              pageRouteID,
-              currentMenuItem,
-              favoritesResult,
-              favoriteItem,
-            });
-            throw new Error('Favorite ID not found');
           }
         } else {
           await dispatchRedux(addFavorite(pageRouteID)).unwrap();
@@ -160,7 +150,6 @@ const SearchBar = () => {
   useEffect(() => {
     dispatchRedux(fetchMenu()).then(res => {
       setMenuItems(res.payload as MenuItem[]);
-      console.log(res.payload);
     });
   }, [dispatchRedux]);
 

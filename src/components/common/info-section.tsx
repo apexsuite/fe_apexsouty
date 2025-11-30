@@ -16,7 +16,8 @@ interface InfoSectionProps {
   icon?: React.ReactNode;
   className?: string;
   layout?: InfoSectionLayout;
-  items: InfoSectionItem[];
+  items?: InfoSectionItem[];
+  children?: React.ReactNode;
 }
 
 const renderItemValue = (item: InfoSectionItem) => {
@@ -52,6 +53,7 @@ export const InfoSection = ({
   className,
   layout = 'list',
   items,
+  children,
 }: InfoSectionProps) => {
   return (
     <Card className={cn('overflow-hidden py-0', className)}>
@@ -62,24 +64,32 @@ export const InfoSection = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="py-4">
-        <div
-          className={cn(
-            'gap-6',
-            layout === 'grid'
-              ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
-              : 'flex flex-col'
-          )}
-        >
-          {items.map(item => (
-            <div key={item.label} className={cn('flex flex-col space-y-1.5')}>
-              <div className="text-muted-foreground flex items-center gap-2 font-medium">
-                {item.icon}
-                <span>{item.label}</span>
-              </div>
-              {renderItemValue(item)}
-            </div>
-          ))}
-        </div>
+        {children ? (
+          <div className="flex flex-col gap-4">{children}</div>
+        ) : (
+          <div
+            className={cn(
+              'gap-4',
+              layout === 'grid'
+                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+                : 'flex flex-col'
+            )}
+          >
+            {items &&
+              items.map(item => (
+                <div
+                  key={item.label}
+                  className={cn('flex flex-col space-y-1.5')}
+                >
+                  <div className="text-muted-foreground flex items-center gap-2 font-medium">
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </div>
+                  {renderItemValue(item)}
+                </div>
+              ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

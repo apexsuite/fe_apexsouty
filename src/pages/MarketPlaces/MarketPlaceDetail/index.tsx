@@ -1,6 +1,5 @@
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { getMarketplaceById } from '@/services/marketplaces';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -9,15 +8,14 @@ import {
   ExternalLink,
   Key,
   MapPin,
-  Pencil,
   Store,
   ToggleRight,
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
-import CustomButton from '@/components/CustomButton';
 import StatusBadge from '@/components/common/status-badge';
 import { InfoSection } from '@/components/common/info-section';
+import { DetailPage } from '@/components/CustomPageLayout/detail-page';
 
 const MarketPlaceDetail = () => {
   const navigate = useNavigate();
@@ -53,39 +51,12 @@ const MarketPlaceDetail = () => {
   };
 
   return (
-    <div className="container mx-auto space-y-6 px-4 py-8">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-start gap-4">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => navigate('/marketplaces')}
-            className="mt-1"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <div className="space-y-2">
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold tracking-tight">
-                {marketplace.marketplace}
-              </h1>
-              <StatusBadge isActive={marketplace.isActive} />
-            </div>
-            <p className="text-muted-foreground text-sm">
-              Marketplace Detail Information
-            </p>
-          </div>
-        </div>
-        <CustomButton
-          icon={<Pencil className="h-4 w-4" />}
-          label="Edit Marketplace"
-          onClick={() => navigate(`/marketplaces/${id}/edit`)}
-          variant="default"
-        />
-      </div>
-
-      <Separator />
-
+    <DetailPage
+      name={marketplace.marketplace}
+      description="Marketplace Detail Information"
+      status={marketplace.isActive ? 'active' : 'inactive'}
+      edit={{ label: 'Edit Marketplace', path: `/marketplaces/${id}/edit` }}
+    >
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <InfoSection
           title="Marketplace Information"
@@ -154,7 +125,7 @@ const MarketPlaceDetail = () => {
           },
         ]}
       />
-    </div>
+    </DetailPage>
   );
 };
 

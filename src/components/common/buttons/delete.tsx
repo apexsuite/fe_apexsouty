@@ -41,16 +41,18 @@ const DeleteButton = ({ title, description, onConfirm }: DeleteButtonProps) => {
           <AlertDialogClose
             render={<CustomButton variant="outline" label="Cancel" />}
           />
-          <AlertDialogClose
-            render={
-              <CustomButton
-                variant="destructive"
-                onClick={onConfirm}
-                label="Delete"
-                icon={<Trash2 />}
-              />
-            }
-          />
+          {onConfirm && (
+            <AlertDialogClose
+              render={
+                <CustomButton
+                  variant="destructive"
+                  onClick={onConfirm}
+                  label="Delete"
+                  icon={<Trash2 />}
+                />
+              }
+            />
+          )}
         </AlertDialogFooter>
       </AlertDialogPopup>
     </AlertDialog>

@@ -64,6 +64,7 @@ const RegionForm = lazy(() => import('@/pages/Region/RegionForm'));
 
 const Vendor = lazy(() => import('@/pages/Vendor'));
 const VendorForm = lazy(() => import('@/pages/Vendor/VendorForm'));
+const VendorDetail = lazy(() => import('@/pages/Vendor/VendorDetail'));
 
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isAuthenticated = useSelector(
@@ -337,6 +338,11 @@ export const protectedRoutes: RouteObject[] = [
             path: 'create',
             element: <VendorForm />,
             handle: { title: 'routes.vendors.create' },
+          },
+          {
+            path: ':id',
+            element: <VendorDetail />,
+            handle: { title: 'routes.vendors.detail' },
           },
           {
             path: ':id/edit',
