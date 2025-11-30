@@ -15,9 +15,6 @@ const AccessDenied = lazy(() => import('@/pages/AccessDenied'));
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
 
 const Permissions = lazy(() => import('@/pages/Permissions'));
-const PermissionsManagement = lazy(
-  () => import('@/pages/PermissionsManagement')
-);
 const AllServices = lazy(() => import('@/pages/AllServices'));
 const AllResources = lazy(() => import('@/pages/AllResources'));
 const PagesRoute = lazy(() => import('@/pages/PagesRoute'));
@@ -145,11 +142,6 @@ export const protectedRoutes: RouteObject[] = [
         path: 'permissions',
         element: <Permissions />,
         handle: { title: 'routes.permissions' },
-      },
-      {
-        path: 'permissions-management',
-        element: <PermissionsManagement />,
-        handle: { title: 'routes.permissionsManagement' },
       },
       {
         path: 'all-services',

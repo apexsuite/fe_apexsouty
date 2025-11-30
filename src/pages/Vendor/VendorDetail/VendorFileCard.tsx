@@ -30,6 +30,8 @@ import {
 } from '@/components/ui/table';
 import {
   ArrowRight,
+  ChevronDown,
+  ChevronUp,
   FileText,
   MousePointerClick,
   Save,
@@ -167,6 +169,17 @@ export const VendorFileCard = ({
     },
   });
 
+  /** Process butonuna tıklandığında önce mapping kaydet, sonra process başlat */
+  const handleProcess = async () => {
+    // Önce mapping'i kaydet
+    await updateVendorFileMapping(vendorId, file.id, {
+      columnMappings,
+      fileDelimeter: delimiter,
+    });
+    // Sonra process başlat
+    processFile(file.isProcessed);
+  };
+
   // Sample veriyi parse et (delimiter'a göre)
   const parsedData = useMemo(() => {
     if (!sampleContent) return null;
@@ -225,9 +238,15 @@ export const VendorFileCard = ({
 
   return (
     <Frame className="rounded-xl p-2">
-      <FrameHeader onClick={() => setIsExpanded(!isExpanded)}>
+      <FrameHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
+            <CustomButton
+              variant="outline"
+              size="icon-lg"
+              icon={isExpanded ? <ChevronUp /> : <ChevronDown />}
+              onClick={() => setIsExpanded(!isExpanded)}
+            />
             <FrameTitle className="text-base">{file.fileName}</FrameTitle>
 
             {mappedColumns.length > 0 && (
@@ -270,9 +289,9 @@ export const VendorFileCard = ({
             />
             <CustomButton
               label={file.isProcessed ? 'Process Again' : 'Process'}
-              onClick={() => processFile(file.isProcessed)}
-              disabled={!isValid || isProcessing}
-              loading={isProcessing}
+              onClick={handleProcess}
+              disabled={!isValid || isProcessing || isUpdating}
+              loading={isProcessing || isUpdating}
               size="lg"
               icon={<MousePointerClick />}
               iconPosition="right"
