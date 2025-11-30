@@ -1,7 +1,11 @@
-import { useMemo, useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useEffect, useMemo, useState } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
-import { updateVendorFileMapping } from '@/services/vendor';
+import {
+  getVendorFileSample,
+  processSelectedVendorFile,
+  updateVendorFileMapping,
+} from '@/services/vendor';
 import type {
   IVendorFileDetail,
   IColumnMapping,
@@ -9,14 +13,6 @@ import type {
 } from '@/services/vendor/types';
 import { COLUMN_NAME_OPTIONS } from '@/services/vendor/types';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import {
   Select,
   SelectContent,
@@ -33,19 +29,29 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
-  ChevronDown,
-  ChevronUp,
+  ArrowRight,
   FileText,
-  Loader2,
+  MousePointerClick,
   Save,
-  Settings,
+  TriangleAlertIcon,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import Empty from '@/components/common/empty';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import CustomButton from '@/components/CustomButton';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import {
+  Frame,
+  FrameHeader,
+  FramePanel,
+  FrameTitle,
+} from '@/components/ui/frame';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface VendorFileCardProps {
   vendorId: string;
   file: IVendorFileDetail;
   onMappingSuccess?: () => void;
+  onProcessSuccess?: () => void;
 }
 
 /** Dosya adından orijinal adı çıkar (UUID prefix'i kaldır) */
@@ -55,40 +61,6 @@ const extractOriginalFileName = (fileName: string): string => {
     return parts.slice(1).join('_');
   }
   return fileName;
-};
-
-/** Dosya status için badge varyantı */
-const getFileStatusVariant = (
-  status: string
-): 'default' | 'secondary' | 'destructive' | 'outline' => {
-  switch (status) {
-    case 'uploaded':
-      return 'secondary';
-    case 'processing':
-      return 'default';
-    case 'processed':
-      return 'outline';
-    case 'error':
-      return 'destructive';
-    default:
-      return 'secondary';
-  }
-};
-
-/** Dosya status için Türkçe etiket */
-const getFileStatusLabel = (status: string): string => {
-  switch (status) {
-    case 'uploaded':
-      return 'Yüklendi';
-    case 'processing':
-      return 'İşleniyor';
-    case 'processed':
-      return 'Tamamlandı';
-    case 'error':
-      return 'Hata';
-    default:
-      return status;
-  }
 };
 
 /** Delimiter seçenekleri */
@@ -134,12 +106,38 @@ export const VendorFileCard = ({
   vendorId,
   file,
   onMappingSuccess,
+  onProcessSuccess,
 }: VendorFileCardProps) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [delimiter, setDelimiter] = useState(file.fileDelimeter || ',');
   const [columnMappings, setColumnMappings] = useState<IColumnMapping[]>(
     file.columnMappings || []
   );
+
+  // Sample data API çağrısı - expand edildiğinde çağrılır
+  const {
+    data: sampleData,
+    isLoading: isSampleLoading,
+    refetch: refetchSample,
+  } = useQuery({
+    queryKey: ['vendorFileSample', vendorId, file.id],
+    queryFn: () => getVendorFileSample(vendorId, file.id),
+  });
+
+  // API'den gelen sample data veya file'dan gelen sample
+  const sampleContent = sampleData?.sample || file.sample;
+
+  // API'den gelen config değerleri ile state'i güncelle
+  useEffect(() => {
+    if (sampleData) {
+      if (sampleData.fileDelimeter) {
+        setDelimiter(sampleData.fileDelimeter);
+      }
+      if (sampleData.columnMappings && sampleData.columnMappings.length > 0) {
+        setColumnMappings(sampleData.columnMappings);
+      }
+    }
+  }, [sampleData]);
 
   // Column mapping güncelle
   const { mutate: updateMapping, isPending: isUpdating } = useMutation({
@@ -151,44 +149,68 @@ export const VendorFileCard = ({
     onSuccess: () => {
       toast.success('Alan eşleştirmesi başarıyla kaydedildi');
       onMappingSuccess?.();
+      refetchSample();
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Alan eşleştirmesi kaydedilemedi');
     },
   });
 
+  // Dosya işleme mutation
+  const { mutate: processFile, isPending: isProcessing } = useMutation({
+    mutationFn: (processAgain: boolean) =>
+      processSelectedVendorFile(vendorId, file.id, {
+        processAgain,
+        vendorFileIds: [file.id],
+      }),
+    onSuccess: () => {
+      toast.success(
+        file.isProcessed
+          ? 'Dosya yeniden işleme alındı'
+          : 'Dosya işleme başlatıldı'
+      );
+      onProcessSuccess?.();
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Dosya işleme başarısız');
+    },
+  });
+
   // Sample veriyi parse et (delimiter'a göre)
   const parsedData = useMemo(() => {
-    if (!file.sample) return null;
+    if (!sampleContent) return null;
 
     // Satırlara ayır
-    const lines = file.sample.split('\n').filter(line => line.trim());
+    const lines = sampleContent.split('\n').filter(line => line.trim());
 
     // Her satırı parse et
     return lines.map(line => parseCSVLine(line, delimiter));
-  }, [file.sample, delimiter]);
+  }, [sampleContent, delimiter]);
 
   // İlk satırı header olarak kullan
   const headers = parsedData?.[0] || [];
   const dataRows = parsedData?.slice(1, 11) || []; // İlk 10 satır
 
+  // "Seçim yok" için özel değer (boş string Select.Item'da kullanılamaz)
+  const NONE_VALUE = '__none__';
+
   // Column index için mapping değerini getir
   const getMappingForIndex = (index: number): string => {
     const mapping = columnMappings.find(m => m.index === index);
-    return mapping?.columnName || '';
+    return mapping?.columnName || NONE_VALUE;
   };
 
   // Column mapping güncelle
   const handleColumnMappingChange = (
     index: number,
-    columnName: ColumnNameType | ''
+    columnName: ColumnNameType | typeof NONE_VALUE
   ) => {
     setColumnMappings(prev => {
       // Önce bu index için mevcut mapping'i kaldır
       const filtered = prev.filter(m => m.index !== index);
 
-      // Eğer boş değilse yeni mapping ekle
-      if (columnName) {
+      // Eğer "seçim yok" değilse yeni mapping ekle
+      if (columnName && columnName !== NONE_VALUE) {
         // Aynı columnName başka bir index'te varsa onu da kaldır
         const withoutDuplicate = filtered.filter(
           m => m.columnName !== columnName
@@ -211,56 +233,29 @@ export const VendorFileCard = ({
   const isValid = missingRequired.length === 0;
 
   return (
-    <Card>
-      <CardHeader
-        className="cursor-pointer"
-        onClick={() => setIsExpanded(!isExpanded)}
-      >
+    <Frame className="rounded-xl p-2">
+      <FrameHeader onClick={() => setIsExpanded(!isExpanded)}>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <FileText className="text-muted-foreground size-5" />
-            <div>
-              <CardTitle className="text-base">
-                {extractOriginalFileName(file.fileName)}
-              </CardTitle>
-              <CardDescription className="flex items-center gap-2">
-                <Badge variant={getFileStatusVariant(file.status)}>
-                  {getFileStatusLabel(file.status)}
-                </Badge>
-                {file.isProcessed && (
-                  <span className="text-xs text-green-600">İşlendi</span>
-                )}
-                {file.fileDelimeter && (
-                  <span className="text-xs">Ayırıcı: {file.fileDelimeter}</span>
-                )}
-              </CardDescription>
-            </div>
-          </div>
           <div className="flex items-center gap-2">
-            {file.columnMappings && file.columnMappings.length > 0 && (
-              <Badge variant="outline">
-                {file.columnMappings.length} alan eşleştirildi
+            <FrameTitle className="text-base">
+              {extractOriginalFileName(file.fileName)}{' '}
+            </FrameTitle>
+
+            {mappedColumns.length > 0 && (
+              <Badge size="lg">
+                {mappedColumns.length} / {headers.length} matched!
               </Badge>
             )}
-            {isExpanded ? (
-              <ChevronUp className="size-5" />
-            ) : (
-              <ChevronDown className="size-5" />
+
+            {file.isProcessed && (
+              <Badge variant="success" size="lg">
+                Processed
+              </Badge>
             )}
           </div>
-        </div>
-      </CardHeader>
-
-      {isExpanded && (
-        <CardContent className="space-y-4">
-          {/* Delimiter Seçimi */}
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Settings className="text-muted-foreground size-4" />
-              <span className="text-sm font-medium">Ayırıcı Karakter:</span>
-            </div>
+          <div className="flex items-center gap-2">
             <Select value={delimiter} onValueChange={setDelimiter}>
-              <SelectTrigger className="w-48">
+              <SelectTrigger className="bg-background">
                 <SelectValue placeholder="Ayırıcı seç" />
               </SelectTrigger>
               <SelectContent>
@@ -271,171 +266,173 @@ export const VendorFileCard = ({
                 ))}
               </SelectContent>
             </Select>
+            <CustomButton
+              variant="outline"
+              label="Save Mapping"
+              onClick={() => updateMapping()}
+              disabled={!isValid || isUpdating}
+              loading={isUpdating}
+              size="lg"
+              icon={<Save />}
+            />
+            <CustomButton
+              label={file.isProcessed ? 'Process Again' : 'Process'}
+              onClick={() => processFile(file.isProcessed)}
+              disabled={!isValid || isProcessing}
+              loading={isProcessing}
+              size="lg"
+              icon={<MousePointerClick />}
+              iconPosition="right"
+            />
           </div>
+        </div>
+      </FrameHeader>
 
-          {/* Sample Data ve Column Mapping */}
-          {parsedData && parsedData.length > 0 ? (
-            <div className="space-y-4">
-              {/* Column Mapping Seçicileri */}
-              <div className="rounded-lg border p-4">
-                <h4 className="mb-3 font-medium">Alan Eşleştirmesi</h4>
-                <p className="text-muted-foreground mb-4 text-sm">
-                  Her sütun için karşılık gelen alanı seçin.{' '}
-                  <span className="text-destructive font-medium">
-                    Name, Price ve ASIN/UPC
-                  </span>{' '}
-                  zorunludur.
-                </p>
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0 }}
+            animate={{ height: 'auto' }}
+            exit={{ height: 0 }}
+          >
+            <FramePanel>
+              {parsedData && parsedData.length > 0 ? (
+                <div className="space-y-2">
+                  <div className="bg-card rounded-lg border p-4">
+                    {missingRequired.length > 0 && (
+                      <Alert variant="error" className="mb-4">
+                        <TriangleAlertIcon />
+                        <AlertTitle>Required fields</AlertTitle>
+                        <AlertDescription>
+                          {missingRequired
+                            .map(col => {
+                              const opt = COLUMN_NAME_OPTIONS.find(
+                                o => o.value === col
+                              );
+                              return opt?.label || col;
+                            })
+                            .join(', ')}
+                          {''} {missingRequired.length > 1 ? 'are' : 'is'}{' '}
+                          missing.
+                        </AlertDescription>
+                      </Alert>
+                    )}
 
-                {/* Zorunlu alanlar uyarısı */}
-                {missingRequired.length > 0 && (
-                  <div className="bg-destructive/10 text-destructive mb-4 rounded-md p-3 text-sm">
-                    Eksik zorunlu alanlar:{' '}
-                    {missingRequired
-                      .map(col => {
-                        const opt = COLUMN_NAME_OPTIONS.find(
-                          o => o.value === col
-                        );
-                        return opt?.label || col;
-                      })
-                      .join(', ')}
+                    <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
+                      {headers.map((header, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <Badge variant="secondary" size="lg">
+                            {String(header) || `Sütun ${index + 1}`}
+                            <ArrowRight />
+                          </Badge>
+                          <Select
+                            value={getMappingForIndex(index)}
+                            onValueChange={value =>
+                              handleColumnMappingChange(
+                                index,
+                                value as ColumnNameType | typeof NONE_VALUE
+                              )
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select column" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value={NONE_VALUE}>None</SelectItem>
+                              {COLUMN_NAME_OPTIONS.map(opt => {
+                                const isAlreadyMapped = columnMappings.some(
+                                  m =>
+                                    m.columnName === opt.value &&
+                                    m.index !== index
+                                );
+                                return (
+                                  <SelectItem
+                                    key={opt.value}
+                                    value={opt.value}
+                                    disabled={isAlreadyMapped}
+                                  >
+                                    {opt.label}
+                                    {opt.required && (
+                                      <Badge variant="error" className="ml-1">
+                                        REQ
+                                      </Badge>
+                                    )}
+                                  </SelectItem>
+                                );
+                              })}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                )}
 
-                <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-                  {headers.map((header, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center gap-2 rounded-md border p-2"
-                    >
-                      <span
-                        className={cn(
-                          'bg-muted truncate rounded px-2 py-1 text-xs font-medium',
-                          'max-w-[120px]'
-                        )}
-                        title={String(header)}
-                      >
-                        {String(header) || `Sütun ${index + 1}`}
-                      </span>
-                      <span className="text-muted-foreground">→</span>
-                      <Select
-                        value={getMappingForIndex(index)}
-                        onValueChange={value =>
-                          handleColumnMappingChange(
-                            index,
-                            value as ColumnNameType | ''
-                          )
-                        }
-                      >
-                        <SelectTrigger className="flex-1">
-                          <SelectValue placeholder="Alan seç" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="">Seçim yok</SelectItem>
-                          {COLUMN_NAME_OPTIONS.map(opt => {
-                            const isAlreadyMapped = columnMappings.some(
-                              m =>
-                                m.columnName === opt.value && m.index !== index
+                  <div className="bg-card rounded-lg border p-4">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          {headers.map((header, index) => {
+                            const mapping = getMappingForIndex(index);
+                            const mappingOpt = COLUMN_NAME_OPTIONS.find(
+                              o => o.value === mapping
                             );
                             return (
-                              <SelectItem
-                                key={opt.value}
-                                value={opt.value}
-                                disabled={isAlreadyMapped}
+                              <TableHead
+                                key={index}
+                                className="whitespace-nowrap"
                               >
-                                {opt.label}
-                                {opt.required && (
-                                  <span className="text-destructive ml-1">
-                                    *
-                                  </span>
-                                )}
-                              </SelectItem>
+                                <div className="flex items-center gap-px">
+                                  <Badge
+                                    variant="secondary"
+                                    className="truncate"
+                                  >
+                                    {String(header)}
+                                  </Badge>
+                                  {mappingOpt && (
+                                    <div className="flex items-center gap-px">
+                                      <ArrowRight className="size-3 stroke-3" />
+                                      <Badge variant="warning">
+                                        {mappingOpt.label}
+                                      </Badge>
+                                    </div>
+                                  )}
+                                </div>
+                              </TableHead>
                             );
                           })}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Sample Data Tablosu */}
-              <div className="rounded-lg border">
-                <div className="bg-muted/50 border-b px-4 py-2">
-                  <h4 className="text-sm font-medium">
-                    Örnek Veri (İlk 10 satır)
-                  </h4>
-                </div>
-                <div className="max-h-96 overflow-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        {headers.map((header, index) => {
-                          const mapping = getMappingForIndex(index);
-                          const mappingOpt = COLUMN_NAME_OPTIONS.find(
-                            o => o.value === mapping
-                          );
-                          return (
-                            <TableHead
-                              key={index}
-                              className="min-w-[120px] whitespace-nowrap"
-                            >
-                              <div className="flex flex-col gap-1">
-                                <span className="text-xs text-gray-500">
-                                  {String(header)}
-                                </span>
-                                {mappingOpt && (
-                                  <Badge variant="outline" className="text-xs">
-                                    {mappingOpt.label}
-                                  </Badge>
-                                )}
-                              </div>
-                            </TableHead>
-                          );
-                        })}
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {dataRows.map((row, rowIndex) => (
-                        <TableRow key={rowIndex}>
-                          {row.map((cell: string, cellIndex: number) => (
-                            <TableCell
-                              key={cellIndex}
-                              className="max-w-[200px] truncate text-sm"
-                              title={String(cell)}
-                            >
-                              {String(cell)}
-                            </TableCell>
-                          ))}
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {dataRows.map((row, rowIndex) => (
+                          <TableRow key={rowIndex}>
+                            {row.map((cell: string, cellIndex: number) => (
+                              <TableCell
+                                key={cellIndex}
+                                className="max-w-32 truncate"
+                                title={String(cell)}
+                              >
+                                {String(cell) || '-'}
+                              </TableCell>
+                            ))}
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
                 </div>
-              </div>
-
-              {/* Kaydet Butonu */}
-              <div className="flex justify-end">
-                <Button
-                  onClick={() => updateMapping()}
-                  disabled={!isValid || isUpdating}
-                >
-                  {isUpdating ? (
-                    <Loader2 className="mr-2 size-4 animate-spin" />
-                  ) : (
-                    <Save className="mr-2 size-4" />
-                  )}
-                  Eşleştirmeyi Kaydet
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="text-muted-foreground py-8 text-center">
-              Örnek veri bulunamadı
-            </div>
-          )}
-        </CardContent>
-      )}
-    </Card>
+              ) : isSampleLoading ? (
+                <LoadingSpinner />
+              ) : (
+                <Empty
+                  title="File not processed yet"
+                  description="This file has not been processed yet or the sample data is not available."
+                  icon={<FileText />}
+                />
+              )}
+            </FramePanel>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </Frame>
   );
 };

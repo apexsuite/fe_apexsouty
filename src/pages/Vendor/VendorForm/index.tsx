@@ -20,6 +20,7 @@ const VendorForm = () => {
   const navigate = useNavigate();
   const [uploadedFiles, setUploadedFiles] = useState<IVendorFile[]>([]);
   const [existingFiles, setExistingFiles] = useState<IVendorFileDetail[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   const { control, handleSubmit, reset } = useForm<IVendorCreateRequest>({
     defaultValues: {
@@ -116,11 +117,13 @@ const VendorForm = () => {
         existingFiles={existingFiles}
         onUploadSuccess={handleUploadSuccess}
         onExistingFileRemove={handleExistingFileRemove}
+        onUploadingChange={setIsUploading}
       />
       <CustomButton
         type="submit"
         label={isEditMode ? 'Güncelle' : 'Vendor Oluştur'}
         loading={isCreating}
+        disabled={isUploading}
         className="w-full"
       />
     </form>

@@ -13,13 +13,13 @@ import {
   FileUploadItemDelete,
   FileUploadItemMetadata,
   FileUploadItemPreview,
+  FileUploadItemProgress,
   FileUploadList,
   type FileUploadProps,
   FileUploadTrigger,
 } from '@/components/ui/file-upload';
 import { uploadFile, uploadFileToBlob } from '@/services/files';
 import CustomButton from '../CustomButton';
-import { Badge } from '@/components/ui/badge';
 import type { IVendorFileDetail } from '@/services/vendor/types';
 import { cn } from '@/lib/utils';
 
@@ -27,40 +27,6 @@ import { cn } from '@/lib/utils';
 const extractPathFromUrl = (pathname: string): string => {
   const match = pathname.match(/\/([^/]+)/);
   return match?.[1] || 'default';
-};
-
-/** Backend'den gelen dosya için status badge renkleri */
-const getStatusBadgeVariant = (
-  status: string
-): 'default' | 'secondary' | 'destructive' | 'outline' => {
-  switch (status) {
-    case 'uploaded':
-      return 'secondary';
-    case 'processing':
-      return 'default';
-    case 'processed':
-      return 'outline';
-    case 'error':
-      return 'destructive';
-    default:
-      return 'secondary';
-  }
-};
-
-/** Status için Türkçe etiketler */
-const getStatusLabel = (status: string): string => {
-  switch (status) {
-    case 'uploaded':
-      return 'Yüklendi';
-    case 'processing':
-      return 'İşleniyor';
-    case 'processed':
-      return 'Tamamlandı';
-    case 'error':
-      return 'Hata';
-    default:
-      return status;
-  }
 };
 
 /** Dosya adından orijinal adı çıkar (UUID prefix'i kaldır) */
@@ -83,18 +49,21 @@ interface UploaderProps {
   accept?: string;
   maxSize?: number;
   disabled?: boolean;
+
   /** Backend'den gelen mevcut dosya listesi (edit mode için) */
   existingFiles?: IVendorFileDetail[];
   onUploadSuccess?: (filePaths: string[]) => void;
   onUploadError?: (error: Error) => void;
   onExistingFileRemove?: (fileId: string) => void;
+  /** Upload durumu değiştiğinde çağrılır (true: yükleniyor, false: duraklatıldı) */
+  onUploadingChange?: (isUploading: boolean) => void;
 }
 
 export function Uploader({
   control,
   name,
   folderType,
-  accept = '.csv',
+  accept,
   maxFiles = 2,
   multiple = true,
   maxSize = 20 * 1024 * 1024, // 20MB
@@ -103,6 +72,7 @@ export function Uploader({
   onUploadSuccess,
   onUploadError,
   onExistingFileRemove,
+  onUploadingChange,
 }: UploaderProps) {
   const location = useLocation();
 
@@ -113,6 +83,9 @@ export function Uploader({
 
   const onUpload: NonNullable<FileUploadProps['onUpload']> = React.useCallback(
     async (files, { onProgress, onSuccess, onError }) => {
+      // Upload başladığını bildir
+      onUploadingChange?.(true);
+
       try {
         const uploadPromises = files.map(async file => {
           try {
@@ -155,9 +128,12 @@ export function Uploader({
         onUploadError?.(
           error instanceof Error ? error : new Error(errorMessage)
         );
+      } finally {
+        // Upload tamamlandığını bildir (başarılı/başarısız fark etmez)
+        onUploadingChange?.(false);
       }
     },
-    [determinedPath, onUploadSuccess, onUploadError]
+    [determinedPath, onUploadSuccess, onUploadError, onUploadingChange]
   );
 
   const onFileReject = React.useCallback(
@@ -233,14 +209,17 @@ export function Uploader({
               </FileUploadDropzone>
               <FileUploadList>
                 {(value || []).map((file: File, index: number) => (
-                  <FileUploadItem key={index} value={file}>
-                    <FileUploadItemPreview />
-                    <FileUploadItemMetadata />
-                    <FileUploadItemDelete asChild>
-                      <Button variant="ghost" size="icon" disabled={disabled}>
-                        <X />
-                      </Button>
-                    </FileUploadItemDelete>
+                  <FileUploadItem key={index} value={file} className="flex-col">
+                    <div className="flex w-full items-center gap-2.5">
+                      <FileUploadItemPreview />
+                      <FileUploadItemMetadata />
+                      <FileUploadItemDelete asChild>
+                        <Button variant="ghost" size="icon" disabled={disabled}>
+                          <X />
+                        </Button>
+                      </FileUploadItemDelete>
+                    </div>
+                    <FileUploadItemProgress className="w-full" />
                   </FileUploadItem>
                 ))}
               </FileUploadList>
@@ -272,21 +251,6 @@ export function Uploader({
                       <span className="truncate text-sm font-medium">
                         {extractOriginalFileName(file.fileName)}
                       </span>
-                      <div className="flex items-center gap-2">
-                        <Badge variant={getStatusBadgeVariant(file.status)}>
-                          {getStatusLabel(file.status)}
-                        </Badge>
-                        {file.isProcessed && (
-                          <span className="text-muted-foreground text-xs">
-                            İşlendi
-                          </span>
-                        )}
-                        {file.fileDelimeter && (
-                          <span className="text-muted-foreground text-xs">
-                            Ayırıcı: {file.fileDelimeter}
-                          </span>
-                        )}
-                      </div>
                     </div>
 
                     {/* Silme butonu */}

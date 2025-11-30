@@ -57,27 +57,51 @@ export interface IVendorFileConfig {
   fileDelimeter: string;
 }
 
+/** getVendorFileSample API response tipi */
 export interface IVendorFileSample {
-  data: {
-    columnMappings: IColumnMapping[];
-    createdAt: string;
-    createdBy: string;
-    fileDelimeter: string;
-    fileName: string;
-    filePath: string;
-    id: string;
-    isProcessed: boolean;
-    isTableCreated: boolean;
-    isTableDeleted: boolean;
-    sample: string;
-    status: string;
-    tableName: string;
-    vendorId: string;
-    vendor: IVendor;
-  };
+  columnMappings: IColumnMapping[] | null;
+  createdAt: string;
+  createdBy: string;
+  fileDelimeter: string | null;
+  fileName: string;
+  filePath: string;
+  id: string;
+  isProcessed: boolean;
+  isTableCreated: boolean;
+  isTableDeleted: boolean;
+  sample: string;
+  status: string;
+  tableName: string;
+  vendorId: string;
+  vendor: IVendor;
 }
 
 export interface IProcessSelectedVendorFileRequest {
   processAgain: boolean;
   vendorFileIds: string[];
 }
+
+/** Column name type tanımları */
+export type ColumnNameType =
+  | 'asin/upc'
+  | 'sku'
+  | 'url'
+  | 'brand'
+  | 'price'
+  | 'name'
+  | 'category';
+
+/** Column mapping seçenekleri - PROCESS.md'de tanımlı zorunlu/opsiyonel alanlar */
+export const COLUMN_NAME_OPTIONS: {
+  value: ColumnNameType;
+  label: string;
+  required: boolean;
+}[] = [
+  { value: 'asin/upc', label: 'ASIN/UPC', required: true },
+  { value: 'price', label: 'Price', required: true },
+  { value: 'name', label: 'Name', required: true },
+  { value: 'sku', label: 'SKU', required: false },
+  { value: 'url', label: 'URL', required: false },
+  { value: 'brand', label: 'Brand', required: false },
+  { value: 'category', label: 'Category', required: false },
+];

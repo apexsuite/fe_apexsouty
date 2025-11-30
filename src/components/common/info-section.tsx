@@ -18,6 +18,7 @@ interface InfoSectionProps {
   layout?: InfoSectionLayout;
   items?: InfoSectionItem[];
   children?: React.ReactNode;
+  actions?: React.ReactNode;
 }
 
 const renderItemValue = (item: InfoSectionItem) => {
@@ -54,6 +55,7 @@ export const InfoSection = ({
   layout = 'list',
   items,
   children,
+  actions,
 }: InfoSectionProps) => {
   return (
     <Card className={cn('overflow-hidden py-0', className)}>
@@ -61,9 +63,10 @@ export const InfoSection = ({
         <CardTitle className="flex items-center gap-2 text-lg">
           {icon}
           {title}
+          <div className="ml-auto">{actions}</div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="py-4">
+      <CardContent className={cn('p-4', children ? 'p-2' : 'p-4')}>
         {children ? (
           <div className="flex flex-col gap-4">{children}</div>
         ) : (

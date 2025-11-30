@@ -1,8 +1,16 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
-import { getVendor } from '@/services/vendor';
+import { toast } from 'react-toastify';
+import { getVendor, processAllVendorFiles } from '@/services/vendor';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { Calendar, Factory, FileText, ToggleRight } from 'lucide-react';
+import {
+  Calendar,
+  Factory,
+  FileText,
+  MousePointerClick,
+  RefreshCw,
+  ToggleRight,
+} from 'lucide-react';
 import { VendorFileCard } from './VendorFileCard';
 import { InfoSection } from '@/components/common/info-section';
 import { formatDate } from '@/lib/utils';
@@ -12,6 +20,7 @@ import StatusBadge, {
 import { TAGS } from '@/utils/constants/tags';
 import Empty from '@/components/common/empty';
 import { DetailPage } from '@/components/CustomPageLayout/detail-page';
+import CustomButton from '@/components/CustomButton';
 
 const VendorDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -25,6 +34,22 @@ const VendorDetail = () => {
     queryFn: () => getVendor(id!),
     enabled: !!id,
   });
+
+  const { mutate: processAll, isPending: isProcessingAll } = useMutation({
+    mutationFn: (processAgain: boolean) =>
+      processAllVendorFiles(id!, processAgain),
+    onSuccess: () => {
+      toast.success('Tüm dosyalar işleme alındı');
+      refetch();
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Dosyalar işlenirken hata oluştu');
+    },
+  });
+
+  // Check if there are processed and unprocessed files
+  const hasProcessedFiles = vendor?.vendorFiles?.some(f => f.isProcessed);
+  const hasUnprocessedFiles = vendor?.vendorFiles?.some(f => !f.isProcessed);
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -76,16 +101,46 @@ const VendorDetail = () => {
         title="Files"
         layout="grid"
         icon={<FileText />}
+        actions={
+          vendor.vendorFiles &&
+          vendor.vendorFiles.length > 0 && (
+            <div className="flex gap-2">
+              {hasUnprocessedFiles && (
+                <CustomButton
+                  variant="outline"
+                  onClick={() => processAll(false)}
+                  disabled={isProcessingAll}
+                  label="Process All"
+                  icon={<MousePointerClick />}
+                  iconPosition="right"
+                  size="lg"
+                />
+              )}
+              {hasProcessedFiles && (
+                <CustomButton
+                  variant="outline"
+                  onClick={() => processAll(true)}
+                  disabled={isProcessingAll}
+                  label="Process All Again"
+                  icon={<RefreshCw />}
+                  iconPosition="right"
+                  size="lg"
+                />
+              )}
+            </div>
+          )
+        }
         children={
           <>
             {vendor.vendorFiles && vendor.vendorFiles.length > 0 ? (
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
                 {vendor.vendorFiles.map(file => (
                   <VendorFileCard
                     key={file.id}
                     vendorId={vendor.id}
                     file={file}
                     onMappingSuccess={() => refetch()}
+                    onProcessSuccess={() => refetch()}
                   />
                 ))}
               </div>

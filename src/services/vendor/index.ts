@@ -131,3 +131,5 @@ export const processAllVendorFiles = async (
   });
   return response.data ?? response;
 };
+
+export const updateVendorFileMapping = createVendorFileConfig;
