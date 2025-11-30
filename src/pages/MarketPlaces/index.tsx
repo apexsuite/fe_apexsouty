@@ -40,6 +40,7 @@ const MarketPlaces = () => {
       ...(isActive && { isActive }),
     };
   }, [searchParams]);
+
   const { data, isLoading } = useQuery({
     queryKey: ['marketplaces', params],
     queryFn: () => getMarketplaces(params),

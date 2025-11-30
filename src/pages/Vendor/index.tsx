@@ -1,5 +1,4 @@
 import CustomPageLayout from '@/components/CustomPageLayout';
-import LoadingSpinner from '@/components/LoadingSpinner';
 import { deleteVendor, getVendors } from '@/services/vendor';
 import { IVendorRequest } from '@/services/vendor/types';
 import usePagination from '@/utils/hooks/usePagination';
@@ -65,10 +64,6 @@ export default function Vendor() {
   const columns = getVendorColumns({
     deleteVendor: deleteVendorMutation,
   });
-
-  if (isFetching) {
-    return <LoadingSpinner />;
-  }
 
   return (
     <CustomPageLayout
