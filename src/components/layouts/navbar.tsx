@@ -7,7 +7,7 @@ export default function Navbar() {
     <nav className="border-b">
       <div className="flex items-center justify-between p-2 px-4">
         <Breadcrumb />
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <ThemeSwitcher />
         </div>

@@ -1,8 +1,9 @@
 import { useLocation } from 'react-router-dom';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { usePageHistory } from '@/utils/hooks/usePageHistory';
-import Navbar from '@/components/Navbar';
-import DashboardSidebar from '@/components/layouts/sidebar';
+
+import Navbar from '@/components/layouts/navbar';
+import DashboardSidebar from '@/components/layouts/dashboard-sidebar';
 
 interface ClientLayoutProps {
   children?: React.ReactNode;
@@ -28,7 +29,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
         <DashboardSidebar />
         <SidebarInset className="z-0 flex flex-col">
           <Navbar />
-          <main className="h-[calc(100vh-48px)] overflow-x-hidden overflow-y-auto">
+          <main className="h-[calc(100vh-3rem)] overflow-x-hidden overflow-y-auto">
             {children}
           </main>
         </SidebarInset>

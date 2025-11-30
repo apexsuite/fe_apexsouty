@@ -31,6 +31,7 @@ export default function Vendor() {
       ...(description && { description }),
     };
   }, [searchParams]);
+
   const { data, isLoading } = useQuery({
     queryKey: ['vendors', params],
     queryFn: () => getVendors(params),
