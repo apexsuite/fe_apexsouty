@@ -55,6 +55,11 @@
       "create": "Create Vendor",
       "edit": "Edit Vendor"
     },
+    "support": {
+      "title": "Support",
+      "create": "Create Support",
+      "edit": "Edit Support"
+    },
     "permissionExamples": "Permission Examples"
   },
   "permissionManagement": "Permission Management",
@@ -967,6 +972,98 @@
     "postalCodeRequired": "Please fill in the Postal Code field in the address form",
     "countryRequired": "Please fill in the Country field in the address form",
     "phoneRequired": "Please fill in the Phone Number field in the address form"
+  },
+  "support": {
+    "list": {
+      "title": "Support Tickets",
+      "description": "View and manage support tickets",
+      "filters": "Filters",
+      "table": {
+        "subject": "Subject",
+        "status": "Status",
+        "priority": "Priority",
+        "category": "Category",
+        "createdBy": "Created By",
+        "createdById": "Created By ID",
+        "createdAt": "Created At",
+        "lastActivityAt": "Last Activity",
+        "ownerId": "Owner ID",
+        "messages": "Messages",
+        "attachments": "Attachments",
+        "replied": "Replied",
+        "actions": "Actions"
+      },
+      "filtersForm": {
+        "subject": {
+          "label": "Subject",
+          "placeholder": "Enter subject"
+        },
+        "status": {
+          "label": "Status",
+          "placeholder": "Select status"
+        },
+        "priority": {
+          "label": "Priority",
+          "placeholder": "Select priority"
+        },
+        "category": {
+          "label": "Category",
+          "placeholder": "Select category"
+        },
+        "assignedToId": {
+          "label": "Assigned To",
+          "placeholder": "Enter assigned user ID"
+        },
+        "isPersonal": {
+          "label": "Personal",
+          "placeholder": "Select personal"
+        }
+      },
+      "tooltips": {
+        "viewTicket": "View Support Ticket",
+        "copyCreatedById": "Copy Created By ID",
+        "copyOwnerId": "Copy Owner ID"
+      },
+      "copy": {
+        "createdByIdSuccess": "Created By ID copied to clipboard",
+        "ownerIdSuccess": "Owner ID copied to clipboard",
+        "genericSuccess": "ID copied to clipboard",
+        "error": "An error occurred while copying"
+      },
+      "values": {
+        "yes": "Yes",
+        "no": "No"
+      }
+    },
+    "form": {
+      "createTitle": "Create Support Ticket",
+      "createDescription": "Describe your issue and we will get back to you as soon as possible.",
+      "subject": {
+        "label": "Subject",
+        "placeholder": "Enter subject",
+        "required": "Subject is required"
+      },
+      "description": {
+        "label": "Description",
+        "placeholder": "Describe your issue in detail",
+        "required": "Description is required"
+      },
+      "priority": {
+        "label": "Priority",
+        "placeholder": "Select priority",
+        "required": "Priority is required"
+      },
+      "category": {
+        "label": "Category",
+        "placeholder": "Select category",
+        "required": "Category is required"
+      },
+      "attachments": {
+        "label": "Attachments",
+        "helper": "You can upload screenshots, documents or other files related to your issue."
+      },
+      "submit": "Create Ticket"
+    }
   },
   "subscriptions": {
     "pageHeader": {

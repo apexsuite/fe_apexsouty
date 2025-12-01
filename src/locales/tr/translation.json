@@ -55,6 +55,11 @@
             "create": "Tedarikçi Oluştur",
             "edit": "Tedarikçi Düzenle"
         },
+        "support": {
+            "title": "Destek",
+            "create": "Destek Oluştur",
+            "edit": "Destek Düzenle"
+        },
         "permissionExamples": "İzin Örnekleri"
     },
     "notification": {
@@ -891,6 +896,98 @@
         "postalCodeRequired": "Lütfen adres formundaki Posta kodu alanını doldurun",
         "countryRequired": "Lütfen adres formundaki Ülke alanını doldurun",
         "phoneRequired": "Lütfen adres formundaki Telefon numarası alanını doldurun"
+    },
+    "support": {
+        "list": {
+            "title": "Destek Kayıtları",
+            "description": "Destek taleplerini görüntüleyin ve yönetin",
+            "filters": "Filtreler",
+            "table": {
+                "subject": "Konu",
+                "status": "Durum",
+                "priority": "Öncelik",
+                "category": "Kategori",
+                "createdBy": "Oluşturan",
+                "createdById": "Oluşturan ID",
+                "createdAt": "Oluşturulma",
+                "lastActivityAt": "Son Aktivite",
+                "ownerId": "Sahip ID",
+                "messages": "Mesajlar",
+                "attachments": "Ekler",
+                "replied": "Cevaplandı",
+                "actions": "İşlemler"
+            },
+            "filtersForm": {
+                "subject": {
+                    "label": "Konu",
+                    "placeholder": "Konu girin"
+                },
+                "status": {
+                    "label": "Durum",
+                    "placeholder": "Durum seçin"
+                },
+                "priority": {
+                    "label": "Öncelik",
+                    "placeholder": "Öncelik seçin"
+                },
+                "category": {
+                    "label": "Kategori",
+                    "placeholder": "Kategori seçin"
+                },
+                "assignedToId": {
+                    "label": "Atanan Kullanıcı ID",
+                    "placeholder": "Atanan kullanıcı ID girin"
+                },
+                "isPersonal": {
+                    "label": "Kişisel",
+                    "placeholder": "Kişisel seçin"
+                }
+            },
+            "tooltips": {
+                "viewTicket": "Destek kaydını görüntüle",
+                "copyCreatedById": "Oluşturan ID'yi kopyala",
+                "copyOwnerId": "Sahip ID'yi kopyala"
+            },
+            "copy": {
+                "createdByIdSuccess": "Oluşturan ID panoya kopyalandı",
+                "ownerIdSuccess": "Sahip ID panoya kopyalandı",
+                "genericSuccess": "ID panoya kopyalandı",
+                "error": "Kopyalama sırasında bir hata oluştu"
+            },
+            "values": {
+                "yes": "Evet",
+                "no": "Hayır"
+            }
+        },
+        "form": {
+            "createTitle": "Destek Talebi Oluştur",
+            "createDescription": "Probleminizi detaylandırın, en kısa sürede size geri dönüş yapalım.",
+            "subject": {
+                "label": "Konu",
+                "placeholder": "Konu başlığı girin",
+                "required": "Konu alanı zorunludur"
+            },
+            "description": {
+                "label": "Açıklama",
+                "placeholder": "Yaşadığınız problemi mümkün olduğunca detaylı anlatın",
+                "required": "Açıklama alanı zorunludur"
+            },
+            "priority": {
+                "label": "Öncelik",
+                "placeholder": "Öncelik seçin",
+                "required": "Öncelik alanı zorunludur"
+            },
+            "category": {
+                "label": "Kategori",
+                "placeholder": "Kategori seçin",
+                "required": "Kategori alanı zorunludur"
+            },
+            "attachments": {
+                "label": "Ekler",
+                "helper": "Probleminizle ilgili ekran görüntüsü, döküman veya diğer dosyaları ekleyebilirsiniz."
+            },
+            "submit": "Talep Oluştur"
+        }
     },
     "subscriptions": {
         "pageHeader": {
