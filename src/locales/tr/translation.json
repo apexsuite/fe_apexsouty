@@ -59,7 +59,13 @@
             "title": "Destek",
             "create": "Destek Oluştur",
             "edit": "Destek Düzenle",
-            "detail": "Destek Detayı"
+            "detail": "Destek Detayı",
+            "messages": {
+                "title": "Mesajlar",
+                "detail": "Mesaj Detayı",
+                "edit": "Mesaj Düzenle",
+                "create": "Mesaj Oluştur"
+            }
         },
         "permissionExamples": "İzin Örnekleri"
     },
@@ -950,7 +956,8 @@
                 "viewTicket": "Destek kaydını görüntüle",
                 "copyCreatedById": "Oluşturan ID'yi kopyala",
                 "copyOwnerId": "Sahip ID'yi kopyala",
-                "editTicket": "Destek talebini düzenle"
+                "editTicket": "Destek talebini düzenle",
+                "viewMessages": "Mesajları görüntüle"
             },
             "copy": {
                 "createdByIdSuccess": "Oluşturan ID panoya kopyalandı",
@@ -961,7 +968,8 @@
             "values": {
                 "yes": "Evet",
                 "no": "Hayır"
-            }
+            },
+            "deleteConfirm": "Bu ticket'ı silmek istediğinize emin misiniz?"
         },
         "detail": {
             "description": "İlk mesaj",
@@ -970,7 +978,18 @@
             "noMessages": "Henüz mesaj yok.",
             "resolvedAt": "Çözüldü",
             "closedAt": "Kapatıldı",
-            "noAttachments": "Bu ticket için ekli dosya yok."
+            "noAttachments": "Bu ticket için ekli dosya yok.",
+            "headerDescription": "Destek bileti detay bilgilerini görüntüleyebilirsiniz.",
+            "systemInformation": "Sistem Bilgileri",
+            "reopen": "Ticket'ı Yeniden Aç",
+            "close": "Ticket'ı Kapat",
+            "delete": "Ticket'ı Sil",
+            "reopenSuccess": "Destek talebi başarıyla yeniden açıldı.",
+            "closeSuccess": "Destek talebi başarıyla kapatıldı.",
+            "deleteSuccess": "Destek talebi başarıyla silindi.",
+            "assignSuccess": "Ticket ataması başarıyla güncellendi.",
+            "unassignSuccess": "Ticket ataması başarıyla kaldırıldı.",
+            "assignedToIdPlaceholder": "Kullanıcı ID (UUID) girin"
         },
         "form": {
             "createTitle": "Destek Talebi Oluştur",
@@ -1012,17 +1031,29 @@
                 "message": "Mesaj",
                 "createdAt": "Gönderim Tarihi",
                 "copyOwnerId": "Sahip ID'yi kopyala",
-                "copyOwnerIdSuccess": "Sahip ID panoya kopyalandı"
+                "copyOwnerIdSuccess": "Sahip ID panoya kopyalandı",
+                "viewDetail": "Mesaj detayını görüntüle",
+                "editMessage": "Mesajı düzenle",
+                "deleteMessage": "Mesajı sil"
             },
             "createTitle": "Yeni Mesaj Oluştur",
             "createDescription": "Ticket için yeni bir mesaj ekleyebilirsiniz.",
             "createSuccess": "Mesaj başarıyla oluşturuldu.",
+            "updateTitle": "Mesajı Güncelle",
+            "updateDescription": "Mesaj içeriğini güncelleyebilirsiniz.",
+            "updateSuccess": "Mesaj başarıyla güncellendi.",
+            "deleteSuccess": "Mesaj başarıyla silindi.",
+            "deleteConfirm": "Bu mesajı silmek istediğinize emin misiniz?",
+            "detailTitle": "Mesaj Detayı",
+            "detailDescription": "Seçili mesaja ait detayları görüntüleyebilirsiniz.",
+            "detailInfo": "Mesaj Bilgileri",
             "form": {
                 "message": {
                     "label": "Mesaj",
                     "placeholder": "Mesajınızı yazın"
                 },
-                "submit": "Mesaj Oluştur"
+                "submit": "Mesaj Oluştur",
+                "updateSubmit": "Mesajı Güncelle"
             }
         }
     },

@@ -1,20 +1,22 @@
 import CustomDataTable from "@/components/CustomDataTable";
 import CustomPageLayout from "@/components/CustomPageLayout";
-import DateTimeDisplay from "@/components/common/date-time-display";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { getSupportTicketMessages } from "@/services/support";
+import { deleteSupportTicketMessage, getSupportTicketMessages } from "@/services/support";
 import { ISupportTicketMessage } from "@/services/support/types";
 import usePagination from "@/utils/hooks/usePagination";
-import { ColumnDef } from "@tanstack/react-table";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { t } from "i18next";
-import { useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import getMessagesColumns from "./column.data";
+import { toast } from "react-toastify";
 
 const Messages = () => {
     const { id } = useParams<{ id: string }>();
     const [pagination, setPage] = usePagination(false);
+    const navigate = useNavigate();
+    const queryClient = useQueryClient();
+    const [deletingId, setDeletingId] = useState<string | null>(null);
 
     const { data, isLoading, isError } = useQuery({
         queryKey: ["support-ticket-messages", id, pagination.request],
@@ -25,6 +27,42 @@ const Messages = () => {
             }),
         enabled: !!id,
     });
+
+    const { mutateAsync: removeMessage } = useMutation({
+        mutationFn: (messageId: string) =>
+            deleteSupportTicketMessage(id as string, messageId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["support-ticket-messages", id],
+            });
+            toast.success(
+                t(
+                    "support.messages.deleteSuccess",
+                    "Mesaj başarıyla silindi.",
+                ),
+            );
+        },
+        onError: (error: any) => {
+            toast.error(error?.message || t("notification.anErrorOccurred"));
+        },
+        onSettled: () => {
+            setDeletingId(null);
+        },
+    });
+
+    const handleDeleteMessage = async (messageId: string) => {
+        const confirmed = window.confirm(
+            t(
+                "support.messages.deleteConfirm",
+                "Bu mesajı silmek istediğinize emin misiniz?",
+            ),
+        );
+
+        if (!confirmed) return;
+
+        setDeletingId(messageId);
+        await removeMessage(messageId);
+    };
 
     // ID yoksa veya geçersizse hiçbir içerik göstermiyoruz
     if (!id) {
@@ -49,7 +87,11 @@ const Messages = () => {
 
     const messages: ISupportTicketMessage[] = data.items || data.data || [];
 
-    const columns = getMessagesColumns();
+    const columns = getMessagesColumns({
+        navigate,
+        onDelete: handleDeleteMessage,
+        deletingId,
+    });
 
     return (
         <CustomPageLayout

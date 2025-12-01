@@ -103,6 +103,11 @@ export interface ISupportTicketMessageCreateRequest {
     attachments?: IAttachment[];  // Opsiyonel ekler
 }
 
+// Mesaj güncelleme isteği (sadece içerik)
+export interface ISupportTicketMessageUpdateRequest {
+    message: string;
+}
+
 export interface ISupportTicketDetail {
     id: string;                 // UUID
     subject: string;

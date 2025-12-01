@@ -11,6 +11,7 @@ import {
     ISupportTicketStatusUpdateRequest,
     ISupportTicketMessage,
     ISupportTicketMessageCreateRequest,
+    ISupportTicketMessageUpdateRequest,
 } from "./types";
 
 export const getSupportTickets = async (params: ISupportTicketRequest): Promise<IPageResponse<ISupportTicket>> => {
@@ -151,5 +152,48 @@ export const createSupportTicketMessage = async (
     await apiRequest(`/support/tickets/${ticketId}/messages`, {
         method: 'POST',
         body: JSON.stringify(data),
+    });
+};
+
+/**
+ * @description Ticket üzerindeki tek bir mesajın detayını döner.
+ */
+export const getSupportTicketMessageById = async (
+    ticketId: string,
+    messageId: string,
+): Promise<ISupportTicketMessage> => {
+    const response = await apiRequest(
+        `/support/tickets/${ticketId}/messages/${messageId}`,
+        {
+            method: "GET",
+        },
+    );
+
+    return response.data;
+};
+
+/**
+ * @description Sadece mesajı yazan kullanıcının güncelleyebileceği mesaj güncelleme isteği.
+ */
+export const updateSupportTicketMessage = async (
+    ticketId: string,
+    messageId: string,
+    data: ISupportTicketMessageUpdateRequest,
+): Promise<void> => {
+    await apiRequest(`/support/tickets/${ticketId}/messages/${messageId}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+    });
+};
+
+/**
+ * @description Ticket'a bağlı bir mesajı siler.
+ */
+export const deleteSupportTicketMessage = async (
+    ticketId: string,
+    messageId: string,
+): Promise<void> => {
+    await apiRequest(`/support/tickets/${ticketId}/messages/${messageId}`, {
+        method: "DELETE",
     });
 };
