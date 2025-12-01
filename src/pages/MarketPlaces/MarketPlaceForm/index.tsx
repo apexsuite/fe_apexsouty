@@ -44,8 +44,6 @@ const MarketPlaceForm = () => {
     queryFn: () => getRegions({ page: 1, pageSize: 1000 }),
   });
 
-  console.log(marketplaceData?.regionId, 'id');
-
   useEffect(() => {
     if (marketplaceData && isEditMode) {
       reset({

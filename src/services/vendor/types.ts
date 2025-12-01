@@ -17,8 +17,8 @@ export interface IVendorRequest extends IPageParams {
 }
 
 export interface IVendorFile {
-  fileName: string;
-  filePath: string;
+  fileName?: string;
+  filePath?: string;
 }
 
 export interface IVendorCreateRequest {

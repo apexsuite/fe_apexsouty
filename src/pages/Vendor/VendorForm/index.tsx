@@ -1,5 +1,5 @@
 import { ControlledInputText } from '@/components/FormInputs';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -9,20 +9,34 @@ import type {
   IVendorFile,
   IVendorFileDetail,
 } from '@/services/vendor/types';
-import { createVendor, getVendor } from '@/services/vendor';
+import { createVendor, getVendor, updateVendor } from '@/services/vendor';
 import { useEffect, useState } from 'react';
 import CustomButton from '@/components/CustomButton';
 import { Uploader } from '@/components/Uploader';
+import { yupResolver } from '@hookform/resolvers/yup';
+import vendorValidationSchema from './vendor.validations';
+
+const extractFileName = (filePath: string): string => {
+  const fullFileName = filePath.split('/').pop() || filePath;
+  const parts = fullFileName.split('_');
+  if (parts.length > 1) {
+    return parts.slice(1).join('_');
+  }
+  return fullFileName;
+};
 
 const VendorForm = () => {
   const { id } = useParams<{ id: string }>();
   const isEditMode = Boolean(id);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadedFiles, setUploadedFiles] = useState<IVendorFile[]>([]);
   const [existingFiles, setExistingFiles] = useState<IVendorFileDetail[]>([]);
-  const [isUploading, setIsUploading] = useState(false);
 
   const { control, handleSubmit, reset } = useForm<IVendorCreateRequest>({
+    resolver: yupResolver(vendorValidationSchema),
     defaultValues: {
       name: '',
       description: '',
@@ -50,11 +64,7 @@ const VendorForm = () => {
   const { mutate: createVendorMutation, isPending: isCreating } = useMutation({
     mutationFn: createVendor,
     onSuccess: response => {
-      toast.success(
-        isEditMode
-          ? 'Vendor başarıyla güncellendi'
-          : 'Vendor başarıyla oluşturuldu'
-      );
+      toast.success('Vendor successfully created');
       reset();
       navigate(`/vendors/${response.id}`);
     },
@@ -63,17 +73,18 @@ const VendorForm = () => {
     },
   });
 
-  /** filePath'ten orijinal dosya adını çıkarır (UUID prefix'i kaldırır) */
-  const extractFileName = (filePath: string): string => {
-    // Path'ten dosya adını al (son / sonrası)
-    const fullFileName = filePath.split('/').pop() || filePath;
-    // UUID prefix'ini kaldır (ilk _ sonrası)
-    const parts = fullFileName.split('_');
-    if (parts.length > 1) {
-      return parts.slice(1).join('_');
-    }
-    return fullFileName;
-  };
+  const { mutate: updateVendorMutation, isPending: isUpdating } = useMutation({
+    mutationFn: (data: IVendorCreateRequest) => updateVendor(id!, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['vendors'] });
+      queryClient.invalidateQueries({ queryKey: ['vendor', id] });
+      toast.success('Vendor updated successfully');
+      navigate('/vendors');
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Failed to update region');
+    },
+  });
 
   const handleUploadSuccess = (filePaths: string[]) => {
     const newFiles: IVendorFile[] = filePaths.map(filePath => ({
@@ -93,7 +104,11 @@ const VendorForm = () => {
       ...data,
       vendorFiles: uploadedFiles,
     };
-    createVendorMutation(submitData);
+    if (isEditMode) {
+      updateVendorMutation(submitData);
+    } else {
+      createVendorMutation(submitData);
+    }
   };
 
   if (isLoadingVendor && isEditMode) {
@@ -101,38 +116,50 @@ const VendorForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4">
-      <ControlledInputText
-        control={control}
-        name="name"
-        label="Name"
-        placeholder="Vendor adını girin"
-      />
-      <ControlledInputText
-        control={control}
-        name="description"
-        label="Description"
-        placeholder="Vendor açıklamasını girin"
-      />
-      <Uploader
-        control={control}
-        name="vendorFiles"
-        folderType="vendors"
-        accept=".csv"
-        maxFiles={2}
-        existingFiles={existingFiles}
-        onUploadSuccess={handleUploadSuccess}
-        onExistingFileRemove={handleExistingFileRemove}
-        onUploadingChange={setIsUploading}
-      />
-      <CustomButton
-        type="submit"
-        label={isEditMode ? 'Güncelle' : 'Vendor Oluştur'}
-        loading={isCreating}
-        disabled={isUploading}
-        className="w-full"
-      />
-    </form>
+    <div className="m-8 space-y-4 rounded-lg border p-8 shadow-sm">
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight">
+            {isEditMode ? 'Edit Vendor' : 'Create Vendor'}
+          </h1>
+          <p className="text-muted-foreground">
+            {isEditMode ? 'Update vendor information' : 'Create a new vendor'}
+          </p>
+        </div>
+      </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <ControlledInputText
+          control={control}
+          name="name"
+          label="Name"
+          placeholder="Vendor name"
+        />
+        <ControlledInputText
+          control={control}
+          name="description"
+          label="Description"
+          placeholder="Vendor açıklamasını girin"
+        />
+        <Uploader
+          control={control}
+          name="vendorFiles"
+          folderType="vendors"
+          accept=".csv"
+          maxFiles={2}
+          existingFiles={existingFiles}
+          onUploadSuccess={handleUploadSuccess}
+          onExistingFileRemove={handleExistingFileRemove}
+          onUploadingChange={setIsUploading}
+        />
+        <CustomButton
+          type="submit"
+          label={isEditMode ? 'Güncelle' : 'Vendor Oluştur'}
+          loading={isCreating || isUpdating}
+          disabled={isUploading || isCreating || isUpdating}
+          className="w-full"
+        />
+      </form>
+    </div>
   );
 };
 

@@ -23,18 +23,16 @@ import CustomButton from '../CustomButton';
 import type { IVendorFileDetail } from '@/services/vendor/types';
 import { cn } from '@/lib/utils';
 
-// URL'den folderType'ı çıkaran yardımcı fonksiyon
+// Dynamic folder type from url pathname
 const extractPathFromUrl = (pathname: string): string => {
   const match = pathname.match(/\/([^/]+)/);
   return match?.[1] || 'default';
 };
 
-/** Dosya adından orijinal adı çıkar (UUID prefix'i kaldır) */
+// Extract original file name from file path (remove UUID prefix)
 const extractOriginalFileName = (fileName: string): string => {
-  // Format: UUID_originalName.csv şeklinde
   const parts = fileName.split('_');
   if (parts.length > 1) {
-    // İlk parçayı (UUID) kaldır ve geri kalanını birleştir
     return parts.slice(1).join('_');
   }
   return fileName;
@@ -50,12 +48,10 @@ interface UploaderProps {
   maxSize?: number;
   disabled?: boolean;
 
-  /** Backend'den gelen mevcut dosya listesi (edit mode için) */
   existingFiles?: IVendorFileDetail[];
   onUploadSuccess?: (filePaths: string[]) => void;
   onUploadError?: (error: Error) => void;
   onExistingFileRemove?: (fileId: string) => void;
-  /** Upload durumu değiştiğinde çağrılır (true: yükleniyor, false: duraklatıldı) */
   onUploadingChange?: (isUploading: boolean) => void;
 }
 
@@ -66,7 +62,7 @@ export function Uploader({
   accept,
   maxFiles = 2,
   multiple = true,
-  maxSize = 20 * 1024 * 1024, // 20MB
+  maxSize = 20 * 1024 * 1024,
   disabled = false,
   existingFiles = [],
   onUploadSuccess,
@@ -129,7 +125,6 @@ export function Uploader({
           error instanceof Error ? error : new Error(errorMessage)
         );
       } finally {
-        // Upload tamamlandığını bildir (başarılı/başarısız fark etmez)
         onUploadingChange?.(false);
       }
     },
@@ -181,7 +176,7 @@ export function Uploader({
                       <p className="text-muted-foreground flex items-center justify-center gap-1.5 text-xs">
                         <span className="font-medium">Desteklenen format:</span>
                         <span className="bg-muted rounded px-2 py-0.5 font-mono">
-                          CSV
+                          {accept}
                         </span>
                       </p>
                       {maxSize && (
@@ -219,7 +214,11 @@ export function Uploader({
                         </Button>
                       </FileUploadItemDelete>
                     </div>
-                    <FileUploadItemProgress className="w-full" />
+                    <FileUploadItemProgress
+                      className="w-full"
+                      variant="circular"
+                      size={40}
+                    />
                   </FileUploadItem>
                 ))}
               </FileUploadList>
@@ -237,31 +236,27 @@ export function Uploader({
                   <div
                     key={file.id}
                     className={cn(
-                      'relative flex items-center gap-2.5 rounded-md border p-3',
-                      'bg-muted/30'
+                      'relative flex items-center gap-2.5 rounded-md border p-3'
                     )}
                   >
-                    {/* Dosya ikonu */}
-                    <div className="bg-accent/50 relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded border">
-                      <FileText className="text-muted-foreground size-5" />
+                    <div className="bg-accent/50 relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-sm border">
+                      <FileText />
                     </div>
 
-                    {/* Dosya bilgileri */}
                     <div className="flex min-w-0 flex-1 flex-col gap-1">
                       <span className="truncate text-sm font-medium">
                         {extractOriginalFileName(file.fileName)}
                       </span>
                     </div>
 
-                    {/* Silme butonu */}
                     {onExistingFileRemove && !disabled && (
-                      <Button
+                      <CustomButton
+                        icon={<X />}
+                        label="Sil"
                         variant="ghost"
                         size="icon"
                         onClick={() => onExistingFileRemove(file.id)}
-                      >
-                        <X className="size-4" />
-                      </Button>
+                      />
                     )}
                   </div>
                 ))}

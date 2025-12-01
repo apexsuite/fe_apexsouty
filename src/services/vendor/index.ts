@@ -38,9 +38,13 @@ export const getVendor = async (id: string): Promise<IVendorDetail> => {
   return response.data ?? response;
 };
 
-export const updateVendor = async (id: string): Promise<IVendor> => {
+export const updateVendor = async (
+  id: string,
+  data: IVendorCreateRequest
+): Promise<IVendor> => {
   const response = await apiRequest(`/vendors/${id}`, {
     method: 'PUT',
+    body: JSON.stringify(data),
   });
   return response.data ?? response;
 };
