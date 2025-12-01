@@ -4,7 +4,7 @@ import IdCopy from "@/components/common/id-copy";
 import { ISupportTicket, TicketPriority, TicketStatus } from "@/services/support/types";
 import { ColumnDef } from "@tanstack/react-table";
 import ButtonGroup from "antd/es/button/button-group";
-import { Eye } from "lucide-react";
+import { Eye, Pencil } from "lucide-react";
 import { NavigateFunction } from "react-router-dom";
 import { PRIORITY_COLOR_MAP, STATUS_COLOR_MAP, SUPPORT_TICKET_CATEGORY, SUPPORT_TICKET_PRIORITY, SUPPORT_TICKET_STATUS } from "@/utils/constants/support";
 import i18n from "@/locales";
@@ -118,6 +118,12 @@ const getSupportTicketColumns = ({
                         tooltip={i18n.t("support.list.tooltips.viewTicket")}
                         icon={<Eye />}
                         onClick={() => navigate(`/support/${row.original.id}`)}
+                    />
+                    <CustomButton
+                        variant="outline"
+                        tooltip={i18n.t("support.list.tooltips.editTicket")}
+                        icon={<Pencil />}
+                        onClick={() => navigate(`/support/${row.original.id}/edit`)}
                     />
                 </ButtonGroup>
             ),

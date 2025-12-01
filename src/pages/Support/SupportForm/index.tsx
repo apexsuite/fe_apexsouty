@@ -1,14 +1,14 @@
 import { ControlledInputText, ControlledSelect } from "@/components/FormInputs";
 import CustomButton from "@/components/CustomButton";
 import { Uploader } from "@/components/Uploader";
-import { createSupportTicket, ISupportTicketCreateRequest } from "@/services/support";
-import { TicketCategory, TicketPriority } from "@/services/support/types";
+import { createSupportTicket, getSupportTicketById, updateSupportTicket } from "@/services/support";
+import { ISupportTicketCreateRequest, ISupportTicketDetail, ISupportTicketUpdateRequest, TicketCategory, TicketPriority } from "@/services/support/types";
 import { SUPPORT_TICKET_CATEGORY, SUPPORT_TICKET_PRIORITY } from "@/utils/constants/support";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { t } from "i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 interface ISupportAttachmentFormValue {
@@ -19,6 +19,8 @@ interface ISupportAttachmentFormValue {
 
 const SupportForm = () => {
     const navigate = useNavigate();
+    const { id } = useParams<{ id: string }>();
+    const isEditMode = Boolean(id);
     const [attachments, setAttachments] = useState<ISupportAttachmentFormValue[]>([]);
 
     const {
@@ -36,7 +38,32 @@ const SupportForm = () => {
         },
     });
 
-    const { mutateAsync } = useMutation({
+    const { data: ticketDetail } = useQuery<ISupportTicketDetail>({
+        queryKey: ["support-ticket", id],
+        queryFn: () => getSupportTicketById(id as string),
+        enabled: isEditMode && !!id,
+    });
+
+    useEffect(() => {
+        if (ticketDetail && isEditMode) {
+            reset({
+                subject: ticketDetail.subject,
+                description: ticketDetail.description,
+                priority: ticketDetail.priority,
+                category: ticketDetail.category,
+                attachments: ticketDetail.attachments,
+            });
+            setAttachments(
+                (ticketDetail.attachments || []).map(att => ({
+                    filePath: att.filePath,
+                    fileName: att.fileName,
+                    contentType: att.contentType,
+                }))
+            );
+        }
+    }, [ticketDetail, isEditMode, reset]);
+
+    const { mutateAsync: createTicket } = useMutation({
         mutationFn: createSupportTicket,
         onSuccess: () => {
             toast.success(t("notification.supportTicketCreatedSuccessfully", "Support ticket created successfully"));
@@ -46,14 +73,22 @@ const SupportForm = () => {
         },
     });
 
+    const { mutateAsync: updateTicket } = useMutation({
+        mutationFn: (payload: { id: string; data: ISupportTicketUpdateRequest }) =>
+            updateSupportTicket(payload.id, payload.data),
+        onSuccess: () => {
+            toast.success(t("notification.supportTicketUpdatedSuccessfully", "Support ticket updated successfully"));
+        },
+        onError: (error: any) => {
+            toast.error(error?.message || t("notification.anErrorOccurred"));
+        },
+    });
+
     const handleUploadSuccess = (filePaths: string[]) => {
-        // NOTE: Burada Uploader bileşeninden gelen dosya yollarını,
-        // API kontratındaki attachment formatına dönüştürüyoruz.
         const newAttachments: ISupportAttachmentFormValue[] = filePaths.map((filePath) => {
             const fileName = filePath.split("/").pop() || filePath;
             const extension = fileName.split(".").pop() || "";
 
-            // Çok kaba MIME tahmini; backend tarafında gerçek MIME type zaten kontrol edilmeli.
             const contentType =
                 extension === "png"
                     ? "image/png"
@@ -74,12 +109,22 @@ const SupportForm = () => {
     };
 
     const onSubmit = async (data: ISupportTicketCreateRequest) => {
-        const payload: ISupportTicketCreateRequest = {
-            ...data,
-            attachments: attachments.length ? attachments : undefined,
-        };
+        if (isEditMode && id) {
+            const updatePayload: ISupportTicketUpdateRequest = {
+                subject: data.subject,
+                description: data.description,
+                priority: data.priority,
+                category: data.category,
+            };
+            await updateTicket({ id, data: updatePayload });
+        } else {
+            const payload: ISupportTicketCreateRequest = {
+                ...data,
+                attachments: attachments.length ? attachments : undefined,
+            };
+            await createTicket(payload);
+        }
 
-        await mutateAsync(payload);
         reset();
         setAttachments([]);
         navigate("/support");
@@ -90,10 +135,14 @@ const SupportForm = () => {
             <div className="flex items-center justify-between">
                 <div className="space-y-1">
                     <h1 className="text-3xl font-bold tracking-tight">
-                        {t("support.form.createTitle", "Create Support Ticket")}
+                        {isEditMode
+                            ? t("support.form.updateTitle", "Update Support Ticket")
+                            : t("support.form.createTitle", "Create Support Ticket")}
                     </h1>
                     <p className="text-sm text-muted-foreground">
-                        {t("support.form.createDescription", "Describe your issue and we will get back to you as soon as possible.")}
+                        {isEditMode
+                            ? t("support.form.updateDescription", "Update your support ticket details.")
+                            : t("support.form.createDescription", "Describe your issue and we will get back to you as soon as possible.")}
                     </p>
                 </div>
             </div>
@@ -135,19 +184,23 @@ const SupportForm = () => {
                     />
                 </div>
 
-                <div className="space-y-2">
-                    <p className="text-sm font-medium">
-                        {t("support.form.attachments.label", "Attachments")}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                        {t("support.form.attachments.helper", "You can upload screenshots, documents or other files related to your issue.")}
-                    </p>
-                    <Uploader
-                        control={control}
-                        name="attachments"
-                        onUploadSuccess={handleUploadSuccess}
-                    />
-                </div>
+                {
+                    !isEditMode && (
+                        <div className="space-y-2">
+                            <p className="text-sm font-medium">
+                                {t("support.form.attachments.label", "Attachments")}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                                {t("support.form.attachments.helper", "You can upload screenshots, documents or other files related to your issue.")}
+                            </p>
+                            <Uploader
+                                control={control}
+                                name="attachments"
+                                onUploadSuccess={handleUploadSuccess}
+                            />
+                        </div>
+                    )
+                }
 
                 <div className="flex flex-col gap-2 ">
                     <CustomButton
@@ -159,7 +212,11 @@ const SupportForm = () => {
                     />
                     <CustomButton
                         type="submit"
-                        label={t("support.form.submit", "Create Ticket")}
+                        label={
+                            isEditMode
+                                ? t("support.form.updateSubmit", "Update Ticket")
+                                : t("support.form.submit", "Create Ticket")
+                        }
                         loading={isSubmitting}
                         className="w-full"
                     />

@@ -58,7 +58,8 @@
     "support": {
       "title": "Support",
       "create": "Create Support",
-      "edit": "Edit Support"
+      "edit": "Edit Support",
+      "detail": "Support Detail"
     },
     "permissionExamples": "Permission Examples"
   },
@@ -177,7 +178,9 @@
     "priceStatusChangedSuccessfully": "Price status changed successfully!",
     "priceSetAsDefaultSuccessfully": "Price set as default successfully!",
     "priceCreatedSuccessfully": "Price created successfully!",
-    "permissionStatusChangedSuccessfully": "Permission status changed successfully!"
+    "permissionStatusChangedSuccessfully": "Permission status changed successfully!",
+    "supportTicketCreatedSuccessfully": "Support ticket created successfully!",
+    "supportTicketUpdatedSuccessfully": "Support ticket updated successfully!"
   },
   "reset": {
     "title": "Reset Password",
@@ -1022,7 +1025,8 @@
       "tooltips": {
         "viewTicket": "View Support Ticket",
         "copyCreatedById": "Copy Created By ID",
-        "copyOwnerId": "Copy Owner ID"
+        "copyOwnerId": "Copy Owner ID",
+        "editTicket": "Edit Support Ticket"
       },
       "copy": {
         "createdByIdSuccess": "Created By ID copied to clipboard",
@@ -1035,9 +1039,20 @@
         "no": "No"
       }
     },
+    "detail": {
+      "description": "Initial message",
+      "conversation": "Conversation",
+      "internalNote": "Internal note",
+      "noMessages": "No messages yet.",
+      "resolvedAt": "Resolved At",
+      "closedAt": "Closed At",
+      "noAttachments": "No attachments for this ticket."
+    },
     "form": {
       "createTitle": "Create Support Ticket",
+      "updateTitle": "Update Support Ticket",
       "createDescription": "Describe your issue and we will get back to you as soon as possible.",
+      "updateDescription": "Update the details of your support ticket.",
       "subject": {
         "label": "Subject",
         "placeholder": "Enter subject",
@@ -1062,7 +1077,8 @@
         "label": "Attachments",
         "helper": "You can upload screenshots, documents or other files related to your issue."
       },
-      "submit": "Create Ticket"
+      "submit": "Create Ticket",
+      "updateSubmit": "Update Ticket"
     }
   },
   "subscriptions": {

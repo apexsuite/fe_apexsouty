@@ -1,4 +1,4 @@
-import { IPageParams } from "@/types/common.types";
+import { IAttachment, IPageParams } from "@/types/common.types";
 
 export interface ISupportTicket {
     attachmentCount: number;
@@ -48,4 +48,53 @@ export enum TicketCategory {
     FEATUREREQUEST = "feature_request", // Özellik talebi
     BUGREPORT = "bug_report",     // Hata raporu
     OTHER = "other"                // Diğer
+}
+
+export interface ISupportTicketCreateRequest {
+    subject: string;
+    description: string;
+    priority: TicketPriority;
+    category: TicketCategory;
+    attachments?: IAttachment[];
+}
+
+export interface ISupportTicketUpdateRequest {
+    subject: string;
+    description: string;
+    priority: TicketPriority;
+    category: TicketCategory;
+}
+
+export interface ISupportTicketDetail {
+    id: string;                 // UUID
+    subject: string;
+    description: string;
+    status: TicketStatus;
+    priority: TicketPriority;
+    category: TicketCategory;
+    createdBy: string;          // UUID: User ID
+    createdByName: string;
+    ownerId: string;            // UUID: Owner User ID
+    lastActivityAt: string;     // ISO 8601
+    resolvedAt?: string;        // ISO 8601, çözüldüğü tarih
+    closedAt?: string;          // ISO 8601, kapatıldığı tarih
+    createdAt: string;          // ISO 8601
+    messages: Array<{
+        id: string;             // UUID: Message ID
+        ticketId: string;       // UUID: Ticket ID
+        message: string;
+        isInternal: boolean;    // Staff notları için
+        createdBy: string;      // UUID: User ID
+        senderName: string;     // Kullanıcı adı veya "ApexScouty Team"
+        createdAt: string;      // ISO 8601
+        attachments: Array<{
+            id: string;             // UUID: Attachment ID
+            filePath: string;       // "tickets/abc123.png"
+            fileName: string;       // "screenshot.png"
+            contentType: string;    // "image/png"
+            uploadedBy: string;     // UUID: User ID
+            createdAt: string;      // ISO 8601
+        }>;
+    }>;
+    attachments: IAttachment[];
 }

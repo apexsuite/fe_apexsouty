@@ -58,7 +58,8 @@
         "support": {
             "title": "Destek",
             "create": "Destek Oluştur",
-            "edit": "Destek Düzenle"
+            "edit": "Destek Düzenle",
+            "detail": "Destek Detayı"
         },
         "permissionExamples": "İzin Örnekleri"
     },
@@ -112,7 +113,9 @@
         "priceStatusChangedSuccessfully": "Fiyat durumu başarıyla değiştirildi!",
         "priceSetAsDefaultSuccessfully": "Fiyat varsayılan olarak ayarlandı!",
         "priceCreatedSuccessfully": "Fiyat başarıyla oluşturuldu!",
-        "permissionStatusChangedSuccessfully": "İzin durumu başarıyla değiştirildi!"
+        "permissionStatusChangedSuccessfully": "İzin durumu başarıyla değiştirildi!",
+        "supportTicketCreatedSuccessfully": "Destek talebi başarıyla oluşturuldu!",
+        "supportTicketUpdatedSuccessfully": "Destek talebi başarıyla güncellendi!"
     },
     "reset": {
         "title": "Reset Password",
@@ -946,7 +949,8 @@
             "tooltips": {
                 "viewTicket": "Destek kaydını görüntüle",
                 "copyCreatedById": "Oluşturan ID'yi kopyala",
-                "copyOwnerId": "Sahip ID'yi kopyala"
+                "copyOwnerId": "Sahip ID'yi kopyala",
+                "editTicket": "Destek talebini düzenle"
             },
             "copy": {
                 "createdByIdSuccess": "Oluşturan ID panoya kopyalandı",
@@ -959,9 +963,20 @@
                 "no": "Hayır"
             }
         },
+        "detail": {
+            "description": "İlk mesaj",
+            "conversation": "Mesajlaşma geçmişi",
+            "internalNote": "İç not",
+            "noMessages": "Henüz mesaj yok.",
+            "resolvedAt": "Çözüldü",
+            "closedAt": "Kapatıldı",
+            "noAttachments": "Bu ticket için ekli dosya yok."
+        },
         "form": {
             "createTitle": "Destek Talebi Oluştur",
+            "updateTitle": "Destek Talebini Güncelle",
             "createDescription": "Probleminizi detaylandırın, en kısa sürede size geri dönüş yapalım.",
+            "updateDescription": "Destek talebinizin detaylarını güncelleyebilirsiniz.",
             "subject": {
                 "label": "Konu",
                 "placeholder": "Konu başlığı girin",
@@ -986,7 +1001,8 @@
                 "label": "Ekler",
                 "helper": "Probleminizle ilgili ekran görüntüsü, döküman veya diğer dosyaları ekleyebilirsiniz."
             },
-            "submit": "Talep Oluştur"
+            "submit": "Talep Oluştur",
+            "updateSubmit": "Talebi Güncelle"
         }
     },
     "subscriptions": {
