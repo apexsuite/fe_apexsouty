@@ -1,20 +1,35 @@
 import CustomButton from "@/components/CustomButton";
 import DateTimeDisplay from "@/components/common/date-time-display";
 import IdCopy from "@/components/common/id-copy";
-import { ISupportTicket, TicketPriority, TicketStatus } from "@/services/support/types";
+import PermissionGuard from "@/components/PermissionGuard";
+import {
+    ISupportTicket,
+    TicketPriority,
+    TicketStatus,
+} from "@/services/support/types";
 import { ColumnDef } from "@tanstack/react-table";
 import ButtonGroup from "antd/es/button/button-group";
-import { Eye, Pencil } from "lucide-react";
+import { Eye, MessageSquare, Pencil, Trash2 } from "lucide-react";
 import { NavigateFunction } from "react-router-dom";
-import { PRIORITY_COLOR_MAP, STATUS_COLOR_MAP, SUPPORT_TICKET_CATEGORY, SUPPORT_TICKET_PRIORITY, SUPPORT_TICKET_STATUS } from "@/utils/constants/support";
+import {
+    PRIORITY_COLOR_MAP,
+    STATUS_COLOR_MAP,
+    SUPPORT_TICKET_CATEGORY,
+    SUPPORT_TICKET_PRIORITY,
+    SUPPORT_TICKET_STATUS,
+} from "@/utils/constants/support";
 import i18n from "@/locales";
 
 interface ISupportTicketColumnsProps {
     navigate: NavigateFunction;
+    onDelete: (id: string, subject: string) => void;
+    deletingId?: string | null;
 }
 
 const getSupportTicketColumns = ({
     navigate,
+    onDelete,
+    deletingId,
 }: ISupportTicketColumnsProps): ColumnDef<ISupportTicket>[] => [
         {
             accessorKey: 'subject',
@@ -114,6 +129,38 @@ const getSupportTicketColumns = ({
                         icon={<Pencil />}
                         onClick={() => navigate(`/support/${row.original.id}/edit`)}
                     />
+                    {/* 
+                     * @description
+                     * Ticket'a ait mesajlar sayfasına yönlendiren buton.
+                     */}
+                    <CustomButton
+                        variant="outline"
+                        tooltip={i18n.t(
+                            "support.list.tooltips.viewMessages",
+                            "View messages",
+                        )}
+                        icon={<MessageSquare />}
+                        onClick={() => navigate(`/support/${row.original.id}/messages`)}
+                    />
+                    <PermissionGuard permission="delete-ticket" mode="hide">
+                        {/*
+                         * @description
+                         * Liste üzerinden ticket silme işlemi.
+                         * Silme işlemi sırasında sadece ilgili satır butonu loading olur.
+                         */}
+                        <CustomButton
+                            variant="outline"
+                            tooltip={i18n.t(
+                                "support.list.tooltips.deleteTicket",
+                                "Delete ticket",
+                            )}
+                            icon={<Trash2 />}
+                            loading={deletingId === row.original.id}
+                            onClick={() =>
+                                onDelete(row.original.id, row.original.subject)
+                            }
+                        />
+                    </PermissionGuard>
                 </ButtonGroup>
             ),
         },

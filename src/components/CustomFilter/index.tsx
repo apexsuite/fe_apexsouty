@@ -10,6 +10,7 @@ import { ListFilter, Plus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
   const [open, setOpen] = useState<boolean>(false);
@@ -49,14 +50,17 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <CustomButton
-          variant="outline"
-          icon={<ListFilter />}
-          label="Filter"
-          onClick={() => setOpen(!open)}
-          size="lg"
-        />
+      <div className={cn("flex items-center justify-between", inputs.length > 0 ? "justify-between" : "justify-end")}>
+        {
+          inputs.length > 0 && (
+            <CustomButton
+              variant="outline"
+              icon={<ListFilter />}
+              label="Filter"
+              onClick={() => setOpen(!open)}
+              size="lg"
+            />)
+        }
         {path && (
           <CustomButton
             label="Create"

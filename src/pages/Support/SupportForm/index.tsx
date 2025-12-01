@@ -1,9 +1,23 @@
 import { ControlledInputText, ControlledSelect } from "@/components/FormInputs";
 import CustomButton from "@/components/CustomButton";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { Uploader } from "@/components/Uploader";
-import { createSupportTicket, getSupportTicketById, updateSupportTicket } from "@/services/support";
-import { ISupportTicketCreateRequest, ISupportTicketDetail, ISupportTicketUpdateRequest, TicketCategory, TicketPriority } from "@/services/support/types";
-import { SUPPORT_TICKET_CATEGORY, SUPPORT_TICKET_PRIORITY } from "@/utils/constants/support";
+import {
+    createSupportTicket,
+    getSupportTicketById,
+    updateSupportTicket,
+} from "@/services/support";
+import {
+    ISupportTicketCreateRequest,
+    ISupportTicketDetail,
+    ISupportTicketUpdateRequest,
+    TicketCategory,
+    TicketPriority,
+} from "@/services/support/types";
+import {
+    SUPPORT_TICKET_CATEGORY,
+    SUPPORT_TICKET_PRIORITY,
+} from "@/utils/constants/support";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { t } from "i18next";
 import { useEffect, useState } from "react";
@@ -38,7 +52,11 @@ const SupportForm = () => {
         },
     });
 
-    const { data: ticketDetail } = useQuery<ISupportTicketDetail>({
+    const {
+        data: ticketDetail,
+        isLoading: isDetailLoading,
+        isError: isDetailError,
+    } = useQuery<ISupportTicketDetail>({
         queryKey: ["support-ticket", id],
         queryFn: () => getSupportTicketById(id as string),
         enabled: isEditMode && !!id,
@@ -129,6 +147,32 @@ const SupportForm = () => {
         setAttachments([]);
         navigate("/support");
     };
+
+    /**
+     * @description
+     * Edit modunda detay verileri gelmeden formu göstermiyoruz.
+     * Böylece kullanıcı boş form görmeden, gerçek ticket verileri ile çalışır.
+     */
+    if (isEditMode && isDetailLoading) {
+        return <LoadingSpinner />;
+    }
+
+    if (isEditMode && (isDetailError || !ticketDetail)) {
+        return (
+            <div className="m-8 mx-auto w-full max-w-3xl">
+                <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-6">
+                    <p className="mb-4 text-sm text-destructive">
+                        {t("notification.recordNotFound") || "Kayıt bulunamadı."}
+                    </p>
+                    <CustomButton
+                        variant="outline"
+                        label={t("pages.back", "Geri dön")}
+                        onClick={() => navigate("/support")}
+                    />
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="m-8 mx-auto w-full max-w-3xl space-y-4 rounded-lg border bg-background p-8 shadow-sm">

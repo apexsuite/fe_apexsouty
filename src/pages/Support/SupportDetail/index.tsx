@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
     ArrowLeft,
     Calendar,
@@ -16,9 +16,17 @@ import CustomButton from "@/components/CustomButton";
 import DateTimeDisplay from "@/components/common/date-time-display";
 import IdCopy from "@/components/common/id-copy";
 import { InfoSection } from "@/components/common/info-section";
+import PermissionGuard from "@/components/PermissionGuard";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { getSupportTicketById } from "@/services/support";
+import {
+    assignSupportTicket,
+    closeSupportTicket,
+    deleteSupportTicket,
+    getSupportTicketById,
+    reopenSupportTicket,
+    unassignSupportTicket,
+} from "@/services/support";
 import {
     ISupportTicketDetail,
     TicketPriority,
@@ -32,8 +40,8 @@ import {
     SUPPORT_TICKET_STATUS,
 } from "@/utils/constants/support";
 import { t } from "i18next";
-import { Spin } from "antd";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { toast } from "react-toastify";
 
 /**
  * @description
@@ -42,6 +50,8 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 const SupportDetail: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
+    const [assignedToId, setAssignedToId] = useState<string>("");
 
     const {
         data: ticket,
@@ -56,6 +66,107 @@ const SupportDetail: React.FC = () => {
     const handleBack = () => {
         navigate("/support");
     };
+
+    /**
+     * @description
+     * Detay ve liste sorgularını yeniden tetiklemek için yardımcı fonksiyon.
+     * Böylece statü / öncelik / atama değişiklikleri ekrana yansır.
+     */
+    const invalidateSupportQueries = () => {
+        if (!id) return;
+        queryClient.invalidateQueries({ queryKey: ["support-ticket", id] });
+        queryClient.invalidateQueries({ queryKey: ["supportTickets"] });
+    };
+
+    // Ticket yeniden açma
+    const { mutateAsync: reopenTicket, status: reopenStatus } = useMutation({
+        mutationFn: () => reopenSupportTicket(id as string),
+        onSuccess: () => {
+            toast.success(
+                t(
+                    "support.detail.reopenSuccess",
+                    "Destek talebi başarıyla yeniden açıldı.",
+                ),
+            );
+            invalidateSupportQueries();
+        },
+        onError: (error: any) => {
+            toast.error(error?.message || t("notification.anErrorOccurred"));
+        },
+    });
+
+    // Ticket kapatma
+    const { mutateAsync: closeTicket, status: closeStatus } = useMutation({
+        mutationFn: () => closeSupportTicket(id as string),
+        onSuccess: () => {
+            toast.success(
+                t(
+                    "support.detail.closeSuccess",
+                    "Destek talebi başarıyla kapatıldı.",
+                ),
+            );
+            invalidateSupportQueries();
+        },
+        onError: (error: any) => {
+            toast.error(error?.message || t("notification.anErrorOccurred"));
+        },
+    });
+
+    // Ticket silme
+    const { mutateAsync: removeTicket, status: deleteStatus } = useMutation({
+        mutationFn: () => deleteSupportTicket(id as string),
+        onSuccess: () => {
+            toast.success(
+                t(
+                    "support.detail.deleteSuccess",
+                    "Destek talebi başarıyla silindi.",
+                ),
+            );
+            invalidateSupportQueries();
+            navigate("/support");
+        },
+        onError: (error: any) => {
+            toast.error(error?.message || t("notification.anErrorOccurred"));
+        },
+    });
+
+    // Atama (staff only)
+    const { mutateAsync: assignTicket, status: assignStatus } = useMutation({
+        mutationFn: () =>
+            assignSupportTicket(id as string, { assignedToId }),
+        onSuccess: () => {
+            toast.success(
+                t(
+                    "support.detail.assignSuccess",
+                    "Ticket ataması başarıyla güncellendi.",
+                ),
+            );
+            invalidateSupportQueries();
+        },
+        onError: (error: any) => {
+            toast.error(error?.message || t("notification.anErrorOccurred"));
+        },
+    });
+
+    // Atama kaldırma (staff only)
+    const { mutateAsync: unassignTicket, status: unassignStatus } =
+        useMutation({
+            mutationFn: () => unassignSupportTicket(id as string),
+            onSuccess: () => {
+                toast.success(
+                    t(
+                        "support.detail.unassignSuccess",
+                        "Ticket ataması başarıyla kaldırıldı.",
+                    ),
+                );
+                invalidateSupportQueries();
+            },
+            onError: (error: any) => {
+                toast.error(
+                    error?.message || t("notification.anErrorOccurred"),
+                );
+            },
+        });
 
     if (!id) {
         return null;
@@ -82,12 +193,14 @@ const SupportDetail: React.FC = () => {
         );
     }
 
-    const statusConfig = SUPPORT_TICKET_STATUS.find(s => s.value === ticket.status);
+    const statusConfig = SUPPORT_TICKET_STATUS.find(
+        s => s.value === ticket.status,
+    );
     const statusColor =
         STATUS_COLOR_MAP[ticket.status as TicketStatus] ?? "bg-gray-400";
 
     const priorityConfig = SUPPORT_TICKET_PRIORITY.find(
-        p => p.value === ticket.priority
+        p => p.value === ticket.priority,
     );
     const priorityColor =
         PRIORITY_COLOR_MAP[ticket.priority as TicketPriority] ?? "bg-gray-400";
@@ -126,15 +239,56 @@ const SupportDetail: React.FC = () => {
                         </p>
                     </div>
                 </div>
-                <CustomButton
-                    icon={<Pencil className="h-4 w-4" />}
-                    label={t(
-                        "support.list.tooltips.editTicket",
-                        "Edit Support Ticket"
-                    )}
-                    onClick={() => navigate(`/support/${id}/edit`)}
-                    variant="default"
-                />
+                <div className="flex flex-col items-end gap-2">
+                    <CustomButton
+                        icon={<Pencil className="h-4 w-4" />}
+                        label={t(
+                            "support.list.tooltips.editTicket",
+                            "Edit Support Ticket"
+                        )}
+                        onClick={() => navigate(`/support/${id}/edit`)}
+                        variant="default"
+                    />
+
+                    {/* Hızlı ticket aksiyonları */}
+                    <div className="flex flex-wrap justify-end gap-2">
+                        {(ticket.status === TicketStatus.CLOSED ||
+                            ticket.status === TicketStatus.RESOLVED) && (
+                                <CustomButton
+                                    variant="outline"
+                                    size="sm"
+                                    label={t(
+                                        "support.detail.reopen",
+                                        "Reopen Ticket",
+                                    )}
+                                    loading={reopenStatus === "pending"}
+                                    onClick={() => reopenTicket()}
+                                />
+                            )}
+                        {ticket.status !== TicketStatus.CLOSED && (
+                            <CustomButton
+                                variant="outline"
+                                size="sm"
+                                label={t(
+                                    "support.detail.close",
+                                    "Close Ticket",
+                                )}
+                                loading={closeStatus === "pending"}
+                                onClick={() => closeTicket()}
+                            />
+                        )}
+                        <CustomButton
+                            variant="destructive"
+                            size="sm"
+                            label={t(
+                                "support.detail.delete",
+                                "Delete Ticket",
+                            )}
+                            loading={deleteStatus === "pending"}
+                            onClick={() => removeTicket()}
+                        />
+                    </div>
+                </div>
             </div>
 
             <Separator />
@@ -203,11 +357,72 @@ const SupportDetail: React.FC = () => {
                         {
                             label: t("support.list.table.ownerId", "Owner ID"),
                             value: (
-                                <IdCopy
-                                    value={ticket.ownerId}
-                                    tooltip="Copy Owner ID"
-                                    successMessage="Owner ID panoya kopyalandı"
-                                />
+                                <div className="flex flex-col gap-2">
+                                    <IdCopy
+                                        value={ticket.ownerId}
+                                        tooltip="Copy Owner ID"
+                                        successMessage="Owner ID panoya kopyalandı"
+                                    />
+
+                                    {/* Atama / unassign alanı - sadece staff/admin */}
+                                    <PermissionGuard
+                                        permission="assign-ticket"
+                                        mode="hide"
+                                    >
+                                        <div className="flex flex-col gap-1">
+                                            <input
+                                                type="text"
+                                                className="w-full rounded-md border bg-background px-2 py-1 text-xs"
+                                                placeholder={t(
+                                                    "support.detail.assignedToIdPlaceholder",
+                                                    "Kullanıcı ID (UUID) girin",
+                                                )}
+                                                value={assignedToId}
+                                                onChange={e =>
+                                                    setAssignedToId(
+                                                        e.target.value,
+                                                    )
+                                                }
+                                            />
+                                            <div className="flex gap-2">
+                                                <CustomButton
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    label={t(
+                                                        "support.detail.assign",
+                                                        "Assign",
+                                                    )}
+                                                    loading={assignStatus === "pending"}
+                                                    onClick={() =>
+                                                        assignTicket()
+                                                    }
+                                                    disabled={
+                                                        !assignedToId.trim()
+                                                    }
+                                                />
+                                                <PermissionGuard
+                                                    permission="unassign-ticket"
+                                                    mode="hide"
+                                                >
+                                                    <CustomButton
+                                                        type="button"
+                                                        variant="outline"
+                                                        size="sm"
+                                                        label={t(
+                                                            "support.detail.unassign",
+                                                            "Unassign",
+                                                        )}
+                                                        loading={unassignStatus === "pending"}
+                                                        onClick={() =>
+                                                            unassignTicket()
+                                                        }
+                                                    />
+                                                </PermissionGuard>
+                                            </div>
+                                        </div>
+                                    </PermissionGuard>
+                                </div>
                             ),
                             icon: <User />,
                         },
@@ -232,6 +447,28 @@ const SupportDetail: React.FC = () => {
                         value: (
                             <DateTimeDisplay
                                 value={ticket.lastActivityAt}
+                                mode="datetime"
+                            />
+                        ),
+                        icon: <Calendar />,
+                    },
+                    {
+                        label: t("support.detail.resolvedAt", "Resolved At"),
+                        value: (
+                            // Çözümlenme tarihi sadece ticket çözüldüğünde doludur
+                            <DateTimeDisplay
+                                value={ticket.resolvedAt}
+                                mode="datetime"
+                            />
+                        ),
+                        icon: <Calendar />,
+                    },
+                    {
+                        label: t("support.detail.closedAt", "Closed At"),
+                        value: (
+                            // Kapanma tarihi sadece ticket kapandığında doludur
+                            <DateTimeDisplay
+                                value={ticket.closedAt}
                                 mode="datetime"
                             />
                         ),

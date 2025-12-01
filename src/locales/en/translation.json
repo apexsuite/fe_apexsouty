@@ -1079,6 +1079,27 @@
       },
       "submit": "Create Ticket",
       "updateSubmit": "Update Ticket"
+    },
+    "messages": {
+      "title": "Messages",
+      "description": "You can view the ticket message history.",
+      "table": {
+        "ownerId": "Owner ID",
+        "message": "Message",
+        "createdAt": "Sent At",
+        "copyOwnerId": "Copy Owner ID",
+        "copyOwnerIdSuccess": "Owner ID copied to clipboard"
+      },
+      "createTitle": "Create New Message",
+      "createDescription": "You can add a new message for this ticket.",
+      "createSuccess": "Message created successfully.",
+      "form": {
+        "message": {
+          "label": "Message",
+          "placeholder": "Write your message"
+        },
+        "submit": "Create Message"
+      }
     }
   },
   "subscriptions": {

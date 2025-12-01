@@ -68,6 +68,8 @@ const VendorForm = lazy(() => import('@/pages/Vendor/VendorForm'));
 const Support = lazy(() => import('@/pages/Support'));
 const SupportForm = lazy(() => import('@/pages/Support/SupportForm'));
 const SupportDetail = lazy(() => import('@/pages/Support/SupportDetail'));
+const Messages = lazy(() => import('@/pages/Support/Messages'));
+const MessageForm = lazy(() => import('@/pages/Support/Messages/MessageForm'));
 
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isAuthenticated = useSelector(
@@ -371,6 +373,16 @@ export const protectedRoutes: RouteObject[] = [
             path: ':id',
             element: <SupportDetail />,
             handle: { title: 'routes.support.detail' },
+          },
+          {
+            path: ':id/messages',
+            element: <Messages />,
+            handle: { title: 'routes.support.messages' },
+          },
+          {
+            path: ':id/messages/create',
+            element: <MessageForm />,
+            handle: { title: 'routes.support.messages.create' },
           },
         ],
       },

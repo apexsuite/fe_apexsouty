@@ -1003,6 +1003,27 @@
             },
             "submit": "Talep Oluştur",
             "updateSubmit": "Talebi Güncelle"
+        },
+        "messages": {
+            "title": "Mesajlar",
+            "description": "Ticket mesaj geçmişini görüntüleyebilirsiniz.",
+            "table": {
+                "ownerId": "Sahip ID",
+                "message": "Mesaj",
+                "createdAt": "Gönderim Tarihi",
+                "copyOwnerId": "Sahip ID'yi kopyala",
+                "copyOwnerIdSuccess": "Sahip ID panoya kopyalandı"
+            },
+            "createTitle": "Yeni Mesaj Oluştur",
+            "createDescription": "Ticket için yeni bir mesaj ekleyebilirsiniz.",
+            "createSuccess": "Mesaj başarıyla oluşturuldu.",
+            "form": {
+                "message": {
+                    "label": "Mesaj",
+                    "placeholder": "Mesajınızı yazın"
+                },
+                "submit": "Mesaj Oluştur"
+            }
         }
     },
     "subscriptions": {

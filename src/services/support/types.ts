@@ -65,6 +65,44 @@ export interface ISupportTicketUpdateRequest {
     category: TicketCategory;
 }
 
+// Ticket durum / öncelik / atama güncelleme istek tipleri
+// Tüm istek body tipleri backend dökümantasyonu ile birebir uyumludur.
+export interface ISupportTicketStatusUpdateRequest {
+    status: TicketStatus;
+}
+
+export interface ISupportTicketPriorityUpdateRequest {
+    priority: TicketPriority;
+}
+
+export interface ISupportTicketAssignRequest {
+    assignedToId: string;
+}
+
+// Mesaj listeleme tipleri
+export interface ISupportTicketMessageListParams extends IPageParams {
+    ticketId: string;
+}
+
+export interface ISupportTicketMessage {
+    ownerId: string;
+    id: string;             // UUID: Message ID
+    ticketId: string;       // UUID: Ticket ID
+    message: string;
+    isInternal: boolean;    // Staff notları için
+    createdBy: string;      // UUID: User ID
+    senderName: string;     // Kullanıcı adı veya "ApexScouty Team"
+    createdAt: string;      // ISO 8601
+    attachments: IAttachment[];
+}
+
+// Mesaj oluşturma isteği
+export interface ISupportTicketMessageCreateRequest {
+    message: string;              // Mesaj içeriği
+    isInternal: boolean;          // Staff notları için (normal kullanıcılar false göndermeli)
+    attachments?: IAttachment[];  // Opsiyonel ekler
+}
+
 export interface ISupportTicketDetail {
     id: string;                 // UUID
     subject: string;
