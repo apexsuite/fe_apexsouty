@@ -40,7 +40,7 @@ const DateTimeDisplay = ({
 
     if (!value) {
         return (
-            <span className="inline-flex items-center gap-1 rounded-full border border-dashed border-border/70 bg-muted/40 px-2 py-0.5 text-[11px] text-muted-foreground">
+            <span className="inline-flex items-center gap-1 rounded-full border border-dashed border-border/70 bg-muted/40 px-2 py-0.5 text-[11px] text-muted-foreground whitespace-nowrap">
                 <Icon className="h-3 w-3 text-muted-foreground" />
                 <span>{placeholder}</span>
             </span>
@@ -56,7 +56,7 @@ const DateTimeDisplay = ({
     const formatted = date.format(format);
 
     return (
-        <span className="inline-flex items-center gap-1 p-2 rounded-full border border-border bg-background text-[11px] text-foreground shadow-sm">
+        <span className="inline-flex items-center gap-1 p-2 rounded-full border border-border bg-background text-[11px] text-foreground shadow-sm whitespace-nowrap">
             <Icon className="h-3 w-3 text-primary/80" />
             <span className="font-mono tracking-tight">{formatted}</span>
         </span>

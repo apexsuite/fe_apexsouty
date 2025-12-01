@@ -60,17 +60,6 @@ const getSupportTicketColumns = ({
             header: i18n.t('support.list.table.createdBy'),
         },
         {
-            accessorKey: 'createdBy',
-            header: i18n.t('support.list.table.createdById'),
-            cell: ({ row }) => (
-                <IdCopy
-                    value={row.original.createdBy}
-                    tooltip={i18n.t("support.list.tooltips.copyCreatedById")}
-                    successMessage={i18n.t("support.list.copy.createdByIdSuccess")}
-                />
-            ),
-        },
-        {
             accessorKey: 'createdAt',
             header: i18n.t('support.list.table.createdAt'),
             cell: ({ row }) => (
