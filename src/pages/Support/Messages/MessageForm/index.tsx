@@ -51,7 +51,7 @@ const MessageForm = () => {
         return <LoadingSpinner />;
     }
 
-    const { data: message, isLoading: isMessageLoading, isError: isMessageError } = useQuery<ISupportTicketMessage>({
+    const { data: message } = useQuery<ISupportTicketMessage>({
         queryKey: ["support-ticket-message", id, messageId],
         queryFn: () =>
             getSupportTicketMessageById(id as string, messageId as string),

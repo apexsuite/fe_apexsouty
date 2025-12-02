@@ -99,7 +99,7 @@ const Support = () => {
         <CustomPageLayout
             title={t("support.list.title")}
             description={t("support.list.description")}
-            filters={{ inputs: FILTER_INPUTS, path: '/support/create', createPermission: 'create-ticket' }}
+            filters={{ inputs: FILTER_INPUTS, path: '/support/create' }}
             datatable={
                 <CustomDataTable
                     columns={columns}

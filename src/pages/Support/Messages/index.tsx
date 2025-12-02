@@ -64,7 +64,6 @@ const Messages = () => {
         await removeMessage(messageId);
     };
 
-    // ID yoksa veya geçersizse hiçbir içerik göstermiyoruz
     if (!id) {
         return null;
     }
@@ -100,7 +99,7 @@ const Messages = () => {
                 "support.messages.description",
                 "Ticket mesaj geçmişini görüntüleyebilirsiniz.",
             )}
-            filters={{ inputs: [], path: `/support/${id}/messages/create`, createPermission: 'create-ticket-message' }}
+            filters={{ inputs: [], path: `/support/${id}/messages/create` }}
             datatable={
                 <CustomDataTable
                     columns={columns}
