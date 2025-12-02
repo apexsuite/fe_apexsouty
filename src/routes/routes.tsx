@@ -63,6 +63,13 @@ const Vendor = lazy(() => import('@/pages/Vendor'));
 const VendorForm = lazy(() => import('@/pages/Vendor/VendorForm'));
 const VendorDetail = lazy(() => import('@/pages/Vendor/VendorDetail'));
 
+const Support = lazy(() => import('@/pages/Support'));
+const SupportForm = lazy(() => import('@/pages/Support/SupportForm'));
+const SupportDetail = lazy(() => import('@/pages/Support/SupportDetail'));
+const Messages = lazy(() => import('@/pages/Support/Messages'));
+const MessageForm = lazy(() => import('@/pages/Support/Messages/MessageForm'));
+const MessageDetail = lazy(() => import('@/pages/Support/Messages/MessageDetail'));
+
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
@@ -340,6 +347,56 @@ export const protectedRoutes: RouteObject[] = [
             path: ':id/edit',
             element: <VendorForm />,
             handle: { title: 'routes.vendors.edit' },
+          },
+        ],
+      },
+      {
+        path: 'support',
+        handle: { title: 'routes.support.title' },
+        children: [
+          {
+            index: true,
+            element: <Support />,
+          },
+          {
+            path: 'create',
+            element: <SupportForm />,
+            handle: { title: 'routes.support.create' },
+          },
+          {
+            path: ':id/edit',
+            element: <SupportForm />,
+            handle: { title: 'routes.support.edit' },
+          },
+          {
+            path: ':id',
+            element: <SupportDetail />,
+            handle: { title: 'routes.support.detail' },
+          },
+          {
+            path: ':id/messages',
+            handle: { title: 'routes.support.messages.title' },
+            children: [
+              {
+                index: true,
+                element: <Messages />,
+              },
+              {
+                path: 'create',
+                element: <MessageForm />,
+                handle: { title: 'routes.support.messages.create' },
+              },
+              {
+                path: ':messageId/edit',
+                element: <MessageForm />,
+                handle: { title: 'routes.support.messages.edit' },
+              },
+              {
+                path: ':messageId',
+                element: <MessageDetail />,
+                handle: { title: 'routes.support.messages.detail' },
+              },
+            ],
           },
         ],
       },

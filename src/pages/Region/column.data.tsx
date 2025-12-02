@@ -1,9 +1,9 @@
 import StatusBadge from '@/components/common/status-badge';
+import DateTimeDisplay from '@/components/common/date-time-display';
 import CustomButton from '@/components/CustomButton';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { IRegion } from '@/services/region/types';
 import { ColumnDef } from '@tanstack/react-table';
-import dayjs from 'dayjs';
 import { Edit, ToggleLeft, ToggleRight, Trash2 } from 'lucide-react';
 import { NavigateFunction } from 'react-router-dom';
 
@@ -48,9 +48,7 @@ const getRegionColumns = ({
     accessorKey: 'createdAt',
     header: 'Created At',
     cell: ({ row }) => (
-      <span className="text-sm">
-        {dayjs(row.original.createdAt).format('DD/MM/YYYY HH:mm')}
-      </span>
+      <DateTimeDisplay value={row.original.createdAt} mode="datetime" />
     ),
   },
   {
