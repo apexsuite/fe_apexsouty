@@ -1,8 +1,8 @@
 import { Loader } from 'lucide-react';
 
 const LoadingSpinner = () => (
-  <div className="flex min-h-dvh items-center justify-center">
-    <Loader className="text-muted animate-spin" size={24} />
+  <div className="flex h-[calc(100vh-4.5rem)] items-center justify-center">
+    <Loader className="animate-spin" size={32} />
   </div>
 );
 

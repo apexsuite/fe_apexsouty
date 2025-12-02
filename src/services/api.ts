@@ -1,3 +1,4 @@
+import { isClient } from '@/utils/helpers/common';
 import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -11,7 +12,7 @@ export const apiConfig = {
 
 // Get token from localStorage
 const getToken = (): string | null => {
-  if (typeof window !== 'undefined') {
+  if (isClient) {
     return localStorage.getItem('token');
   }
   return null;
@@ -53,7 +54,7 @@ export const apiRequest = async (endpoint: string, options: any = {}) => {
       throw {
         status: response.status,
         data: response.data,
-        message: `HTTP ${response.status}: ${response.statusText}`
+        message: `HTTP ${response.status}: ${response.statusText}`,
       };
     }
   } catch (error: any) {
@@ -62,10 +63,12 @@ export const apiRequest = async (endpoint: string, options: any = {}) => {
       throw {
         status: error.response.status,
         data: error.response.data,
-        message: error.response.data?.message || `HTTP ${error.response.status}: ${error.response.statusText}`
+        message:
+          error.response.data?.message ||
+          `HTTP ${error.response.status}: ${error.response.statusText}`,
       };
     }
     console.error('API request failed:', error);
     throw error;
   }
-}; 
+};

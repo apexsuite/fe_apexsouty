@@ -4,8 +4,12 @@ import { fetchMyPermissions } from './permissionSlice';
 
 export const usePermissions = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const permissions = useSelector((state: RootState) => state.userPermissions.permissions);
-  const loading = useSelector((state: RootState) => state.userPermissions.loading);
+  const permissions = useSelector(
+    (state: RootState) => state.userPermissions.permissions
+  );
+  const loading = useSelector(
+    (state: RootState) => state.userPermissions.loading
+  );
 
   const hasPermission = (permissionName: string): boolean => {
     if (Array.isArray(permissions) && permissions.length > 0) {
@@ -39,10 +43,13 @@ export const usePermissions = () => {
           '/marketplaces/edit': 'update-marketplace',
           '/marketplaces/delete': 'delete-marketplace',
         };
-        const permissionName = pathMap[path] || path.replace(/\//g, '-').substring(1);
+        const permissionName =
+          pathMap[path] || path.replace(/\//g, '-').substring(1);
         return (permissions as string[]).includes(permissionName);
       } else {
-        return (permissions as any[]).some(p => p.path === path || path.startsWith(p.path));
+        return (permissions as any[]).some(
+          p => p.path === path || path.startsWith(p.path)
+        );
       }
     }
     return false;
@@ -51,9 +58,13 @@ export const usePermissions = () => {
   const hasAnyPermission = (permissionNames: string[]): boolean => {
     if (Array.isArray(permissions) && permissions.length > 0) {
       if (typeof permissions[0] === 'string') {
-        return permissionNames.some(name => (permissions as string[]).includes(name));
+        return permissionNames.some(name =>
+          (permissions as string[]).includes(name)
+        );
       } else {
-        return permissionNames.some(name => (permissions as any[]).some(p => p.name === name));
+        return permissionNames.some(name =>
+          (permissions as any[]).some(p => p.name === name)
+        );
       }
     }
     return false;
@@ -62,9 +73,13 @@ export const usePermissions = () => {
   const hasAllPermissions = (permissionNames: string[]): boolean => {
     if (Array.isArray(permissions) && permissions.length > 0) {
       if (typeof permissions[0] === 'string') {
-        return permissionNames.every(name => (permissions as string[]).includes(name));
+        return permissionNames.every(name =>
+          (permissions as string[]).includes(name)
+        );
       } else {
-        return permissionNames.every(name => (permissions as any[]).some(p => p.name === name));
+        return permissionNames.every(name =>
+          (permissions as any[]).some(p => p.name === name)
+        );
       }
     }
     return false;
@@ -73,12 +88,16 @@ export const usePermissions = () => {
   const getResourcePermissions = (resource: string) => {
     if (Array.isArray(permissions) && permissions.length > 0) {
       if (typeof permissions[0] === 'string') {
-        return (permissions as string[]).filter(permission => 
-          permission.includes(resource) || permission.includes(resource.replace('-', ''))
+        return (permissions as string[]).filter(
+          permission =>
+            permission.includes(resource) ||
+            permission.includes(resource.replace('-', ''))
         );
       } else {
         return (permissions as any[])
-          .filter(p => p.path?.includes(`/${resource}`) || p.resource === resource)
+          .filter(
+            p => p.path?.includes(`/${resource}`) || p.resource === resource
+          )
           .map(p => p.name);
       }
     }
@@ -103,43 +122,46 @@ export const usePermissions = () => {
 
 export const useResourcePermissions = (resource: string) => {
   const { hasPermission, getResourcePermissions } = usePermissions();
-  
+
   const resourcePermissions = getResourcePermissions(resource);
-  
-  const resourcePermissionMap: Record<string, { create: string; read: string; update: string; delete: string }> = {
-    'products': {
+
+  const resourcePermissionMap: Record<
+    string,
+    { create: string; read: string; update: string; delete: string }
+  > = {
+    products: {
       create: 'create-product',
       read: 'get-product-list',
       update: 'update-product',
-      delete: 'delete-product'
+      delete: 'delete-product',
     },
-    'roles': {
+    roles: {
       create: 'create-role',
       read: 'get-role-list',
       update: 'update-role',
-      delete: 'delete-role'
+      delete: 'delete-role',
     },
-    'permissions': {
+    permissions: {
       create: 'create-permission',
       read: 'get-permission-list',
       update: 'update-permission',
-      delete: 'delete-permission'
+      delete: 'delete-permission',
     },
-    'marketplaces': {
+    marketplaces: {
       create: 'create-marketplace',
       read: 'get-marketplace-list',
       update: 'update-marketplace',
-      delete: 'delete-marketplace'
-    }
+      delete: 'delete-marketplace',
+    },
   };
-  
+
   const permissionMap = resourcePermissionMap[resource] || {
     create: `create-${resource}`,
     read: `get-${resource}-list`,
     update: `update-${resource}`,
-    delete: `delete-${resource}`
+    delete: `delete-${resource}`,
   };
-  
+
   const canCreate = hasPermission(permissionMap.create);
   const canRead = hasPermission(permissionMap.read);
   const canUpdate = hasPermission(permissionMap.update);

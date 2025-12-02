@@ -15,9 +15,6 @@ const AccessDenied = lazy(() => import('@/pages/AccessDenied'));
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
 
 const Permissions = lazy(() => import('@/pages/Permissions'));
-const PermissionsManagement = lazy(
-  () => import('@/pages/PermissionsManagement')
-);
 const AllServices = lazy(() => import('@/pages/AllServices'));
 const AllResources = lazy(() => import('@/pages/AllResources'));
 const PagesRoute = lazy(() => import('@/pages/PagesRoute'));
@@ -64,6 +61,7 @@ const RegionForm = lazy(() => import('@/pages/Region/RegionForm'));
 
 const Vendor = lazy(() => import('@/pages/Vendor'));
 const VendorForm = lazy(() => import('@/pages/Vendor/VendorForm'));
+const VendorDetail = lazy(() => import('@/pages/Vendor/VendorDetail'));
 
 const Support = lazy(() => import('@/pages/Support'));
 const SupportForm = lazy(() => import('@/pages/Support/SupportForm'));
@@ -151,11 +149,6 @@ export const protectedRoutes: RouteObject[] = [
         path: 'permissions',
         element: <Permissions />,
         handle: { title: 'routes.permissions' },
-      },
-      {
-        path: 'permissions-management',
-        element: <PermissionsManagement />,
-        handle: { title: 'routes.permissionsManagement' },
       },
       {
         path: 'all-services',
@@ -344,6 +337,11 @@ export const protectedRoutes: RouteObject[] = [
             path: 'create',
             element: <VendorForm />,
             handle: { title: 'routes.vendors.create' },
+          },
+          {
+            path: ':id',
+            element: <VendorDetail />,
+            handle: { title: 'routes.vendors.detail' },
           },
           {
             path: ':id/edit',

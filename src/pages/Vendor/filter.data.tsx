@@ -1,4 +1,5 @@
 import { FilterInputs, INPUT_TYPES } from '@/components/CustomFilter/types';
+import { statusOptions } from '@/utils/constants/common';
 
 export const FILTER_INPUTS: FilterInputs[] = [
   {
@@ -12,5 +13,12 @@ export const FILTER_INPUTS: FilterInputs[] = [
     label: 'Description',
     placeholder: 'Enter description',
     type: INPUT_TYPES.Text,
+  },
+  {
+    name: 'status',
+    label: 'Status',
+    placeholder: 'Select status',
+    type: INPUT_TYPES.Select,
+    options: statusOptions,
   },
 ];
