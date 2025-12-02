@@ -100,7 +100,7 @@ const Messages = () => {
                 "support.messages.description",
                 "Ticket mesaj geçmişini görüntüleyebilirsiniz.",
             )}
-            filters={{ inputs: [], path: `/support/${id}/messages/create` }}
+            filters={{ inputs: [], path: `/support/${id}/messages/create`, createPermission: 'create-ticket-message' }}
             datatable={
                 <CustomDataTable
                     columns={columns}

@@ -924,7 +924,8 @@
                 "messages": "Mesajlar",
                 "attachments": "Ekler",
                 "replied": "Cevaplandı",
-                "actions": "İşlemler"
+                "actions": "İşlemler",
+                "assignedTo": "Atanan Kullanıcı"
             },
             "filtersForm": {
                 "subject": {

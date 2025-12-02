@@ -1,6 +1,7 @@
 import { ControlledInputText, ControlledSelect } from "@/components/FormInputs";
 import CustomButton from "@/components/CustomButton";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import PermissionGuard from "@/components/PermissionGuard";
 import { Uploader } from "@/components/Uploader";
 import {
     createSupportTicket,
@@ -148,11 +149,6 @@ const SupportForm = () => {
         navigate("/support");
     };
 
-    /**
-     * @description
-     * Edit modunda detay verileri gelmeden formu göstermiyoruz.
-     * Böylece kullanıcı boş form görmeden, gerçek ticket verileri ile çalışır.
-     */
     if (isEditMode && isDetailLoading) {
         return <LoadingSpinner />;
     }
@@ -254,16 +250,21 @@ const SupportForm = () => {
                         className="w-full"
                         onClick={() => navigate("/support")}
                     />
-                    <CustomButton
-                        type="submit"
-                        label={
-                            isEditMode
-                                ? t("support.form.updateSubmit", "Update Ticket")
-                                : t("support.form.submit", "Create Ticket")
-                        }
-                        loading={isSubmitting}
-                        className="w-full"
-                    />
+                    <PermissionGuard
+                        permission={isEditMode ? "update-ticket" : "create-ticket"}
+                        mode="hide"
+                    >
+                        <CustomButton
+                            type="submit"
+                            label={
+                                isEditMode
+                                    ? t("support.form.updateSubmit", "Update Ticket")
+                                    : t("support.form.submit", "Create Ticket")
+                            }
+                            loading={isSubmitting}
+                            className="w-full"
+                        />
+                    </PermissionGuard>
                 </div>
             </form>
         </div>

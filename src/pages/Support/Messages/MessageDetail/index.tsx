@@ -1,5 +1,4 @@
 import DateTimeDisplay from "@/components/common/date-time-display";
-import IdCopy from "@/components/common/id-copy";
 import { InfoSection } from "@/components/common/info-section";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { getSupportTicketMessageById } from "@/services/support";
@@ -73,7 +72,7 @@ const MessageDetail = () => {
                 title={t("support.messages.detailInfo", "Mesaj Bilgileri")}
                 items={[
                     {
-                        label: t("support.messages.table.ownerId", "Sahip ID"),
+                        label: t("support.messages.table.senderName", "Gönderen"),
                         value: message.senderName
                     },
                     {

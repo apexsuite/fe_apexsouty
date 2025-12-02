@@ -1000,7 +1000,8 @@
         "messages": "Messages",
         "attachments": "Attachments",
         "replied": "Replied",
-        "actions": "Actions"
+        "actions": "Actions",
+        "assignedTo": "Assigned To"
       },
       "filtersForm": {
         "subject": {

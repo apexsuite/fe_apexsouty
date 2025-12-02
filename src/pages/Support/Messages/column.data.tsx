@@ -65,30 +65,34 @@ const getMessagesColumns = ({
                             )
                         }
                     />
-                    <CustomButton
-                        variant="outline"
-                        tooltip={t(
-                            "support.messages.table.editMessage",
-                            "Mesajı düzenle",
-                        )}
-                        icon={<Pencil />}
-                        onClick={() =>
-                            navigate(
-                                `/support/${row.original.ticketId}/messages/${row.original.id}/edit`,
-                            )
-                        }
-                    />
+                    <PermissionGuard permission="update-ticket-message" mode="hide">
+                        <CustomButton
+                            variant="outline"
+                            tooltip={t(
+                                "support.messages.table.editMessage",
+                                "Mesajı düzenle",
+                            )}
+                            icon={<Pencil />}
+                            onClick={() =>
+                                navigate(
+                                    `/support/${row.original.ticketId}/messages/${row.original.id}/edit`,
+                                )
+                            }
+                        />
+                    </PermissionGuard>
 
-                    <CustomButton
-                        variant="outline"
-                        tooltip={t(
-                            "support.messages.table.deleteMessage",
-                            "Mesajı sil",
-                        )}
-                        icon={<Trash2 />}
-                        loading={deletingId === row.original.id}
-                        onClick={() => onDelete(row.original.id)}
-                    />
+                    <PermissionGuard permission="update-ticket-message" mode="hide">
+                        <CustomButton
+                            variant="outline"
+                            tooltip={t(
+                                "support.messages.table.deleteMessage",
+                                "Mesajı sil",
+                            )}
+                            icon={<Trash2 />}
+                            loading={deletingId === row.original.id}
+                            onClick={() => onDelete(row.original.id)}
+                        />
+                    </PermissionGuard>
                 </ButtonGroup>
             ),
         },

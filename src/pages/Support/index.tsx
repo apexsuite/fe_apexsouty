@@ -58,8 +58,7 @@ const Support = () => {
 
     const { mutateAsync: removeTicket } = useMutation({
         mutationFn: (id: string) => deleteSupportTicket(id),
-        onSuccess: (_data, id) => {
-            // Silme işleminden sonra listeyi tazele
+        onSuccess: (_data) => {
             queryClient.invalidateQueries({ queryKey: ["supportTickets"] });
             toast.success(
                 t(
@@ -77,7 +76,6 @@ const Support = () => {
     });
 
     const handleDeleteTicket = async (id: string, subject: string) => {
-        // Basit onay diyaloğu ile yanlışlıkla silmenin önüne geçiyoruz
         const confirmed = window.confirm(
             t(
                 "support.list.deleteConfirm",
@@ -101,7 +99,7 @@ const Support = () => {
         <CustomPageLayout
             title={t("support.list.title")}
             description={t("support.list.description")}
-            filters={{ inputs: FILTER_INPUTS, path: '/support/create' }}
+            filters={{ inputs: FILTER_INPUTS, path: '/support/create', createPermission: 'create-ticket' }}
             datatable={
                 <CustomDataTable
                     columns={columns}

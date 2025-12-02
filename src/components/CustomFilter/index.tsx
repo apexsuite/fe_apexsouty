@@ -1,5 +1,6 @@
 import CustomButton from '@/components/CustomButton';
 import { ControlledInputText, ControlledSelect } from '@/components/FormInputs';
+import PermissionGuard from '@/components/PermissionGuard';
 import useQueryParams from '@/utils/hooks/useQueryParams';
 import {
   type CustomFilterProps,
@@ -12,7 +13,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
-const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
+const CustomFilter = ({ inputs, path, createPermission }: CustomFilterProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const { updateQueryParams, clearAllQueryParams, deleteQueryParams } =
     useQueryParams();
@@ -62,11 +63,24 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
             />)
         }
         {path && (
-          <CustomButton
-            label="Create"
-            icon={<Plus />}
-            onClick={() => navigate(path)}
-          />
+          createPermission ? (
+            <PermissionGuard
+              permission={createPermission}
+              mode="hide"
+            >
+              <CustomButton
+                label="Create"
+                icon={<Plus />}
+                onClick={() => navigate(path)}
+              />
+            </PermissionGuard>
+          ) : (
+            <CustomButton
+              label="Create"
+              icon={<Plus />}
+              onClick={() => navigate(path)}
+            />
+          )
         )}
       </div>
       {open && (

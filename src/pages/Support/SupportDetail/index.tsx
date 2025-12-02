@@ -10,6 +10,9 @@ import {
     Shield,
     User,
     Pencil,
+    RotateCcw,
+    X,
+    Trash2,
 } from "lucide-react";
 
 import CustomButton from "@/components/CustomButton";
@@ -43,10 +46,7 @@ import { t } from "i18next";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { toast } from "react-toastify";
 
-/**
- * @description
- * Destek bileti detaylarını ve mesajlaşma geçmişini gösteren sayfa.
- */
+
 const SupportDetail: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
@@ -67,18 +67,12 @@ const SupportDetail: React.FC = () => {
         navigate("/support");
     };
 
-    /**
-     * @description
-     * Detay ve liste sorgularını yeniden tetiklemek için yardımcı fonksiyon.
-     * Böylece statü / öncelik / atama değişiklikleri ekrana yansır.
-     */
     const invalidateSupportQueries = () => {
         if (!id) return;
         queryClient.invalidateQueries({ queryKey: ["support-ticket", id] });
         queryClient.invalidateQueries({ queryKey: ["supportTickets"] });
     };
 
-    // Ticket yeniden açma
     const { mutateAsync: reopenTicket, status: reopenStatus } = useMutation({
         mutationFn: () => reopenSupportTicket(id as string),
         onSuccess: () => {
@@ -95,7 +89,6 @@ const SupportDetail: React.FC = () => {
         },
     });
 
-    // Ticket kapatma
     const { mutateAsync: closeTicket, status: closeStatus } = useMutation({
         mutationFn: () => closeSupportTicket(id as string),
         onSuccess: () => {
@@ -112,7 +105,6 @@ const SupportDetail: React.FC = () => {
         },
     });
 
-    // Ticket silme
     const { mutateAsync: removeTicket, status: deleteStatus } = useMutation({
         mutationFn: () => deleteSupportTicket(id as string),
         onSuccess: () => {
@@ -130,7 +122,6 @@ const SupportDetail: React.FC = () => {
         },
     });
 
-    // Atama (staff only)
     const { mutateAsync: assignTicket, status: assignStatus } = useMutation({
         mutationFn: () =>
             assignSupportTicket(id as string, { assignedToId }),
@@ -148,7 +139,6 @@ const SupportDetail: React.FC = () => {
         },
     });
 
-    // Atama kaldırma (staff only)
     const { mutateAsync: unassignTicket, status: unassignStatus } =
         useMutation({
             mutationFn: () => unassignSupportTicket(id as string),
@@ -210,7 +200,6 @@ const SupportDetail: React.FC = () => {
 
     return (
         <div className="container mx-auto space-y-6 px-4 py-8">
-            {/* Header */}
             <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-4">
                     <Button
@@ -239,61 +228,71 @@ const SupportDetail: React.FC = () => {
                         </p>
                     </div>
                 </div>
-                <div className="flex flex-col items-end gap-2">
-                    <CustomButton
-                        icon={<Pencil className="h-4 w-4" />}
-                        label={t(
-                            "support.list.tooltips.editTicket",
-                            "Edit Support Ticket"
-                        )}
-                        onClick={() => navigate(`/support/${id}/edit`)}
-                        variant="default"
-                    />
+                <div className="flex flex-col items-end gap-3">
+                    <div className="flex flex-wrap items-center justify-end gap-2">
+                        <PermissionGuard permission="update-ticket" mode="hide">
+                            <CustomButton
+                                icon={<Pencil className="h-4 w-4" />}
+                                label={t(
+                                    "support.list.tooltips.editTicket",
+                                    "Edit Support Ticket"
+                                )}
+                                onClick={() => navigate(`/support/${id}/edit`)}
+                                variant="outline"
+                                size="sm"
+                            />
+                        </PermissionGuard>
 
-                    {/* Hızlı ticket aksiyonları */}
-                    <div className="flex flex-wrap justify-end gap-2">
                         {(ticket.status === TicketStatus.CLOSED ||
                             ticket.status === TicketStatus.RESOLVED) && (
+                                <PermissionGuard permission="reopen-ticket" mode="hide">
+                                    <CustomButton
+                                        icon={<RotateCcw className="h-4 w-4" />}
+                                        variant="outline"
+                                        size="sm"
+                                        label={t(
+                                            "support.detail.reopen",
+                                            "Reopen Ticket",
+                                        )}
+                                        loading={reopenStatus === "pending"}
+                                        onClick={() => reopenTicket()}
+                                    />
+                                </PermissionGuard>
+                            )}
+                        {ticket.status !== TicketStatus.CLOSED && (
+                            <PermissionGuard permission="close-ticket" mode="hide">
                                 <CustomButton
+                                    icon={<X className="h-4 w-4" />}
                                     variant="outline"
                                     size="sm"
                                     label={t(
-                                        "support.detail.reopen",
-                                        "Reopen Ticket",
+                                        "support.detail.close",
+                                        "Close Ticket",
                                     )}
-                                    loading={reopenStatus === "pending"}
-                                    onClick={() => reopenTicket()}
+                                    loading={closeStatus === "pending"}
+                                    onClick={() => closeTicket()}
                                 />
-                            )}
-                        {ticket.status !== TicketStatus.CLOSED && (
+                            </PermissionGuard>
+                        )}
+                        <PermissionGuard permission="delete-ticket" mode="hide">
                             <CustomButton
+                                icon={<Trash2 className="h-4 w-4" />}
                                 variant="outline"
                                 size="sm"
                                 label={t(
-                                    "support.detail.close",
-                                    "Close Ticket",
+                                    "support.detail.delete",
+                                    "Delete Ticket",
                                 )}
-                                loading={closeStatus === "pending"}
-                                onClick={() => closeTicket()}
+                                loading={deleteStatus === "pending"}
+                                onClick={() => removeTicket()}
                             />
-                        )}
-                        <CustomButton
-                            variant="destructive"
-                            size="sm"
-                            label={t(
-                                "support.detail.delete",
-                                "Delete Ticket",
-                            )}
-                            loading={deleteStatus === "pending"}
-                            onClick={() => removeTicket()}
-                        />
+                        </PermissionGuard>
                     </div>
                 </div>
             </div>
 
             <Separator />
 
-            {/* Info sections similar to MarketplaceDetail */}
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <InfoSection
                     title={t("support.detail.ticketInformation", "Ticket Information")}
@@ -355,16 +354,10 @@ const SupportDetail: React.FC = () => {
                             icon: <User />,
                         },
                         {
-                            label: t("support.list.table.ownerId", "Owner ID"),
+                            label: t("support.list.table.assignedTo", "Atanan Kullanıcı"),
                             value: (
                                 <div className="flex flex-col gap-2">
-                                    <IdCopy
-                                        value={ticket.ownerId}
-                                        tooltip="Copy Owner ID"
-                                        successMessage="Owner ID panoya kopyalandı"
-                                    />
 
-                                    {/* Atama / unassign alanı - sadece staff/admin */}
                                     <PermissionGuard
                                         permission="assign-ticket"
                                         mode="hide"
@@ -455,7 +448,6 @@ const SupportDetail: React.FC = () => {
                     {
                         label: t("support.detail.resolvedAt", "Resolved At"),
                         value: (
-                            // Çözümlenme tarihi sadece ticket çözüldüğünde doludur
                             <DateTimeDisplay
                                 value={ticket.resolvedAt}
                                 mode="datetime"
@@ -466,7 +458,6 @@ const SupportDetail: React.FC = () => {
                     {
                         label: t("support.detail.closedAt", "Closed At"),
                         value: (
-                            // Kapanma tarihi sadece ticket kapandığında doludur
                             <DateTimeDisplay
                                 value={ticket.closedAt}
                                 mode="datetime"
@@ -483,7 +474,6 @@ const SupportDetail: React.FC = () => {
                 ]}
             />
 
-            {/* Description, conversation & attachments as InfoSections */}
             <div className="grid gap-6 lg:grid-cols-3">
                 <div className="space-y-4 lg:col-span-2">
                     <InfoSection

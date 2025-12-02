@@ -123,12 +123,14 @@ const getSupportTicketColumns = ({
                         icon={<Eye />}
                         onClick={() => navigate(`/support/${row.original.id}`)}
                     />
-                    <CustomButton
-                        variant="outline"
-                        tooltip={i18n.t("support.list.tooltips.editTicket")}
-                        icon={<Pencil />}
-                        onClick={() => navigate(`/support/${row.original.id}/edit`)}
-                    />
+                    <PermissionGuard permission="update-ticket" mode="hide">
+                        <CustomButton
+                            variant="outline"
+                            tooltip={i18n.t("support.list.tooltips.editTicket")}
+                            icon={<Pencil />}
+                            onClick={() => navigate(`/support/${row.original.id}/edit`)}
+                        />
+                    </PermissionGuard>
                     {/* 
                      * @description
                      * Ticket'a ait mesajlar sayfasına yönlendiren buton.

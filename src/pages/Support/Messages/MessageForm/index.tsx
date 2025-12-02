@@ -1,6 +1,7 @@
 import { ControlledInputText } from "@/components/FormInputs";
 import CustomButton from "@/components/CustomButton";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import PermissionGuard from "@/components/PermissionGuard";
 import { Uploader } from "@/components/Uploader";
 import {
     createSupportTicketMessage,
@@ -78,7 +79,6 @@ const MessageForm = () => {
                     "Mesaj başarıyla oluşturuldu.",
                 ),
             );
-            // Mesaj oluşturulduktan sonra mesaj listesini yeniliyoruz
             queryClient.invalidateQueries({
                 queryKey: ["support-ticket-messages", id],
             });
@@ -145,7 +145,6 @@ const MessageForm = () => {
         } else {
             const payload: ISupportTicketMessageCreateRequest = {
                 message: data.message,
-                // Normal kullanıcılar için daima false; staff için ayrı bir form eklenebilir
                 isInternal: false,
                 attachments: attachments.length ? attachments : undefined,
             };
@@ -229,22 +228,27 @@ const MessageForm = () => {
                         className="w-full"
                         onClick={() => navigate(`/support/${id}/messages`)}
                     />
-                    <CustomButton
-                        type="submit"
-                        label={
-                            isEditMode
-                                ? t(
-                                    "support.messages.form.updateSubmit",
-                                    "Mesajı Güncelle",
-                                )
-                                : t(
-                                    "support.messages.form.submit",
-                                    "Mesaj Oluştur",
-                                )
-                        }
-                        loading={isSubmitting}
-                        className="w-full"
-                    />
+                    <PermissionGuard
+                        permission={isEditMode ? "update-ticket-message" : "create-ticket-message"}
+                        mode="hide"
+                    >
+                        <CustomButton
+                            type="submit"
+                            label={
+                                isEditMode
+                                    ? t(
+                                        "support.messages.form.updateSubmit",
+                                        "Mesajı Güncelle",
+                                    )
+                                    : t(
+                                        "support.messages.form.submit",
+                                        "Mesaj Oluştur",
+                                    )
+                            }
+                            loading={isSubmitting}
+                            className="w-full"
+                        />
+                    </PermissionGuard>
                 </div>
             </form>
         </div>
