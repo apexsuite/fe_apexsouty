@@ -211,7 +211,6 @@ export const protectedRoutes: RouteObject[] = [
           {
             index: true,
             element: <Roles />,
-            handle: { title: 'routes.roles.title' },
           },
           {
             path: 'create',
