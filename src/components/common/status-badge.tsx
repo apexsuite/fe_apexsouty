@@ -4,7 +4,6 @@ import {
   XCircle,
   Hourglass,
   Shield,
-  ShieldBan,
   EyeOff,
   Eye,
   Hammer,
@@ -15,7 +14,6 @@ const STATUS_MAP = {
   inactive: { variant: 'error', icon: XCircle, label: 'Inactive' },
   pending: { variant: 'warning', icon: Hourglass, label: 'Pending' },
   default: { variant: 'info', icon: Shield, label: 'Default' },
-  not_default: { variant: 'warning', icon: ShieldBan, label: 'Not Default' },
   visible: { variant: 'info', icon: Eye, label: 'Visible' },
   invisible: { variant: 'warning', icon: EyeOff, label: 'Invisible' },
   under_construction: {

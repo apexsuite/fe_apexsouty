@@ -34,9 +34,7 @@ const COLUMN_CONFIG: ColumnConfig<IRole>[] = [
     accessorKey: 'isDefault',
     header: 'Is Default',
     size: 1,
-    cell: row => (
-      <StatusBadge status={row.isDefault ? 'default' : 'not_default'} />
-    ),
+    cell: row => <StatusBadge status={row.isDefault ? 'yes' : 'no'} />,
   },
   {
     accessorKey: 'permissionCount',

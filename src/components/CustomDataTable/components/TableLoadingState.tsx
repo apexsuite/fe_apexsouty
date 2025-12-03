@@ -13,7 +13,7 @@ interface TableLoadingStateProps {
 export const TableLoadingState = ({
   columnCount,
   columns,
-  rowCount = 3,
+  rowCount = 10,
 }: TableLoadingStateProps) => {
   return (
     <>

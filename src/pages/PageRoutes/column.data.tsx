@@ -1,13 +1,12 @@
 import StatusBadge from '@/components/common/status-badge';
 import type { IPageRoute } from '@/services/page-routes/types';
 import type { ColumnDef } from '@tanstack/react-table';
-import type { NavigateFunction } from 'react-router-dom';
+import { Link, type NavigateFunction } from 'react-router-dom';
 import createColumns, {
   type ColumnConfig,
   type ActionsConfig,
 } from '@/components/CustomColumn';
 import * as LucideIcons from 'lucide-react';
-import CustomButton from '@/components/CustomButton';
 import { Badge } from '@/components/ui/badge';
 import { t } from 'i18next';
 
@@ -17,23 +16,34 @@ interface IGetPageRouteColumnsProps {
   changePageRouteStatus: (id: string) => void;
 }
 
-const getLucideIcon = (iconName: string) => {
-  if (!iconName) return LucideIcons.Circle;
+const getLucideIcon = (icon: string) => {
+  if (!icon) return LucideIcons.Circle;
 
-  const pascalCaseName = iconName
+  const pascalCaseName = icon
     .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .map(word => word[0]?.toUpperCase() + word.slice(1).toLowerCase())
     .join('');
 
-  const IconComponent = (LucideIcons as any)[pascalCaseName];
-  return IconComponent || LucideIcons.Circle;
+  const IconComponent = (
+    LucideIcons as unknown as Record<string, typeof LucideIcons.Circle>
+  )[pascalCaseName];
+  return IconComponent ?? LucideIcons.Circle;
 };
 
 const COLUMN_CONFIG: ColumnConfig<IPageRoute>[] = [
   {
     accessorKey: 'name',
     header: t('pages.table.name'),
-    size: 2,
+    size: 1,
+    cell: row => {
+      const IconComponent = getLucideIcon(row.icon);
+      return (
+        <div className="flex items-center gap-2">
+          <IconComponent />
+          {row.name}
+        </div>
+      );
+    },
   },
   {
     accessorKey: 'component',
@@ -45,25 +55,12 @@ const COLUMN_CONFIG: ColumnConfig<IPageRoute>[] = [
     header: t('pages.table.path'),
     size: 1,
     cell: row => (
-      <Badge variant="secondary" size="lg">
-        {row.path}
-      </Badge>
+      <Link to={row.path}>
+        <Badge variant="secondary" size="lg">
+          {row.path}
+        </Badge>
+      </Link>
     ),
-  },
-  {
-    accessorKey: 'icon',
-    header: t('pages.table.icon'),
-    size: 1,
-    cell: row => {
-      const IconComponent = getLucideIcon(row.icon);
-      return (
-        <CustomButton
-          icon={<IconComponent size={20} />}
-          size="icon-lg"
-          variant="secondary"
-        />
-      );
-    },
   },
   {
     accessorKey: 'permissionCount',
