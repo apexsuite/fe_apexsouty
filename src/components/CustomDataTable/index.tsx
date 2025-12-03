@@ -61,8 +61,8 @@ export default function CustomDataTable<TData, TValue>({
   });
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="border-border bg-card max-h-[calc(100vh-300px)] overflow-hidden rounded-lg border shadow-sm">
+    <div className="flex flex-col gap-2">
+      <div className="bg-card max-h-[calc(100vh-300px)] overflow-hidden rounded-lg border">
         <div className="max-h-[calc(100vh-350px)] overflow-auto">
           <table className="w-full caption-bottom text-sm">
             <TableHeader className="bg-muted sticky top-0 z-10">
@@ -71,31 +71,48 @@ export default function CustomDataTable<TData, TValue>({
                   key={headerGroup.id + idx}
                   className="hover:bg-muted border-b"
                 >
-                  {headerGroup.headers.map((header, idx) => (
-                    <TableHead
-                      key={header.id + idx}
-                      className="bg-muted h-12 px-4 font-semibold"
-                      style={{
-                        width:
-                          header.getSize() !== 150
-                            ? header.getSize()
-                            : undefined,
-                      }}
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  ))}
+                  {headerGroup.headers.map((header, idx) => {
+                    const meta = header.column.columnDef.meta as
+                      | { className?: string; style?: React.CSSProperties }
+                      | undefined;
+                    const hasCustomWidth =
+                      meta?.className?.includes('w-') ||
+                      meta?.style?.width ||
+                      header.getSize() !== 150;
+
+                    return (
+                      <TableHead
+                        key={header.id + idx}
+                        className={`bg-muted h-12 px-4 font-semibold ${
+                          meta?.className || ''
+                        }`}
+                        style={{
+                          ...meta?.style,
+                          width:
+                            meta?.style?.width ||
+                            (hasCustomWidth && !meta?.className?.includes('w-')
+                              ? header.getSize()
+                              : undefined),
+                        }}
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
               ))}
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                <TableLoadingState columnCount={columns.length} />
+                <TableLoadingState
+                  columnCount={columns.length}
+                  columns={columns}
+                />
               ) : table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row, idx) => (
                   <>
@@ -104,23 +121,36 @@ export default function CustomDataTable<TData, TValue>({
                       data-state={row.getIsSelected() && 'selected'}
                       className="hover:bg-muted/50 border-b transition-colors"
                     >
-                      {row.getVisibleCells().map(cell => (
-                        <TableCell
-                          key={cell.id + idx}
-                          className="px-4 py-3"
-                          style={{
-                            width:
-                              cell.column.getSize() !== 150
-                                ? cell.column.getSize()
-                                : undefined,
-                          }}
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
+                      {row.getVisibleCells().map(cell => {
+                        const meta = cell.column.columnDef.meta as
+                          | { className?: string; style?: React.CSSProperties }
+                          | undefined;
+                        const hasCustomWidth =
+                          meta?.className?.includes('w-') ||
+                          meta?.style?.width ||
+                          cell.column.getSize() !== 150;
+
+                        return (
+                          <TableCell
+                            key={cell.id + idx}
+                            className={`px-4 py-3 ${meta?.className || ''}`}
+                            style={{
+                              ...meta?.style,
+                              width:
+                                meta?.style?.width ||
+                                (hasCustomWidth &&
+                                !meta?.className?.includes('w-')
+                                  ? cell.column.getSize()
+                                  : undefined),
+                            }}
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </TableCell>
+                        );
+                      })}
                     </TableRow>
                     {row.getIsExpanded() && renderSubComponent && (
                       <TableRow key={`${row.id}-expanded`}>
@@ -138,7 +168,6 @@ export default function CustomDataTable<TData, TValue>({
           </table>
         </div>
       </div>
-
       {pagination && totalCount > 0 && (
         <div className="shrink-0">
           <TablePaginationControls

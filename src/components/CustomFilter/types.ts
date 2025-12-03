@@ -1,11 +1,13 @@
 export const INPUT_TYPES = {
   Text: 'text',
+  Number: 'number',
   Select: 'select',
+  Checkbox: 'checkbox',
 } as const;
 
 export type Types = (typeof INPUT_TYPES)[keyof typeof INPUT_TYPES];
 export interface SelectOption {
-  value: string;
+  value: string | undefined;
   label: string;
 }
 
@@ -14,7 +16,8 @@ export interface FilterInputs {
   name: string;
   label: string;
   placeholder?: string;
-  options?: SelectOption[];
+  options?: readonly SelectOption[];
+  description?: string;
 }
 /**
  * @param inputs - The inputs for the filters
@@ -25,4 +28,4 @@ export interface CustomFilterProps {
   path?: string;
 }
 
-export type FilterFormData = Record<string, string>;
+export type FilterFormData = Record<string, string | boolean>;

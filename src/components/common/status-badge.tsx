@@ -1,10 +1,18 @@
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle2, XCircle, Hourglass } from 'lucide-react';
+import {
+  CheckCircle2,
+  XCircle,
+  Hourglass,
+  Shield,
+  ShieldBan,
+} from 'lucide-react';
 
 const STATUS_MAP = {
   active: { variant: 'success', icon: CheckCircle2, label: 'Active' },
   inactive: { variant: 'error', icon: XCircle, label: 'Inactive' },
   pending: { variant: 'warning', icon: Hourglass, label: 'Pending' },
+  default: { variant: 'info', icon: Shield, label: 'Default' },
+  not_default: { variant: 'warning', icon: ShieldBan, label: 'Not Default' },
 } as const;
 
 export type StatusVariant = keyof typeof STATUS_MAP;

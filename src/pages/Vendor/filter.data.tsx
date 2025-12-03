@@ -1,5 +1,5 @@
 import { FilterInputs, INPUT_TYPES } from '@/components/CustomFilter/types';
-import { statusOptions } from '@/utils/constants/common';
+import { STATUS_OPTIONS } from '@/utils/constants/options';
 
 export const FILTER_INPUTS: FilterInputs[] = [
   {
@@ -19,6 +19,6 @@ export const FILTER_INPUTS: FilterInputs[] = [
     label: 'Status',
     placeholder: 'Select status',
     type: INPUT_TYPES.Select,
-    options: statusOptions,
+    options: STATUS_OPTIONS,
   },
 ];

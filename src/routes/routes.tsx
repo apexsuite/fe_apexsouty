@@ -35,9 +35,10 @@ const PageRoutePermissionFormRoute = lazy(
   () => import('@/components/pageRoutePermissions/PageRoutePermissionFormRoute')
 );
 const Roles = lazy(() => import('@/pages/Roles'));
-const RoleCreate = lazy(() => import('@/pages/RoleCreate'));
-const RoleEdit = lazy(() => import('@/pages/RoleEdit'));
+const RoleForm = lazy(() => import('@/pages/Roles/RoleForm'));
+
 const RoleDetail = lazy(() => import('@/pages/RoleDetail'));
+
 const Products = lazy(() => import('@/pages/Products'));
 const ProductCreate = lazy(() => import('@/pages/ProductCreate'));
 const ProductEdit = lazy(() => import('@/pages/ProductEdit'));
@@ -205,6 +206,7 @@ export const protectedRoutes: RouteObject[] = [
       },
       {
         path: 'roles',
+        handle: { title: 'routes.roles.title' },
         children: [
           {
             index: true,
@@ -213,18 +215,18 @@ export const protectedRoutes: RouteObject[] = [
           },
           {
             path: 'create',
-            element: <RoleCreate />,
+            element: <RoleForm />,
             handle: { title: 'routes.roles.create' },
+          },
+          {
+            path: ':id/edit',
+            element: <RoleForm />,
+            handle: { title: 'routes.roles.edit' },
           },
           {
             path: ':id',
             element: <RoleDetail />,
             handle: { title: 'routes.roles.detail' },
-          },
-          {
-            path: ':id/edit',
-            element: <RoleEdit />,
-            handle: { title: 'routes.roles.edit' },
           },
         ],
       },

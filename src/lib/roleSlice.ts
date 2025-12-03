@@ -94,27 +94,35 @@ const initialState: RoleState = {
 // Fetch all roles
 export const fetchRoles = createAsyncThunk(
   'role/fetchRoles',
-  async (params: {
-    page?: number;
-    pageSize?: number;
-    name?: string;
-    description?: string;
-    roleValue?: number;
-    isDefault?: boolean;
-    isActive?: boolean;
-  } = {}, { rejectWithValue }) => {
+  async (
+    params: {
+      page?: number;
+      pageSize?: number;
+      name?: string;
+      description?: string;
+      roleValue?: number;
+      isDefault?: boolean;
+      isActive?: boolean;
+    } = {},
+    { rejectWithValue }
+  ) => {
     try {
       const queryParams = new URLSearchParams();
       if (params.page) queryParams.append('page', params.page.toString());
-      if (params.pageSize) queryParams.append('pageSize', params.pageSize.toString());
+      if (params.pageSize)
+        queryParams.append('pageSize', params.pageSize.toString());
       if (params.name) queryParams.append('name', params.name);
-      if (params.description) queryParams.append('description', params.description);
-      if (params.roleValue) queryParams.append('roleValue', params.roleValue.toString());
-      if (params.isDefault !== undefined) queryParams.append('isDefault', params.isDefault.toString());
-      if (params.isActive !== undefined) queryParams.append('isActive', params.isActive.toString());
+      if (params.description)
+        queryParams.append('description', params.description);
+      if (params.roleValue)
+        queryParams.append('roleValue', params.roleValue.toString());
+      if (params.isDefault !== undefined)
+        queryParams.append('isDefault', params.isDefault.toString());
+      if (params.isActive !== undefined)
+        queryParams.append('isActive', params.isActive.toString());
 
       const response = await apiRequest(`/roles?${queryParams.toString()}`);
-      
+
       return response;
     } catch (error: any) {
       console.error('❌ Error fetching roles:', error);
@@ -155,7 +163,10 @@ export const createRole = createAsyncThunk(
 // Update role
 export const updateRole = createAsyncThunk(
   'role/updateRole',
-  async ({ roleId, roleData }: { roleId: string; roleData: UpdateRoleRequest }, { rejectWithValue }) => {
+  async (
+    { roleId, roleData }: { roleId: string; roleData: UpdateRoleRequest },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await apiRequest(`/roles/${roleId}`, {
         method: 'PUT',
@@ -187,7 +198,10 @@ export const changeRoleStatus = createAsyncThunk(
 // Set role permissions
 export const setRolePermissions = createAsyncThunk(
   'role/setRolePermissions',
-  async ({ roleId, permissions }: SetRolePermissionsRequest, { rejectWithValue }) => {
+  async (
+    { roleId, permissions }: SetRolePermissionsRequest,
+    { rejectWithValue }
+  ) => {
     try {
       const response = await apiRequest(`/roles/${roleId}/permissions`, {
         method: 'POST',
@@ -203,12 +217,18 @@ export const setRolePermissions = createAsyncThunk(
 // Change role permission status
 export const changeRolePermissionStatus = createAsyncThunk(
   'role/changeRolePermissionStatus',
-  async ({ roleId, rolePermissionId, status }: ChangeRolePermissionStatusRequest, { rejectWithValue }) => {
+  async (
+    { roleId, rolePermissionId, status }: ChangeRolePermissionStatusRequest,
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await apiRequest(`/roles/${roleId}/permissions/${rolePermissionId}/change-status`, {
-        method: 'PATCH',
-        data: { isActive: status },
-      });
+      const response = await apiRequest(
+        `/roles/${roleId}/permissions/${rolePermissionId}/change-status`,
+        {
+          method: 'PATCH',
+          data: { isActive: status },
+        }
+      );
       return response;
     } catch (error: any) {
       return rejectWithValue(error);
@@ -234,7 +254,10 @@ export const deleteRole = createAsyncThunk(
 // Role Permission Management
 export const assignPermissionsToRole = createAsyncThunk(
   'role/assignPermissions',
-  async ({ roleId, permissions }: { roleId: string; permissions: any[] }, { rejectWithValue }) => {
+  async (
+    { roleId, permissions }: { roleId: string; permissions: any[] },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await apiRequest(`/roles/${roleId}/permissions`, {
         method: 'POST',
@@ -249,11 +272,17 @@ export const assignPermissionsToRole = createAsyncThunk(
 
 export const unassignPermissionFromRole = createAsyncThunk(
   'role/unassignPermission',
-  async ({ roleId, permissionId }: { roleId: string; permissionId: string }, { rejectWithValue }) => {
+  async (
+    { roleId, permissionId }: { roleId: string; permissionId: string },
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await apiRequest(`/roles/${roleId}/permissions/${permissionId}`, {
-        method: 'DELETE',
-      });
+      const response = await apiRequest(
+        `/roles/${roleId}/permissions/${permissionId}`,
+        {
+          method: 'DELETE',
+        }
+      );
       return response;
     } catch (error: any) {
       return rejectWithValue(error);
@@ -264,7 +293,10 @@ export const unassignPermissionFromRole = createAsyncThunk(
 // Set role permissions (bulk update)
 export const setRolePermissionsBulk = createAsyncThunk(
   'role/setRolePermissionsBulk',
-  async ({ roleId, permissions }: { roleId: string; permissions: any[] }, { rejectWithValue }) => {
+  async (
+    { roleId, permissions }: { roleId: string; permissions: any[] },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await apiRequest(`/roles/${roleId}/permissions`, {
         method: 'POST',
@@ -280,7 +312,13 @@ export const setRolePermissionsBulk = createAsyncThunk(
 // Create role permissions (new API)
 export const createRolePermissions = createAsyncThunk(
   'role/createRolePermissions',
-  async ({ roleId, permissionIdList }: { roleId: string; permissionIdList: string[] }, { rejectWithValue }) => {
+  async (
+    {
+      roleId,
+      permissionIdList,
+    }: { roleId: string; permissionIdList: string[] },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await apiRequest(`/roles/${roleId}/permissions`, {
         method: 'POST',
@@ -296,11 +334,17 @@ export const createRolePermissions = createAsyncThunk(
 // Delete role permission (new API)
 export const deleteRolePermission = createAsyncThunk(
   'role/deleteRolePermission',
-  async ({ roleId, rolePermissionId }: { roleId: string; rolePermissionId: string }, { rejectWithValue }) => {
+  async (
+    { roleId, rolePermissionId }: { roleId: string; rolePermissionId: string },
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await apiRequest(`/roles/${roleId}/permissions/${rolePermissionId}`, {
-        method: 'DELETE',
-      });
+      const response = await apiRequest(
+        `/roles/${roleId}/permissions/${rolePermissionId}`,
+        {
+          method: 'DELETE',
+        }
+      );
       return response;
     } catch (error: any) {
       return rejectWithValue(error);
@@ -312,10 +356,10 @@ const roleSlice = createSlice({
   name: 'role',
   initialState,
   reducers: {
-    clearCurrentRole: (state) => {
+    clearCurrentRole: state => {
       state.currentRole = null;
     },
-    clearError: (state) => {
+    clearError: state => {
       state.error = null;
     },
     setCurrentPageNumber: (state, action: PayloadAction<number>) => {
@@ -325,19 +369,22 @@ const roleSlice = createSlice({
       state.pageSize = action.payload;
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     // Fetch roles
     builder
-      .addCase(fetchRoles.pending, (state) => {
+      .addCase(fetchRoles.pending, state => {
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchRoles.fulfilled, (state, action) => {
-       
         state.loading = false;
-        
+
         // API response formatını kontrol et
-        if (action.payload && action.payload.data && action.payload.data.items) {
+        if (
+          action.payload &&
+          action.payload.data &&
+          action.payload.data.items
+        ) {
           // Format: {data: {items: [...], page: 1, pageSize: 10, pageCount: 1, totalCount: 3}, error: null}
           state.roles = action.payload.data.items;
           state.totalPages = action.payload.data.pageCount || 1;
@@ -362,7 +409,7 @@ const roleSlice = createSlice({
 
     // Fetch role by ID
     builder
-      .addCase(fetchRoleById.pending, (state) => {
+      .addCase(fetchRoleById.pending, state => {
         state.loading = true;
         state.error = null;
       })
@@ -376,73 +423,67 @@ const roleSlice = createSlice({
       });
 
     // Create role
-    builder
-      .addCase(createRole.fulfilled, (state, action) => {
-        const newRole = action.payload.data || action.payload;
-        state.roles.unshift(newRole);
-      });
+    builder.addCase(createRole.fulfilled, (state, action) => {
+      const newRole = action.payload.data || action.payload;
+      state.roles.unshift(newRole);
+    });
 
     // Update role
-    builder
-      .addCase(updateRole.fulfilled, (state, action) => {
-        const updatedRole = action.payload.data || action.payload;
-        const index = state.roles.findIndex(role => role.id === updatedRole.id);
-        if (index !== -1) {
-          state.roles[index] = updatedRole;
-        }
-        if (state.currentRole?.id === updatedRole.id) {
-          state.currentRole = updatedRole;
-        }
-      });
+    builder.addCase(updateRole.fulfilled, (state, action) => {
+      const updatedRole = action.payload.data || action.payload;
+      const index = state.roles.findIndex(role => role.id === updatedRole.id);
+      if (index !== -1) {
+        state.roles[index] = updatedRole;
+      }
+      if (state.currentRole?.id === updatedRole.id) {
+        state.currentRole = updatedRole;
+      }
+    });
 
     // Change role status
-    builder
-      .addCase(changeRoleStatus.fulfilled, (state, action) => {
-        const updatedRole = action.payload.data || action.payload;
-        const index = state.roles.findIndex(role => role.id === updatedRole.id);
-        if (index !== -1) {
-          state.roles[index] = updatedRole;
-        }
-        if (state.currentRole?.id === updatedRole.id) {
-          state.currentRole = updatedRole;
-        }
-      });
+    builder.addCase(changeRoleStatus.fulfilled, (state, action) => {
+      const updatedRole = action.payload.data || action.payload;
+      const index = state.roles.findIndex(role => role.id === updatedRole.id);
+      if (index !== -1) {
+        state.roles[index] = updatedRole;
+      }
+      if (state.currentRole?.id === updatedRole.id) {
+        state.currentRole = updatedRole;
+      }
+    });
 
     // Set role permissions
-    builder
-      .addCase(setRolePermissions.fulfilled, (state, action) => {
-        const updatedRole = action.payload.data || action.payload;
-        const index = state.roles.findIndex(role => role.id === updatedRole.id);
-        if (index !== -1) {
-          state.roles[index] = updatedRole;
-        }
-        if (state.currentRole?.id === updatedRole.id) {
-          state.currentRole = updatedRole;
-        }
-      });
+    builder.addCase(setRolePermissions.fulfilled, (state, action) => {
+      const updatedRole = action.payload.data || action.payload;
+      const index = state.roles.findIndex(role => role.id === updatedRole.id);
+      if (index !== -1) {
+        state.roles[index] = updatedRole;
+      }
+      if (state.currentRole?.id === updatedRole.id) {
+        state.currentRole = updatedRole;
+      }
+    });
 
     // Change role permission status
-    builder
-      .addCase(changeRolePermissionStatus.fulfilled, (state, action) => {
-        const updatedRole = action.payload.data || action.payload;
-        const index = state.roles.findIndex(role => role.id === updatedRole.id);
-        if (index !== -1) {
-          state.roles[index] = updatedRole;
-        }
-        if (state.currentRole?.id === updatedRole.id) {
-          state.currentRole = updatedRole;
-        }
-      });
+    builder.addCase(changeRolePermissionStatus.fulfilled, (state, action) => {
+      const updatedRole = action.payload.data || action.payload;
+      const index = state.roles.findIndex(role => role.id === updatedRole.id);
+      if (index !== -1) {
+        state.roles[index] = updatedRole;
+      }
+      if (state.currentRole?.id === updatedRole.id) {
+        state.currentRole = updatedRole;
+      }
+    });
 
     // Delete role
-    builder
-      .addCase(deleteRole.fulfilled, (state, action) => {
-        const deletedRoleId = action.payload.data?.id || action.payload.id;
-        state.roles = state.roles.filter(role => role.id !== deletedRoleId);
-        if (state.currentRole?.id === deletedRoleId) {
-          state.currentRole = null;
-        }
-      });
+    builder.addCase(deleteRole.fulfilled, (state, action) => {
+      const deletedRoleId = action.payload.data?.id || action.payload.id;
+      state.roles = state.roles.filter(role => role.id !== deletedRoleId);
+      if (state.currentRole?.id === deletedRoleId) {
+        state.currentRole = null;
+      }
+    });
   },
 });
 
@@ -450,7 +491,7 @@ export const {
   clearCurrentRole,
   clearError,
   setCurrentPageNumber,
-  setPageSize
+  setPageSize,
 } = roleSlice.actions;
 
-export default roleSlice.reducer; 
+export default roleSlice.reducer;

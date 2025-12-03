@@ -25,7 +25,7 @@ const RoleCreate: React.FC = () => {
       // Ensure roleValue is converted to number
       const roleData = {
         ...values,
-        roleValue: Number(values.roleValue)
+        roleValue: Number(values.roleValue),
       };
       await dispatch(createRole(roleData)).unwrap();
       // Rol oluşturulduktan sonra permissions'ı yenile
@@ -44,53 +44,65 @@ const RoleCreate: React.FC = () => {
   };
 
   return (
-    <div className="p-6 min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="w-full mx-auto">
+    <div className="min-h-screen bg-gray-50 p-6 dark:bg-gray-900">
+      <div className="mx-auto w-full">
         {/* Header */}
-        <Card className="mb-6 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+        <Card className="mb-6 border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
           <div className="flex items-center gap-4">
             <button
               onClick={handleCancel}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
             >
-              <ArrowLeft size={20} className="text-gray-600 dark:text-gray-300" />
+              <ArrowLeft
+                size={20}
+                className="text-gray-600 dark:text-gray-300"
+              />
             </button>
             <div>
               <Title level={2} className="mb-2 text-gray-900 dark:text-white">
                 {t('roles.createRole') || 'Create Role'}
               </Title>
-              <Paragraph className="text-gray-600 dark:text-gray-400 mb-0">
-                {t('roles.createNewRole') || 'Create a new role with specific permissions'}
+              <Paragraph className="mb-0 text-gray-600 dark:text-gray-400">
+                {t('roles.createNewRole') ||
+                  'Create a new role with specific permissions'}
               </Paragraph>
             </div>
           </div>
         </Card>
 
         {/* Form */}
-        <Card className="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+        <Card className="border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
           <Form
             layout="vertical"
             onFinish={onFinish}
             initialValues={{
               isActive: true,
               isDefault: false,
-              roleValue: 1
+              roleValue: 1,
             }}
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               {/* Name */}
               <Form.Item
                 label={t('roles.name') || 'Name'}
                 name="name"
                 rules={[
-                  { required: true, message: t('roles.nameRequired') || 'Name is required' },
-                  { min: 2, message: t('roles.nameMinLength') || 'Name must be at least 2 characters' }
+                  {
+                    required: true,
+                    message: t('roles.nameRequired') || 'Name is required',
+                  },
+                  {
+                    min: 2,
+                    message:
+                      t('roles.nameMinLength') ||
+                      'Name must be at least 2 characters',
+                  },
                 ]}
               >
                 <Input
                   placeholder={t('roles.enterRoleName') || 'Enter role name'}
                   size="large"
-                  className="dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                  className="dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
                 />
               </Form.Item>
 
@@ -99,23 +111,32 @@ const RoleCreate: React.FC = () => {
                 label={t('roles.roleValue') || 'Role Value'}
                 name="roleValue"
                 rules={[
-                  { required: true, message: t('roles.roleValueRequired') || 'Role value is required' },
+                  {
+                    required: true,
+                    message:
+                      t('roles.roleValueRequired') || 'Role value is required',
+                  },
                   {
                     validator: (_, value) => {
                       const numValue = Number(value);
                       if (isNaN(numValue) || numValue < 1) {
-                        return Promise.reject(new Error(t('roles.roleValueMin') || 'Role value must be at least 1'));
+                        return Promise.reject(
+                          new Error(
+                            t('roles.roleValueMin') ||
+                              'Role value must be at least 1'
+                          )
+                        );
                       }
                       return Promise.resolve();
-                    }
-                  }
+                    },
+                  },
                 ]}
               >
                 <Input
                   type="number"
                   placeholder={t('roles.enterRoleValue') || 'Enter role value'}
                   size="large"
-                  className="dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                  className="dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
                 />
               </Form.Item>
             </div>
@@ -125,19 +146,30 @@ const RoleCreate: React.FC = () => {
               label={t('roles.description') || 'Description'}
               name="description"
               rules={[
-                { required: true, message: t('roles.descriptionRequired') || 'Description is required' },
-                { min: 10, message: t('roles.descriptionMinLength') || 'Description must be at least 10 characters' }
+                {
+                  required: true,
+                  message:
+                    t('roles.descriptionRequired') || 'Description is required',
+                },
+                {
+                  min: 10,
+                  message:
+                    t('roles.descriptionMinLength') ||
+                    'Description must be at least 10 characters',
+                },
               ]}
             >
               <TextArea
                 rows={4}
-                placeholder={t('roles.enterRoleDescription') || 'Enter role description'}
-                className="dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                placeholder={
+                  t('roles.enterRoleDescription') || 'Enter role description'
+                }
+                className="dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
               />
             </Form.Item>
 
             {/* Switches */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <Form.Item
                 label={t('roles.isActive') || 'Is Active'}
                 name="isActive"
@@ -157,11 +189,11 @@ const RoleCreate: React.FC = () => {
 
             {/* Actions */}
             <Form.Item className="mb-0">
-              <div className="flex gap-3 justify-end">
+              <div className="flex justify-end gap-3">
                 <Button
                   size="large"
                   onClick={handleCancel}
-                  className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
                 >
                   {t('roles.cancel') || 'Cancel'}
                 </Button>
@@ -171,9 +203,11 @@ const RoleCreate: React.FC = () => {
                   size="large"
                   loading={loading}
                   icon={<Save size={16} />}
-                  className="bg-blue-600 hover:bg-blue-700 border-blue-600 hover:border-blue-700"
+                  className="border-blue-600 bg-blue-600 hover:border-blue-700 hover:bg-blue-700"
                 >
-                  {loading ? t('roles.creating') || 'Creating...' : t('roles.createRole') || 'Create Role'}
+                  {loading
+                    ? t('roles.creating') || 'Creating...'
+                    : t('roles.createRole') || 'Create Role'}
                 </Button>
               </div>
             </Form.Item>
@@ -184,4 +218,4 @@ const RoleCreate: React.FC = () => {
   );
 };
 
-export default RoleCreate; 
+export default RoleCreate;

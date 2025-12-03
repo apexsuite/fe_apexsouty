@@ -1,4 +1,5 @@
 export const TAGS = {
+  ROLE: 'role',
   VENDOR: 'vendor',
 } as const;
 

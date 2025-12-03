@@ -1,5 +1,4 @@
 import CustomButton from '@/components/CustomButton';
-import { ControlledInputText, ControlledSelect } from '@/components/FormInputs';
 import useQueryParams from '@/utils/hooks/useQueryParams';
 import {
   type CustomFilterProps,
@@ -17,6 +16,16 @@ import { Badge } from '@/components/ui/badge';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Group } from '@/components/ui/group';
 
+/**
+ * @description Import the form inputs components
+ */
+import {
+  ControlledSelect,
+  ControlledCheckbox,
+  ControlledInputNumber,
+  ControlledInputText,
+} from '@/components/FormInputs';
+
 const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const [searchParams] = useSearchParams();
@@ -25,15 +34,24 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
 
   const defaultValues = useMemo<FilterFormData>(() => {
     return inputs.reduce((acc, input) => {
-      acc[input.name] = '';
+      if (input.type === INPUT_TYPES.Checkbox) {
+        acc[input.name] = false;
+      } else {
+        acc[input.name] = '';
+      }
       return acc;
     }, {} as FilterFormData);
   }, [inputs]);
 
   const getInitialValues = useMemo<FilterFormData>(() => {
     return inputs.reduce((acc, input) => {
-      const value = searchParams.get(input.name);
-      acc[input.name] = value || '';
+      if (input.type === INPUT_TYPES.Checkbox) {
+        const value = searchParams.get(input.name);
+        acc[input.name] = value === 'true';
+      } else {
+        const value = searchParams.get(input.name);
+        acc[input.name] = value || '';
+      }
       return acc;
     }, {} as FilterFormData);
   }, [inputs, searchParams.toString()]);
@@ -45,8 +63,13 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
 
   useEffect(() => {
     const values = inputs.reduce((acc, input) => {
-      const value = searchParams.get(input.name);
-      acc[input.name] = value || '';
+      if (input.type === INPUT_TYPES.Checkbox) {
+        const value = searchParams.get(input.name);
+        acc[input.name] = value === 'true';
+      } else {
+        const value = searchParams.get(input.name);
+        acc[input.name] = value || '';
+      }
       return acc;
     }, {} as FilterFormData);
     reset(values);
@@ -71,11 +94,21 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
     });
 
     const searchParams = Object.fromEntries(
-      Object.entries(formValues).filter(
-        ([, value]) => value !== undefined && value !== ''
-      )
+      Object.entries(formValues).filter(([, value]) => {
+        if (typeof value === 'boolean') {
+          return value === true;
+        }
+        return value !== undefined && value !== '';
+      })
     );
-    updateQueryParams({ ...searchParams, page: 1, pageSize: 10 });
+    // Convert boolean values to string for query params
+    const stringParams = Object.fromEntries(
+      Object.entries(searchParams).map(([key, value]) => [
+        key,
+        typeof value === 'boolean' ? String(value) : value,
+      ])
+    );
+    updateQueryParams({ ...stringParams, page: 1, pageSize: 10 });
   };
 
   const handleReset = () => {
@@ -117,12 +150,11 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
           >
             <Card className="mt-4 p-4">
               <form onSubmit={handleSubmit(handleSearch)} onReset={handleReset}>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-5">
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-5">
                   {inputs.map(input => {
                     if (input.type === INPUT_TYPES.Select) {
                       return (
                         <ControlledSelect
-                          key={input.name}
                           control={control}
                           name={input.name}
                           label={input.label}
@@ -131,9 +163,27 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
                         />
                       );
                     }
+                    if (input.type === INPUT_TYPES.Checkbox) {
+                      return (
+                        <ControlledCheckbox
+                          control={control}
+                          name={input.name}
+                          label={input.label}
+                        />
+                      );
+                    }
+                    if (input.type === INPUT_TYPES.Number) {
+                      return (
+                        <ControlledInputNumber
+                          control={control}
+                          name={input.name}
+                          label={input.label}
+                          placeholder={input.placeholder}
+                        />
+                      );
+                    }
                     return (
                       <ControlledInputText
-                        key={input.name}
                         control={control}
                         name={input.name}
                         label={input.label}
@@ -141,12 +191,17 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
                       />
                     );
                   })}
-                  <div className="col-start-6 flex items-end justify-end gap-2">
-                    <CustomButton type="submit" label="Apply" />
+                  <div className="mt-2 flex items-end justify-end gap-2 lg:col-start-5 lg:mt-0">
+                    <CustomButton
+                      type="submit"
+                      label="Apply"
+                      className="w-1/2 lg:w-auto"
+                    />
                     <CustomButton
                       type="reset"
                       label="Clear"
                       variant="outline"
+                      className="w-1/2 lg:w-auto"
                     />
                   </div>
                 </div>
