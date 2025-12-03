@@ -8,7 +8,7 @@ import {
 import CustomButton from '@/components/CustomButton';
 import DeleteButton from '@/components/common/buttons/delete';
 import { ButtonGroup } from '@/components/ui/button-group';
-import { Edit, Eye, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Eye, SquarePen, ToggleLeft, ToggleRight } from 'lucide-react';
 
 export interface ActionConfig<TData> {
   label: string;
@@ -99,6 +99,7 @@ export function createColumns<TData>(
           tooltip={actions.view.label}
           icon={<Eye />}
           onClick={() => actions.view!.onClick(row)}
+          size="icon"
         />
       );
     }
@@ -110,8 +111,9 @@ export function createColumns<TData>(
           key="edit"
           variant="outline"
           tooltip={actions.edit.label}
-          icon={<Edit />}
+          icon={<SquarePen />}
           onClick={() => actions.edit!.onClick(row)}
+          size="icon"
         />
       );
     }
@@ -129,6 +131,7 @@ export function createColumns<TData>(
           tooltip={actions.toggle.label}
           icon={toggleIcon}
           onClick={() => actions.toggle!.onClick(row)}
+          size="icon"
         />
       );
     }

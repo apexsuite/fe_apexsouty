@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import CustomButton from '@/components/CustomButton';
 import {
   ChevronLeft,
   ChevronRight,
@@ -27,46 +27,38 @@ export const PaginationNavigationButtons = ({
 }: PaginationNavigationButtonsProps) => {
   return (
     <div className="flex items-center gap-1">
-      <Button
+      <CustomButton
         variant="outline"
-        size="icon"
+        size="icon-sm"
         onClick={onFirstPage}
         disabled={!canGoPrevious || isLoading}
-        className="hover:bg-primary hover:text-primary-foreground h-9 w-9 transition-all disabled:opacity-50"
+        icon={<ChevronsLeft />}
         title="First page"
-      >
-        <ChevronsLeft className="h-4 w-4" />
-      </Button>
-      <Button
+      />
+      <CustomButton
         variant="outline"
-        size="icon"
+        size="icon-sm"
         onClick={onPreviousPage}
         disabled={!canGoPrevious || isLoading}
-        className="hover:bg-primary hover:text-primary-foreground h-9 w-9 transition-all disabled:opacity-50"
         title="Previous page"
-      >
-        <ChevronLeft className="h-4 w-4" />
-      </Button>
-      <Button
+        icon={<ChevronLeft />}
+      />
+      <CustomButton
         variant="outline"
-        size="icon"
+        size="icon-sm"
         onClick={onNextPage}
         disabled={!canGoNext || isLoading}
-        className="hover:bg-primary hover:text-primary-foreground h-9 w-9 transition-all disabled:opacity-50"
         title="Next page"
-      >
-        <ChevronRight className="h-4 w-4" />
-      </Button>
-      <Button
+        icon={<ChevronRight />}
+      />
+      <CustomButton
         variant="outline"
-        size="icon"
+        size="icon-sm"
         onClick={onLastPage}
         disabled={!canGoNext || isLoading}
-        className="hover:bg-primary hover:text-primary-foreground h-9 w-9 transition-all disabled:opacity-50"
         title="Last page"
-      >
-        <ChevronsRight className="h-4 w-4" />
-      </Button>
+        icon={<ChevronsRight />}
+      />
     </div>
   );
 };

@@ -38,7 +38,7 @@ const PagesRoute: React.FC = () => {
 
   const themeKey = theme.theme === 'light' ? 'light' : 'dark';
 
-  useEffect(() => { }, [theme]);
+  useEffect(() => {}, [theme]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
@@ -271,13 +271,16 @@ const PagesRoute: React.FC = () => {
                     placeholder={t('pages.searchPlaceholder')}
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
-                    className={`w-full rounded-lg border py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${theme.theme === 'dark'
-                      ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
-                      : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
-                      }`}
+                    className={`w-full rounded-lg border py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
+                      theme.theme === 'dark'
+                        ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                        : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+                    }`}
                     style={{
-                      backgroundColor: theme.theme === 'dark' ? '#374151' : '#ffffff',
-                      borderColor: theme.theme === 'dark' ? '#4b5563' : '#d1d5db',
+                      backgroundColor:
+                        theme.theme === 'dark' ? '#374151' : '#ffffff',
+                      borderColor:
+                        theme.theme === 'dark' ? '#4b5563' : '#d1d5db',
                       color: theme.theme === 'dark' ? '#ffffff' : '#111827',
                     }}
                   />
@@ -290,14 +293,15 @@ const PagesRoute: React.FC = () => {
 
               <Button
                 onClick={() => setShowFilters(!showFilters)}
-                className={`flex items-center gap-2 ${Object.values(filters).some(
-                  value => value !== '' && value !== undefined
-                )
-                  ? 'bg-blue-600 text-white'
-                  : theme.theme === 'dark'
-                    ? 'bg-gray-700 text-gray-300'
-                    : 'bg-gray-100 text-gray-700'
-                  }`}
+                className={`flex items-center gap-2 ${
+                  Object.values(filters).some(
+                    value => value !== '' && value !== undefined
+                  )
+                    ? 'bg-blue-600 text-white'
+                    : theme.theme === 'dark'
+                      ? 'bg-gray-700 text-gray-300'
+                      : 'bg-gray-100 text-gray-700'
+                }`}
                 style={{
                   backgroundColor: Object.values(filters).some(
                     value => value !== '' && value !== undefined
@@ -321,14 +325,14 @@ const PagesRoute: React.FC = () => {
                 {Object.values(filters).some(
                   value => value !== '' && value !== undefined
                 ) && (
-                    <span className="ml-1 rounded-full bg-white px-1.5 py-0.5 text-xs text-blue-600">
-                      {
-                        Object.values(filters).filter(
-                          value => value !== '' && value !== undefined
-                        ).length
-                      }
-                    </span>
-                  )}
+                  <span className="ml-1 rounded-full bg-white px-1.5 py-0.5 text-xs text-blue-600">
+                    {
+                      Object.values(filters).filter(
+                        value => value !== '' && value !== undefined
+                      ).length
+                    }
+                  </span>
+                )}
               </Button>
             </div>
 
@@ -346,10 +350,11 @@ const PagesRoute: React.FC = () => {
                     placeholder={t('pages.enterName')}
                     value={filters.name}
                     onChange={e => handleFilterChange('name', e.target.value)}
-                    className={`w-full rounded-lg border px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${theme.theme === 'dark'
-                      ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
-                      : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
-                      }`}
+                    className={`w-full rounded-lg border px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
+                      theme.theme === 'dark'
+                        ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                        : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+                    }`}
                   />
                 </div>
 
@@ -364,10 +369,11 @@ const PagesRoute: React.FC = () => {
                     placeholder={t('pages.enterPath')}
                     value={filters.path}
                     onChange={e => handleFilterChange('path', e.target.value)}
-                    className={`w-full rounded-lg border px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${theme.theme === 'dark'
-                      ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
-                      : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
-                      }`}
+                    className={`w-full rounded-lg border px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
+                      theme.theme === 'dark'
+                        ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                        : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+                    }`}
                   />
                 </div>
 
@@ -384,10 +390,11 @@ const PagesRoute: React.FC = () => {
                     onChange={e =>
                       handleFilterChange('component', e.target.value)
                     }
-                    className={`w-full rounded-lg border px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${theme.theme === 'dark'
-                      ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
-                      : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
-                      }`}
+                    className={`w-full rounded-lg border px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
+                      theme.theme === 'dark'
+                        ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
+                        : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+                    }`}
                   />
                 </div>
 
@@ -417,8 +424,10 @@ const PagesRoute: React.FC = () => {
                     onClick={clearFilters}
                     className="flex items-center gap-2"
                     style={{
-                      backgroundColor: theme.theme === 'dark' ? '#374151' : '#f3f4f6',
-                      borderColor: theme.theme === 'dark' ? '#4b5563' : '#d1d5db',
+                      backgroundColor:
+                        theme.theme === 'dark' ? '#374151' : '#f3f4f6',
+                      borderColor:
+                        theme.theme === 'dark' ? '#4b5563' : '#d1d5db',
                       color: theme.theme === 'dark' ? '#d1d5db' : '#374151',
                     }}
                   >

@@ -1,84 +1,86 @@
 import StatusBadge from '@/components/common/status-badge';
-import CustomButton from '@/components/CustomButton';
-import { ButtonGroup } from '@/components/ui/button-group';
-import { IRegion } from '@/services/region/types';
-import { ColumnDef } from '@tanstack/react-table';
+import type { IRegion } from '@/services/region/types';
+import type { ColumnDef } from '@tanstack/react-table';
+import type { NavigateFunction } from 'react-router-dom';
+import createColumns, {
+  type ColumnConfig,
+  type ActionsConfig,
+} from '@/components/CustomColumn';
 import dayjs from 'dayjs';
-import { Edit, ToggleLeft, ToggleRight, Trash2 } from 'lucide-react';
-import { NavigateFunction } from 'react-router-dom';
 
-interface IRegionColumnsProps {
+interface IGetRegionColumnsProps {
   navigate: NavigateFunction;
   deleteRegion: (id: string) => void;
   changeRegionStatus: (id: string) => void;
 }
 
-const getRegionColumns = ({
-  navigate,
-  deleteRegion,
-  changeRegionStatus,
-}: IRegionColumnsProps): ColumnDef<IRegion>[] => [
+const COLUMN_CONFIG: ColumnConfig<IRegion>[] = [
   {
     accessorKey: 'regionName',
     header: 'Region Name',
-    cell: ({ row }) => (
-      <span className="font-medium">{row.original.regionName}</span>
-    ),
+    size: 2,
+    cell: row => <span className="font-medium">{row.regionName}</span>,
   },
   {
     accessorKey: 'regionURL',
     header: 'Region URL',
-    cell: ({ row }) => (
+    size: 3,
+    cell: row => (
       <a
-        href={row.original.regionURL}
+        href={row.regionURL}
         target="_blank"
         rel="noopener noreferrer"
         className="text-primary inline-flex items-center gap-1 hover:underline"
       >
-        {row.original.regionURL}
+        {row.regionURL}
       </a>
     ),
   },
   {
     accessorKey: 'isActive',
     header: 'Status',
-    cell: ({ row }) => <StatusBadge isActive={row.original.isActive} />,
+    size: 1,
+    cell: row => <StatusBadge isActive={row.isActive} />,
   },
   {
     accessorKey: 'createdAt',
     header: 'Created At',
-    cell: ({ row }) => (
-      <span className="text-sm">
-        {dayjs(row.original.createdAt).format('DD/MM/YYYY HH:mm')}
-      </span>
-    ),
+    size: 2,
+    cell: row => dayjs(row.createdAt).format('DD/MM/YYYY HH:mm'),
   },
   {
-    accessorKey: 'id',
+    accessorKey: 'actions',
     header: 'Actions',
-    cell: ({ row }) => (
-      <ButtonGroup>
-        <CustomButton
-          variant="outline"
-          tooltip="Edit Region"
-          icon={<Edit />}
-          onClick={() => navigate(`/regions/${row.original.id}/edit`)}
-        />
-        <CustomButton
-          variant="outline"
-          tooltip="Change Region Status"
-          onClick={() => changeRegionStatus(row.original.id)}
-          icon={row.original.isActive ? <ToggleRight /> : <ToggleLeft />}
-        />
-        <CustomButton
-          variant="outline"
-          tooltip="Delete Region"
-          onClick={() => deleteRegion(row.original.id)}
-          icon={<Trash2 />}
-        />
-      </ButtonGroup>
-    ),
+    size: 1,
   },
 ];
+
+const getRegionColumns = ({
+  navigate,
+  deleteRegion,
+  changeRegionStatus,
+}: IGetRegionColumnsProps): ColumnDef<IRegion>[] => {
+  const actions: ActionsConfig<IRegion> = {
+    edit: {
+      label: 'Edit Region',
+      onClick: row => navigate(`/regions/${row.id}/edit`),
+    },
+    toggle: {
+      label: 'Change Region Status',
+      onClick: row => changeRegionStatus(row.id),
+    },
+    delete: {
+      label: 'Delete',
+      onConfirm: row => deleteRegion(row.id),
+      title: 'Delete Region',
+      description: 'Are you sure you want to delete this region?',
+    },
+  };
+
+  return createColumns<IRegion>({
+    config: COLUMN_CONFIG,
+    actions,
+  });
+};
 
 export default getRegionColumns;

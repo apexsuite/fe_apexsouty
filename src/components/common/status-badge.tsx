@@ -5,6 +5,9 @@ import {
   Hourglass,
   Shield,
   ShieldBan,
+  EyeOff,
+  Eye,
+  Hammer,
 } from 'lucide-react';
 
 const STATUS_MAP = {
@@ -13,6 +16,15 @@ const STATUS_MAP = {
   pending: { variant: 'warning', icon: Hourglass, label: 'Pending' },
   default: { variant: 'info', icon: Shield, label: 'Default' },
   not_default: { variant: 'warning', icon: ShieldBan, label: 'Not Default' },
+  visible: { variant: 'info', icon: Eye, label: 'Visible' },
+  invisible: { variant: 'warning', icon: EyeOff, label: 'Invisible' },
+  under_construction: {
+    variant: 'warning',
+    icon: Hammer,
+    label: 'Under Construction',
+  },
+  yes: { variant: 'success', icon: CheckCircle2, label: 'Yes' },
+  no: { variant: 'error', icon: XCircle, label: 'No' },
 } as const;
 
 export type StatusVariant = keyof typeof STATUS_MAP;

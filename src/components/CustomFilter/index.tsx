@@ -127,14 +127,39 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
           >
             <ListFilter />
             <span>Filter</span>
-            {activeFilters > 0 && (
-              <Badge
-                variant="secondary"
-                className="flex size-4 items-center justify-center rounded-full p-1"
-              >
-                {activeFilters}
-              </Badge>
-            )}
+            <AnimatePresence>
+              {activeFilters > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0, y: -4 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0, y: -4 }}
+                  transition={{
+                    type: 'spring',
+                    stiffness: 400,
+                    damping: 25,
+                    mass: 0.5,
+                  }}
+                >
+                  <Badge
+                    variant="secondary"
+                    className="flex size-4 items-center justify-center rounded-full p-1"
+                  >
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{
+                        delay: 0.1,
+                        type: 'spring',
+                        stiffness: 500,
+                        damping: 15,
+                      }}
+                    >
+                      {activeFilters}
+                    </motion.span>
+                  </Badge>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </Button>
         </Group>
         {path && <CreateButton path={path} />}

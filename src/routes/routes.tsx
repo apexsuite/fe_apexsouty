@@ -17,7 +17,7 @@ const Dashboard = lazy(() => import('@/pages/Dashboard'));
 const Permissions = lazy(() => import('@/pages/Permissions'));
 const AllServices = lazy(() => import('@/pages/AllServices'));
 const AllResources = lazy(() => import('@/pages/AllResources'));
-const PagesRoute = lazy(() => import('@/pages/PagesRoute'));
+const PageRoutes = lazy(() => import('@/pages/PageRoutes'));
 const PageDetailRoute = lazy(
   () => import('@/components/pagesRoute/PageDetailRoute')
 );
@@ -159,7 +159,7 @@ export const protectedRoutes: RouteObject[] = [
         children: [
           {
             index: true,
-            element: <PagesRoute />,
+            element: <PageRoutes />,
             handle: { title: 'routes.pageRoutes.title' },
           },
           {

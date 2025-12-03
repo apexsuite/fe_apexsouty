@@ -21,15 +21,12 @@ export const PageSizeSelector = ({
 }: PageSizeSelectorProps) => {
   return (
     <div className="flex items-center gap-2">
-      <label className="text-muted-foreground text-sm whitespace-nowrap">
-        Show:
-      </label>
       <Select
         value={String(currentPageSize)}
         onValueChange={value => onPageSizeChange(Number(value))}
         disabled={isLoading}
       >
-        <SelectTrigger className="h-8 w-[140px] shadow-none">
+        <SelectTrigger className="h-8 shadow-none">
           <SelectValue placeholder="Select page size" />
         </SelectTrigger>
         <SelectContent>
