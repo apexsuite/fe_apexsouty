@@ -64,16 +64,18 @@ export function ControlledInputText<T extends FieldValues>({
                 autoComplete={autoComplete}
               />
             </div>
-            <motion.span
-              animate={{
-                opacity: fieldState.error ? 1 : 0,
-                y: fieldState.error ? 0 : -10,
-              }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="text-destructive block min-h-[20px] text-xs font-medium"
-            >
-              {fieldState.error?.message}
-            </motion.span>
+            {fieldState.error && (
+              <motion.span
+                animate={{
+                  opacity: fieldState.error ? 1 : 0,
+                  y: fieldState.error ? 0 : -10,
+                }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+                className="text-destructive block min-h-[20px] text-xs font-medium"
+              >
+                {fieldState.error?.message}
+              </motion.span>
+            )}
           </div>
         )}
       />

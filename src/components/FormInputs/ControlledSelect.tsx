@@ -67,7 +67,9 @@ export function ControlledSelect<T extends FieldValues>({
                 }
                 onValueChange={value => {
                   // '__all__' özel değerini undefined'a çevir
-                  field.onChange(value === '__all__' ? undefined : value);
+                  field.onChange(
+                    value && value === '__all__' ? undefined : value
+                  );
                 }}
                 disabled={disabled}
               >
@@ -75,6 +77,7 @@ export function ControlledSelect<T extends FieldValues>({
                   id={name}
                   aria-invalid={fieldState.error ? 'true' : 'false'}
                   className={cn(
+                    'h-9',
                     Icon && 'pl-9',
                     fieldState.error &&
                       'border-destructive focus:ring-destructive/20'
@@ -99,16 +102,18 @@ export function ControlledSelect<T extends FieldValues>({
             {description && !fieldState.error && (
               <p className="text-muted-foreground text-sm">{description}</p>
             )}
-            <motion.span
-              animate={{
-                opacity: fieldState.error ? 1 : 0,
-                y: fieldState.error ? 0 : -10,
-              }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="text-destructive block min-h-[20px] text-xs font-medium"
-            >
-              {fieldState.error?.message}
-            </motion.span>
+            {fieldState.error && (
+              <motion.span
+                animate={{
+                  opacity: fieldState.error ? 1 : 0,
+                  y: fieldState.error ? 0 : -10,
+                }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+                className="text-destructive block min-h-[20px] text-xs font-medium"
+              >
+                {fieldState.error?.message}
+              </motion.span>
+            )}
           </div>
         )}
       />

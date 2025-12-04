@@ -21,9 +21,7 @@ const PageRoutes = lazy(() => import('@/pages/PageRoutes'));
 const PageDetailRoute = lazy(
   () => import('@/components/pagesRoute/PageDetailRoute')
 );
-const PageFormRoute = lazy(
-  () => import('@/components/pagesRoute/PageFormRoute')
-);
+const PageRouteForm = lazy(() => import('@/pages/PageRoutes/PageRouteForm'));
 const PageRoutePermissionsRoute = lazy(
   () => import('@/pages/PageRoutePermissionsRoute')
 );
@@ -156,26 +154,26 @@ export const protectedRoutes: RouteObject[] = [
       },
       {
         path: 'page-routes',
+        handle: { title: 'routes.pageRoutes.title' },
         children: [
           {
             index: true,
             element: <PageRoutes />,
-            handle: { title: 'routes.pageRoutes.title' },
           },
           {
             path: 'create',
-            element: <PageFormRoute />,
+            element: <PageRouteForm />,
             handle: { title: 'routes.pageRoutes.create' },
+          },
+          {
+            path: ':id/edit',
+            element: <PageRouteForm />,
+            handle: { title: 'routes.pageRoutes.edit' },
           },
           {
             path: ':id',
             element: <PageDetailRoute />,
             handle: { title: 'routes.pageRoutes.detail' },
-          },
-          {
-            path: ':id/edit',
-            element: <PageFormRoute />,
-            handle: { title: 'routes.pageRoutes.edit' },
           },
         ],
       },

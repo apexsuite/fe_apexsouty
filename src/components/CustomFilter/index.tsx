@@ -166,7 +166,7 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
           >
             <Card className="mt-4 p-4">
               <form onSubmit={handleSubmit(handleSearch)} onReset={handleReset}>
-                <div className="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-5">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-5">
                   {inputs.map(input => {
                     if (input.type === INPUT_TYPES.Select) {
                       return (

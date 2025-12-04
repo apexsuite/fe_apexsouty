@@ -6,6 +6,7 @@ import { fetchPrivateRoutes, forceRefresh } from '@/lib/routeGuardSlice';
 import { checkAuth } from '@/lib/authSlice';
 import { fetchMyPermissions } from '@/lib/permissionSlice';
 import AccessDenied from '@/pages/AccessDenied';
+import UnderConstruction from '@/pages/UnderConstruction';
 import { PUBLIC_ROUTES, ALWAYS_ALLOWED_ROUTES } from '@/utils/constants/routes';
 
 interface RouteGuardProps {
@@ -17,7 +18,7 @@ const RouteGuard: React.FC<RouteGuardProps> = ({ children }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { privateRoutes, loading, error } = useSelector(
+  const { privateRoutes, routeMap, loading, error } = useSelector(
     (state: RootState) => state.routeGuard
   );
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
@@ -152,6 +153,7 @@ const RouteGuard: React.FC<RouteGuardProps> = ({ children }) => {
   }, [
     location.pathname,
     privateRoutes,
+    routeMap,
     isAuthenticated,
     isPublicRoute,
     loading,
@@ -174,6 +176,19 @@ const RouteGuard: React.FC<RouteGuardProps> = ({ children }) => {
 
   if (!hasAccess && isAuthenticated) {
     return <AccessDenied />;
+  }
+
+  // Eğer route'un component'i UnderConstruction ise, UnderConstruction component'ini render et
+  const currentPath = location.pathname;
+  const routeInfo =
+    routeMap[currentPath] ||
+    Object.values(routeMap).find(
+      route =>
+        currentPath.startsWith(route.path + '/') || currentPath === route.path
+    );
+
+  if (routeInfo && routeInfo.component === 'UnderConstruction') {
+    return <UnderConstruction />;
   }
 
   return <>{children}</>;
