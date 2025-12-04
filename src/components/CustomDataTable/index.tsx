@@ -19,6 +19,7 @@ import { TableLoadingState } from './components/TableLoadingState';
 import { TableEmptyState } from './components/TableEmptyState';
 import { TablePaginationControls } from './components/TablePaginationControls';
 import { ReactNode } from 'react';
+import { cn } from '@/lib/utils';
 
 interface CustomDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -82,9 +83,10 @@ export default function CustomDataTable<TData, TValue>({
                   return (
                     <TableHead
                       key={header.id + idx}
-                      className={`bg-muted h-12 px-4 font-semibold ${
-                        meta?.className || ''
-                      }`}
+                      className={cn(
+                        'bg-muted h-12 font-semibold',
+                        meta?.className
+                      )}
                       style={{
                         ...meta?.style,
                         width:
@@ -132,7 +134,7 @@ export default function CustomDataTable<TData, TValue>({
                       return (
                         <TableCell
                           key={cell.id + idx}
-                          className={`px-4 py-3 ${meta?.className || ''}`}
+                          className={cn('p-3', meta?.className)}
                           style={{
                             ...meta?.style,
                             width:

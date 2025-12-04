@@ -27,10 +27,10 @@ export const TableLoadingState = ({
             return (
               <TableCell
                 key={colIndex}
-                className={cn('px-4 py-3', meta?.className)}
+                className={cn('shrink-0 p-3', meta?.className)}
                 style={meta?.style}
               >
-                <Skeleton className="h-6 w-full" />
+                <Skeleton className="h-6 w-full shrink-0" />
               </TableCell>
             );
           })}

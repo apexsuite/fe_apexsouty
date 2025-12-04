@@ -46,7 +46,9 @@ import { Separator } from '../ui/separator';
 
 type LucideIconComponent = React.ComponentType<{ size?: number }>;
 
-const getIconComponent = (icon?: string): LucideIconComponent | undefined => {
+export const getIconComponent = (
+  icon?: string
+): LucideIconComponent | undefined => {
   if (!icon) return undefined;
 
   return LucideIcons[icon as keyof typeof LucideIcons] as

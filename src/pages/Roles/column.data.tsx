@@ -22,7 +22,7 @@ const COLUMN_CONFIG: ColumnConfig<IRole>[] = [
   {
     accessorKey: 'description',
     header: 'Description',
-    size: 2,
+    size: 5,
     tooltip: true,
   },
   {
@@ -31,15 +31,15 @@ const COLUMN_CONFIG: ColumnConfig<IRole>[] = [
     size: 1,
   },
   {
+    accessorKey: 'permissionCount',
+    header: 'Permissions',
+    size: 1,
+  },
+  {
     accessorKey: 'isDefault',
     header: 'Is Default',
     size: 1,
     cell: row => <StatusBadge status={row.isDefault ? 'yes' : 'no'} />,
-  },
-  {
-    accessorKey: 'permissionCount',
-    header: 'Permissions',
-    size: 1,
   },
   {
     accessorKey: 'isActive',

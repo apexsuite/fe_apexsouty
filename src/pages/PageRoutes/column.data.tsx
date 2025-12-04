@@ -6,9 +6,9 @@ import createColumns, {
   type ColumnConfig,
   type ActionsConfig,
 } from '@/components/CustomColumn';
-import * as LucideIcons from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { t } from 'i18next';
+import { getIconComponent } from '@/components/layouts/dashboard-sidebar';
 
 interface IGetPageRouteColumnsProps {
   navigate: NavigateFunction;
@@ -16,30 +16,16 @@ interface IGetPageRouteColumnsProps {
   changePageRouteStatus: (id: string) => void;
 }
 
-const getLucideIcon = (icon: string) => {
-  if (!icon) return LucideIcons.Circle;
-
-  const pascalCaseName = icon
-    .split('-')
-    .map(word => word[0]?.toUpperCase() + word.slice(1).toLowerCase())
-    .join('');
-
-  const IconComponent = (
-    LucideIcons as unknown as Record<string, typeof LucideIcons.Circle>
-  )[pascalCaseName];
-  return IconComponent ?? LucideIcons.Circle;
-};
-
 const COLUMN_CONFIG: ColumnConfig<IPageRoute>[] = [
   {
     accessorKey: 'name',
     header: t('pages.table.name'),
     size: 1,
     cell: row => {
-      const IconComponent = getLucideIcon(row.icon);
+      const IconComponent = getIconComponent(row.icon ?? '');
       return (
         <div className="flex items-center gap-2">
-          <IconComponent />
+          {IconComponent && <IconComponent />}
           {row.name}
         </div>
       );

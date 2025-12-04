@@ -124,19 +124,21 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
             variant={activeFilters > 0 ? 'default' : 'outline'}
             onClick={() => setOpen(!open)}
             size="lg"
+            className="relative gap-2"
           >
             <ListFilter />
             <span>Filter</span>
-            <AnimatePresence>
+            <AnimatePresence initial={false}>
               {activeFilters > 0 && (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0, y: -4 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0, y: -4 }}
+                  layout
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0 }}
                   transition={{
                     type: 'spring',
-                    stiffness: 400,
-                    damping: 25,
+                    stiffness: 500,
+                    damping: 30,
                     mass: 0.5,
                   }}
                 >
@@ -144,18 +146,7 @@ const CustomFilter = ({ inputs, path }: CustomFilterProps) => {
                     variant="secondary"
                     className="flex size-4 items-center justify-center rounded-full p-1"
                   >
-                    <motion.span
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{
-                        delay: 0.1,
-                        type: 'spring',
-                        stiffness: 500,
-                        damping: 15,
-                      }}
-                    >
-                      {activeFilters}
-                    </motion.span>
+                    {activeFilters}
                   </Badge>
                 </motion.div>
               )}
