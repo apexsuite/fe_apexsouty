@@ -7,7 +7,10 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import CustomDataTable from '@/components/CustomDataTable';
 import { toastManager } from '@/components/ui/toast';
 import { TAGS } from '@/utils/constants/tags';
-import type { IPageRouteRequest } from '@/services/page-routes/types';
+import type {
+  IPageRouteRequest,
+  IPageRoutes,
+} from '@/services/page-routes/types';
 import getPageRouteColumns from '@/pages/PageRoutes/column.data';
 import {
   changePageRouteStatus,
@@ -15,6 +18,7 @@ import {
   getPageRoutes,
 } from '@/services/page-routes';
 import { FILTER_INPUTS } from '@/pages/PageRoutes/filter.data';
+import type { ColumnDef } from '@tanstack/react-table';
 
 export default function PageRoutes() {
   const navigate = useNavigate();
@@ -118,7 +122,7 @@ export default function PageRoutes() {
       filters={{ inputs: FILTER_INPUTS, path: '/page-routes/create' }}
       datatable={
         <CustomDataTable
-          columns={columns}
+          columns={columns as ColumnDef<IPageRoutes>[]}
           data={pageRoutes?.items || []}
           pagination={page.componentParams}
           setPagination={setPage}
