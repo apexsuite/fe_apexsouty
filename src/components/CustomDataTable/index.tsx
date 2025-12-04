@@ -62,8 +62,8 @@ export default function CustomDataTable<TData, TValue>({
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="bg-card overflow-hidden rounded-lg border">
-        <table className="w-full caption-bottom rounded-lg text-sm">
+      <div className="bg-card overflow-x-auto rounded-lg border">
+        <table className="w-full min-w-full caption-bottom text-sm">
           <TableHeader className="bg-muted sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup, idx) => (
               <TableRow

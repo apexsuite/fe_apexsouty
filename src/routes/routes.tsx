@@ -231,11 +231,11 @@ export const protectedRoutes: RouteObject[] = [
       },
       {
         path: 'products',
+        handle: { title: 'routes.products.title' },
         children: [
           {
             index: true,
             element: <Products />,
-            handle: { title: 'routes.products.title' },
           },
           {
             path: 'create',

@@ -18,7 +18,6 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
@@ -135,88 +134,97 @@ function DashboardSidebar() {
           <SearchBar />
         </div>
         {favoritesMenu.length > 0 && (
-          <SidebarGroup>
+          <SidebarGroup className="space-y-1">
             {state === 'expanded' && (
-              <SidebarGroupLabel className="flex items-center gap-2 px-2">
-                <LucideIcons.Star fill="#facc15" stroke="#facc15" />
-                <span className="text-sm font-medium">
-                  {t('sidebar.favorites')}
-                </span>
-              </SidebarGroupLabel>
+              <SidebarGroupLabel>{t('sidebar.favorites')}</SidebarGroupLabel>
             )}
-            <SidebarGroupContent>
-              <DragDropContext onDragEnd={handleFavoriteReorder}>
-                <Droppable droppableId="favorites">
-                  {provided => (
-                    <SidebarMenu
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                    >
-                      {favoritesMenu.map((item: MenuItem, idx: number) => {
-                        const Icon = getIconComponent(item.icon);
-                        const draggableId = String(item.favouriteId || item.id);
-                        const colorClasses = COLORS[idx % COLORS.length];
 
-                        return (
-                          <Draggable
-                            key={draggableId}
-                            draggableId={draggableId}
-                            index={idx}
-                          >
-                            {(provided, snapshot) => (
-                              <SidebarMenuItem
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
+            <DragDropContext onDragEnd={handleFavoriteReorder}>
+              <Droppable droppableId="favorites">
+                {provided => (
+                  <SidebarMenu
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    className="space-y-0.5"
+                  >
+                    {favoritesMenu.map((item: MenuItem, idx: number) => {
+                      const Icon = getIconComponent(item.icon);
+                      const draggableId = String(item.favouriteId || item.id);
+                      const colorClasses = COLORS[idx % COLORS.length];
+
+                      return (
+                        <Draggable
+                          key={draggableId}
+                          draggableId={draggableId}
+                          index={idx}
+                        >
+                          {provided => (
+                            <SidebarMenuItem
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              className={cn('group')}
+                            >
+                              <SidebarMenuButton
+                                asChild
+                                tooltip={item.name}
+                                size="lg"
                                 className={cn(
-                                  snapshot.isDragging &&
-                                    'group flex cursor-grab items-center gap-2 active:cursor-grabbing'
+                                  'h-9 px-0.5',
+                                  isCollapsed && '-ml-1'
                                 )}
                               >
-                                <SidebarMenuButton
-                                  asChild
-                                  tooltip={item.name}
-                                  size="lg"
-                                >
-                                  <Link to={item.path ?? '#'}>
-                                    {Icon && (
-                                      <div className={colorClasses}>
-                                        <Icon />
-                                      </div>
-                                    )}
+                                <Link to={item.path ?? '#'}>
+                                  {Icon && (
+                                    <div
+                                      className={cn(
+                                        colorClasses,
+                                        isCollapsed && 'p-2'
+                                      )}
+                                    >
+                                      <Icon />
+                                    </div>
+                                  )}
+                                  {!isCollapsed && (
                                     <span>{item.name || item.label}</span>
-                                  </Link>
-                                </SidebarMenuButton>
+                                  )}
+                                </Link>
+                              </SidebarMenuButton>
+                              <div className="flex items-center gap-0.5 opacity-0 transition-all duration-300 ease-in-out group-hover:opacity-100">
                                 {item.favouriteId && (
                                   <SidebarMenuAction asChild>
                                     <CustomButton
                                       variant="ghost"
                                       size="icon-xs"
+                                      className="hover:bg-muted translate-x-1 scale-0 transition-all duration-300 ease-in-out group-hover:translate-x-0 group-hover:scale-100"
                                       icon={
                                         <LucideIcons.Star
                                           fill="#facc15"
                                           stroke="#facc15"
+                                          className="size-3.5!"
                                         />
                                       }
-                                      onClick={() =>
+                                      onClick={e => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
                                         dispatch(
                                           deleteFavorite(item.favouriteId!)
-                                        )
-                                      }
+                                        );
+                                      }}
                                     />
                                   </SidebarMenuAction>
                                 )}
-                              </SidebarMenuItem>
-                            )}
-                          </Draggable>
-                        );
-                      })}
-                      {provided.placeholder}
-                    </SidebarMenu>
-                  )}
-                </Droppable>
-              </DragDropContext>
-            </SidebarGroupContent>
+                              </div>
+                            </SidebarMenuItem>
+                          )}
+                        </Draggable>
+                      );
+                    })}
+                    {provided.placeholder}
+                  </SidebarMenu>
+                )}
+              </Droppable>
+            </DragDropContext>
           </SidebarGroup>
         )}
       </SidebarContent>

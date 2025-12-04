@@ -32,7 +32,7 @@ export const DetailPage = ({
             icon={<ArrowLeft />}
             onClick={() => navigate(-1)}
             variant="outline"
-            size="icon-lg"
+            size="icon"
           />
           <div className="space-y-1">
             <div className="flex items-center gap-2">

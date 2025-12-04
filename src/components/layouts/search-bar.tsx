@@ -170,7 +170,7 @@ const SearchBar = () => {
   return (
     <>
       <Button
-        variant="outline"
+        variant="secondary"
         onClick={() => setOpen(true)}
         size={isCollapsed ? 'icon' : 'default'}
         className={!isCollapsed ? 'w-full' : undefined}

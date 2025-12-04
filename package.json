@@ -10,7 +10,9 @@
     "lint:fix": "eslint . --ext ts,tsx --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "knip": "knip",
+    "ts:check": "tsc --noEmit"
   },
   "dependencies": {
     "@base-ui-components/react": "^1.0.0-beta.6",
@@ -65,6 +67,7 @@
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.16",
+    "knip": "^5.66.4",
     "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.9",
     "tailwindcss": "^4.1.16",
