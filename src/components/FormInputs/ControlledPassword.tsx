@@ -1,9 +1,14 @@
 import { useState } from 'react';
 import { Controller, Control, FieldValues, Path } from 'react-hook-form';
 import { motion } from 'framer-motion';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import { Button } from '../ui/button';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
+} from '@/components/ui/input-group';
 import { cn } from '@/lib/utils';
 import { LucideIcon, Eye, EyeOff } from 'lucide-react';
 
@@ -31,7 +36,7 @@ export function ControlledPassword<T extends FieldValues>({
   icon: Icon,
   autoComplete = 'off',
 }: ControlledPasswordProps<T>) {
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   return (
     <div className={cn('space-y-2', className)}>
@@ -41,47 +46,50 @@ export function ControlledPassword<T extends FieldValues>({
           {required && <span className="text-destructive -ml-1">*</span>}
         </Label>
       )}
-
       <Controller
         control={control}
         name={name}
         render={({ field, fieldState }) => (
           <div className="flex flex-col gap-1">
-            <div className="relative">
-              {Icon && (
-                <Icon className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+            <InputGroup
+              className={cn(
+                fieldState.error &&
+                  'has-[input[aria-invalid=true]]:border-destructive/36 has-[input[aria-invalid=true]:focus-visible]:border-destructive/64'
               )}
-              <Input
+            >
+              {Icon && (
+                <InputGroupAddon align="inline-start">
+                  <InputGroupText>
+                    <Icon className="h-4 w-4" />
+                  </InputGroupText>
+                </InputGroupAddon>
+              )}
+              <InputGroupInput
                 {...field}
                 id={name}
                 type={showPassword ? 'text' : 'password'}
                 placeholder={placeholder}
                 disabled={disabled}
                 aria-invalid={fieldState.error ? 'true' : 'false'}
-                className={cn(
-                  Icon && 'pl-9',
-                  'pr-10',
-                  fieldState.error &&
-                    'border-destructive focus-visible:ring-destructive/20'
-                )}
                 autoComplete={autoComplete}
               />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="text-muted-foreground hover:text-foreground absolute top-1/2 right-0 h-8 w-8 -translate-y-1/2"
-                onClick={() => setShowPassword(!showPassword)}
-                disabled={disabled}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-              >
-                {showPassword ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-              </Button>
-            </div>
+              <InputGroupAddon align="inline-end">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-xs"
+                  onClick={() => setShowPassword(!showPassword)}
+                  disabled={disabled}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </Button>
+              </InputGroupAddon>
+            </InputGroup>
             <motion.span
               animate={{
                 opacity: fieldState.error ? 1 : 0,

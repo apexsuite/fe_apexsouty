@@ -25,7 +25,7 @@ export const DetailPage = ({
   const navigate = useNavigate();
 
   return (
-    <div className="mx-auto space-y-6 p-4">
+    <div className="mx-auto space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-4">
           <CustomButton

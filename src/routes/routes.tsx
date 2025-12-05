@@ -62,6 +62,10 @@ const Vendor = lazy(() => import('@/pages/Vendor'));
 const VendorForm = lazy(() => import('@/pages/Vendor/VendorForm'));
 const VendorDetail = lazy(() => import('@/pages/Vendor/VendorDetail'));
 
+const UserManagement = lazy(() => import('@/pages/UserManagment'));
+const UserDetail = lazy(() => import('@/pages/UserManagment/UserDetail'));
+const UserForm = lazy(() => import('@/pages/UserManagment/UserForm'));
+
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
@@ -339,6 +343,31 @@ export const protectedRoutes: RouteObject[] = [
             path: ':id/edit',
             element: <VendorForm />,
             handle: { title: 'routes.vendors.edit' },
+          },
+        ],
+      },
+      {
+        path: 'user-management',
+        handle: { title: 'routes.userManagement.title' },
+        children: [
+          {
+            index: true,
+            element: <UserManagement />,
+          },
+          {
+            path: ':id',
+            element: <UserDetail />,
+            handle: { title: 'routes.userManagement.detail' },
+          },
+          {
+            path: 'create',
+            element: <UserForm />,
+            handle: { title: 'routes.userManagement.create' },
+          },
+          {
+            path: ':id/edit',
+            element: <UserForm />,
+            handle: { title: 'routes.userManagement.edit' },
           },
         ],
       },

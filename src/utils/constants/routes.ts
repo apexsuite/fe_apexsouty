@@ -15,3 +15,6 @@ export const ALWAYS_ALLOWED_ROUTES = [
   '/all-services',
   '/all-resources',
 ] as const;
+
+export type PublicRoutes = (typeof PUBLIC_ROUTES)[number];
+export type AlwaysAllowedRoutes = (typeof ALWAYS_ALLOWED_ROUTES)[number];

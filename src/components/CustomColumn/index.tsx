@@ -5,11 +5,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import CustomButton from '@/components/CustomButton';
-import DeleteButton from '@/components/common/buttons/delete';
-import { ButtonGroup } from '@/components/ui/button-group';
-import { Eye, SquarePen, ToggleLeft, ToggleRight } from 'lucide-react';
+import { renderActions } from './actions';
 
+export interface CustomActionConfig<TData> {
+  label: string;
+  icon: React.ReactNode;
+  onClick: (row: TData) => void;
+}
 export interface ActionConfig<TData> {
   label: string;
   onClick: (row: TData) => void;
@@ -27,7 +29,7 @@ export interface ActionsConfig<TData> {
   view?: ActionConfig<TData>;
   delete?: DeleteActionConfig<TData>;
   toggle?: ActionConfig<TData>;
-  custom?: ActionConfig<TData>[];
+  custom?: CustomActionConfig<TData>[];
 }
 
 export interface ColumnConfig<TData> {
@@ -84,86 +86,10 @@ export function createColumns<TData>(
     );
   };
 
-  // Actions renderer oluştur
-  const renderActions = (row: TData): React.ReactNode => {
+  // Actions renderer wrapper
+  const renderActionsWrapper = (row: TData): React.ReactNode => {
     if (!actions) return null;
-
-    const actionButtons: React.ReactNode[] = [];
-
-    // View action - default icon: Eye
-    if (actions.view) {
-      actionButtons.push(
-        <CustomButton
-          key="view"
-          variant="outline"
-          tooltip={actions.view.label}
-          icon={<Eye />}
-          onClick={() => actions.view!.onClick(row)}
-          size="icon"
-        />
-      );
-    }
-
-    // Edit action - default icon: Edit
-    if (actions.edit) {
-      actionButtons.push(
-        <CustomButton
-          key="edit"
-          variant="outline"
-          tooltip={actions.edit.label}
-          icon={<SquarePen />}
-          onClick={() => actions.edit!.onClick(row)}
-          size="icon"
-        />
-      );
-    }
-
-    // Toggle action - dinamik icon (isActive durumuna göre)
-    if (actions.toggle) {
-      // Toggle için isActive field'ını kontrol et (genel kullanım için)
-      const isActive = (row as any).isActive;
-      const toggleIcon = isActive ? <ToggleRight /> : <ToggleLeft />;
-
-      actionButtons.push(
-        <CustomButton
-          key="toggle"
-          variant="outline"
-          tooltip={actions.toggle.label}
-          icon={toggleIcon}
-          onClick={() => actions.toggle!.onClick(row)}
-          size="icon"
-        />
-      );
-    }
-
-    // Delete action
-    if (actions.delete) {
-      actionButtons.push(
-        <DeleteButton
-          key="delete"
-          title={actions.delete.title}
-          description={actions.delete.description}
-          onConfirm={() => actions.delete!.onConfirm(row)}
-        />
-      );
-    }
-
-    // Custom actions
-    if (actions.custom) {
-      actions.custom.forEach((customAction, index) => {
-        actionButtons.push(
-          <CustomButton
-            key={`custom-${index}`}
-            variant="outline"
-            tooltip={customAction.label}
-            label={customAction.label}
-            onClick={() => customAction.onClick(row)}
-          />
-        );
-      });
-    }
-
-    return <ButtonGroup>{actionButtons}</ButtonGroup>;
+    return renderActions(row, actions);
   };
 
   return config.map(colConfig => {
@@ -177,7 +103,7 @@ export function createColumns<TData>(
 
     // Actions column için özel renderer
     if (colConfig.accessorKey === actionsAccessorKey && actions) {
-      columnDef.cell = ({ row }) => renderActions(row.original);
+      columnDef.cell = ({ row }) => renderActionsWrapper(row.original);
     } else if (colConfig.cell) {
       // Custom cell renderer varsa kullan
       columnDef.cell = ({ row }) => {

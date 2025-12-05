@@ -1,27 +1,29 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { Frame, FrameHeader, FramePanel, FrameTitle } from '../ui/frame';
+import { Link } from 'lucide-react';
+import { Badge } from '../ui/badge';
 
-export type InfoSectionLayout = 'grid' | 'list';
-export type InfoSectionItemType = 'text' | 'link' | 'code';
+export type Layout = 'grid' | 'list';
+export type ItemType = 'text' | 'link' | 'code';
 
-export interface InfoSectionItem {
+export interface Item {
   label: string;
   value: string | React.ReactNode;
   icon?: React.ReactNode;
-  type?: InfoSectionItemType;
+  type?: ItemType;
 }
 
 interface InfoSectionProps {
   title: string;
   icon?: React.ReactNode;
   className?: string;
-  layout?: InfoSectionLayout;
-  items?: InfoSectionItem[];
+  layout?: Layout;
+  items?: Item[];
   children?: React.ReactNode;
   actions?: React.ReactNode;
 }
 
-const renderItemValue = (item: InfoSectionItem) => {
+const renderItemValue = (item: Item) => {
   switch (item.type) {
     case 'link':
       return (
@@ -29,16 +31,18 @@ const renderItemValue = (item: InfoSectionItem) => {
           href={item.value as string}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm font-medium hover:underline"
+          className="group text-sm font-medium hover:underline"
         >
-          {item.value}
+          <span className="flex items-center gap-1">
+            {item.value} <Link className="opacity-0 group-hover:opacity-100" />
+          </span>
         </a>
       );
     case 'code':
       return (
-        <code className="bg-muted w-fit rounded-md px-2 py-1 font-mono text-sm font-medium">
+        <Badge className="w-fit" variant="secondary" size="lg">
           {item.value}
-        </code>
+        </Badge>
       );
     case 'text':
     default:
@@ -58,15 +62,15 @@ export const InfoSection = ({
   actions,
 }: InfoSectionProps) => {
   return (
-    <Card className={cn('overflow-hidden py-0', className)}>
-      <CardHeader className="bg-muted/50 border-b py-4">
-        <CardTitle className="flex items-center gap-2 text-lg">
+    <Frame className={cn(className)}>
+      <FrameHeader>
+        <FrameTitle className="flex items-center gap-2 text-lg">
           {icon}
           {title}
           <div className="ml-auto">{actions}</div>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className={cn('p-4', children ? 'p-2' : 'p-4')}>
+        </FrameTitle>
+      </FrameHeader>
+      <FramePanel>
         {children ? (
           <div className="flex flex-col gap-4">{children}</div>
         ) : (
@@ -74,7 +78,7 @@ export const InfoSection = ({
             className={cn(
               'gap-4',
               layout === 'grid'
-                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5'
                 : 'flex flex-col'
             )}
           >
@@ -84,16 +88,16 @@ export const InfoSection = ({
                   key={item.label}
                   className={cn('flex flex-col space-y-1.5')}
                 >
-                  <div className="text-muted-foreground flex items-center gap-2 font-medium">
+                  <h3 className="text-muted-foreground flex items-center gap-2 font-medium">
                     {item.icon}
-                    <span>{item.label}</span>
-                  </div>
+                    {item.label}
+                  </h3>
                   {renderItemValue(item)}
                 </div>
               ))}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </FramePanel>
+    </Frame>
   );
 };
