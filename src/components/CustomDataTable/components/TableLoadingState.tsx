@@ -1,6 +1,5 @@
 import { TableRow, TableCell } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
-import { cn } from '@/lib/utils';
 
 interface TableLoadingStateProps {
   columnCount: number;
@@ -18,7 +17,7 @@ export const TableLoadingState = ({
   return (
     <>
       {Array.from({ length: rowCount }).map((_, rowIndex) => (
-        <TableRow key={rowIndex} className="hover:bg-transparent">
+        <TableRow key={rowIndex}>
           {Array.from({ length: columnCount }).map((_, colIndex) => {
             const column = columns?.[colIndex];
             const meta = column?.meta as
@@ -27,7 +26,7 @@ export const TableLoadingState = ({
             return (
               <TableCell
                 key={colIndex}
-                className={cn('shrink-0 p-3', meta?.className)}
+                className={meta?.className}
                 style={meta?.style}
               >
                 <Skeleton className="h-6 w-full shrink-0" />
