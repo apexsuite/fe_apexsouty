@@ -46,9 +46,9 @@ const COLUMN_CONFIG: ColumnConfig<IUsers>[] = [
   {
     accessorKey: 'roles',
     header: 'Roles',
-    size: 1,
+    size: 2,
     cell: row => (
-      <div className="flex flex-wrap gap-1">
+      <>
         {row.roles && row.roles.length > 0 ? (
           <div className="flex flex-wrap gap-1">
             {row.roles.map(role => (
@@ -60,7 +60,7 @@ const COLUMN_CONFIG: ColumnConfig<IUsers>[] = [
         ) : (
           <span className="text-muted-foreground">-</span>
         )}
-      </div>
+      </>
     ),
   },
   {
