@@ -1,5 +1,6 @@
 import RouteGuard from '@/components/RouteGuard';
 import ClientLayout from '@/components/ClientLayout';
+
 import { RootState } from '@/lib/store';
 import { lazy } from 'react';
 import { useSelector } from 'react-redux';
@@ -75,7 +76,7 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return <Navigate to="/dashboard" replace />;
   }
 
-  return <>{children}</>;
+  return children;
 };
 
 const ProtectedLayout: React.FC = () => {

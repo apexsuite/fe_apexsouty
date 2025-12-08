@@ -33,7 +33,7 @@ export const TablePaginationControls = ({
   if (pageCount === 0) return null;
 
   return (
-    <div className="bg-card flex items-center justify-between rounded-xl border p-4">
+    <div className="bg-card flex items-center justify-between rounded-xl border p-2">
       <div className="flex items-center gap-3">
         <p className="text-foreground text-sm leading-none font-medium whitespace-nowrap">
           {`${totalCount} ${totalCount === 1 ? 'record' : 'records'}`}

@@ -12,21 +12,22 @@ export default function UnderConstruction() {
         title="Under Construction"
         description="This page is under construction."
         icon={<Hammer />}
-      >
-        <div className="flex items-center gap-2">
-          <CustomButton
-            onClick={() => navigate('/')}
-            label="Go Back"
-            icon={<ArrowLeft />}
-            variant="outline"
-          />
-          <CustomButton
-            onClick={() => navigate('/')}
-            label="Go Home"
-            icon={<Home />}
-          />
-        </div>
-      </Empty>
+        children={
+          <div className="flex items-center gap-2">
+            <CustomButton
+              onClick={() => navigate('/')}
+              label="Go Back"
+              icon={<ArrowLeft />}
+              variant="outline"
+            />
+            <CustomButton
+              onClick={() => navigate('/')}
+              label="Go Home"
+              icon={<Home />}
+            />
+          </div>
+        }
+      />
     </div>
   );
 }
