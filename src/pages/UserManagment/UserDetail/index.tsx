@@ -11,6 +11,7 @@ import {
   Package,
   Clock,
   Hash,
+  Trash,
 } from 'lucide-react';
 
 import { getUser } from '@/services/user-managment';
@@ -22,7 +23,10 @@ import StatusBadge, {
 } from '@/components/common/status-badge';
 import { TAGS } from '@/utils/constants/tags';
 import Empty from '@/components/common/empty';
-import { DetailPage } from '@/components/CustomPageLayout/detail-page';
+import {
+  DetailPage,
+  type DetailPageAction,
+} from '@/components/CustomPageLayout/detail-page';
 import { Badge } from '@/components/ui/badge';
 import type { IUserRole } from '@/services/user-managment/types';
 
@@ -141,6 +145,13 @@ export default function UserDetail() {
     },
   ];
 
+  const DETAIL_PAGE_ACTIONS: DetailPageAction[] = [
+    {
+      label: 'Delete User',
+      icon: <Trash />,
+    },
+  ];
+
   return (
     <DetailPage
       name={`${user?.firstname} ${user?.lastname}`}
@@ -148,6 +159,7 @@ export default function UserDetail() {
         label: 'Edit User',
         path: `/user-management/${id}/edit`,
       }}
+      actions={DETAIL_PAGE_ACTIONS}
     >
       <InfoSection
         title="User Information"

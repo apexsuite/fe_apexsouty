@@ -6,6 +6,12 @@ import StatusBadge, {
   type StatusVariant,
 } from '@/components/common/status-badge';
 
+export interface DetailPageAction {
+  label: string;
+  icon?: React.ReactNode;
+  onClick?: () => void;
+}
+
 interface DetailPageProps {
   name: string;
   status?: StatusVariant;
@@ -14,6 +20,7 @@ interface DetailPageProps {
     label: string;
     path: string;
   };
+  actions?: DetailPageAction[];
 }
 
 export const DetailPage = ({
@@ -21,6 +28,7 @@ export const DetailPage = ({
   status,
   children,
   edit,
+  actions,
 }: DetailPageProps) => {
   const navigate = useNavigate();
 
@@ -41,12 +49,23 @@ export const DetailPage = ({
             </div>
           </div>
         </div>
-        <CustomButton
-          label={edit.label}
-          onClick={() => navigate(edit.path)}
-          size="lg"
-          icon={<Edit />}
-        />
+        <div className="flex items-center gap-2">
+          <CustomButton
+            label={edit.label}
+            onClick={() => navigate(edit.path)}
+            size="lg"
+            icon={<Edit />}
+          />
+          {actions?.map(action => (
+            <CustomButton
+              key={action.label}
+              onClick={action.onClick}
+              icon={action.icon}
+              tooltip={action.label}
+              size="icon-lg"
+            />
+          ))}
+        </div>
       </div>
 
       {children}

@@ -33,7 +33,7 @@ export const TablePaginationControls = ({
   if (pageCount === 0) return null;
 
   return (
-    <div className="bg-card flex items-center justify-between rounded-xl border p-2">
+    <div className="bg-card flex items-center justify-between rounded-xl border px-2.5 py-2">
       <div className="flex items-center gap-3">
         <p className="text-foreground text-sm leading-none font-medium whitespace-nowrap">
           {`${totalCount} ${totalCount === 1 ? 'record' : 'records'}`}
@@ -46,7 +46,7 @@ export const TablePaginationControls = ({
         />
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-4">
         <p className="text-muted-foreground text-sm font-medium whitespace-nowrap">
           Page {currentPage} of {pageCount}
         </p>

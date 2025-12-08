@@ -11,10 +11,12 @@ import createColumns, {
 } from '@/components/CustomColumn';
 import dayjs from 'dayjs';
 import { Badge } from '@/components/ui/badge';
+import { KeySquare } from 'lucide-react';
 
 interface IGetUsersColumnsProps {
   navigate: NavigateFunction;
   changeUserStatus: (request: IChangeUserStatusRequest) => void;
+  onChangePassword: (user: { id: string; fullName: string }) => void;
 }
 
 const COLUMN_CONFIG: ColumnConfig<IUsers>[] = [
@@ -89,20 +91,28 @@ const COLUMN_CONFIG: ColumnConfig<IUsers>[] = [
 const getUsersColumns = ({
   navigate,
   changeUserStatus,
+  onChangePassword,
 }: IGetUsersColumnsProps): ColumnDef<IUsers>[] => {
   const actions: ActionsConfig<IUsers> = {
     view: {
       label: 'View User',
       onClick: row => navigate(`/user-management/${row.id}`),
     },
-    edit: {
-      label: 'Edit User',
-      onClick: row => navigate(`/user-management/${row.id}/edit`),
-    },
     toggle: {
       label: 'Change User Status',
       onClick: row => changeUserStatus({ id: row.id, isActive: !row.isActive }),
     },
+    custom: [
+      {
+        label: 'Change Password',
+        icon: <KeySquare />,
+        onClick: row =>
+          onChangePassword({
+            id: row.id,
+            fullName: `${row.firstname} ${row.lastname}`,
+          }),
+      },
+    ],
   };
 
   return createColumns<IUsers>({

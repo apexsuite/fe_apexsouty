@@ -26,13 +26,13 @@ export const PageSizeSelector = ({
         onValueChange={value => onPageSizeChange(Number(value))}
         disabled={isLoading}
       >
-        <SelectTrigger className="h-8 shadow-none">
+        <SelectTrigger className="h-8 w-fit shadow-none">
           <SelectValue placeholder="Select page size" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="w-fit">
           {PAGE_SIZE_OPTIONS.map(size => (
             <SelectItem key={size} value={String(size)}>
-              {size} per page
+              {size}
             </SelectItem>
           ))}
         </SelectContent>

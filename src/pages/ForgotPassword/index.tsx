@@ -7,7 +7,10 @@ import { forgotPassword } from '@/services/auth';
 import { IForgotPasswordRequest } from '@/services/auth/types';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { getForgotPasswordValidationSchema, ForgotPasswordFormData } from './forgotPassword.validation';
+import {
+  getForgotPasswordValidationSchema,
+  ForgotPasswordFormData,
+} from './forgotPassword.validation';
 import { ControlledInputText } from '@/components/FormInputs';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -26,10 +29,7 @@ export default function ForgotPassword() {
     [t]
   );
 
-  const {
-    control,
-    handleSubmit,
-  } = useForm<ForgotPasswordFormData>({
+  const { control, handleSubmit } = useForm<ForgotPasswordFormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       email: '',
@@ -38,7 +38,7 @@ export default function ForgotPassword() {
 
   const forgotPasswordMutation = useMutation({
     mutationFn: (data: IForgotPasswordRequest) => forgotPassword(data),
-    onSuccess: (response) => {
+    onSuccess: response => {
       if (response && !response.error) {
         toast.success(t('forgotPassword.success'));
         setTimeout(() => {
@@ -85,16 +85,16 @@ export default function ForgotPassword() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-950">
-      <div className="absolute right-4 top-4 z-10">
+      <div className="absolute top-4 right-4 z-10">
         <LanguageSwitcher />
       </div>
 
       <div className="w-full max-w-md px-4">
         <div className="mb-8 flex items-center justify-center gap-2">
-          <div className="flex size-10 items-center justify-center rounded-lg bg-gray-800 dark:bg-gray-800 shadow-md">
+          <div className="flex size-10 items-center justify-center rounded-lg bg-gray-800 shadow-md dark:bg-gray-800">
             <span className="text-xl font-bold text-white">A</span>
           </div>
-          <span className="text-3xl font-bold leading-tight tracking-tight text-gray-800 dark:text-white">
+          <span className="text-3xl leading-tight font-bold tracking-tight text-gray-800 dark:text-white">
             ApexScouty
           </span>
         </div>
@@ -129,12 +129,11 @@ export default function ForgotPassword() {
                 required
                 type="email"
                 icon={Mail}
-                autoComplete="email"
               />
 
               <Button
                 type="submit"
-                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-900 dark:bg-gray-200 dark:hover:bg-gray-300 dark:text-gray-900"
+                className="w-full bg-gray-200 text-gray-900 hover:bg-gray-300 dark:bg-gray-200 dark:text-gray-900 dark:hover:bg-gray-300"
                 size="xl"
                 disabled={forgotPasswordMutation.isPending}
               >
@@ -149,4 +148,3 @@ export default function ForgotPassword() {
     </div>
   );
 }
-

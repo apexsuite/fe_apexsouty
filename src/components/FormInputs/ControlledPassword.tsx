@@ -22,7 +22,6 @@ interface ControlledPasswordProps<T extends FieldValues> {
   className?: string;
   description?: string;
   icon?: LucideIcon;
-  autoComplete?: 'current-password' | 'new-password' | 'off';
 }
 
 export function ControlledPassword<T extends FieldValues>({
@@ -34,7 +33,6 @@ export function ControlledPassword<T extends FieldValues>({
   required = false,
   className,
   icon: Icon,
-  autoComplete = 'off',
 }: ControlledPasswordProps<T>) {
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -71,7 +69,7 @@ export function ControlledPassword<T extends FieldValues>({
                 placeholder={placeholder}
                 disabled={disabled}
                 aria-invalid={fieldState.error ? 'true' : 'false'}
-                autoComplete={autoComplete}
+                autoComplete="off"
               />
               <InputGroupAddon align="inline-end">
                 <Button
@@ -90,16 +88,18 @@ export function ControlledPassword<T extends FieldValues>({
                 </Button>
               </InputGroupAddon>
             </InputGroup>
-            <motion.span
-              animate={{
-                opacity: fieldState.error ? 1 : 0,
-                y: fieldState.error ? 0 : -10,
-              }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="text-destructive block min-h-[20px] text-xs font-medium"
-            >
-              {fieldState.error?.message}
-            </motion.span>
+            {fieldState.error && (
+              <motion.span
+                animate={{
+                  opacity: fieldState.error ? 1 : 0,
+                  y: fieldState.error ? 0 : -10,
+                }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+                className="text-destructive block min-h-[20px] text-xs font-medium"
+              >
+                {fieldState.error?.message}
+              </motion.span>
+            )}
           </div>
         )}
       />

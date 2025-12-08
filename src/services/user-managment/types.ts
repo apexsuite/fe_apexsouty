@@ -102,6 +102,10 @@ export interface IChangeUserStatusRequest {
   isActive: boolean;
 }
 
+export interface IChangeUserPasswordRequest {
+  newPassword: string;
+}
+
 export interface IUserSessions {
   expiresAt: string;
   tokenId: string;

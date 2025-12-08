@@ -124,9 +124,13 @@ function DashboardSidebar() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
-          <div className="bg-sidebar-primary flex size-8 items-center justify-center rounded-md">
-            <span className="text-white">A</span>
-          </div>
+          <Link to={'/'}>
+            <img
+              src="/logo.svg"
+              alt="ApexScouty"
+              className={cn('h-8 w-auto', isCollapsed && 'hidden')}
+            />
+          </Link>
           <SidebarTrigger />
         </motion.div>
       </SidebarHeader>
