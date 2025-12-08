@@ -11,6 +11,7 @@ import type {
   IUsersRequest,
 } from '@/services/user-managment/types';
 import type { IPageResponse } from '@/types/common.types';
+import type { ISubscription } from '../subscription/types';
 
 /* SERVICE BASE URL */
 const BASE_URL = '/user-management/users' as const;
@@ -90,11 +91,11 @@ export const getUserRoles = async (id: string): Promise<IUserRole[]> => {
 /* Permission: PERMISSIONS.USER_MANAGMENT.ASSIGN_ROLE */
 export const assignRoleToUser = async (
   id: string,
-  data: IUserRole[]
+  roleId: string
 ): Promise<IUser> => {
   const response = await apiRequest(`${BASE_URL}/${id}/roles`, {
     method: 'POST',
-    data,
+    body: JSON.stringify({ roleId }),
   });
   return response.data || response;
 };
@@ -144,5 +145,27 @@ export const deleteUserSession = async (
       method: 'DELETE',
     }
   );
+  return response.data || response;
+};
+
+/* Permission: PERMISSIONS.USER_MANAGMENT.GET_USER_SUBSCRIPTION */
+export const getUserSubscription = async (
+  id: string
+): Promise<ISubscription> => {
+  const response = await apiRequest(`${BASE_URL}/${id}/subscription`, {
+    method: 'GET',
+  });
+  return response.data || response;
+};
+
+/* Permission: PERMISSIONS.USER_MANAGMENT.UPDATE_USER_SUBSCRIPTION_CAPACITY */
+export const updateUserSubscriptionCapacity = async (
+  id: string,
+  customCapacity: number
+): Promise<IUser> => {
+  const response = await apiRequest(`${BASE_URL}/${id}/subscription/capacity`, {
+    method: 'PATCH',
+    body: JSON.stringify({ customCapacity }),
+  });
   return response.data || response;
 };

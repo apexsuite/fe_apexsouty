@@ -10,9 +10,7 @@ import {
 import CustomButton from '@/components/CustomButton';
 import DeleteButton from '@/components/common/buttons/delete';
 import { Group, GroupSeparator } from '@/components/ui/group';
-import { ButtonGroup } from '@/components/ui/button-group';
 import { Menu, MenuTrigger, MenuPopup, MenuItem } from '@/components/ui/menu';
-import { Button } from '@/components/ui/button';
 import type { ActionsConfig } from '.';
 
 const MAX_ACTIONS = 4;
@@ -134,11 +132,22 @@ export function renderActions<TData>(
   // Custom actions
   if (actions.custom) {
     actions.custom.forEach((customAction, index) => {
+      // If component is provided, render it
+      if (customAction.component) {
+        actionButtons.push(
+          <React.Fragment key={`custom-${index}`}>
+            {customAction.component(row)}
+          </React.Fragment>
+        );
+        return;
+      }
+
+      // Yoksa normal button render et
       const metadata: ActionMetadata = {
         key: `custom-${index}`,
         label: customAction.label,
         icon: customAction.icon,
-        onClick: () => customAction.onClick(row),
+        onClick: () => customAction.onClick?.(row),
       };
       actionMetadata.push(metadata);
       actionButtons.push(
@@ -148,7 +157,7 @@ export function renderActions<TData>(
           icon={customAction.icon}
           label={customAction.label}
           tooltip={customAction.label}
-          onClick={() => customAction.onClick(row)}
+          onClick={() => customAction.onClick?.(row)}
           size="icon"
         />
       );
@@ -179,7 +188,12 @@ export function renderActions<TData>(
         <Menu key="more-actions">
           <MenuTrigger
             render={
-              <Button aria-label="More actions" size="icon" variant="outline" />
+              <CustomButton
+                aria-label="More actions"
+                size="icon"
+                icon={<EllipsisIcon />}
+                variant="outline"
+              />
             }
           >
             <EllipsisIcon />
@@ -229,5 +243,5 @@ export function renderActions<TData>(
   }
 
   // 4 veya daha az action varsa ButtonGroup kullan
-  return <ButtonGroup>{actionButtons}</ButtonGroup>;
+  return <Group>{actionButtons}</Group>;
 }

@@ -20,7 +20,6 @@ interface DetailPageProps {
     label: string;
     path: string;
   };
-  actions?: DetailPageAction[];
 }
 
 export const DetailPage = ({
@@ -28,46 +27,33 @@ export const DetailPage = ({
   status,
   children,
   edit,
-  actions,
 }: DetailPageProps) => {
   const navigate = useNavigate();
 
   return (
-    <div className="mx-auto space-y-6">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-start gap-4">
+    <div className="mx-auto space-y-4">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-start gap-2">
           <CustomButton
             icon={<ArrowLeft />}
             onClick={() => navigate(-1)}
-            variant="outline"
+            variant="ghost"
             size="icon"
           />
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold tracking-tight">{name}</h1>
+              <h1 className="text-2xl font-semibold tracking-tight">{name}</h1>
               {status && <StatusBadge status={status} />}
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <CustomButton
-            label={edit.label}
-            onClick={() => navigate(edit.path)}
-            size="lg"
-            icon={<Edit />}
-          />
-          {actions?.map(action => (
-            <CustomButton
-              key={action.label}
-              onClick={action.onClick}
-              icon={action.icon}
-              tooltip={action.label}
-              size="icon-lg"
-            />
-          ))}
-        </div>
+        <CustomButton
+          label={edit.label}
+          onClick={() => navigate(edit.path)}
+          size="lg"
+          icon={<Edit />}
+        />
       </div>
-
       {children}
     </div>
   );

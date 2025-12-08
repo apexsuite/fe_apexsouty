@@ -63,8 +63,8 @@ export const InfoSection = ({
 }: InfoSectionProps) => {
   return (
     <Frame className={cn(className)}>
-      <FrameHeader>
-        <FrameTitle className="flex items-center gap-2 text-lg font-medium">
+      <FrameHeader className="py-3">
+        <FrameTitle className="flex items-center gap-2 text-base">
           {icon}
           {title}
           <div className="ml-auto">{actions}</div>

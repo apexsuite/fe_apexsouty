@@ -6,11 +6,13 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { renderActions } from './actions';
+import ClipboardCell from './ClipboardCell';
 
 export interface CustomActionConfig<TData> {
   label: string;
   icon: React.ReactNode;
-  onClick: (row: TData) => void;
+  onClick?: (row: TData) => void;
+  component?: (row: TData) => React.ReactNode;
 }
 export interface ActionConfig<TData> {
   label: string;
@@ -38,6 +40,7 @@ export interface ColumnConfig<TData> {
   size: number;
   cell?: (row: TData) => React.ReactNode;
   tooltip?: boolean | string;
+  clipboard?: boolean;
 }
 
 interface CustomColumnOptions<TData> {
@@ -108,18 +111,38 @@ export function createColumns<TData>(
       // Custom cell renderer varsa kullan
       columnDef.cell = ({ row }) => {
         const cellContent = colConfig.cell!(row.original);
+        const value = (row.original as any)[colConfig.accessorKey];
+
+        // Clipboard desteği
+        let finalContent = cellContent;
+        if (colConfig.clipboard) {
+          finalContent = (
+            <ClipboardCell value={value}>{cellContent}</ClipboardCell>
+          );
+        }
+
         // Tooltip desteği
         if (colConfig.tooltip) {
-          const value = (row.original as any)[colConfig.accessorKey];
-          return wrapWithTooltip(cellContent, colConfig.tooltip, value);
+          return wrapWithTooltip(finalContent, colConfig.tooltip, value);
         }
-        return cellContent;
+        return finalContent;
       };
-    } else if (colConfig.tooltip) {
-      // Tooltip desteği - otomatik değer gösterimi
+    } else if (colConfig.tooltip || colConfig.clipboard) {
+      // Tooltip veya Clipboard desteği - otomatik değer gösterimi
       columnDef.cell = ({ row }) => {
         const value = (row.original as any)[colConfig.accessorKey];
-        return wrapWithTooltip(<span>{value}</span>, colConfig.tooltip, value);
+        let content = <span>{value}</span>;
+
+        // Clipboard desteği
+        if (colConfig.clipboard) {
+          content = <ClipboardCell value={value}>{content}</ClipboardCell>;
+        }
+
+        // Tooltip desteği
+        if (colConfig.tooltip) {
+          return wrapWithTooltip(content, colConfig.tooltip, value);
+        }
+        return content;
       };
     }
 

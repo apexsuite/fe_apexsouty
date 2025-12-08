@@ -6,7 +6,6 @@ import {
   InputGroupInput,
   InputGroupText,
 } from '@/components/ui/input-group';
-import { cn } from '@/lib/utils';
 import { Label } from '@/components/ui/label';
 
 import { LucideIcon } from 'lucide-react';
@@ -39,23 +38,18 @@ export function ControlledInputText<T extends FieldValues>({
       control={control}
       name={name}
       render={({ field, fieldState }) => (
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
           {label && (
             <Label htmlFor={name}>
               {label}
               {required && <span className="text-destructive -ml-1">*</span>}
             </Label>
           )}
-          <InputGroup
-            className={cn(
-              fieldState.error &&
-                'has-[input[aria-invalid=true]]:border-destructive/36 has-[input[aria-invalid=true]:focus-visible]:border-destructive/64'
-            )}
-          >
+          <InputGroup>
             {Icon && (
               <InputGroupAddon align="inline-start">
                 <InputGroupText>
-                  <Icon className="h-4 w-4" />
+                  <Icon />
                 </InputGroupText>
               </InputGroupAddon>
             )}
@@ -65,7 +59,6 @@ export function ControlledInputText<T extends FieldValues>({
               type={type}
               placeholder={placeholder}
               disabled={disabled}
-              aria-invalid={fieldState.error ? 'true' : 'false'}
             />
           </InputGroup>
           {fieldState.error && (
