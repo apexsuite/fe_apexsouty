@@ -1,11 +1,11 @@
 import React from 'react';
 import {
-  Eye,
   SquarePen,
   ToggleLeft,
   ToggleRight,
   EllipsisIcon,
   TrashIcon,
+  InfoIcon,
 } from 'lucide-react';
 import CustomButton from '@/components/CustomButton';
 import DeleteButton from '@/components/common/buttons/delete';
@@ -39,12 +39,12 @@ export function renderActions<TData>(
   const actionMetadata: ActionMetadata[] = [];
   const actionButtons: React.ReactNode[] = [];
 
-  // View action - default icon: Eye
+  // View action - default icon: InfoIcon
   if (actions.view) {
     const metadata: ActionMetadata = {
       key: 'view',
       label: actions.view.label,
-      icon: <Eye />,
+      icon: <InfoIcon />,
       onClick: () => actions.view!.onClick(row),
     };
     actionMetadata.push(metadata);
@@ -53,7 +53,7 @@ export function renderActions<TData>(
         key="view"
         variant="outline"
         tooltip={actions.view.label}
-        icon={<Eye />}
+        icon={<InfoIcon />}
         onClick={() => actions.view!.onClick(row)}
         size="icon"
       />
