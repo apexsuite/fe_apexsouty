@@ -22,10 +22,12 @@ export interface FilterInputs {
 /**
  * @param inputs - The inputs for the filters
  * @param path - The path to navigate to when the create button is clicked
+ * @param createPermission - The permission required to show the create button
  */
 export interface CustomFilterProps {
   inputs: FilterInputs[];
   path?: string;
+  createPermission?: string;
 }
 
 export type FilterFormData = Record<string, string | boolean>;

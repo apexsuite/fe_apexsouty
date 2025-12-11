@@ -55,6 +55,18 @@
             "create": "Tedarikçi Oluştur",
             "edit": "Tedarikçi Düzenle"
         },
+        "support": {
+            "title": "Destek",
+            "create": "Destek Oluştur",
+            "edit": "Destek Düzenle",
+            "detail": "Destek Detayı",
+            "messages": {
+                "title": "Mesajlar",
+                "detail": "Mesaj Detayı",
+                "edit": "Mesaj Düzenle",
+                "create": "Mesaj Oluştur"
+            }
+        },
         "permissionExamples": "İzin Örnekleri"
     },
     "notification": {
@@ -107,7 +119,9 @@
         "priceStatusChangedSuccessfully": "Fiyat durumu başarıyla değiştirildi!",
         "priceSetAsDefaultSuccessfully": "Fiyat varsayılan olarak ayarlandı!",
         "priceCreatedSuccessfully": "Fiyat başarıyla oluşturuldu!",
-        "permissionStatusChangedSuccessfully": "İzin durumu başarıyla değiştirildi!"
+        "permissionStatusChangedSuccessfully": "İzin durumu başarıyla değiştirildi!",
+        "supportTicketCreatedSuccessfully": "Destek talebi başarıyla oluşturuldu!",
+        "supportTicketUpdatedSuccessfully": "Destek talebi başarıyla güncellendi!"
     },
     "reset": {
         "title": "Reset Password",
@@ -891,6 +905,158 @@
         "postalCodeRequired": "Lütfen adres formundaki Posta kodu alanını doldurun",
         "countryRequired": "Lütfen adres formundaki Ülke alanını doldurun",
         "phoneRequired": "Lütfen adres formundaki Telefon numarası alanını doldurun"
+    },
+    "support": {
+        "list": {
+            "title": "Destek Kayıtları",
+            "description": "Destek taleplerini görüntüleyin ve yönetin",
+            "filters": "Filtreler",
+            "table": {
+                "subject": "Konu",
+                "status": "Durum",
+                "priority": "Öncelik",
+                "category": "Kategori",
+                "createdBy": "Oluşturan",
+                "createdById": "Oluşturan ID",
+                "createdAt": "Oluşturulma",
+                "lastActivityAt": "Son Aktivite",
+                "ownerId": "Sahip ID",
+                "messages": "Mesajlar",
+                "attachments": "Ekler",
+                "replied": "Cevaplandı",
+                "actions": "İşlemler",
+                "assignedTo": "Atanan Kullanıcı"
+            },
+            "filtersForm": {
+                "subject": {
+                    "label": "Konu",
+                    "placeholder": "Konu girin"
+                },
+                "status": {
+                    "label": "Durum",
+                    "placeholder": "Durum seçin"
+                },
+                "priority": {
+                    "label": "Öncelik",
+                    "placeholder": "Öncelik seçin"
+                },
+                "category": {
+                    "label": "Kategori",
+                    "placeholder": "Kategori seçin"
+                },
+                "assignedToId": {
+                    "label": "Atanan Kullanıcı ID",
+                    "placeholder": "Atanan kullanıcı ID girin"
+                },
+                "isPersonal": {
+                    "label": "Kişisel",
+                    "placeholder": "Kişisel seçin"
+                }
+            },
+            "tooltips": {
+                "viewTicket": "Destek kaydını görüntüle",
+                "copyCreatedById": "Oluşturan ID'yi kopyala",
+                "copyOwnerId": "Sahip ID'yi kopyala",
+                "editTicket": "Destek talebini düzenle",
+                "viewMessages": "Mesajları görüntüle"
+            },
+            "copy": {
+                "createdByIdSuccess": "Oluşturan ID panoya kopyalandı",
+                "ownerIdSuccess": "Sahip ID panoya kopyalandı",
+                "genericSuccess": "ID panoya kopyalandı",
+                "error": "Kopyalama sırasında bir hata oluştu"
+            },
+            "values": {
+                "yes": "Evet",
+                "no": "Hayır"
+            },
+            "deleteConfirm": "Bu ticket'ı silmek istediğinize emin misiniz?"
+        },
+        "detail": {
+            "description": "İlk mesaj",
+            "conversation": "Mesajlaşma geçmişi",
+            "internalNote": "İç not",
+            "noMessages": "Henüz mesaj yok.",
+            "resolvedAt": "Çözüldü",
+            "closedAt": "Kapatıldı",
+            "noAttachments": "Bu ticket için ekli dosya yok.",
+            "headerDescription": "Destek bileti detay bilgilerini görüntüleyebilirsiniz.",
+            "systemInformation": "Sistem Bilgileri",
+            "reopen": "Ticket'ı Yeniden Aç",
+            "close": "Ticket'ı Kapat",
+            "delete": "Ticket'ı Sil",
+            "reopenSuccess": "Destek talebi başarıyla yeniden açıldı.",
+            "closeSuccess": "Destek talebi başarıyla kapatıldı.",
+            "deleteSuccess": "Destek talebi başarıyla silindi.",
+            "assignSuccess": "Ticket ataması başarıyla güncellendi.",
+            "unassignSuccess": "Ticket ataması başarıyla kaldırıldı.",
+            "assignedToIdPlaceholder": "Kullanıcı ID (UUID) girin"
+        },
+        "form": {
+            "createTitle": "Destek Talebi Oluştur",
+            "updateTitle": "Destek Talebini Güncelle",
+            "createDescription": "Probleminizi detaylandırın, en kısa sürede size geri dönüş yapalım.",
+            "updateDescription": "Destek talebinizin detaylarını güncelleyebilirsiniz.",
+            "subject": {
+                "label": "Konu",
+                "placeholder": "Konu başlığı girin",
+                "required": "Konu alanı zorunludur"
+            },
+            "description": {
+                "label": "Açıklama",
+                "placeholder": "Yaşadığınız problemi mümkün olduğunca detaylı anlatın",
+                "required": "Açıklama alanı zorunludur"
+            },
+            "priority": {
+                "label": "Öncelik",
+                "placeholder": "Öncelik seçin",
+                "required": "Öncelik alanı zorunludur"
+            },
+            "category": {
+                "label": "Kategori",
+                "placeholder": "Kategori seçin",
+                "required": "Kategori alanı zorunludur"
+            },
+            "attachments": {
+                "label": "Ekler",
+                "helper": "Probleminizle ilgili ekran görüntüsü, döküman veya diğer dosyaları ekleyebilirsiniz."
+            },
+            "submit": "Talep Oluştur",
+            "updateSubmit": "Talebi Güncelle"
+        },
+        "messages": {
+            "title": "Mesajlar",
+            "description": "Ticket mesaj geçmişini görüntüleyebilirsiniz.",
+            "table": {
+                "ownerId": "Sahip ID",
+                "message": "Mesaj",
+                "createdAt": "Gönderim Tarihi",
+                "copyOwnerId": "Sahip ID'yi kopyala",
+                "copyOwnerIdSuccess": "Sahip ID panoya kopyalandı",
+                "viewDetail": "Mesaj detayını görüntüle",
+                "editMessage": "Mesajı düzenle",
+                "deleteMessage": "Mesajı sil"
+            },
+            "createTitle": "Yeni Mesaj Oluştur",
+            "createDescription": "Ticket için yeni bir mesaj ekleyebilirsiniz.",
+            "createSuccess": "Mesaj başarıyla oluşturuldu.",
+            "updateTitle": "Mesajı Güncelle",
+            "updateDescription": "Mesaj içeriğini güncelleyebilirsiniz.",
+            "updateSuccess": "Mesaj başarıyla güncellendi.",
+            "deleteSuccess": "Mesaj başarıyla silindi.",
+            "deleteConfirm": "Bu mesajı silmek istediğinize emin misiniz?",
+            "detailTitle": "Mesaj Detayı",
+            "detailDescription": "Seçili mesaja ait detayları görüntüleyebilirsiniz.",
+            "detailInfo": "Mesaj Bilgileri",
+            "form": {
+                "message": {
+                    "label": "Mesaj",
+                    "placeholder": "Mesajınızı yazın"
+                },
+                "submit": "Mesaj Oluştur",
+                "updateSubmit": "Mesajı Güncelle"
+            }
+        }
     },
     "subscriptions": {
         "pageHeader": {
