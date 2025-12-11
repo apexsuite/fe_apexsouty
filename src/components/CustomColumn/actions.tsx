@@ -39,12 +39,11 @@ export function renderActions<TData>(
   const actionMetadata: ActionMetadata[] = [];
   const actionButtons: React.ReactNode[] = [];
 
-  // View action - default icon: InfoIcon
   if (actions.view) {
     const metadata: ActionMetadata = {
       key: 'view',
       label: actions.view.label,
-      icon: <InfoIcon />,
+      icon: <InfoIcon className='size-3.5' />,
       onClick: () => actions.view!.onClick(row),
     };
     actionMetadata.push(metadata);
@@ -53,7 +52,7 @@ export function renderActions<TData>(
         key="view"
         variant="outline"
         tooltip={actions.view.label}
-        icon={<InfoIcon />}
+        icon={<InfoIcon className='size-3.5' />}
         onClick={() => actions.view!.onClick(row)}
         size="icon"
       />

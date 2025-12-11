@@ -12,7 +12,7 @@ import { Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import CustomButton from './CustomButton';
 
-const LANGUAGES = {
+export const LANGUAGES = {
   en: {
     name: 'English',
     flag: '🇬🇧',

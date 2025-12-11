@@ -16,7 +16,6 @@ import { t } from 'i18next';
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
   SidebarHeader,
@@ -37,8 +36,6 @@ import {
   reorderFavoritesLocally,
   type MenuItem,
 } from '@/lib/menuSlice';
-import { logoutUser } from '@/lib/authSlice';
-import { clearPageHistory } from '@/utils/hooks/usePageHistory';
 import { COLORS } from '@/utils/constants/colors';
 import CustomButton from '@/components/CustomButton';
 import SearchBar from './search-bar';
@@ -68,10 +65,6 @@ function DashboardSidebar() {
     dispatch(fetchFavorites());
   }, [dispatch]);
 
-  const handleLogout = () => {
-    dispatch(logoutUser());
-    clearPageHistory();
-  };
 
   const handleFavoriteReorder = (result: DropResult) => {
     if (!result.destination) return;
@@ -234,20 +227,6 @@ function DashboardSidebar() {
           </SidebarGroup>
         )}
       </SidebarContent>
-      <SidebarFooter>
-        <CustomButton
-          icon={<LucideIcons.LogOut />}
-          label={t('sidebar.logout')}
-          onClick={handleLogout}
-          variant="outline"
-          size={isCollapsed ? 'icon' : 'default'}
-        />
-        {state === 'expanded' && (
-          <div className="text-muted-foreground px-2 text-center text-xs">
-            © 2024 ApexScouty
-          </div>
-        )}
-      </SidebarFooter>
     </Sidebar>
   );
 }
