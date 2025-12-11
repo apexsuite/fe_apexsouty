@@ -15,7 +15,7 @@ const CustomPageLayout = ({
   description,
 }: CustomPageLayoutProps) => {
   return (
-    <section className="w-full p-4 lg:p-8">
+    <section className="w-full">
       <div className="space-y-1">
         <h1 className="text-2xl font-bold">{title}</h1>
         <p className="text-muted-foreground">{description}</p>

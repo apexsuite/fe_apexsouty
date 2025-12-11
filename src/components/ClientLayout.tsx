@@ -29,9 +29,9 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
         <DashboardSidebar />
         <SidebarInset className="z-0 flex flex-col">
           <Navbar />
-          <main className="h-[calc(100vh-3rem)] overflow-x-hidden overflow-y-auto">
+          <div className="h-[calc(100vh-3rem)] overflow-x-hidden overflow-y-auto p-4">
             {children}
-          </main>
+          </div>
         </SidebarInset>
       </div>
     </SidebarProvider>

@@ -1,68 +1,64 @@
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import CustomButton from '@/components/CustomButton';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from 'lucide-react';
 
 interface PaginationNavigationButtonsProps {
-    onFirstPage: () => void;
-    onPreviousPage: () => void;
-    onNextPage: () => void;
-    onLastPage: () => void;
-    canGoPrevious: boolean;
-    canGoNext: boolean;
-    isLoading: boolean;
+  onFirstPage: () => void;
+  onPreviousPage: () => void;
+  onNextPage: () => void;
+  onLastPage: () => void;
+  canGoPrevious: boolean;
+  canGoNext: boolean;
+  isLoading: boolean;
 }
 
 export const PaginationNavigationButtons = ({
-    onFirstPage,
-    onPreviousPage,
-    onNextPage,
-    onLastPage,
-    canGoPrevious,
-    canGoNext,
-    isLoading,
+  onFirstPage,
+  onPreviousPage,
+  onNextPage,
+  onLastPage,
+  canGoPrevious,
+  canGoNext,
+  isLoading,
 }: PaginationNavigationButtonsProps) => {
-    return (
-        <div className="flex items-center gap-1">
-            <Button
-                variant="outline"
-                size="icon"
-                onClick={onFirstPage}
-                disabled={!canGoPrevious || isLoading}
-                className="h-9 w-9 transition-all hover:bg-primary hover:text-primary-foreground disabled:opacity-50"
-                title="First page"
-            >
-                <ChevronsLeft className="h-4 w-4" />
-            </Button>
-            <Button
-                variant="outline"
-                size="icon"
-                onClick={onPreviousPage}
-                disabled={!canGoPrevious || isLoading}
-                className="h-9 w-9 transition-all hover:bg-primary hover:text-primary-foreground disabled:opacity-50"
-                title="Previous page"
-            >
-                <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-                variant="outline"
-                size="icon"
-                onClick={onNextPage}
-                disabled={!canGoNext || isLoading}
-                className="h-9 w-9 transition-all hover:bg-primary hover:text-primary-foreground disabled:opacity-50"
-                title="Next page"
-            >
-                <ChevronRight className="h-4 w-4" />
-            </Button>
-            <Button
-                variant="outline"
-                size="icon"
-                onClick={onLastPage}
-                disabled={!canGoNext || isLoading}
-                className="h-9 w-9 transition-all hover:bg-primary hover:text-primary-foreground disabled:opacity-50"
-                title="Last page"
-            >
-                <ChevronsRight className="h-4 w-4" />
-            </Button>
-        </div>
-    );
+  return (
+    <div className="flex items-center gap-1">
+      <CustomButton
+        variant="outline"
+        size="icon-sm"
+        onClick={onFirstPage}
+        disabled={!canGoPrevious || isLoading}
+        icon={<ChevronsLeft />}
+        title="First page"
+      />
+      <CustomButton
+        variant="outline"
+        size="icon-sm"
+        onClick={onPreviousPage}
+        disabled={!canGoPrevious || isLoading}
+        title="Previous page"
+        icon={<ChevronLeft />}
+      />
+      <CustomButton
+        variant="outline"
+        size="icon-sm"
+        onClick={onNextPage}
+        disabled={!canGoNext || isLoading}
+        title="Next page"
+        icon={<ChevronRight />}
+      />
+      <CustomButton
+        variant="outline"
+        size="icon-sm"
+        onClick={onLastPage}
+        disabled={!canGoNext || isLoading}
+        title="Last page"
+        icon={<ChevronsRight />}
+      />
+    </div>
+  );
 };
-

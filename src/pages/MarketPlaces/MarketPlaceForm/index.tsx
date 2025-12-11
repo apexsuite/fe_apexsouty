@@ -1,5 +1,4 @@
 import { ControlledInputText, ControlledSelect } from '@/components/FormInputs';
-import { Button } from '@/components/ui/button';
 import {
   createMarketplace,
   getMarketplaceById,
@@ -16,6 +15,13 @@ import { useForm } from 'react-hook-form';
 import marketPlaceValidationSchema from './marketPlace.validations';
 import { getRegions } from '@/services/region';
 import CustomButton from '@/components/CustomButton';
+import {
+  Frame,
+  FrameDescription,
+  FrameHeader,
+  FramePanel,
+  FrameTitle,
+} from '@/components/ui/frame';
 
 const MarketPlaceForm = () => {
   const navigate = useNavigate();
@@ -101,8 +107,6 @@ const MarketPlaceForm = () => {
     }
   };
 
-  const isPending = isCreating || isUpdating;
-
   if (isLoadingMarketplace && isEditMode) {
     return (
       <div className="container mx-auto space-y-6 px-4 py-8">
@@ -117,66 +121,66 @@ const MarketPlaceForm = () => {
   }
 
   return (
-    <div className="m-8 space-y-4 rounded-lg border p-8 shadow-sm">
-      <div className="flex items-center justify-between">
-        <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight">
+    <section className="p-4">
+      <Frame>
+        <FrameHeader>
+          <FrameTitle className="text-2xl font-bold">
             {isEditMode ? 'Edit Marketplace' : 'Create Marketplace'}
-          </h1>
-          <p className="text-muted-foreground">
+          </FrameTitle>
+          <FrameDescription className="text-muted-foreground text-base">
             {isEditMode
               ? 'Update marketplace information'
               : 'Create a new marketplace'}
-          </p>
-        </div>
-      </div>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div className="flex flex-col gap-4">
-          <ControlledInputText
-            control={control}
-            name="marketplace"
-            label="Marketplace Name"
-            placeholder="e.g., North America"
-          />
-          <ControlledInputText
-            control={control}
-            name="marketplaceURL"
-            label="Marketplace URL"
-            placeholder="e.g., https://..."
-          />
-          <ControlledInputText
-            control={control}
-            name="marketplaceKey"
-            label="Marketplace Key"
-            placeholder="e.g., A1234567890"
-          />
-          <ControlledSelect
-            control={control}
-            name="regionId"
-            label="Region"
-            placeholder="Select Region"
-            options={regionsOptions}
-            disabled={isLoadingRegions}
-          />
-          <div className="flex flex-col gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => navigate('/marketplaces')}
-            >
-              Cancel
-            </Button>
-            <CustomButton
-              label={isEditMode ? 'Update' : 'Create'}
-              onClick={handleSubmit(onSubmit)}
-              disabled={isPending}
-              loading={isPending}
-              className="w-full"
-            />
-          </div>
-        </div>
-      </form>
-    </div>
+          </FrameDescription>
+        </FrameHeader>
+        <FramePanel>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <ControlledInputText
+                control={control}
+                name="marketplace"
+                label="Marketplace Name"
+                placeholder="e.g., North America"
+              />
+              <ControlledInputText
+                control={control}
+                name="marketplaceURL"
+                label="Marketplace URL"
+                placeholder="e.g., https://..."
+              />
+              <ControlledInputText
+                control={control}
+                name="marketplaceKey"
+                label="Marketplace Key"
+                placeholder="e.g., A1234567890"
+              />
+              <ControlledSelect
+                control={control}
+                name="regionId"
+                label="Region"
+                placeholder="Select Region"
+                options={regionsOptions}
+                disabled={isLoadingRegions}
+              />
+
+              <CustomButton
+                label="Cancel"
+                onClick={() => navigate('/marketplaces')}
+                variant="outline"
+                className="w-full md:w-auto"
+              />
+              <CustomButton
+                label={isEditMode ? 'Update' : 'Create'}
+                onClick={handleSubmit(onSubmit)}
+                disabled={isCreating || isUpdating}
+                loading={isCreating || isUpdating}
+                className="w-full md:w-auto"
+              />
+            </div>
+          </form>
+        </FramePanel>
+      </Frame>
+    </section>
   );
 };
 

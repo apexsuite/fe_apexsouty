@@ -6,6 +6,12 @@ import StatusBadge, {
   type StatusVariant,
 } from '@/components/common/status-badge';
 
+export interface DetailPageAction {
+  label: string;
+  icon?: React.ReactNode;
+  onClick?: () => void;
+}
+
 interface DetailPageProps {
   name: string;
   status?: StatusVariant;
@@ -25,18 +31,18 @@ export const DetailPage = ({
   const navigate = useNavigate();
 
   return (
-    <div className="mx-auto space-y-6 p-4">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-start gap-4">
+    <div className="mx-auto space-y-4">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-start gap-2">
           <CustomButton
             icon={<ArrowLeft />}
             onClick={() => navigate(-1)}
-            variant="outline"
-            size="icon-lg"
+            variant="ghost"
+            size="icon"
           />
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold tracking-tight">{name}</h1>
+              <h1 className="text-2xl font-semibold tracking-tight">{name}</h1>
               {status && <StatusBadge status={status} />}
             </div>
           </div>
@@ -48,7 +54,6 @@ export const DetailPage = ({
           icon={<Edit />}
         />
       </div>
-
       {children}
     </div>
   );

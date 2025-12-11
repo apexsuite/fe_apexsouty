@@ -11,16 +11,19 @@ import { ILoginRequest } from '@/services/auth/types';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getLoginValidationSchema, LoginFormData } from './login.validation';
-import { ControlledInputText } from '@/components/FormInputs';
+import {
+  ControlledInputText,
+  ControlledPassword,
+} from '@/components/FormInputs';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Mail, Lock } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useErrorHandler } from '@/lib/useErrorHandler';
 import useQueryParamHandler from '@/utils/hooks/useQueryParamHandler';
 import { requestConsentsCallback } from '@/services/consents';
 import { IConsentsCallback } from '@/services/consents/types';
-  
+
 export default function Login() {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
@@ -196,18 +199,14 @@ export default function Login() {
                 required
                 type="email"
                 icon={Mail}
-                autoComplete="email"
               />
 
-              <ControlledInputText
+              <ControlledPassword
                 control={control}
                 name="password"
                 label={t('login.password')}
                 placeholder={t('login.passwordPlaceholder')}
                 required
-                type="password"
-                icon={Lock}
-                autoComplete="current-password"
               />
 
               <div className="flex justify-end">

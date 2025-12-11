@@ -1,5 +1,6 @@
 import RouteGuard from '@/components/RouteGuard';
 import ClientLayout from '@/components/ClientLayout';
+
 import { RootState } from '@/lib/store';
 import { lazy } from 'react';
 import { useSelector } from 'react-redux';
@@ -17,13 +18,11 @@ const Dashboard = lazy(() => import('@/pages/Dashboard'));
 const Permissions = lazy(() => import('@/pages/Permissions'));
 const AllServices = lazy(() => import('@/pages/AllServices'));
 const AllResources = lazy(() => import('@/pages/AllResources'));
-const PagesRoute = lazy(() => import('@/pages/PagesRoute'));
+const PageRoutes = lazy(() => import('@/pages/PageRoutes'));
 const PageDetailRoute = lazy(
   () => import('@/components/pagesRoute/PageDetailRoute')
 );
-const PageFormRoute = lazy(
-  () => import('@/components/pagesRoute/PageFormRoute')
-);
+const PageRouteForm = lazy(() => import('@/pages/PageRoutes/PageRouteForm'));
 const PageRoutePermissionsRoute = lazy(
   () => import('@/pages/PageRoutePermissionsRoute')
 );
@@ -35,9 +34,10 @@ const PageRoutePermissionFormRoute = lazy(
   () => import('@/components/pageRoutePermissions/PageRoutePermissionFormRoute')
 );
 const Roles = lazy(() => import('@/pages/Roles'));
-const RoleCreate = lazy(() => import('@/pages/RoleCreate'));
-const RoleEdit = lazy(() => import('@/pages/RoleEdit'));
+const RoleForm = lazy(() => import('@/pages/Roles/RoleForm'));
+
 const RoleDetail = lazy(() => import('@/pages/RoleDetail'));
+
 const Products = lazy(() => import('@/pages/Products'));
 const ProductCreate = lazy(() => import('@/pages/ProductCreate'));
 const ProductEdit = lazy(() => import('@/pages/ProductEdit'));
@@ -70,6 +70,10 @@ const Messages = lazy(() => import('@/pages/Support/Messages'));
 const MessageForm = lazy(() => import('@/pages/Support/Messages/MessageForm'));
 const MessageDetail = lazy(() => import('@/pages/Support/Messages/MessageDetail'));
 
+const UserManagement = lazy(() => import('@/pages/UserManagment'));
+const UserDetail = lazy(() => import('@/pages/UserManagment/UserDetail'));
+const UserForm = lazy(() => import('@/pages/UserManagment/UserForm'));
+
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
@@ -79,7 +83,7 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return <Navigate to="/dashboard" replace />;
   }
 
-  return <>{children}</>;
+  return children;
 };
 
 const ProtectedLayout: React.FC = () => {
@@ -162,26 +166,26 @@ export const protectedRoutes: RouteObject[] = [
       },
       {
         path: 'page-routes',
+        handle: { title: 'routes.pageRoutes.title' },
         children: [
           {
             index: true,
-            element: <PagesRoute />,
-            handle: { title: 'routes.pageRoutes.title' },
+            element: <PageRoutes />,
           },
           {
             path: 'create',
-            element: <PageFormRoute />,
+            element: <PageRouteForm />,
             handle: { title: 'routes.pageRoutes.create' },
+          },
+          {
+            path: ':id/edit',
+            element: <PageRouteForm />,
+            handle: { title: 'routes.pageRoutes.edit' },
           },
           {
             path: ':id',
             element: <PageDetailRoute />,
             handle: { title: 'routes.pageRoutes.detail' },
-          },
-          {
-            path: ':id/edit',
-            element: <PageFormRoute />,
-            handle: { title: 'routes.pageRoutes.edit' },
           },
         ],
       },
@@ -212,36 +216,36 @@ export const protectedRoutes: RouteObject[] = [
       },
       {
         path: 'roles',
+        handle: { title: 'routes.roles.title' },
         children: [
           {
             index: true,
             element: <Roles />,
-            handle: { title: 'routes.roles.title' },
           },
           {
             path: 'create',
-            element: <RoleCreate />,
+            element: <RoleForm />,
             handle: { title: 'routes.roles.create' },
+          },
+          {
+            path: ':id/edit',
+            element: <RoleForm />,
+            handle: { title: 'routes.roles.edit' },
           },
           {
             path: ':id',
             element: <RoleDetail />,
             handle: { title: 'routes.roles.detail' },
           },
-          {
-            path: ':id/edit',
-            element: <RoleEdit />,
-            handle: { title: 'routes.roles.edit' },
-          },
         ],
       },
       {
         path: 'products',
+        handle: { title: 'routes.products.title' },
         children: [
           {
             index: true,
             element: <Products />,
-            handle: { title: 'routes.products.title' },
           },
           {
             path: 'create',
@@ -347,6 +351,31 @@ export const protectedRoutes: RouteObject[] = [
             path: ':id/edit',
             element: <VendorForm />,
             handle: { title: 'routes.vendors.edit' },
+          },
+        ],
+      },
+      {
+        path: 'user-management',
+        handle: { title: 'routes.userManagement.title' },
+        children: [
+          {
+            index: true,
+            element: <UserManagement />,
+          },
+          {
+            path: ':id',
+            element: <UserDetail />,
+            handle: { title: 'routes.userManagement.detail' },
+          },
+          {
+            path: 'create',
+            element: <UserForm />,
+            handle: { title: 'routes.userManagement.create' },
+          },
+          {
+            path: ':id/edit',
+            element: <UserForm />,
+            handle: { title: 'routes.userManagement.edit' },
           },
         ],
       },

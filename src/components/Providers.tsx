@@ -9,6 +9,7 @@ import { ThemeProvider } from '@/providers/theme';
 import { THEME_STORAGE_KEY } from '@/utils/constants/theme';
 import ToastProvider from '@/components/ToastProvider';
 import { ToastProvider as CustomToastProvider } from '@/components/ui/toast';
+import { NuqsAdapter } from 'nuqs/adapters/react';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -53,11 +54,13 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-        <ThemeProvider defaultTheme="system" storageKey={THEME_STORAGE_KEY}>
-          {children}
-          <CustomToastProvider position="top-center" />
-          <ToastProvider />
-        </ThemeProvider>
+        <NuqsAdapter>
+          <ThemeProvider defaultTheme="system" storageKey={THEME_STORAGE_KEY}>
+            {children}
+            <CustomToastProvider position="top-center" />
+            <ToastProvider />
+          </ThemeProvider>
+        </NuqsAdapter>
       </Provider>
     </QueryClientProvider>
   );

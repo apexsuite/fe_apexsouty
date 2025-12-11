@@ -5,7 +5,7 @@ import usePagination from '@/utils/hooks/usePagination';
 import useQueryParams from '@/utils/hooks/useQueryParams';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import getVendorColumns from './column.data';
 import CustomDataTable from '@/components/CustomDataTable';
 import { FILTER_INPUTS } from '@/pages/Vendor/filter.data';
@@ -13,6 +13,7 @@ import { toastManager } from '@/components/ui/toast';
 import { TAGS } from '@/utils/constants/tags';
 
 export default function Vendor() {
+  const navigate = useNavigate();
   const [page, setPage] = usePagination();
   const [searchParams] = useSearchParams();
   const { getQueryParams } = useQueryParams();
@@ -64,6 +65,7 @@ export default function Vendor() {
   });
 
   const columns = getVendorColumns({
+    navigate,
     deleteVendor: deleteVendorMutation,
   });
 

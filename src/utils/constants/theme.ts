@@ -1,6 +1,6 @@
 import { MonitorIcon, MoonIcon, SunIcon } from 'lucide-react';
 
-export const THEME_STORAGE_KEY = 'theme';
+export const THEME_STORAGE_KEY = 'theme' as const;
 
 export const THEME_CONFIG = [
   {
@@ -19,3 +19,5 @@ export const THEME_CONFIG = [
     icon: MoonIcon,
   },
 ] as const;
+
+export type Theme = (typeof THEME_CONFIG)[number]['key'];

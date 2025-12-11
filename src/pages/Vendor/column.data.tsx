@@ -1,77 +1,80 @@
-import DeleteButton from '@/components/common/buttons/delete';
 import StatusBadge, {
   type StatusVariant,
 } from '@/components/common/status-badge';
-import CustomButton from '@/components/CustomButton';
-import { Group, GroupSeparator } from '@/components/ui/group';
 import type { IVendor } from '@/services/vendor/types';
-import type { Row } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
+import type { NavigateFunction } from 'react-router-dom';
+import createColumns, {
+  type ColumnConfig,
+  type ActionsConfig,
+} from '@/components/CustomColumn';
 import dayjs from 'dayjs';
-import { Edit, Eye } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
 interface IGetVendorColumnsProps {
+  navigate: NavigateFunction;
   deleteVendor: (id: string) => void;
 }
 
-export default function getVendorColumns({
+const COLUMN_CONFIG: ColumnConfig<IVendor>[] = [
+  {
+    accessorKey: 'name',
+    header: 'Name',
+    size: 2,
+  },
+  {
+    accessorKey: 'description',
+    header: 'Description',
+    size: 2,
+  },
+  {
+    accessorKey: 'fileCount',
+    header: 'File Count',
+    size: 2,
+  },
+  {
+    accessorKey: 'createdAt',
+    header: 'Created At',
+    size: 2,
+    cell: row => dayjs(row.createdAt).format('DD/MM/YYYY HH:mm'),
+  },
+  {
+    accessorKey: 'status',
+    header: 'Status',
+    size: 2,
+    cell: row => <StatusBadge status={row.status as StatusVariant} />,
+  },
+  {
+    accessorKey: 'actions',
+    header: 'Actions',
+    size: 1,
+  },
+];
+
+const getVendorColumns = ({
+  navigate,
   deleteVendor,
-}: IGetVendorColumnsProps) {
-  return [
-    {
-      accessorKey: 'name',
-      header: 'Name',
+}: IGetVendorColumnsProps): ColumnDef<IVendor>[] => {
+  const actions: ActionsConfig<IVendor> = {
+    view: {
+      label: 'View Vendor',
+      onClick: row => navigate(`/vendors/${row.id}`),
     },
-    {
-      accessorKey: 'description',
-      header: 'Description',
+    edit: {
+      label: 'Edit Vendor',
+      onClick: row => navigate(`/vendors/${row.id}/edit`),
     },
-    {
-      accessorKey: 'fileCount',
-      header: 'File Count',
+    delete: {
+      label: 'Delete',
+      onConfirm: row => deleteVendor(row.id),
+      title: 'Delete Vendor',
+      description: 'Are you sure you want to delete this vendor?',
     },
-    {
-      accessorKey: 'createdAt',
-      header: 'Created At',
-      cell: ({ row }: { row: Row<IVendor> }) => {
-        return dayjs(row.original.createdAt).format('DD/MM/YYYY HH:mm');
-      },
-    },
-    {
-      accessorKey: 'status',
-      header: 'Status',
-      cell: ({ row }: { row: Row<IVendor> }) => (
-        <StatusBadge status={row.original.status as StatusVariant} />
-      ),
-    },
-    {
-      accessorKey: 'id',
-      header: 'Actions',
-      cell: ({ row }: { row: Row<IVendor> }) => (
-        <Group>
-          <CustomButton
-            variant="outline"
-            tooltip="View Vendor"
-            icon={<Eye />}
-            size="icon"
-            render={<Link to={`/vendors/${row.original.id}`} />}
-          />
-          <GroupSeparator />
-          <CustomButton
-            variant="outline"
-            tooltip="Edit Vendor"
-            icon={<Edit />}
-            size="icon"
-            render={<Link to={`/vendors/${row.original.id}/edit`} />}
-          />
-          <GroupSeparator />
-          <DeleteButton
-            title="Delete Vendor"
-            description="Are you sure you want to delete this vendor?"
-            onConfirm={() => deleteVendor(row.original.id)}
-          />
-        </Group>
-      ),
-    },
-  ];
-}
+  };
+
+  return createColumns<IVendor>({
+    config: COLUMN_CONFIG,
+    actions,
+  });
+};
+
+export default getVendorColumns;

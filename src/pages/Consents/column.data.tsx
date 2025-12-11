@@ -30,11 +30,7 @@ const getConsentsColumns = (): ColumnDef<IConsent>[] => [
           onClick={() => row.toggleExpanded()}
           className="h-8 w-8 p-0"
         >
-          {row.getIsExpanded() ? (
-            <ChevronDown className="h-4 w-4" />
-          ) : (
-            <ChevronRight className="h-4 w-4" />
-          )}
+          {row.getIsExpanded() ? <ChevronDown /> : <ChevronRight />}
         </Button>
       );
     },
@@ -70,7 +66,7 @@ const getConsentsColumns = (): ColumnDef<IConsent>[] => [
           <StatusBadge isActive={row.original.consent?.isActive ?? false} />
         );
       }
-      return <StatusBadge isActive={false} />;
+      return <StatusBadge isActive={row.original.isActive} />;
     },
   },
   {

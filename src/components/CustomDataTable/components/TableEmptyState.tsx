@@ -1,19 +1,40 @@
-import { TableRow, TableCell } from "@/components/ui/table";
+import { TableRow, TableCell } from '@/components/ui/table';
+import {
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  EmptyDescription,
+} from '@/components/ui/empty';
+import { ListFilter } from 'lucide-react';
 
 interface TableEmptyStateProps {
-    columnCount: number;
+  columnCount: number;
+  title?: string;
+  description?: string;
 }
 
-export const TableEmptyState = ({ columnCount }: TableEmptyStateProps) => {
-    return (
-        <TableRow className="hover:bg-transparent">
-            <TableCell colSpan={columnCount} className="h-32 text-center">
-                <div className="flex flex-col items-center justify-center gap-2">
-                    <p className="text-sm font-medium text-muted-foreground">No results found</p>
-                    <p className="text-xs text-muted-foreground">Try adjusting your filters</p>
-                </div>
-            </TableCell>
-        </TableRow>
-    );
+export const TableEmptyState = ({
+  columnCount,
+  title = 'No results found',
+  description = 'Try adjusting your filters or search terms',
+}: TableEmptyStateProps) => {
+  return (
+    <TableRow className="hover:bg-transparent">
+      <TableCell colSpan={columnCount} className="py-12">
+        <div className="flex flex-col items-center justify-center">
+          <EmptyHeader className="max-w-md">
+            <EmptyMedia variant="icon">
+              <ListFilter className="text-muted-foreground size-5" />
+            </EmptyMedia>
+            <EmptyTitle className="text-foreground text-base font-semibold">
+              {title}
+            </EmptyTitle>
+            <EmptyDescription className="mt-2 text-sm">
+              {description}
+            </EmptyDescription>
+          </EmptyHeader>
+        </div>
+      </TableCell>
+    </TableRow>
+  );
 };
-
