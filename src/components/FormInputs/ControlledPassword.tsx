@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Controller, Control, FieldValues, Path } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
 import {
   InputGroup,
   InputGroupAddon,
@@ -11,6 +10,7 @@ import {
 } from '@/components/ui/input-group';
 import { cn } from '@/lib/utils';
 import { LucideIcon, Eye, EyeOff } from 'lucide-react';
+import CustomButton from '../CustomButton';
 
 interface ControlledPasswordProps<T extends FieldValues> {
   control: Control<T>;
@@ -49,16 +49,11 @@ export function ControlledPassword<T extends FieldValues>({
         name={name}
         render={({ field, fieldState }) => (
           <div className="flex flex-col gap-1">
-            <InputGroup
-              className={cn(
-                fieldState.error &&
-                  'has-[input[aria-invalid=true]]:border-destructive/36 has-[input[aria-invalid=true]:focus-visible]:border-destructive/64'
-              )}
-            >
+            <InputGroup>
               {Icon && (
                 <InputGroupAddon align="inline-start">
                   <InputGroupText>
-                    <Icon className="h-4 w-4" />
+                    <Icon />
                   </InputGroupText>
                 </InputGroupAddon>
               )}
@@ -68,24 +63,19 @@ export function ControlledPassword<T extends FieldValues>({
                 type={showPassword ? 'text' : 'password'}
                 placeholder={placeholder}
                 disabled={disabled}
-                aria-invalid={fieldState.error ? 'true' : 'false'}
+                aria-invalid={!!fieldState.error}
                 autoComplete="off"
               />
               <InputGroupAddon align="inline-end">
-                <Button
+                <CustomButton
                   type="button"
                   variant="ghost"
                   size="icon-xs"
                   onClick={() => setShowPassword(!showPassword)}
                   disabled={disabled}
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </Button>
+                  icon={showPassword ? <EyeOff /> : <Eye />}
+                />
               </InputGroupAddon>
             </InputGroup>
             {fieldState.error && (

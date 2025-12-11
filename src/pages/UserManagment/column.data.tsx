@@ -9,7 +9,6 @@ import createColumns, {
   type ColumnConfig,
   type ActionsConfig,
 } from '@/components/CustomColumn';
-import dayjs from 'dayjs';
 import { Badge } from '@/components/ui/badge';
 import { KeySquare } from 'lucide-react';
 
@@ -30,18 +29,17 @@ const COLUMN_CONFIG: ColumnConfig<IUsers>[] = [
     accessorKey: 'email',
     header: 'Email',
     size: 2,
-  },
-  {
-    accessorKey: 'createdAt',
-    header: 'Created At',
-    size: 1,
-    cell: row => dayjs(row.createdAt).format('DD/MM/YYYY HH:mm'),
+    clipboard: true,
   },
   {
     accessorKey: 'userType',
     header: 'User Type',
     size: 1,
-    cell: row => <Badge variant="info">{row.userType}</Badge>,
+    cell: row => (
+      <Badge variant="info" className="capitalize">
+        {row.userType.replace('_', ' ')}
+      </Badge>
+    ),
   },
   {
     accessorKey: 'roles',

@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import type { IUserRole } from '@/services/user-managment/types';
 import type { ColumnDef } from '@tanstack/react-table';
 import createColumns, {
@@ -7,6 +6,7 @@ import createColumns, {
 } from '@/components/CustomColumn';
 import { Badge } from '@/components/ui/badge';
 import StatusBadge from '@/components/common/status-badge';
+import { formatDate } from '@/lib/utils';
 
 interface IGetUserRoleColumnsProps {
   unassignRole: (roleId: string) => void;
@@ -16,32 +16,30 @@ const COLUMN_CONFIG: ColumnConfig<IUserRole>[] = [
   {
     accessorKey: 'roleName',
     header: 'Role Name',
-    size: 1,
+    size: 3,
     cell: row => <Badge variant="warning">{row.roleName}</Badge>,
   },
   {
     accessorKey: 'description',
     header: 'Description',
-    size: 3,
-    tooltip: true,
+    size: 1,
   },
   {
     accessorKey: 'roleValue',
     header: 'Role Value',
-    size: 1,
+    size: 2,
   },
   {
     accessorKey: 'isActive',
     header: 'Status',
-    size: 1,
+    size: 2,
     cell: row => <StatusBadge isActive={row.isActive} />,
   },
   {
     accessorKey: 'createdAt',
     header: 'Assigned At',
-    size: 1,
-    cell: row =>
-      row.createdAt ? dayjs(row.createdAt).format('DD/MM/YYYY HH:mm') : '-',
+    size: 2,
+    cell: row => (row.createdAt ? formatDate(row.createdAt) : '-'),
   },
   {
     accessorKey: 'actions',

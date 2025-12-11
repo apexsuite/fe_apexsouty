@@ -14,16 +14,11 @@ import { toastManager } from '@/components/ui/toast';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Empty from '@/components/common/empty';
 import { ControlledSelect } from '@/components/FormInputs';
-import {
-  Frame,
-  FrameHeader,
-  FramePanel,
-  FrameTitle,
-} from '@/components/ui/frame';
 import getUserRoleColumns from './user-role.column';
 import type { IRole } from '@/services/roles/types';
 import { useMemo } from 'react';
 import CustomButton from '@/components/CustomButton';
+import { InfoSection } from '@/components/common/info-section';
 
 interface AssignRoleFormData {
   roleId: string;
@@ -34,13 +29,13 @@ export default function UserRoles() {
   const queryClient = useQueryClient();
 
   const { data: userRoles, isLoading: isLoadingUserRoles } = useQuery({
-    queryKey: [TAGS.USER, id, 'roles'],
+    queryKey: [TAGS.USER, id, TAGS.USER_ROLES],
     queryFn: () => getUserRoles(id!),
     enabled: !!id,
   });
 
   const { data: rolesData, isLoading: isLoadingRoles } = useQuery({
-    queryKey: ['roles', 'all'],
+    queryKey: [TAGS.ROLE, 'all'],
     queryFn: () => getRoles({ page: 1, pageSize: 10, isActive: true }),
     enabled: !!id,
   });
@@ -51,7 +46,7 @@ export default function UserRoles() {
     },
   });
 
-  // Mevcut kullanıcı rollerini filtrele
+  // FILTER AVAILABLE ROLES
   const availableRoles = useMemo(() => {
     if (!rolesData?.items && !rolesData?.data) return [];
     const roles = rolesData.items || rolesData.data || [];
@@ -59,23 +54,19 @@ export default function UserRoles() {
     return roles.filter((role: IRole) => !assignedRoleIds.has(role.id));
   }, [rolesData, userRoles]);
 
-  const roleOptions = useMemo(() => {
-    return availableRoles.map((role: IRole) => ({
-      value: role.id,
-      label: role.name,
-    }));
-  }, [availableRoles]);
-
-  const { mutate: assignRoleMutation, isPending: isAssigning } = useMutation({
+  const { mutate: assignRoleMutation, isPending } = useMutation({
     mutationFn: (roleId: string) => {
       return assignRoleToUser(id!, roleId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [TAGS.USER, id, 'roles'],
+        queryKey: [TAGS.USER, id, TAGS.USER_ROLES],
       });
       queryClient.invalidateQueries({
         queryKey: [TAGS.USER, id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [TAGS.USER],
       });
       reset();
       toastManager.add({
@@ -95,10 +86,13 @@ export default function UserRoles() {
     mutationFn: (roleId: string) => unassignRoleFromUser(id!, roleId),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [TAGS.USER, id, 'roles'],
+        queryKey: [TAGS.USER, id, TAGS.USER_ROLES],
       });
       queryClient.invalidateQueries({
         queryKey: [TAGS.USER, id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [TAGS.USER],
       });
       toastManager.add({
         title: 'Role unassigned successfully',
@@ -136,6 +130,35 @@ export default function UserRoles() {
 
   return (
     <div className="space-y-2">
+      {availableRoles.length > 0 && (
+        <InfoSection title="Assign Role" icon={<Shield />}>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="flex items-end gap-4">
+              <ControlledSelect
+                control={control}
+                name="roleId"
+                label="Select Role"
+                placeholder="Select a role to assign"
+                options={availableRoles.map((role: IRole) => ({
+                  value: role.id,
+                  label: role.name,
+                }))}
+                required
+                disabled={isPending}
+                className="w-full flex-1"
+              />
+              <CustomButton
+                label="Assign Role"
+                icon={<Plus />}
+                type="submit"
+                disabled={isPending}
+                loading={isPending}
+                size="lg"
+              />
+            </div>
+          </form>
+        </InfoSection>
+      )}
       {!userRoles || userRoles.length === 0 ? (
         <Empty
           title="No roles assigned"
@@ -148,45 +171,6 @@ export default function UserRoles() {
           data={userRoles}
           isLoading={isLoadingUserRoles}
         />
-      )}
-      {roleOptions.length > 0 && (
-        <Frame>
-          <FrameHeader className="py-3">
-            <FrameTitle className="flex items-center gap-2 text-base">
-              <Shield />
-              Assign Role
-            </FrameTitle>
-          </FrameHeader>
-          <FramePanel>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="flex items-end gap-4">
-                <div className="flex-1">
-                  <ControlledSelect
-                    control={control}
-                    name="roleId"
-                    label="Select Role"
-                    placeholder={
-                      roleOptions.length === 0
-                        ? 'No available roles'
-                        : 'Choose a role to assign'
-                    }
-                    options={roleOptions}
-                    required
-                    disabled={roleOptions.length === 0 || isAssigning}
-                  />
-                </div>
-                <CustomButton
-                  label="Assign Role"
-                  icon={<Plus />}
-                  onClick={handleSubmit(onSubmit)}
-                  disabled={roleOptions.length === 0 || isAssigning}
-                  loading={isAssigning}
-                  size="lg"
-                />
-              </div>
-            </form>
-          </FramePanel>
-        </Frame>
       )}
     </div>
   );

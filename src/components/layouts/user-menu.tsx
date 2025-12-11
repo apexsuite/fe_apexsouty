@@ -55,9 +55,7 @@ export function UserMenu() {
             {`${user?.firstname} ${user?.lastname}`.trim()}
           </span>
         </div>
-
         <DropdownMenuSeparator />
-
         <DropdownMenuSub>
           <DropdownMenuSubTrigger className="h-9 px-2">
             <div className="flex items-center gap-2">

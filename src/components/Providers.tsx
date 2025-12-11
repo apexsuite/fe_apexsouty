@@ -57,7 +57,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <NuqsAdapter>
           <ThemeProvider defaultTheme="system" storageKey={THEME_STORAGE_KEY}>
             {children}
-            <CustomToastProvider position="top-center" />
+            <CustomToastProvider
+              position="top-center"
+              timeout={2500}
+              limit={2}
+            />
             <ToastProvider />
           </ThemeProvider>
         </NuqsAdapter>

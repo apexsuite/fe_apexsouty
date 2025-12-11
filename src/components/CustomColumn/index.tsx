@@ -80,7 +80,9 @@ export function createColumns<TData>(
     return (
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className="line-clamp-1 cursor-pointer">{content}</span>
+          <span className="line-clamp-1 max-w-2xl cursor-pointer truncate">
+            {content}
+          </span>
         </TooltipTrigger>
         <TooltipContent side="top">
           <span className="text-sm">{tooltipText}</span>

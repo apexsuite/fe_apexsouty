@@ -41,7 +41,13 @@ export default function ClipboardCell({ value, children }: ClipboardCellProps) {
           size="icon-xs"
           onClick={handleCopy}
           tooltip={hasCopied ? 'Copied!' : 'Copy to clipboard'}
-          icon={hasCopied ? <Check className="text-success" /> : <Copy />}
+          icon={
+            hasCopied ? (
+              <Check className="text-success size-3.5" />
+            ) : (
+              <Copy className="size-3.5" />
+            )
+          }
           className="opacity-0 transition-opacity group-hover:opacity-100"
         />
       )}
